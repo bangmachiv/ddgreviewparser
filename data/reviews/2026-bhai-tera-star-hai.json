@@ -10,7 +10,10 @@
       "critic_name": null,
       "review_title": "राघव जुयाल की कॉमेडी ने दिया सिरदर्द, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T17:50:41Z"
+      "parsed_timestamp": "2026-08-03T17:50:41Z",
+      "fetch_status": {
+        "status": "blocked"
+      }
     },
     {
       "publisher_id": "bollywood-hungama",
@@ -18,7 +21,11 @@
       "critic_name": null,
       "review_title": "Movie Review",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T17:52:24Z"
+      "parsed_timestamp": "2026-08-03T17:52:24Z",
+      "fetch_status": {
+        "status": "ok",
+        "method": "requests"
+      }
     },
     {
       "publisher_id": "dainik-jagran",
@@ -26,7 +33,11 @@
       "critic_name": null,
       "review_title": "कॉमेडी के नाम पर फूहड़ता, बेकार कहानी... राघव जुयाल से नहीं थी ऐसी उम्मीद!",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T18:00:10Z"
+      "parsed_timestamp": "2026-08-03T18:00:10Z",
+      "fetch_status": {
+        "status": "ok",
+        "method": "requests"
+      }
     },
     {
       "publisher_id": "filmfare",
@@ -34,7 +45,11 @@
       "critic_name": null,
       "review_title": "Rather than letting situations generate humour organically, the film relies on constant shouting, frantic running and repetitive misunderstandings. Before long, the noise becomes exhausting.",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T18:11:58Z"
+      "parsed_timestamp": "2026-08-03T18:11:58Z",
+      "fetch_status": {
+        "status": "ok",
+        "method": "playwright"
+      }
     },
     {
       "publisher_id": "hindustan-times",
@@ -42,7 +57,10 @@
       "critic_name": null,
       "review_title": "This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?'",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T18:20:45Z"
+      "parsed_timestamp": "2026-08-03T18:20:45Z",
+      "fetch_status": {
+        "status": "blocked"
+      }
     },
     {
       "publisher_id": "koimoi",
@@ -50,7 +68,10 @@
       "critic_name": null,
       "review_title": "Raghav Juyal's Film Is Unfunny, Aimless & Pointless!",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T18:24:24Z"
+      "parsed_timestamp": "2026-08-03T18:24:24Z",
+      "fetch_status": {
+        "status": "blocked"
+      }
     },
     {
       "publisher_id": "mid-day",
@@ -58,7 +79,10 @@
       "critic_name": null,
       "review_title": "It's done, bro!",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T18:31:59Z"
+      "parsed_timestamp": "2026-08-03T18:31:59Z",
+      "fetch_status": {
+        "status": "blocked"
+      }
     },
     {
       "publisher_id": "movie-talkies",
@@ -66,7 +90,10 @@
       "critic_name": null,
       "review_title": "A painful blow to filmmaking standards",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T18:42:20Z"
+      "parsed_timestamp": "2026-08-03T18:42:20Z",
+      "fetch_status": {
+        "status": "blocked"
+      }
     },
     {
       "publisher_id": "navbharat-times",
@@ -74,7 +101,11 @@
       "critic_name": null,
       "review_title": "लाउड कॉमेडी और लचर स्‍क्रीनप्‍ले, 'स्टार' नहीं बन पाए राघव जुयाल",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T18:45:03Z"
+      "parsed_timestamp": "2026-08-03T18:45:03Z",
+      "fetch_status": {
+        "status": "ok",
+        "method": "playwright"
+      }
     },
     {
       "publisher_id": "ndtv",
@@ -82,7 +113,10 @@
       "critic_name": null,
       "review_title": "Raghav Juyal Shines, But The Comedy Falls Flat",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T18:51:00Z"
+      "parsed_timestamp": "2026-08-03T18:51:00Z",
+      "fetch_status": {
+        "status": "blocked"
+      }
     },
     {
       "publisher_id": "rediff",
@@ -90,7 +124,11 @@
       "critic_name": null,
       "review_title": "Raghav Juyal's Film Is Absurd",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T18:58:43Z"
+      "parsed_timestamp": "2026-08-03T18:58:43Z",
+      "fetch_status": {
+        "status": "ok",
+        "method": "playwright"
+      }
     },
     {
       "publisher_id": "the-federal",
@@ -98,7 +136,10 @@
       "critic_name": null,
       "review_title": "Raghav Juyal's comedy promises a lot, delivers little",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T19:10:15Z"
+      "parsed_timestamp": "2026-08-03T19:10:15Z",
+      "fetch_status": {
+        "status": "blocked"
+      }
     },
     {
       "publisher_id": "the-indian-express",
@@ -106,7 +147,11 @@
       "critic_name": null,
       "review_title": "Raghav Juyal film is a comedy with scant laughs",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T19:13:40Z"
+      "parsed_timestamp": "2026-08-03T19:13:40Z",
+      "fetch_status": {
+        "status": "ok",
+        "method": "playwright"
+      }
     },
     {
       "publisher_id": "the-times-of-india",
@@ -114,7 +159,10 @@
       "critic_name": null,
       "review_title": "A nightmare of a comedy that drags on",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T19:18:30Z"
+      "parsed_timestamp": "2026-08-03T19:18:30Z",
+      "fetch_status": {
+        "status": "blocked"
+      }
     },
     {
       "publisher_id": "the-tribune",
@@ -122,7 +170,11 @@
       "critic_name": null,
       "review_title": "More madness than amusement",
       "star_rating": null,
-      "parsed_timestamp": "2026-08-03T19:23:16Z"
+      "parsed_timestamp": "2026-08-03T19:23:16Z",
+      "fetch_status": {
+        "status": "ok",
+        "method": "playwright"
+      }
     }
   ]
 }
