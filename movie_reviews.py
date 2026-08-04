@@ -1,27 +1,33 @@
+#!/usr/bin/env python3
+
 import argparse
-from duckduckgo_search import DDGS
+from ddgs import DDGS
 
 
-def search(query, max_results=10):
+def search(query: str, max_results: int = 10):
     print(f"Searching: {query}\n")
 
-    with DDGS() as ddgs:
-        results = list(ddgs.text(query, max_results=max_results))
+    try:
+        with DDGS() as ddgs:
+            results = list(ddgs.text(query, max_results=max_results))
 
-    if not results:
-        print("No results found.")
-        return
+        if not results:
+            print("No results found.")
+            return
 
-    for i, result in enumerate(results, start=1):
-        print("=" * 80)
-        print(f"Result #{i}")
-        print(f"Title   : {result.get('title', '')}")
-        print(f"URL     : {result.get('href', '')}")
-        print(f"Snippet : {result.get('body', '')}")
+        for i, result in enumerate(results, start=1):
+            print("=" * 80)
+            print(f"Result #{i}")
+            print(f"Title   : {result.get('title', '')}")
+            print(f"URL     : {result.get('href', '')}")
+            print(f"Snippet : {result.get('body', '')}")
+
+    except Exception as e:
+        print(f"Search failed: {e}")
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+def main():
+    parser = argparse.ArgumentParser(description="DuckDuckGo Search")
     parser.add_argument(
         "--query",
         required=True,
@@ -30,9 +36,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--max-results",
         type=int,
-        default=10
+        default=10,
+        help="Maximum number of search results"
     )
 
     args = parser.parse_args()
-
     search(args.query, args.max_results)
+
+
+if __name__ == "__main__":
+    main()
