@@ -1,4 +1,1 @@
-# DuckDuckGo search (no API key). Package renamed from "duckduckgo-search".
-ddgs>=9.0
-# Used by the preflight probe and the primp-free fallback path in movie_reviews.py.
-requests>=2.31
+duckduckgo-search==8.1.1
