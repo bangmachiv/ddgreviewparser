@@ -1,0 +1,47 @@
+# Place this file at:  .github/workflows/movie-reviews.yml
+name: Movie Review Search
+
+on:
+  workflow_dispatch:
+    inputs:
+      movie_name:
+        description: "Movie to search reviews for"
+        required: false
+        default: "Bhai tera star hai"
+        type: string
+
+  # Optional: run on a schedule (uncomment and adjust the cron as needed).
+  # Times are UTC. Example below = 06:00 UTC daily (11:30 IST).
+  # schedule:
+  #   - cron: "0 6 * * *"
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run review search
+        env:
+          # For manual runs this uses the input above; for scheduled runs it is
+          # empty and the script falls back to DEFAULT_MOVIE_NAME.
+          MOVIE_NAME: ${{ github.event.inputs.movie_name }}
+          # Optional: set a proxy to avoid DuckDuckGo blocking Actions' cloud IP.
+          # Add a repo secret named DDGS_PROXY, then this line passes it through.
+          DDGS_PROXY: ${{ secrets.DDGS_PROXY }}
+        run: python movie_reviews.py | tee results.json
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: review-results
+          path: results.json
