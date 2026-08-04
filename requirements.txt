@@ -1,1 +1,1 @@
-duckduckgo-search==8.1.1
+ddgs
