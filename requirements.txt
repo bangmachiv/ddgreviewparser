@@ -1,0 +1,3 @@
+# DuckDuckGo search (formerly the "duckduckgo-search" package, now "ddgs").
+# No API key required.
+ddgs>=9.0
