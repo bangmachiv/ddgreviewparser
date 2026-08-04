@@ -1,48 +1,32 @@
-#!/usr/bin/env python3
-
-import argparse
+import json
+from urllib.parse import urlparse
 from ddgs import DDGS
 
+movie_name = "Oppenheimer"
 
-def search(query: str, max_results: int = 10):
-    print(f"Searching: {query}\n")
+with open("publishers.json", "r", encoding="utf-8") as f:
+    publishers = json.load(f)
 
-    try:
-        with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=max_results))
+with DDGS() as ddgs:
+    for publisher in publishers:
+        if not publisher.get("active", False):
+            continue
 
-        if not results:
-            print("No results found.")
-            return
+        domain = urlparse(publisher["url"]).netloc
+        query = f"{movie_name} site:{domain} movie review"
 
-        for i, result in enumerate(results, start=1):
-            print("=" * 80)
-            print(f"Result #{i}")
-            print(f"Title   : {result.get('title', '')}")
-            print(f"URL     : {result.get('href', '')}")
-            print(f"Snippet : {result.get('body', '')}")
+        print(f"\n=== {publisher['name']} ===")
+        print(f"Query: {query}")
 
-    except Exception as e:
-        print(f"Search failed: {e}")
+        try:
+            results = list(ddgs.text(query, max_results=1))
 
+            if results:
+                r = results[0]
+                print(f"Title: {r['title']}")
+                print(f"URL: {r['href']}")
+            else:
+                print("No result found.")
 
-def main():
-    parser = argparse.ArgumentParser(description="DuckDuckGo Search")
-    parser.add_argument(
-        "--query",
-        required=True,
-        help="Search query"
-    )
-    parser.add_argument(
-        "--max-results",
-        type=int,
-        default=10,
-        help="Maximum number of search results"
-    )
-
-    args = parser.parse_args()
-    search(args.query, args.max_results)
-
-
-if __name__ == "__main__":
-    main()
+        except Exception as e:
+            print(f"Search failed: {e}")
