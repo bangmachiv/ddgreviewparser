@@ -28,16 +28,16 @@ jobs:
         run: |
           python extract_jsonld.py data/reviews/2026-bhai-tera-star-hai.json
 
-      - name: Commit updated JSON
+      - name: Commit changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add data/reviews/2026-bhai-tera-star-hai.json
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Extract critic names and star ratings from JSON-LD"
+            git commit -m "Update critic names and star ratings"
             git push
-          fiq
+          fi
