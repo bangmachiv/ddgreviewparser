@@ -75,7 +75,7 @@ def log(level, msg=""):
 
 def banner(title):
     log("")
-    log("=" * 4, f"===== {title} " + "=" * (60 - len(title)))
+    log("====", f"===== {title} " + "=" * max(0, (60 - len(title))))
 
 
 def log_exc(prefix):
@@ -135,6 +135,49 @@ def phase1_proxy_cleanup():
                and os.environ.pop(v, None) is not None]
     log("INFO", f"cleared proxy vars: {removed or 'none'}")
     log("INFO", "-> a proxy can no longer be the cause of a builder error on this run")
+
+
+# --------------------------------------------------------------------------- #
+# PHASE 1b - impersonation build check (THE fix for BuilderError on some runners)
+# --------------------------------------------------------------------------- #
+def phase1b_impersonation_check():
+    """
+    ddgs builds primp.Client(impersonate="random", impersonate_os="random", ...).
+    On some hosts (e.g. certain GitHub Actions runners) that TLS-impersonation
+    client fails to build -> BuilderError('builder error', None), before any
+    network call. Plain (non-impersonated) primp works fine there. So: probe the
+    impersonation build; if it fails, monkeypatch ddgs to drop impersonation.
+    """
+    banner("PHASE 1b  primp impersonation check")
+    try:
+        import primp
+    except Exception:
+        log("WARN", "primp not importable; skipping impersonation check")
+        return False
+
+    try:
+        primp.Client(proxy=None, timeout=5, impersonate="random",
+                     impersonate_os="random", verify=True, ca_cert_file=None)
+        log("OK", "impersonation client builds fine -> no patch needed")
+        return False
+    except Exception:
+        log_exc("impersonation client FAILED to build")
+
+    # Patch: replace primp.Client with a class wrapper that drops the impersonation
+    # kwargs and returns a real primp.Client. Class (not function) so that ddgs's
+    # `primp.Client | None` type annotation still evaluates.
+    _Orig = primp.Client
+
+    class _NoImpersonateClient:
+        def __new__(cls, *a, **k):
+            k.pop("impersonate", None)
+            k.pop("impersonate_os", None)
+            return _Orig(*a, **k)
+
+    primp.Client = _NoImpersonateClient
+    log("INFO", "-> PATCHED ddgs to use a NON-impersonated primp client "
+                "(fixes the builder error on this runner)")
+    return True
 
 
 # --------------------------------------------------------------------------- #
@@ -272,17 +315,17 @@ def requests_fallback(query):
 
 def search_one(name, domain, query):
     """Run all strategies for a single publisher; return (title, url, method)."""
-    log("STEP", f"strategy 1: ddgs(auto)")
+    log("STEP", "strategy 1: ddgs(auto)")
     title, url = ddgs_auto(query)
     if title:
         return title, url, "ddgs-auto"
 
-    log("STEP", f"strategy 2: per-backend probe")
+    log("STEP", "strategy 2: per-backend probe")
     be, (title, url) = ddgs_per_backend(query)
     if title:
         return title, url, f"ddgs-{be}"
 
-    log("STEP", f"strategy 3: requests fallback")
+    log("STEP", "strategy 3: requests fallback")
     try:
         title, url = requests_fallback(query)
         if title:
@@ -343,6 +386,7 @@ def main():
 
     phase0_environment(movie, len(publishers))
     phase1_proxy_cleanup()
+    phase1b_impersonation_check()
     preflight = phase2_preflight()
 
     banner("PHASE 3  per-publisher search")
