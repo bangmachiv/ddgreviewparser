@@ -1,0 +1,61 @@
+name: Secondary Missing Review Search
+
+on:
+  # Allows you to run this manually from the Actions tab
+  workflow_dispatch:
+  
+  # Optional: You can run this on a schedule (e.g., every day at 10 AM UTC)
+  # schedule:
+  #   - cron: "0 10 * * *"
+
+jobs:
+  secondary-search:
+    runs-on: ubuntu-latest
+    
+    # Required to allow the GitHub Action bot to push commits
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          # fetch-depth: 0 is recommended when using pull --rebase to ensure full git history
+          fetch-depth: 0 
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10" # You can adjust this to match your environment
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install duckduckgo_search
+          # If you have a requirements.txt, use this instead:
+          # pip install -r requirements.txt
+
+      - name: Run Secondary Search
+        run: |
+          python second_search_reviews.py
+
+      - name: Commit and Push Results
+        run: |
+          # Set up bot identity for the commit
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # Stage the newly created JSON files in the searches directory
+          git add data/searches/
+          
+          # Check if there are actually any new changes to commit
+          if git diff --staged --quiet; then
+            echo "No missing reviews were processed or found. Nothing to commit."
+          else
+            git commit -m "chore: add secondary search results for missing reviews"
+            
+            # Rebase to prevent race conditions from other concurrent workflows
+            git pull --rebase origin main
+            
+            git push origin main
+          fi
