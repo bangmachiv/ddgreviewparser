@@ -10,12 +10,15 @@ REVIEW_PHRASES = [
     "review",
     "movie review",
     "film review",
+    "hindi review",
+    "hindi movie review",
     "रिव्यू",
     "समीक्षा",
     "मूवी रिव्यू",
     "मूवी समीक्षा",
     "फिल्म रिव्यू",
     "फिल्म समीक्षा",
+    "हिंदी रिव्यू"
 ]
 
 NEGATIVE_PHRASES = [
