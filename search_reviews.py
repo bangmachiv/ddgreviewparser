@@ -72,7 +72,12 @@ def main():
 
                 try:
 
-                    results = list(ddgs.text(query, max_results=5))
+                    results = list(ddgs.text(
+                                    query, 
+                                    region="in-en",       # Forces Indian localized results
+                                    backend="html",       # Forces the HTML endpoint you verified in your browser
+                                    max_results=5
+                                ))
 
                     for rank, r in enumerate(results, start=1):
 
