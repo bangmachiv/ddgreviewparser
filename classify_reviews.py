@@ -61,6 +61,40 @@ def check_if_review(title,valid_combos):
             return True
     return False
 
+def beautify_title(title: str, movie_name: str) -> str:
+    """
+    Parses title from the last word towards the first. 
+    Removes trailing movie name words, 'movie', 'review', etc.
+    Stops and removes the character when it encounters the first ':' or '|'.
+    """
+    if not title or title == "NA":
+        return title
+        
+    # Words we want to strip from the tail
+    target_words = set(movie_name.lower().split() + ["movie", "review", "film", "समीक्षा", "रिव्यू"])
+    words = title.split()
+    
+    while words:
+        last_word = words[-1]
+        
+        # Stop condition: encounter ':' or '|'
+        if ':' in last_word or '|' in last_word:
+            cleaned = last_word.replace(':', '').replace('|', '')
+            if cleaned:
+                words[-1] = cleaned
+            else:
+                words.pop() # Remove the standalone char
+            break
+            
+        # Clean the word from punctuation for exact matching
+        alpha_only = "".join(c for c in last_word.lower() if c.isalnum())
+        if alpha_only in target_words or not alpha_only:
+            words.pop()
+        else:
+            break
+            
+    return " ".join(words).strip()
+
 def main():
     base=os.path.dirname(os.path.abspath(__file__))
     movies_file=os.path.join(base,"data","movies","movies-live-today.json")
@@ -101,11 +135,15 @@ def main():
                 if ok and first is None:
                     first=result
 
+            # Retrieve and beautify the title
+            raw_title = first.get("title", "NA") if first else "NA"
+            clean_title = beautify_title(raw_title, movie["name"]) if first else "NA"
+
             reviews_output["publishers"].append({
                 "publisher_id":pub.get("publisher_id",""),
                 "publisher_name":pub.get("publisher_name",""),
                 "review_url": first.get("url","NA") if first else "NA",
-                "review_title": first.get("title","NA") if first else "NA",
+                "review_title": clean_title,
                 "search_rank": first.get("rank","NA") if first else "NA"
             })
 
