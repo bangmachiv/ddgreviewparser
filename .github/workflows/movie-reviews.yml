@@ -3,6 +3,9 @@ name: DuckDuckGo Search
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   search:
     runs-on: ubuntu-latest
@@ -10,6 +13,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -23,15 +28,19 @@ jobs:
 
       - name: Run search
         run: |
-          python movie_reviews.py
+          python search_reviews.py
 
-      - name: Commit search results
+      - name: Commit updated search files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add data/searches
+          git add data/searches/*.json
 
-          git diff --cached --quiet && echo "No changes" || git commit -m "Update search results"
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
 
+          git commit -m "Update search results"
           git push
