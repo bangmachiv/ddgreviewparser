@@ -9,6 +9,7 @@ from ddgs import DDGS
 
 PUBLISHERS_FILE = "publishers.json"
 MOVIES_FILE = "data/movies/movies-live-today.json"
+REVIEWS_DIR = "data/reviews"
 OUTPUT_DIR = "data/searches"
 
 
@@ -39,8 +40,34 @@ def main():
             movie_slug = movie["slug"]
 
             print("\n" + "=" * 80)
-            print(movie_name)
+            print(f"Processing: {movie_name}")
             print("=" * 80)
+
+            # -----------------------------
+            # FILTER LOGIC: Find missing publishers
+            # -----------------------------
+            reviews_file_path = os.path.join(REVIEWS_DIR, f"reviews_{movie_slug}.json")
+            
+            # Skip if the classification file doesn't exist yet
+            if not os.path.exists(reviews_file_path):
+                print(f"No classified reviews file found for {movie_slug}. Skipping.")
+                continue
+                
+            with open(reviews_file_path, "r", encoding="utf-8") as rf:
+                classified_data = json.load(rf)
+                
+            # Collect publisher IDs where the review URL is "NA"
+            na_publishers = set()
+            for pub in classified_data.get("publishers", []):
+                if pub.get("review_url") == "NA":
+                    na_publishers.add(pub.get("publisher_id"))
+            
+            # If the set is empty, all reviews were found. Skip the movie entirely.
+            if not na_publishers:
+                print("All reviews already found for this movie. Skipping secondary search.")
+                continue
+                
+            print(f"Found {len(na_publishers)} publishers missing reviews. Starting targeted search...")
 
             output = {
                 "movie": {
@@ -56,11 +83,18 @@ def main():
                 if not publisher.get("active", False):
                     continue
 
+                # -----------------------------
+                # Skip publishers that already have a review
+                # -----------------------------
+                if publisher["id"] not in na_publishers:
+                    continue
+
                 domain = urlparse(publisher["url"]).netloc.replace("www.", "")
 
-                query = f'"{movie_name}" movie review site:{domain}'
+                # Implemented the strict exact-match query string
+                query = f'"{movie_name}" site:{domain}'
 
-                print(f"Searching {publisher['name']}")
+                print(f"Searching {publisher['name']} (Missing URL)...")
 
                 publisher_result = {
                     "publisher_id": publisher["id"],
@@ -75,7 +109,7 @@ def main():
                     results = list(ddgs.text(
                                     query, 
                                     region="in-en",       # Forces Indian localized results
-                                    backend="html",       # Forces the HTML endpoint you verified in your browser
+                                    backend="html",       # Forces the HTML endpoint
                                     max_results=5
                                 ))
 
@@ -94,9 +128,10 @@ def main():
 
                 output["publishers"].append(publisher_result)
 
+            # Saving to a distinct "second_search_" file so it doesn't overwrite the primary run
             output_path = os.path.join(
                 OUTPUT_DIR,
-                f"search_{movie_slug}.json"
+                f"second_search_{movie_slug}.json"
             )
 
             with open(output_path, "w", encoding="utf-8") as f:
