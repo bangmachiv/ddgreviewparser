@@ -9,6 +9,7 @@ from ddgs import DDGS
 
 PUBLISHERS_FILE = "publishers.json"
 MOVIES_FILE = "data/movies/movies-live-today.json"
+REVIEWS_DIR = "data/reviews"
 OUTPUT_DIR = "data/searches"
 
 
@@ -42,6 +43,37 @@ def main():
             print(movie_name)
             print("=" * 80)
 
+            # -----------------------------
+            # Load existing review data if it exists to skip found publishers
+            # -----------------------------
+            completed_publishers = set()
+            reviews_file_path = os.path.join(REVIEWS_DIR, f"reviews_{movie_slug}.json")
+            if os.path.exists(reviews_file_path):
+                try:
+                    with open(reviews_file_path, "r", encoding="utf-8") as rf:
+                        existing_review_data = json.load(rf)
+                        for pub in existing_review_data.get("publishers", []):
+                            if pub.get("review_url") and pub.get("review_url") != "NA":
+                                completed_publishers.add(pub.get("publisher_id"))
+                    print(f"Found existing review file. Skipping {len(completed_publishers)} already-resolved publishers.")
+                except Exception as e:
+                    print(f"Could not parse existing review file: {e}")
+
+            # Also load existing search file if it exists so we don't wipe out previous results
+            output_path = os.path.join(
+                OUTPUT_DIR,
+                f"search_{movie_slug}.json"
+            )
+            existing_search_publishers = {}
+            if os.path.exists(output_path):
+                try:
+                    with open(output_path, "r", encoding="utf-8") as sf:
+                        existing_search_data = json.load(sf)
+                        for pub in existing_search_data.get("publishers", []):
+                            existing_search_publishers[pub.get("publisher_id")] = pub
+                except Exception:
+                    pass
+
             output = {
                 "movie": {
                     "name": movie_name,
@@ -56,48 +88,84 @@ def main():
                 if not publisher.get("active", False):
                     continue
 
+                pub_id = publisher["id"]
+
+                # If we already have a valid review URL from the review file, skip searching entirely
+                if pub_id in completed_publishers:
+                    print(f"Skipping {publisher['name']} (Review URL already found)")
+                    # Keep existing search record if available
+                    if pub_id in existing_search_publishers:
+                        output["publishers"].append(existing_search_publishers[pub_id])
+                    continue
+
                 domain = urlparse(publisher["url"]).netloc.replace("www.", "")
 
-                query = f'{movie_name} movie review site:{domain}'
+                # -------------------------------------------------------------
+                # QUERY 1: Standard Search (exact_match: false)
+                # -------------------------------------------------------------
+                query_broad = f'"{movie_name}" movie review site:{domain}'
 
-                print(f"Searching {publisher['name']}")
+                print(f"Searching {publisher['name']} (Broad)...")
 
                 publisher_result = {
                     "publisher_id": publisher["id"],
                     "publisher_name": publisher["name"],
                     "publisher_url": publisher["url"],
-                    "query": query,
+                    "query": query_broad,
                     "results": []
                 }
 
                 try:
+                    results_broad = list(ddgs.text(
+                                        query_broad, 
+                                        region="in-en",       
+                                        backend="html",       
+                                        max_results=5
+                                    ))
 
-                    results = list(ddgs.text(
-                                    query, 
-                                    region="in-en",       # Forces Indian localized results
-                                    backend="html",       # Forces the HTML endpoint you verified in your browser
-                                    max_results=5
-                                ))
-
-                    for rank, r in enumerate(results, start=1):
-
+                    for rank, r in enumerate(results_broad, start=1):
                         publisher_result["results"].append({
                             "rank": rank,
                             "title": r.get("title", ""),
                             "url": r.get("href", ""),
-                            "snippet": r.get("body", "")
+                            "snippet": r.get("body", ""),
+                            "exact_match": False
                         })
 
                 except Exception as e:
-
                     publisher_result["error"] = str(e)
 
-                output["publishers"].append(publisher_result)
+                # -------------------------------------------------------------
+                # QUERY 2: Exact Match Search (exact_match: true)
+                # -------------------------------------------------------------
+                query_exact = f'"{movie_name}" review "{publisher["name"]}"'
 
-            output_path = os.path.join(
-                OUTPUT_DIR,
-                f"search_{movie_slug}.json"
-            )
+                print(f"Searching {publisher['name']} (Exact Match)...")
+
+                try:
+                    results_exact = list(ddgs.text(
+                                        query_exact, 
+                                        region="in-en",       
+                                        backend="html",       
+                                        max_results=5
+                                    ))
+
+                    current_rank = len(publisher_result["results"]) + 1
+                    for r in results_exact:
+                        publisher_result["results"].append({
+                            "rank": current_rank,
+                            "title": r.get("title", ""),
+                            "url": r.get("href", ""),
+                            "snippet": r.get("body", ""),
+                            "exact_match": True
+                        })
+                        current_rank += 1
+
+                except Exception as e:
+                    if "error" not in publisher_result:
+                        publisher_result["error"] = str(e)
+
+                output["publishers"].append(publisher_result)
 
             with open(output_path, "w", encoding="utf-8") as f:
                 json.dump(output, f, ensure_ascii=False, indent=2)
