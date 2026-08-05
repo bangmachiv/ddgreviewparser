@@ -103,7 +103,7 @@ def main():
                 # -------------------------------------------------------------
                 # QUERY 1: Standard Search (exact_match: false)
                 # -------------------------------------------------------------
-                query_broad = f'"{movie_name}" movie review site:{domain}'
+                query_broad = f'{movie_name} movie review site:{domain}'
 
                 print(f"Searching {publisher['name']} (Broad)...")
 
@@ -138,7 +138,7 @@ def main():
                 # -------------------------------------------------------------
                 # QUERY 2: Exact Match Search (exact_match: true)
                 # -------------------------------------------------------------
-                query_exact = f'"{movie_name}" review "{publisher["name"]}"'
+                query_exact = f'"{movie_name}" movie review site:{domain}'
 
                 print(f"Searching {publisher['name']} (Exact Match)...")
 
@@ -149,7 +149,11 @@ def main():
                                         backend="html",       
                                         max_results=5
                                     ))
+                # NEW: Catch the 0-results case and log it for CI/CD visibility
+                    if not results_exact:
+                        print(f"  [!] 0 exact match results for: {domain}")
 
+                
                     current_rank = len(publisher_result["results"]) + 1
                     for r in results_exact:
                         publisher_result["results"].append({
