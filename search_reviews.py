@@ -56,9 +56,9 @@ def main():
                 if not publisher.get("active", False):
                     continue
 
-                domain = urlparse(publisher["url"]).netloc
+                domain = urlparse(publisher["url"]).netloc.replace("www.", "")
 
-                query = f'{movie_name} movie review site:"{domain}"'
+                query = f'{movie_name} movie review site:{domain}'
 
                 print(f"Searching {publisher['name']}")
 
