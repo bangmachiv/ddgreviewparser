@@ -1,109 +1,84 @@
 import json
-import re
+import os
 from urllib.parse import urlparse
 from ddgs import DDGS
-
-movie_name = "Oppenheimer"
-
-# -----------------------------
-# Build whitelist
-# -----------------------------
-
-STATIC_WHITELIST = {
-    "movie",
-    "film",
-    "review",
-    "मूवी",
-    "फिल्म",
-    "रिव्यू",
-    "समीक्षा",
-}
-
-clean_movie_name = re.sub(r"[^A-Za-z0-9 ]+", " ", movie_name)
-clean_movie_name = " ".join(clean_movie_name.split()).lower()
-
-movie_words = set(clean_movie_name.split())
-
-WHITELIST = STATIC_WHITELIST | movie_words
-
-print("Whitelist:", sorted(WHITELIST))
-print()
 
 # -----------------------------
 # Load publishers
 # -----------------------------
-
 with open("publishers.json", "r", encoding="utf-8") as f:
     publishers = json.load(f)
 
 # -----------------------------
+# Load today's movies
+# -----------------------------
+with open("data/movies/movies-live-today.json", "r", encoding="utf-8") as f:
+    movies_data = json.load(f)
+
+# -----------------------------
+# Ensure output directory exists
+# -----------------------------
+os.makedirs("data/searches", exist_ok=True)
+
+# -----------------------------
 # Search
 # -----------------------------
-
 with DDGS() as ddgs:
 
-    for publisher in publishers:
+    for movie in movies_data["movies"]:
 
-        if not publisher.get("active", False):
-            continue
+        movie_name = movie["name"]
+        movie_slug = movie["slug"]
 
-        domain = urlparse(publisher["url"]).netloc
+        print(f"\n{'='*80}")
+        print(movie_name)
+        print(f"{'='*80}")
 
-        query = f'{movie_name} movie review site:"{domain}"'
+        output = {
+            "movie": movie_name,
+            "slug": movie_slug,
+            "searches": []
+        }
 
-        print("=" * 100)
-        print(publisher["name"])
-        print(query)
+        for publisher in publishers:
 
-        try:
-
-            results = list(ddgs.text(query, max_results=5))
-
-            if not results:
-                print("No results")
-                print()
+            if not publisher.get("active", False):
                 continue
 
-            matched = False
+            domain = urlparse(publisher["url"]).netloc
 
-            for i, r in enumerate(results, start=1):
+            query = f'{movie_name} movie review site:"{domain}"'
 
-                title = r["title"]
-                url = r["href"]
+            print(f"Searching {publisher['name']}")
 
-                print(f"\nResult {i}")
-                print(title)
-                print(url)
+            publisher_result = {
+                "publisher_id": publisher["id"],
+                "publisher_name": publisher["name"],
+                "publisher_url": publisher["url"],
+                "query": query,
+                "results": []
+            }
 
-                # -----------------------------
-                # Whitelist check
-                # -----------------------------
+            try:
 
-                if ":" not in title:
-                    continue
+                results = list(ddgs.text(query, max_results=5))
 
-                prefix = title.split(":", 1)[0]
+                for rank, r in enumerate(results, start=1):
+                    publisher_result["results"].append({
+                        "rank": rank,
+                        "title": r.get("title", ""),
+                        "url": r.get("href", ""),
+                        "snippet": r.get("body", "")
+                    })
 
-                prefix_clean = re.sub(
-                    r"[^\w\u0900-\u097F ]+",
-                    " ",
-                    prefix.lower()
-                )
+            except Exception as e:
+                publisher_result["error"] = str(e)
 
-                prefix_clean = " ".join(prefix_clean.split())
+            output["searches"].append(publisher_result)
 
-                words = prefix_clean.split()
+        output_path = f"data/searches/search_{movie_slug}.json"
 
-                if words and all(word in WHITELIST for word in words):
-                    print("✅ WHITELIST MATCH")
-                    matched = True
-                    break
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(output, f, ensure_ascii=False, indent=2)
 
-            if not matched:
-                print("\n❌ No whitelist match")
-
-            print()
-
-        except Exception as e:
-            print("Search failed:", e)
-            print()
+        print(f"Saved -> {output_path}")
