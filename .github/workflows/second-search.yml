@@ -1,10 +1,10 @@
 name: Secondary Missing Review Search
 
 on:
-  # Allows you to run this manually from the Actions tab
+  # Allows manual triggering from the Actions tab
   workflow_dispatch:
   
-  # Optional: You can run this on a schedule (e.g., every day at 10 AM UTC)
+  # Optional: Uncomment to run daily (e.g., at 10:00 UTC)
   # schedule:
   #   - cron: "0 10 * * *"
 
@@ -20,20 +20,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          # fetch-depth: 0 is recommended when using pull --rebase to ensure full git history
+          # fetch-depth: 0 ensures full git history for the rebase step
           fetch-depth: 0 
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10" # You can adjust this to match your environment
+          python-version: "3.10" 
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install duckduckgo_search
-          # If you have a requirements.txt, use this instead:
-          # pip install -r requirements.txt
+          # Installs ddgs>=9.0.0 directly from your environment file
+          pip install -r environment.txt
 
       - name: Run Secondary Search
         run: |
@@ -54,7 +53,7 @@ jobs:
           else
             git commit -m "chore: add secondary search results for missing reviews"
             
-            # Rebase to prevent race conditions from other concurrent workflows
+            # Rebase to prevent race conditions if other workflows pushed changes
             git pull --rebase origin main
             
             git push origin main
