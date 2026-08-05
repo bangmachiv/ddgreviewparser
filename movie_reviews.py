@@ -1,45 +1,37 @@
-import re
+import json
+from urllib.parse import urlparse
+from ddgs import DDGS
 
+movie_name = "Oppenheimer"
 
-def normalize(text):
-    text = text.lower()
+with open("publishers.json", "r", encoding="utf-8") as f:
+    publishers = json.load(f)
 
-    # remove punctuation except unicode letters/numbers
-    text = re.sub(r"[^\w\s]", " ", text)
+with DDGS() as ddgs:
+    for publisher in publishers:
+        if not publisher.get("active", False):
+            continue
 
-    # remove extra spaces
-    return " ".join(text.split())
+        domain = urlparse(publisher["url"]).netloc
 
+        # Changed query format
+        query = f'{movie_name} movie review site:"{domain}"'
 
-def is_valid_review_title(title, movie_name):
+        print(f"\n=== {publisher['name']} ===")
+        print(f"Query: {query}")
 
-    if ":" not in title:
-        return False
+        try:
+            # Fetch first 5 results instead of 1
+            results = list(ddgs.text(query, max_results=5))
 
-    prefix = title.split(":")[0]
+            if not results:
+                print("No result found.")
+                continue
 
-    prefix = normalize(prefix)
+            for i, r in enumerate(results, start=1):
+                print(f"\nResult #{i}")
+                print(f"Title: {r['title']}")
+                print(f"URL: {r['href']}")
 
-    movie = normalize(movie_name)
-
-    allowed_words = set(
-        movie.split()
-        + [
-            "movie",
-            "review",
-            "film"
-        ]
-    )
-
-    words = prefix.split()
-
-    # every word before colon must be allowed
-    for word in words:
-        if word not in allowed_words:
-            return False
-
-    # must contain review keyword
-    if "review" not in words:
-        return False
-
-    return True
+        except Exception as e:
+            print(f"Search failed: {e}")
