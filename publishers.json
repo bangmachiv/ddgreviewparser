@@ -26,7 +26,7 @@
   { "id": "rediff", "name": "Rediff.com", "url": "https://www.rediff.com", "category": "text-media-digital-english-news", "active": true },
   { "id": "scroll-in", "name": "Scroll.in", "url": "https://scroll.in", "category": "text-media-digital-english-news", "active": true },
   { "id": "the-economic-times", "name": "The Economic Times", "url": "https://economictimes.indiatimes.com", "category": "text-media-print-english-business", "active": true },
-  { "id": "the-federal", "name": "The Federal", "url": "https://thefederal.com", "category": "text-media-digital-english-news", "active": true },
+  { "id": "the-federal", "name": "The Federal", "url": "https://thefederal.com/film-reviews/", "category": "text-media-digital-english-news", "active": true },
   { "id": "the-hindu", "name": "The Hindu", "url": "https://www.thehindu.com", "category": "text-media-print-english-national", "active": true },
   { "id": "the-indian-express", "name": "The Indian Express", "url": "https://indianexpress.com", "category": "text-media-print-english-national", "active": true },
   { "id": "the-quint", "name": "The Quint", "url": "https://www.thequint.com", "category": "text-media-digital-english-news", "active": true },
