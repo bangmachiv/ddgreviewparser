@@ -2,7 +2,7 @@ import json
 import os
 import time
 from playwright.sync_api import sync_playwright
-from playwright_stealth import stealth_sync  # The magic anti-403 shield
+from playwright_stealth import Stealth  # The v2.0 magic anti-403 shield
 
 # -----------------------------------------------------------------------------
 # Configuration
@@ -31,8 +31,10 @@ def download_all_publishers():
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    print("\n[STEP 3] Launching headless browser with Stealth...")
-    with sync_playwright() as p:
+    print("\n[STEP 3] Launching headless browser with Stealth v2.0...")
+    
+    # NEW v2.0 SYNTAX: Wrap the entire playwright instance in Stealth Mode!
+    with Stealth().use_sync(sync_playwright()) as p:
         browser = p.chromium.launch(headless=True)
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -69,9 +71,9 @@ def download_all_publishers():
             print(f"[FETCH] URL: {review_url}")
             
             try:
-                # Create a fresh page for each URL and apply Stealth!
+                # Create a fresh page for each URL. Because we wrapped `sync_playwright()`
+                # in Step 3, every page automatically has stealth scripts injected!
                 page = context.new_page()
-                stealth_sync(page)
                 
                 response = page.goto(review_url, wait_until="domcontentloaded", timeout=30000)
                 
