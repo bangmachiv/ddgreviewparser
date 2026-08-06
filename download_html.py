@@ -1,121 +1,110 @@
 import json
 import os
+import time
 from playwright.sync_api import sync_playwright
+from playwright_stealth import stealth_sync  # The magic anti-403 shield
 
 # -----------------------------------------------------------------------------
 # Configuration
 # -----------------------------------------------------------------------------
 INPUT_JSON_PATH = "data/reviews/reviews_2026-bhai-tera-star-hai.json"
-TARGET_PUBLISHER_ID = "the-indian-express"
-
 OUTPUT_DIR = "data/webpages/html_2026-bhai-tera-star-hai"
-OUTPUT_FILE_PATH = os.path.join(
-    OUTPUT_DIR, "webpage_the-indian-express_2026-bhai-tera-star-hai.html"
-)
 
-def download_html_for_publisher():
-    print("[STEP 1] Initializing script.")
-    print(f"[TRACE] Target JSON path: {INPUT_JSON_PATH}")
-    print(f"[TRACE] Target Publisher ID: {TARGET_PUBLISHER_ID}")
+def download_all_publishers():
+    print("[STEP 1] Initializing batch download script.")
 
-    # 1. Verify input JSON file exists
-    print("\n[STEP 2] Verifying JSON file exists...")
     if not os.path.exists(INPUT_JSON_PATH):
         print(f"[ERROR] Input JSON file not found at: {INPUT_JSON_PATH}")
         return
-    print("[TRACE] JSON file located successfully.")
 
-    # 2. Read and parse JSON data
-    print("\n[STEP 3] Reading JSON data...")
+    print("[STEP 2] Loading JSON data...")
     try:
         with open(INPUT_JSON_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
-        print("[TRACE] JSON data loaded into memory successfully.")
     except Exception as e:
         print(f"[ERROR] Failed to parse JSON file: {e}")
         return
 
-    # 3. Locate target publisher
-    print("\n[STEP 4] Searching for target publisher in JSON...")
+    movie_slug = data.get("movie", {}).get("slug", "unknown_movie")
     publishers = data.get("publishers", [])
-    print(f"[TRACE] Found {len(publishers)} total publishers in JSON.")
-    
-    target_publisher = next(
-        (p for p in publishers if p.get("publisher_id") == TARGET_PUBLISHER_ID),
-        None,
-    )
+    print(f"[TRACE] Loaded {len(publishers)} publishers for movie: {movie_slug}")
 
-    if not target_publisher:
-        print(f"[ERROR] Publisher ID '{TARGET_PUBLISHER_ID}' was not found in the JSON array.")
-        return
-    print(f"[TRACE] Match found for publisher: {target_publisher.get('publisher_name')}")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    # 4. Extract and validate URL
-    print("\n[STEP 5] Validating review URL...")
-    review_url = target_publisher.get("review_url")
-    if not review_url or review_url == "NA":
-        print(f"[ERROR] Invalid or missing review URL. Value is: '{review_url}'")
-        return
-    print(f"[TRACE] Valid URL extracted: {review_url}")
+    print("\n[STEP 3] Launching headless browser with Stealth...")
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            viewport={"width": 1920, "height": 1080}
+        )
+        
+        success_count = 0
+        error_count = 0
+        skipped_count = 0
 
-    # 5. Download the HTML page using Playwright
-    print("\n[STEP 6] Initiating headless browser request using Playwright...")
-    try:
-        with sync_playwright() as p:
-            print("[TRACE] Launching Chromium browser...")
-            browser = p.chromium.launch(headless=True)
+        print("\n[STEP 4] Beginning batch download loop...")
+        
+        for index, pub in enumerate(publishers, start=1):
+            pub_id = pub.get("publisher_id", "unknown_publisher")
+            review_url = pub.get("review_url")
             
-            # Use a realistic User-Agent and viewport to mimic a real desktop user
-            context = browser.new_context(
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                viewport={"width": 1920, "height": 1080}
-            )
-            
-            page = context.new_page()
-            print(f"[TRACE] Navigating to: {review_url}")
-            
-            # Wait until the DOM is loaded to ensure we get the content
-            response = page.goto(review_url, wait_until="domcontentloaded", timeout=30000)
-            
-            if response:
-                print(f"[TRACE] HTTP Response Status Code: {response.status}")
-                if response.status >= 400:
-                    print(f"[ERROR] Playwright received an HTTP error status: {response.status}")
-                    # We continue anyway, as Cloudflare challenge pages sometimes return 403s 
-                    # but still load HTML that we want to inspect for RCA.
-            
-            html_content = page.content()
-            print(f"[TRACE] Successfully downloaded HTML payload ({len(html_content)} characters).")
-            
-            browser.close()
-            print("[TRACE] Browser closed successfully.")
-            
-    except Exception as e:
-        print(f"[ERROR] Playwright encountered a network or execution error: {e}")
-        return
+            print(f"\n--- [{index}/{len(publishers)}] Processing: {pub_id} ---")
 
-    # 6. Ensure output directory exists
-    print("\n[STEP 7] Checking output directory...")
-    print(f"[TRACE] Target output directory: {OUTPUT_DIR}")
-    try:
-        os.makedirs(OUTPUT_DIR, exist_ok=True)
-        print("[TRACE] Output directory is ready (created if not existed).")
-    except Exception as e:
-        print(f"[ERROR] Failed to create output directory: {e}")
-        return
+            # 1. Skip if URL is NA
+            if not review_url or review_url == "NA":
+                print(f"[SKIP] No valid URL found.")
+                skipped_count += 1
+                continue
 
-    # 7. Write HTML to target file
-    print("\n[STEP 8] Writing HTML data to local file...")
-    print(f"[TRACE] Target file path: {OUTPUT_FILE_PATH}")
-    try:
-        with open(OUTPUT_FILE_PATH, "w", encoding="utf-8") as f:
-            f.write(html_content)
-        print("[TRACE] File write operation completed successfully.")
-    except Exception as e:
-        print(f"[ERROR] Failed to write HTML to file: {e}")
-        return
+            output_file_name = f"webpage_{pub_id}_{movie_slug}.html"
+            output_file_path = os.path.join(OUTPUT_DIR, output_file_name)
 
-    print("\n[SUCCESS] Script executed perfectly. Webpage HTML is saved and ready for extraction.")
+            # 2. Skip if already downloaded (prevents re-downloading if script restarts)
+            if os.path.exists(output_file_path):
+                print(f"[SKIP] File already exists: {output_file_name}")
+                skipped_count += 1
+                continue
+
+            print(f"[FETCH] URL: {review_url}")
+            
+            try:
+                # Create a fresh page for each URL and apply Stealth!
+                page = context.new_page()
+                stealth_sync(page)
+                
+                response = page.goto(review_url, wait_until="domcontentloaded", timeout=30000)
+                
+                if response and response.status >= 400:
+                    print(f"[WARNING] HTTP Status {response.status}")
+                
+                html_content = page.content()
+                
+                with open(output_file_path, "w", encoding="utf-8") as out_file:
+                    out_file.write(html_content)
+                
+                print(f"[SUCCESS] Saved {len(html_content)} chars to {output_file_name}")
+                success_count += 1
+                
+                # Close the page to free up memory before the next loop
+                page.close()
+                
+                # Sleep to avoid rate-limiting
+                time.sleep(2)
+                
+            except Exception as e:
+                print(f"[ERROR] Failed to download {pub_id}: {e}")
+                error_count += 1
+
+        print("\n[STEP 5] Cleaning up browser...")
+        browser.close()
+
+    print("\n" + "="*40)
+    print("BATCH DOWNLOAD COMPLETE")
+    print(f"Successfully downloaded: {success_count}")
+    print(f"Skipped (NA/Exists): {skipped_count}")
+    print(f"Errors: {error_count}")
+    print("="*40)
 
 if __name__ == "__main__":
-    download_html_for_publisher()
+    download_all_publishers()
