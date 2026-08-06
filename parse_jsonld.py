@@ -8,8 +8,8 @@ from playwright.sync_api import sync_playwright
 INPUT_JSON_PATH = "data/reviews/reviews_2026-bhai-tera-star-hai.json"
 HTML_DIR = "data/webpages/html_2026-bhai-tera-star-hai"
 
-# Enhanced JavaScript extraction logic
-# It now recursively searches for any 'ratingValue' and multiple author schemas
+# STRICT JavaScript extraction logic
+# Enforces the parent-child relationship: obj.reviewRating.ratingValue
 JS_EXTRACTOR = """
 () => {
     const jsonlds = [...document.querySelectorAll('script[type="application/ld+json"]')]
@@ -34,7 +34,7 @@ JS_EXTRACTOR = """
     function search(obj) {
         if (!obj || typeof obj !== "object") return;
 
-        // 1. Check for Critic Name variants (author, reviewer, creator)
+        // 1. Look for Author/Critic variants (author, reviewer, creator)
         ['author', 'reviewer', 'creator'].forEach(key => {
             if (obj[key]) {
                 let persons = Array.isArray(obj[key]) ? obj[key] : [obj[key]];
@@ -48,12 +48,16 @@ JS_EXTRACTOR = """
             }
         });
 
-        // 2. Check for ANY ratingValue, regardless of where it is nested
-        if (obj.ratingValue !== undefined) {
-            results.star_ratings.push(String(obj.ratingValue));
+        // 2. STRICT Parent-Child Check: reviewRating -> ratingValue
+        if (
+            obj.reviewRating && 
+            typeof obj.reviewRating === "object" && 
+            obj.reviewRating.ratingValue !== undefined
+        ) {
+            results.star_ratings.push(String(obj.reviewRating.ratingValue));
         }
 
-        // 3. Continue deep recursion through all object values and arrays
+        // Keep digging recursively through the object
         Object.values(obj).forEach(val => {
             if (val && typeof val === "object") {
                 search(val);
@@ -87,13 +91,19 @@ def parse_all_htmls():
         browser = p.chromium.launch(headless=True)
         context = browser.new_context()
 
+        # --- THE NETWORK BLOCKER ---
+        # Aborts all external internet requests (ads, trackers, images).
+        # This guarantees local HTML files load instantly and never timeout (fixes Rediff).
+        context.route("**/*", lambda route: route.abort() if route.request.url.startswith("http") else route.continue_())
+
         parsed_count = 0
         skipped_count = 0
 
         for index, pub in enumerate(publishers, start=1):
             pub_id = pub.get("publisher_id")
             review_url = pub.get("review_url")
-            is_download_successful = pub.get("webpage_extraction_successful")
+            
+            is_download_successful = pub.get("webpage_extraction_successful", pub.get("is_downloaded"))
 
             print(f"\n--- [{index}/{len(publishers)}] Processing: {pub_id} ---")
 
@@ -116,20 +126,25 @@ def parse_all_htmls():
 
             html_file_name = f"webpage_{pub_id}_{movie_slug}.html"
             html_file_path = os.path.join(HTML_DIR, html_file_name)
-
+            
+            # File naming fallback
             if not os.path.exists(html_file_path):
-                print(f"[WARNING] HTML file missing on disk for: {pub_id}")
-                pub["critic_name"] = "could not find from jsonld"
-                pub["star_rating"] = "could not find from jsonld"
-                pub["json_ld_extraction_status"] = "Could not find data from json ld by JS"
-                continue
+                alt_file_path = os.path.join(HTML_DIR, f"webpage_{pub_id}.html")
+                if os.path.exists(alt_file_path):
+                    html_file_path = alt_file_path
+                else:
+                    print(f"[WARNING] HTML file missing on disk for: {pub_id}")
+                    pub["critic_name"] = "could not find from jsonld"
+                    pub["star_rating"] = "could not find from jsonld"
+                    pub["json_ld_extraction_status"] = "Could not find data from json ld by JS"
+                    continue
 
             try:
                 page = context.new_page()
                 file_url = f"file://{os.path.abspath(html_file_path)}"
                 
-                # FIXED: wait_until="commit" completely bypasses local rendering hangups and external resource timeouts
-                page.goto(file_url, wait_until="commit", timeout=15000)
+                # Allows the DOM to fully build so we don't miss NDTV/TOI, while blocker prevents timeouts
+                page.goto(file_url, wait_until="domcontentloaded", timeout=15000)
 
                 extracted_data = page.evaluate(JS_EXTRACTOR)
                 page.close()
@@ -140,7 +155,7 @@ def parse_all_htmls():
                     pub["star_rating"] = "could not find from jsonld"
                     pub["json_ld_extraction_status"] = "Could not find data from json ld by JS"
                 else:
-                    # Use set() to remove duplicates, but preserve order for first valid hit
+                    # Remove duplicates while preserving order
                     critic_names = list(dict.fromkeys(extracted_data.get("critic_names", [])))
                     star_ratings = list(dict.fromkeys(extracted_data.get("star_ratings", [])))
 
@@ -170,6 +185,7 @@ def parse_all_htmls():
 
         browser.close()
 
+    # Save updated JSON state back to file
     with open(INPUT_JSON_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
