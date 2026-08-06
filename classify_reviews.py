@@ -31,30 +31,17 @@ NEGATIVE_PHRASES = [
 ]
 
 def is_video_url(url: str) -> bool:
-    """
-    Negative URL test: Returns True if the URL points to a video page structure.
-    Checks for '/video/' in path, path ending with '/video', or ?type=video parameter.
-    """
     if not url:
         return False
-        
     url_lower = url.lower()
     parsed = urlparse(url_lower)
-    
-    # 1. Test if '/video/' is present anywhere in the path
     if "/video/" in parsed.path:
         return True
-        
-    # 2. Test if path ends with '/video' or '/video/'
-    clean_path = parsed.path.rstrip("/")
-    if clean_path.endswith("/video"):
+    if parsed.path.rstrip("/").endswith("/video"):
         return True
-
-    # 3. Test if URL query parameter explicitly specifies type=video
     query_params = parse_qs(parsed.query)
     if "video" in query_params.get("type", []):
         return True
-
     return False
 
 def normalize_title(title: str) -> str:
@@ -65,9 +52,6 @@ def normalize_title(title: str) -> str:
     for ch in title:
         out.append(ch if (ch.isalnum() or ch.isspace()) else " ")
     return " ".join("".join(out).split())
-
-def normalize_movie_name(name: str) -> str:
-    return normalize_title(name)
 
 def get_movie_substrings(normalized_name: str):
     words = normalized_name.split()
@@ -82,24 +66,16 @@ def generate_valid_combinations(movie_substrings):
     return sorted(combos, key=len, reverse=True)
 
 def check_if_review(title: str, url: str, valid_combos: list) -> bool:
-    # --- NEGATIVE URL TEST ---
-    # Reject URL immediately if it contains /video/ or ends with /video
     if is_video_url(url):
         return False
-
     norm_title = normalize_title(title)
     padded = f" {norm_title} "
-    
-    # Negative phrase check on headline title
     for neg in NEGATIVE_PHRASES:
         if f" {neg} " in padded:
             return False
-            
-    # Valid review phrase combination check
     for combo in valid_combos:
         if norm_title == combo or norm_title.startswith(combo + " "):
             return True
-            
     return False
 
 def main():
@@ -122,8 +98,25 @@ def main():
             search_data = json.load(f)
 
         combos = generate_valid_combinations(
-            get_movie_substrings(normalize_movie_name(movie["name"]))
+            get_movie_substrings(normalize_title(movie["name"]))
         )
+
+        # -------------------------------------------------------------
+        # NEW: Load existing reviews to prevent losing them
+        # -------------------------------------------------------------
+        existing_classified_publishers = {}
+        reviews_file_path = os.path.join(reviews_dir, f"reviews_{slug}.json")
+        
+        if os.path.exists(reviews_file_path):
+            try:
+                with open(reviews_file_path, "r", encoding="utf-8") as rf:
+                    existing_data = json.load(rf)
+                    for pub in existing_data.get("publishers", []):
+                        # Only save it if it actually has a valid URL
+                        if pub.get("review_url") and pub.get("review_url") != "NA":
+                            existing_classified_publishers[pub["publisher_id"]] = pub
+            except Exception as e:
+                print(f"[WARNING] Could not parse existing reviews file for {slug}: {e}")
 
         reviews_output = {
             "movie": {
@@ -135,9 +128,19 @@ def main():
         }
 
         for pub in search_data.get("publishers", []):
+            pub_id = pub.get("publisher_id", "")
+            
+            # ---------------------------------------------------------
+            # NEW: If we already have a valid review URL, skip parsing!
+            # ---------------------------------------------------------
+            if pub_id in existing_classified_publishers:
+                print(f"  [SKIP PARSING] {pub.get('publisher_name')} already classified.")
+                reviews_output["publishers"].append(existing_classified_publishers[pub_id])
+                continue
+
+            # Otherwise, evaluate the search results normally
             first = None
             for result in pub.get("results", []):
-                # Passes both URL and Title to check_if_review
                 ok = check_if_review(
                     result.get("title", ""),
                     result.get("url", ""),
@@ -148,17 +151,19 @@ def main():
                     first = result
 
             reviews_output["publishers"].append({
-                "publisher_id": pub.get("publisher_id", ""),
+                "publisher_id": pub_id,
                 "publisher_name": pub.get("publisher_name", ""),
                 "review_url": first.get("url", "NA") if first else "NA",
                 "review_title": first.get("title", "NA") if first else "NA",
                 "search_rank": first.get("rank", "NA") if first else "NA"
             })
 
+        # Save back the search file (in case we updated "is_review" flags)
         with open(search_file, "w", encoding="utf-8") as f:
             json.dump(search_data, f, ensure_ascii=False, indent=2)
 
-        with open(os.path.join(reviews_dir, f"reviews_{slug}.json"), "w", encoding="utf-8") as f:
+        # Save the finalized reviews file
+        with open(reviews_file_path, "w", encoding="utf-8") as f:
             json.dump(reviews_output, f, ensure_ascii=False, indent=2)
 
         print(f"Processed {slug}")
