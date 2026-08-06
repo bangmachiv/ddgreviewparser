@@ -94,6 +94,10 @@ def main():
         if not os.path.exists(search_file):
             continue
 
+        print(f"\n================================================================================")
+        print(f"Parsing Reviews for: {movie['name']}")
+        print(f"================================================================================")
+
         with open(search_file, encoding="utf-8") as f:
             search_data = json.load(f)
 
@@ -101,9 +105,6 @@ def main():
             get_movie_substrings(normalize_title(movie["name"]))
         )
 
-        # -------------------------------------------------------------
-        # NEW: Load existing reviews to prevent losing them
-        # -------------------------------------------------------------
         existing_classified_publishers = {}
         reviews_file_path = os.path.join(reviews_dir, f"reviews_{slug}.json")
         
@@ -112,7 +113,6 @@ def main():
                 with open(reviews_file_path, "r", encoding="utf-8") as rf:
                     existing_data = json.load(rf)
                     for pub in existing_data.get("publishers", []):
-                        # Only save it if it actually has a valid URL
                         if pub.get("review_url") and pub.get("review_url") != "NA":
                             existing_classified_publishers[pub["publisher_id"]] = pub
             except Exception as e:
@@ -129,16 +129,17 @@ def main():
 
         for pub in search_data.get("publishers", []):
             pub_id = pub.get("publisher_id", "")
+            pub_name = pub.get("publisher_name", "")
             
-            # ---------------------------------------------------------
-            # NEW: If we already have a valid review URL, skip parsing!
-            # ---------------------------------------------------------
+            # 1. Skip if already locked in
             if pub_id in existing_classified_publishers:
-                print(f"  [SKIP PARSING] {pub.get('publisher_name')} already classified.")
+                print(f"  [SKIP PARSING] {pub_name} already classified.")
                 reviews_output["publishers"].append(existing_classified_publishers[pub_id])
                 continue
 
-            # Otherwise, evaluate the search results normally
+            # 2. Log that we are actively evaluating this publisher
+            print(f"  [EVALUATING] {pub_name}...")
+
             first = None
             for result in pub.get("results", []):
                 ok = check_if_review(
@@ -150,23 +151,28 @@ def main():
                 if ok and first is None:
                     first = result
 
+            # 3. Log the outcome of the evaluation
+            if first:
+                print(f"    -> [SUCCESS] Found valid review at Rank {first.get('rank')}")
+            else:
+                print(f"    -> [FAILED] No valid review titles found.")
+
             reviews_output["publishers"].append({
                 "publisher_id": pub_id,
-                "publisher_name": pub.get("publisher_name", ""),
+                "publisher_name": pub_name,
                 "review_url": first.get("url", "NA") if first else "NA",
                 "review_title": first.get("title", "NA") if first else "NA",
                 "search_rank": first.get("rank", "NA") if first else "NA"
             })
 
-        # Save back the search file (in case we updated "is_review" flags)
         with open(search_file, "w", encoding="utf-8") as f:
             json.dump(search_data, f, ensure_ascii=False, indent=2)
 
-        # Save the finalized reviews file
         with open(reviews_file_path, "w", encoding="utf-8") as f:
             json.dump(reviews_output, f, ensure_ascii=False, indent=2)
 
-        print(f"Processed {slug}")
+        print(f"\nSuccessfully finished processing {slug}\n")
 
 if __name__ == "__main__":
     main()
+
