@@ -3,7 +3,7 @@ name: Download Publisher HTML
 on:
   workflow_dispatch:
 
-# NEW: We must give the GitHub Action permission to push changes to your repo
+# REQUIRED: Grants the action permission to push the updated JSON back to the repo
 permissions:
   contents: write
 
@@ -23,20 +23,21 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests playwright playwright-stealth
+          pip install requests playwright playwright-stealth curl_cffi
           playwright install --with-deps chromium
 
       - name: Run download script
         run: python download_html.py
 
-      # NEW: This commits the updated JSON file back to your GitHub repository!
+      # REQUIRED: Commits the 'Y' and 'N' flags to your JSON file so they persist
       - name: Commit updated JSON file
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add data/reviews/*.json
+          git add .
+          git status
           git commit -m "Auto-update extraction status (Y/N) in JSON" || echo "No changes to commit"
-          git push
+          git push origin HEAD:${{ github.ref }}
 
       - name: Upload HTML Artifact
         uses: actions/upload-artifact@v4
