@@ -1,181 +1,110 @@
-#!/usr/bin/env python3
-
 import json
 import os
-from urllib.parse import urlparse
+import time
+from playwright.sync_api import sync_playwright
 
-from ddgs import DDGS
+# -----------------------------------------------------------------------------
+# Configuration
+# -----------------------------------------------------------------------------
+INPUT_JSON_PATH = "data/reviews/reviews_2026-bhai-tera-star-hai.json"
+OUTPUT_DIR = "data/webpages/html_2026-bhai-tera-star-hai"
 
+def download_all_publishers():
+    print("[STEP 1] Initializing batch download script.")
 
-PUBLISHERS_FILE = "publishers.json"
-MOVIES_FILE = "data/movies/movies-live-today.json"
-REVIEWS_DIR = "data/reviews"
-OUTPUT_DIR = "data/searches"
+    # 1. Verify input JSON file exists
+    if not os.path.exists(INPUT_JSON_PATH):
+        print(f"[ERROR] Input JSON file not found at: {INPUT_JSON_PATH}")
+        return
 
+    # 2. Read and parse JSON data
+    print("[STEP 2] Loading JSON data...")
+    try:
+        with open(INPUT_JSON_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        print(f"[ERROR] Failed to parse JSON file: {e}")
+        return
 
-def main():
+    movie_slug = data.get("movie", {}).get("slug", "unknown_movie")
+    publishers = data.get("publishers", [])
+    print(f"[TRACE] Loaded {len(publishers)} publishers for movie: {movie_slug}")
 
-    # -----------------------------
-    # Load publishers
-    # -----------------------------
-    with open(PUBLISHERS_FILE, "r", encoding="utf-8") as f:
-        publishers = json.load(f)
-
-    # -----------------------------
-    # Load today's movies
-    # -----------------------------
-    with open(MOVIES_FILE, "r", encoding="utf-8") as f:
-        movies_data = json.load(f)
-
-    # -----------------------------
-    # Ensure output directory exists
-    # -----------------------------
+    # 3. Ensure output directory exists
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    with DDGS() as ddgs:
+    # 4. Start Playwright and loop through URLs
+    print("\n[STEP 3] Launching headless browser...")
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            viewport={"width": 1920, "height": 1080}
+        )
+        page = context.new_page()
 
-        for movie in movies_data["movies"]:
+        success_count = 0
+        error_count = 0
+        skipped_count = 0
 
-            movie_name = movie["name"]
-            movie_slug = movie["slug"]
+        print("\n[STEP 4] Beginning batch download loop...")
+        
+        for index, pub in enumerate(publishers, start=1):
+            pub_id = pub.get("publisher_id", "unknown_publisher")
+            review_url = pub.get("review_url")
+            
+            print(f"\n--- [{index}/{len(publishers)}] Processing: {pub_id} ---")
 
-            print("\n" + "=" * 80)
-            print(movie_name)
-            print("=" * 80)
+            # Skip if URL is NA or empty
+            if not review_url or review_url == "NA":
+                print(f"[SKIP] No valid URL found.")
+                skipped_count += 1
+                continue
 
-            # -----------------------------
-            # Load existing review data if it exists to skip found publishers
-            # -----------------------------
-            completed_publishers = set()
-            reviews_file_path = os.path.join(REVIEWS_DIR, f"reviews_{movie_slug}.json")
-            if os.path.exists(reviews_file_path):
-                try:
-                    with open(reviews_file_path, "r", encoding="utf-8") as rf:
-                        existing_review_data = json.load(rf)
-                        for pub in existing_review_data.get("publishers", []):
-                            if pub.get("review_url") and pub.get("review_url") != "NA":
-                                completed_publishers.add(pub.get("publisher_id"))
-                    print(f"Found existing review file. Skipping {len(completed_publishers)} already-resolved publishers.")
-                except Exception as e:
-                    print(f"Could not parse existing review file: {e}")
+            output_file_name = f"webpage_{pub_id}_{movie_slug}.html"
+            output_file_path = os.path.join(OUTPUT_DIR, output_file_name)
 
-            # Also load existing search file if it exists so we don't wipe out previous results
-            output_path = os.path.join(
-                OUTPUT_DIR,
-                f"search_{movie_slug}.json"
-            )
-            existing_search_publishers = {}
-            if os.path.exists(output_path):
-                try:
-                    with open(output_path, "r", encoding="utf-8") as sf:
-                        existing_search_data = json.load(sf)
-                        for pub in existing_search_data.get("publishers", []):
-                            existing_search_publishers[pub.get("publisher_id")] = pub
-                except Exception:
-                    pass
+            # Skip if we already downloaded it (useful if the script crashed midway last time)
+            if os.path.exists(output_file_path):
+                print(f"[SKIP] File already exists: {output_file_name}")
+                skipped_count += 1
+                continue
 
-            output = {
-                "movie": {
-                    "name": movie_name,
-                    "slug": movie_slug,
-                    "date": movie.get("date")
-                },
-                "publishers": []
-            }
-
-            for publisher in publishers:
-
-                if not publisher.get("active", False):
-                    continue
-
-                pub_id = publisher["id"]
-
-                # If we already have a valid review URL from the review file, skip searching entirely
-                if pub_id in completed_publishers:
-                    print(f"Skipping {publisher['name']} (Review URL already found)")
-                    # Keep existing search record if available
-                    if pub_id in existing_search_publishers:
-                        output["publishers"].append(existing_search_publishers[pub_id])
-                    continue
-
-                domain = urlparse(publisher["url"]).netloc.replace("www.", "")
-
-                # -------------------------------------------------------------
-                # QUERY 1: Standard Search (exact_match: false)
-                # -------------------------------------------------------------
-                query_broad = f'{movie_name} movie review site:{domain}'
-
-                print(f"Searching {publisher['name']} (Broad)...")
-
-                publisher_result = {
-                    "publisher_id": publisher["id"],
-                    "publisher_name": publisher["name"],
-                    "publisher_url": publisher["url"],
-                    "query": query_broad,
-                    "results": []
-                }
-
-                try:
-                    results_broad = list(ddgs.text(
-                                        query_broad, 
-                                        region="in-en",       
-                                        backend="html",       
-                                        max_results=5
-                                    ))
-
-                    for rank, r in enumerate(results_broad, start=1):
-                        publisher_result["results"].append({
-                            "rank": rank,
-                            "title": r.get("title", ""),
-                            "url": r.get("href", ""),
-                            "snippet": r.get("body", ""),
-                            "exact_match": False
-                        })
-
-                except Exception as e:
-                    publisher_result["error"] = str(e)
-
-                # -------------------------------------------------------------
-                # QUERY 2: Exact Match Search (exact_match: true)
-                # -------------------------------------------------------------
-                query_exact = f'"{movie_name}" movie review site:{domain}'
-
-                print(f"Searching {publisher['name']} (Exact Match)...")
-
-                try:
-                    results_exact = list(ddgs.text(
-                                        query_exact, 
-                                        region="in-en",       
-                                        backend="html",       
-                                        max_results=5
-                                    ))
-                # NEW: Catch the 0-results case and log it for CI/CD visibility
-                    if not results_exact:
-                        print(f"  [!] 0 exact match results for: {domain}")
-
+            print(f"[FETCH] URL: {review_url}")
+            
+            try:
+                # Navigate to the page
+                response = page.goto(review_url, wait_until="domcontentloaded", timeout=30000)
                 
-                    current_rank = len(publisher_result["results"]) + 1
-                    for r in results_exact:
-                        publisher_result["results"].append({
-                            "rank": current_rank,
-                            "title": r.get("title", ""),
-                            "url": r.get("href", ""),
-                            "snippet": r.get("body", ""),
-                            "exact_match": True
-                        })
-                        current_rank += 1
+                if response and response.status >= 400:
+                    print(f"[WARNING] HTTP Status {response.status}")
+                
+                # Extract HTML
+                html_content = page.content()
+                
+                # Save to disk
+                with open(output_file_path, "w", encoding="utf-8") as out_file:
+                    out_file.write(html_content)
+                
+                print(f"[SUCCESS] Saved {len(html_content)} chars to {output_file_name}")
+                success_count += 1
+                
+                # Sleep for 2 seconds to be polite to the servers and avoid rate-limiting
+                time.sleep(2)
+                
+            except Exception as e:
+                print(f"[ERROR] Failed to download {pub_id}: {e}")
+                error_count += 1
 
-                except Exception as e:
-                    if "error" not in publisher_result:
-                        publisher_result["error"] = str(e)
+        print("\n[STEP 5] Cleaning up browser...")
+        browser.close()
 
-                output["publishers"].append(publisher_result)
-
-            with open(output_path, "w", encoding="utf-8") as f:
-                json.dump(output, f, ensure_ascii=False, indent=2)
-
-            print(f"Saved -> {output_path}")
-
+    print("\n" + "="*40)
+    print("BATCH DOWNLOAD COMPLETE")
+    print(f"Successfully downloaded: {success_count}")
+    print(f"Skipped (NA/Exists): {skipped_count}")
+    print(f"Errors: {error_count}")
+    print("="*40)
 
 if __name__ == "__main__":
-    main()
+    download_all_publishers()
