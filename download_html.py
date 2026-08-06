@@ -1,6 +1,6 @@
 import json
 import os
-import requests
+from playwright.sync_api import sync_playwright
 
 # -----------------------------------------------------------------------------
 # Configuration
@@ -12,16 +12,6 @@ OUTPUT_DIR = "data/webpages/html_2026-bhai-tera-star-hai"
 OUTPUT_FILE_PATH = os.path.join(
     OUTPUT_DIR, "webpage_the-indian-express_2026-bhai-tera-star-hai.html"
 )
-
-# Realistic headers to mimic a web browser and prevent requests from being blocked
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/120.0.0.0 Safari/537.36"
-    ),
-    "Accept-Language": "en-US,en;q=0.9",
-}
 
 def download_html_for_publisher():
     print("[STEP 1] Initializing script.")
@@ -68,23 +58,40 @@ def download_html_for_publisher():
         return
     print(f"[TRACE] Valid URL extracted: {review_url}")
 
-    # 5. Download the HTML page
-    print("\n[STEP 6] Initiating HTTP GET request to download webpage...")
-    print(f"[TRACE] Using headers: {HEADERS}")
+    # 5. Download the HTML page using Playwright
+    print("\n[STEP 6] Initiating headless browser request using Playwright...")
     try:
-        response = requests.get(review_url, headers=HEADERS, timeout=15)
-        print(f"[TRACE] HTTP Response Status Code: {response.status_code}")
-        response.raise_for_status()  # Raises an exception for 4xx and 5xx status codes
-        html_content = response.text
-        print(f"[TRACE] Successfully downloaded HTML payload ({len(html_content)} characters).")
-    except requests.exceptions.Timeout:
-        print("[ERROR] HTTP Request timed out after 15 seconds.")
-        return
-    except requests.exceptions.HTTPError as e:
-        print(f"[ERROR] HTTP Error occurred: {e}")
-        return
-    except requests.exceptions.RequestException as e:
-        print(f"[ERROR] A network or request error occurred: {e}")
+        with sync_playwright() as p:
+            print("[TRACE] Launching Chromium browser...")
+            browser = p.chromium.launch(headless=True)
+            
+            # Use a realistic User-Agent and viewport to mimic a real desktop user
+            context = browser.new_context(
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                viewport={"width": 1920, "height": 1080}
+            )
+            
+            page = context.new_page()
+            print(f"[TRACE] Navigating to: {review_url}")
+            
+            # Wait until the DOM is loaded to ensure we get the content
+            response = page.goto(review_url, wait_until="domcontentloaded", timeout=30000)
+            
+            if response:
+                print(f"[TRACE] HTTP Response Status Code: {response.status}")
+                if response.status >= 400:
+                    print(f"[ERROR] Playwright received an HTTP error status: {response.status}")
+                    # We continue anyway, as Cloudflare challenge pages sometimes return 403s 
+                    # but still load HTML that we want to inspect for RCA.
+            
+            html_content = page.content()
+            print(f"[TRACE] Successfully downloaded HTML payload ({len(html_content)} characters).")
+            
+            browser.close()
+            print("[TRACE] Browser closed successfully.")
+            
+    except Exception as e:
+        print(f"[ERROR] Playwright encountered a network or execution error: {e}")
         return
 
     # 6. Ensure output directory exists
