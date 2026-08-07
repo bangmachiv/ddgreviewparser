@@ -1,99 +1,209 @@
-import json,sys,re,time
-import requests
-from bs4 import BeautifulSoup
+import json
+import os
+import sys
 from playwright.sync_api import sync_playwright
 
-HEADERS={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
-session=requests.Session(); session.headers.update(HEADERS)
+# -----------------------------------------------------------------------------
+# Configuration
+# -----------------------------------------------------------------------------
+# Safely grab the file path from the command line argument (GitHub Actions)
+if len(sys.argv) < 2:
+    print("[ERROR] Please provide the JSON file path.")
+    print("Example: python extract_jsonld.py data/reviews/2026-bhai-tera-star-hai.json")
+    sys.exit(1)
 
-BAD_PATTERNS=[r"access denied",r"just a moment",r"checking your browser",r"cf-browser-verification",r"cloudflare",r"captcha",r"human verification",r"enable javascript"]
+INPUT_JSON_PATH = sys.argv[1]
 
-def valid(html):
-    if not html or len(html)<200: return False
-    h=html.lower()
-    return not any(re.search(p,h) for p in BAD_PATTERNS)
+# STRICT JavaScript extraction logic
+# Enforces the parent-child relationship: obj.reviewRating.ratingValue
+JS_EXTRACTOR = """
+() => {
+    const jsonlds = [...document.querySelectorAll('script[type="application/ld+json"]')]
+        .map(s => {
+            try {
+                return JSON.parse(s.textContent);
+            } catch {
+                return null;
+            }
+        })
+        .filter(Boolean);
 
-def fetch_requests(url,retries=3):
-    last=None
-    for i in range(retries):
-        try:
-            r=session.get(url,timeout=30,allow_redirects=True)
-            r.raise_for_status()
-            if valid(r.text): return r.text,"requests"
-            raise RuntimeError("invalid html")
-        except Exception as e:
-            last=e; time.sleep(2**i)
-    raise last
+    if (jsonlds.length === 0) {
+        return { error: "No JSON-LD found" };
+    }
 
-def fetch_playwright(url):
+    let results = {
+        critic_names: [],
+        star_ratings: []
+    };
+
+    function search(obj) {
+        if (!obj || typeof obj !== "object") return;
+
+        // 1. Look for Author/Critic variants (author, reviewer, creator)
+        ['author', 'reviewer', 'creator'].forEach(key => {
+            if (obj[key]) {
+                let persons = Array.isArray(obj[key]) ? obj[key] : [obj[key]];
+                persons.forEach(p => {
+                    if (p && typeof p === "object" && p.name) {
+                        results.critic_names.push(p.name);
+                    } else if (typeof p === "string") {
+                        results.critic_names.push(p);
+                    }
+                });
+            }
+        });
+
+        // 2. STRICT Parent-Child Check: reviewRating -> ratingValue
+        if (
+            obj.reviewRating && 
+            typeof obj.reviewRating === "object" && 
+            obj.reviewRating.ratingValue !== undefined
+        ) {
+            results.star_ratings.push(String(obj.reviewRating.ratingValue));
+        }
+
+        // Keep digging recursively through the object
+        Object.values(obj).forEach(val => {
+            if (val && typeof val === "object") {
+                search(val);
+            }
+        });
+    }
+
+    jsonlds.forEach(data => {
+        search(data);
+    });
+
+    return results;
+}
+"""
+
+def parse_all_htmls():
+    print(f"[STEP 1] Initializing full batch JSON-LD parser script for: {INPUT_JSON_PATH}")
+
+    if not os.path.exists(INPUT_JSON_PATH):
+        print(f"[ERROR] Input JSON file not found at: {INPUT_JSON_PATH}")
+        return
+
+    with open(INPUT_JSON_PATH, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    movie_slug = data.get("movie", {}).get("slug", "unknown_movie")
+    publishers = data.get("publishers", [])
+
+    # Dynamically set the HTML directory based on the movie slug
+    HTML_DIR = f"data/webpages/html_{movie_slug}"
+
+    print(f"\n[STEP 2] Launching headless browser for local DOM evaluation in {HTML_DIR}...")
     with sync_playwright() as p:
-        b=p.chromium.launch(headless=True,args=["--no-sandbox","--disable-dev-shm-usage"])
-        page=b.new_page(user_agent=HEADERS["User-Agent"])
-        page.goto(url,wait_until="networkidle",timeout=30000)
-        html=page.content(); b.close()
-        if not valid(html): raise RuntimeError("invalid html")
-        return html,"playwright"
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context()
 
-def repair(t):
-    t=t.lstrip("\ufeff")
-    t=re.sub(r",(\s*[}\]])",r"\1",t)
-    return t
+        # --- THE NETWORK BLOCKER ---
+        # Aborts all external internet requests (ads, trackers, images).
+        # This guarantees local HTML files load instantly and never timeout (fixes Rediff).
+        context.route("**/*", lambda route: route.abort() if route.request.url.startswith("http") else route.continue_())
 
-def jsonlds(html):
-    soup=BeautifulSoup(html,"html.parser")
-    out=[]
-    for i,s in enumerate(soup.find_all("script",type="application/ld+json")):
-        t=s.string or s.get_text()
-        if not t: continue
-        try:o=json.loads(t)
-        except:
-            try:o=json.loads(repair(t))
-            except: continue
-        out.append((i,o))
-    return out
+        parsed_count = 0
+        skipped_count = 0
 
-def walk(n,path="root"):
-    if isinstance(n,dict):
-        rr=n.get("reviewRating")
-        if isinstance(rr,dict) and rr.get("ratingValue") is not None:
-            a=n.get("author");name=None;ap=None
-            if isinstance(a,dict): name=a.get("name"); ap=path+".author.name"
-            elif isinstance(a,list) and a and isinstance(a[0],dict): name=a[0].get("name"); ap=path+".author[0].name"
-            return {"critic":name,"rating":rr.get("ratingValue"),"critic_path":ap,"rating_path":path+".reviewRating.ratingValue"}
-        for k,v in n.items():
-            r=walk(v,path+"."+k)
-            if r:return r
-    elif isinstance(n,list):
-        for idx,v in enumerate(n):
-            r=walk(v,f"{path}[{idx}]")
-            if r:return r
-    return None
+        for index, pub in enumerate(publishers, start=1):
+            pub_id = pub.get("publisher_id")
+            review_url = pub.get("review_url")
+            
+            is_download_successful = pub.get("webpage_extraction_successful", pub.get("is_downloaded"))
 
-def extract(html):
-    for idx,obj in jsonlds(html):
-        r=walk(obj)
-        if r:
-            r["jsonld_block"]=idx
-            return r
-    return None
+            print(f"\n--- [{index}/{len(publishers)}] Processing: {pub_id} ---")
 
-if len(sys.argv)!=2:
-    print("Usage: python extract_jsonld.py data/reviews/file.json"); sys.exit(1)
-path=sys.argv[1]
-data=json.load(open(path,encoding="utf-8"))
-for rev in data["reviews"]:
-    url=rev.get("review_url")
-    if not url: continue
-    print("Processing",url)
-    try: html,method=fetch_requests(url)
-    except: 
-        try: html,method=fetch_playwright(url)
-        except:
-            rev["fetch_status"]={"status":"blocked"}; continue
-    res=extract(html)
-    if res:
-        if res["critic"] is not None: rev["critic_name"]=res["critic"]
-        if res["rating"] is not None: rev["star_rating"]=res["rating"]
-        rev["extract_log"]={"jsonld_block":res["jsonld_block"],"critic_path":res["critic_path"],"rating_path":res["rating_path"]}
-    rev["fetch_status"]={"status":"ok","method":method}
-json.dump(data,open(path,"w",encoding="utf-8"),indent=2,ensure_ascii=False)
+            if not review_url or review_url == "NA" or str(is_download_successful).upper() != "Y":
+                print("[SKIP] Publisher has no valid webpage download (NA).")
+                pub["critic_name"] = "Na"
+                pub["star_rating"] = "Na"
+                pub["json_ld_extraction_status"] = "Na"
+                skipped_count += 1
+                continue
+
+            existing_critic = pub.get("critic_name")
+            existing_rating = pub.get("star_rating")
+            
+            invalid_placeholders = [None, "Na", "NA", "could not find from jsonld"]
+            if existing_critic not in invalid_placeholders and existing_rating not in invalid_placeholders:
+                print(f"[SKIP] Both critic and rating already successfully parsed: Critic='{existing_critic}', Rating='{existing_rating}'")
+                skipped_count += 1
+                continue
+
+            html_file_name = f"webpage_{pub_id}_{movie_slug}.html"
+            html_file_path = os.path.join(HTML_DIR, html_file_name)
+            
+            # File naming fallback
+            if not os.path.exists(html_file_path):
+                alt_file_path = os.path.join(HTML_DIR, f"webpage_{pub_id}.html")
+                if os.path.exists(alt_file_path):
+                    html_file_path = alt_file_path
+                else:
+                    print(f"[WARNING] HTML file missing on disk for: {pub_id}")
+                    pub["critic_name"] = "could not find from jsonld"
+                    pub["star_rating"] = "could not find from jsonld"
+                    pub["json_ld_extraction_status"] = "Could not find data from json ld by JS"
+                    continue
+
+            try:
+                page = context.new_page()
+                file_url = f"file://{os.path.abspath(html_file_path)}"
+                
+                # Allows the DOM to fully build so we don't miss NDTV/TOI, while blocker prevents timeouts
+                page.goto(file_url, wait_until="domcontentloaded", timeout=15000)
+
+                extracted_data = page.evaluate(JS_EXTRACTOR)
+                page.close()
+
+                if "error" in extracted_data:
+                    print(f"  └─► {extracted_data['error']}")
+                    pub["critic_name"] = "could not find from jsonld"
+                    pub["star_rating"] = "could not find from jsonld"
+                    pub["json_ld_extraction_status"] = "Could not find data from json ld by JS"
+                else:
+                    # Remove duplicates while preserving order
+                    critic_names = list(dict.fromkeys(extracted_data.get("critic_names", [])))
+                    star_ratings = list(dict.fromkeys(extracted_data.get("star_ratings", [])))
+
+                    has_critic = len(critic_names) > 0
+                    has_rating = len(star_ratings) > 0
+
+                    pub["critic_name"] = critic_names[0] if has_critic else "could not find from jsonld"
+                    pub["star_rating"] = star_ratings[0] if has_rating else "could not find from jsonld"
+
+                    if has_critic and has_rating:
+                        pub["json_ld_extraction_status"] = "Found full data from json ld by JS"
+                        print(f"  └─► [SUCCESS] Found Critic: {pub['critic_name']} | Rating: {pub['star_rating']}")
+                    elif has_critic or has_rating:
+                        pub["json_ld_extraction_status"] = "Found partial data from json ld by JS"
+                        print(f"  └─► [PARTIAL] Critic: {pub['critic_name']} | Rating: {pub['star_rating']}")
+                    else:
+                        pub["json_ld_extraction_status"] = "Could not find data from json ld by JS"
+                        print(f"  └─► [NOT FOUND] No matching properties inside JSON-LD blocks.")
+
+                parsed_count += 1
+
+            except Exception as e:
+                print(f"[ERROR] Failed parsing {pub_id}: {e}")
+                pub["critic_name"] = "could not find from jsonld"
+                pub["star_rating"] = "could not find from jsonld"
+                pub["json_ld_extraction_status"] = "Could not find data from json ld by JS"
+
+        browser.close()
+
+    # Save updated JSON state back to file
+    with open(INPUT_JSON_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+    print("\n" + "="*40)
+    print("JSON-LD BATCH PARSING COMPLETE")
+    print(f"Newly parsed files: {parsed_count}")
+    print(f"Skipped publishers: {skipped_count}")
+    print(f"Updated JSON saved back to: {INPUT_JSON_PATH}")
+    print("="*40)
+
+if __name__ == "__main__":
+    parse_all_htmls()
