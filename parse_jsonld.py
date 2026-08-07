@@ -71,7 +71,7 @@ JS_EXTRACTOR = """
 def get_live_movie_slugs():
     """Reads the data/movies/ folder to find exactly which movies are LIVE today."""
     slugs = []
-    live_master_file = "data/movies/movies_live_today.json"
+    live_master_file = "data/movies/movies-live-today.json"
 
     # Strategy A: If you have a master list of live movies
     if os.path.exists(live_master_file):
