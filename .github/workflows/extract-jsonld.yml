@@ -1,13 +1,14 @@
-name: Extract JSON-LD Metadata
+name: Parse JSON-LD
 
 on:
   workflow_dispatch:
 
+# You MUST have this permission block so GitHub allows the bot to save files
 permissions:
   contents: write
 
 jobs:
-  extract:
+  parse-jsonld:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,30 +18,26 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install playwright
-          python -m playwright install --with-deps chromium
+          playwright install --with-deps chromium
+          
+      - name: Run parser script
+        run: python parse_jsonld.py
 
-      - name: Verify Playwright installation
-        run: |
-          python -c "from playwright.sync_api import sync_playwright; print('Playwright installed successfully')"
-
-      - name: Run extractor
-        run: |
-          python parse_jsonld.py data/reviews/reviews_2026-bhai-tera-star-hai.json
-
-      - name: Commit changes
+      # THIS IS THE MISSING STEP THAT SAVES YOUR DATA
+      - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          # Stage the entire directory to ensure it catches the updated file
-          git add data/reviews/
-
+          
+          # Stage the specific file your Python script updates
+          git add data/reviews/reviews_2026-bhai-tera-star-hai.json
+          
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
