@@ -1,4 +1,4 @@
-name: Parse JSON-LD
+name: Parse JSON-LD New
 
 on:
   workflow_dispatch:
