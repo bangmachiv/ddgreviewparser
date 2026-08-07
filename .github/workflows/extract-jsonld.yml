@@ -31,14 +31,15 @@ jobs:
 
       - name: Run extractor
         run: |
-          python extract_jsonld.py data/reviews/2026-bhai-tera-star-hai.json
+          python extract_jsonld.py data/reviews/reviews_2026-bhai-tera-star-hai.json
 
       - name: Commit changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add data/reviews/2026-bhai-tera-star-hai.json
+          # Stage the directory to ensure it catches the file perfectly
+          git add data/reviews/
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
