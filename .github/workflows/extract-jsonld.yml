@@ -3,7 +3,6 @@ name: Parse JSON-LD
 on:
   workflow_dispatch:
 
-# You MUST have this permission block so GitHub allows the bot to save files
 permissions:
   contents: write
 
@@ -29,18 +28,12 @@ jobs:
       - name: Run parser script
         run: python parse_jsonld.py
 
-      # THIS IS THE MISSING STEP THAT SAVES YOUR DATA
+      # बिलकुल वही Git Commands जो आपकी डाउनलोड स्क्रिप्ट में काम कर रहे हैं
       - name: Commit and push changes
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
-          # Stage the ENTIRE reviews folder. This guarantees it catches the updated file perfectly.
-          git add data/reviews/
-          
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-          else
-            git commit -m "Update critic names and star ratings"
-            git push
-          fi
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git status
+          git commit -m "Update critic names and star ratings" || echo "No changes to commit"
+          git push origin HEAD:${{ github.ref }}
