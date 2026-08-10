@@ -39,6 +39,10 @@ def main():
             movie_name = movie["name"]
             movie_slug = movie["slug"]
 
+            # Extract 4-digit release year from date field
+            movie_date = movie.get("date", "")
+            movie_year = movie_date[:4] if movie_date and len(movie_date) >= 4 else ""
+
             print("\n" + "=" * 80)
             print(movie_name)
             print("=" * 80)
@@ -103,7 +107,7 @@ def main():
                 # -------------------------------------------------------------
                 # QUERY 1: Standard Search (exact_match: false)
                 # -------------------------------------------------------------
-                query_broad = f'{movie_name} movie review site:{domain}'
+                query_broad = f'{movie_name} {movie_year} movie review site:{domain}'.strip() if movie_year else f'{movie_name} movie review site:{domain}'
 
                 print(f"Searching {publisher['name']} (Broad)...")
 
@@ -138,7 +142,7 @@ def main():
                 # -------------------------------------------------------------
                 # QUERY 2: Exact Match Search (exact_match: true)
                 # -------------------------------------------------------------
-                query_exact = f'"{movie_name}" movie review site:{domain}'
+                query_exact = f'"{movie_name}" {movie_year} movie review site:{domain}'.strip() if movie_year else f'"{movie_name}" movie review site:{domain}'
 
                 print(f"Searching {publisher['name']} (Exact Match)...")
 
