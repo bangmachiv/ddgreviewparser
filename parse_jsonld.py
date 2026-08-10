@@ -132,19 +132,21 @@ def process_single_movie_json(json_path, context):
 
         # 1. Log: Url not available
         if not review_url or review_url == "NA":
-            print("  └─► Html Not parsed (Url not available)")
+            status_msg = "Html Not parsed (Url not available)"
+            print(f"  └─► {status_msg}")
             pub["critic_name"] = "Na"
             pub["star_rating"] = "Na"
-            pub["json_ld_extraction_status"] = "Na"
+            pub["json_ld_extraction_status"] = status_msg
             skipped_count += 1
             continue
 
-        # 2. Log: Webpage not available (Download failed in Step 3)
+        # 2. Log: Webpage not available
         if str(is_download_successful).upper() != "Y":
-            print("  └─► Html Not parsed (Webpage not available)")
+            status_msg = "Html Not parsed (Webpage not available)"
+            print(f"  └─► {status_msg}")
             pub["critic_name"] = "Na"
             pub["star_rating"] = "Na"
-            pub["json_ld_extraction_status"] = "Na"
+            pub["json_ld_extraction_status"] = status_msg
             skipped_count += 1
             continue
 
@@ -152,12 +154,14 @@ def process_single_movie_json(json_path, context):
         existing_rating = pub.get("star_rating")
         invalid_placeholders = [None, "Na", "NA", "could not find from jsonld"]
 
-        # 3. Log: Data already available (Skips if EITHER critic or rating is found to preserve partials)
+        # 3. Log: Data already available
         has_valid_critic = existing_critic not in invalid_placeholders
         has_valid_rating = existing_rating not in invalid_placeholders
 
         if has_valid_critic or has_valid_rating:
-            print("  └─► Html Not parsed (data already available)")
+            status_msg = "Html Not parsed (data already available)"
+            print(f"  └─► {status_msg}")
+            pub["json_ld_extraction_status"] = status_msg
             skipped_count += 1
             continue
 
@@ -170,10 +174,11 @@ def process_single_movie_json(json_path, context):
             if os.path.exists(alt_file_path):
                 html_file_path = alt_file_path
             else:
-                print("  └─► Html Not parsed (Webpage not available)")
+                status_msg = "Html Not parsed (Webpage not available)"
+                print(f"  └─► {status_msg}")
                 pub["critic_name"] = "could not find from jsonld"
                 pub["star_rating"] = "could not find from jsonld"
-                pub["json_ld_extraction_status"] = "Could not find data from json ld by JS"
+                pub["json_ld_extraction_status"] = status_msg
                 continue
 
         try:
@@ -185,10 +190,11 @@ def process_single_movie_json(json_path, context):
             page.close()
 
             if "error" in extracted_data:
-                print("  └─► Html parsed (no data found)")
+                status_msg = "Html parsed (no data found)"
+                print(f"  └─► {status_msg}")
                 pub["critic_name"] = "could not find from jsonld"
                 pub["star_rating"] = "could not find from jsonld"
-                pub["json_ld_extraction_status"] = "Could not find data from json ld by JS"
+                pub["json_ld_extraction_status"] = status_msg
             else:
                 critic_names = list(dict.fromkeys(extracted_data.get("critic_names", [])))
                 star_ratings = list(dict.fromkeys(extracted_data.get("star_ratings", [])))
@@ -201,22 +207,26 @@ def process_single_movie_json(json_path, context):
 
                 # 4, 5, 6. Structured Classification Outcomes based on found data
                 if has_critic and has_rating:
-                    pub["json_ld_extraction_status"] = "Found full data from json ld by JS"
-                    print(f"  └─► Html parsed (both data found) [Critic: {pub['critic_name']} | Rating: {pub['star_rating']}]")
+                    status_msg = "Html parsed (both data found)"
+                    pub["json_ld_extraction_status"] = status_msg
+                    print(f"  └─► {status_msg} [Critic: {pub['critic_name']} | Rating: {pub['star_rating']}]")
                 elif has_critic or has_rating:
-                    pub["json_ld_extraction_status"] = "Found partial data from json ld by JS"
-                    print(f"  └─► Html parsed (partial data found) [Critic: {pub['critic_name']} | Rating: {pub['star_rating']}]")
+                    status_msg = "Html parsed (partial data found)"
+                    pub["json_ld_extraction_status"] = status_msg
+                    print(f"  └─► {status_msg} [Critic: {pub['critic_name']} | Rating: {pub['star_rating']}]")
                 else:
-                    pub["json_ld_extraction_status"] = "Could not find data from json ld by JS"
-                    print("  └─► Html parsed (no data found)")
+                    status_msg = "Html parsed (no data found)"
+                    pub["json_ld_extraction_status"] = status_msg
+                    print(f"  └─► {status_msg}")
 
             parsed_count += 1
 
         except Exception as e:
-            print(f"  └─► Html Not parsed (Webpage not available) [{e}]")
+            status_msg = "Html Not parsed (Webpage not available)"
+            print(f"  └─► {status_msg} [{e}]")
             pub["critic_name"] = "could not find from jsonld"
             pub["star_rating"] = "could not find from jsonld"
-            pub["json_ld_extraction_status"] = "Could not find data from json ld by JS"
+            pub["json_ld_extraction_status"] = status_msg
 
     # Save updated JSON state back to the exact target file
     with open(json_path, "w", encoding="utf-8") as f:
