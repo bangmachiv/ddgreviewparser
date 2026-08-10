@@ -194,7 +194,7 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "could not find from jsonld",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Could not find data from json ld by JS"
+            "json_ld_extraction_status": "no data found from json ld by js"
         },
         {
             "publisher_id": "movie-talkies",
