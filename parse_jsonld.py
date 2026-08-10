@@ -119,6 +119,16 @@ def process_single_movie_json(json_path, context):
 
     parsed_count = 0
     skipped_count = 0
+    
+    # Dictionary to track our final summary logs
+    summary_counts = {
+        "Html Not parsed (Url not available)": 0,
+        "Html Not parsed (Webpage not available)": 0,
+        "Html Not parsed (data already available)": 0,
+        "Html parsed (no data found)": 0,
+        "Html parsed (partial data found)": 0,
+        "Html parsed (both data found)": 0
+    }
 
     for index, pub in enumerate(publishers, start=1):
         pub_id = pub.get("publisher_id")
@@ -144,7 +154,9 @@ def process_single_movie_json(json_path, context):
         ]
 
         if current_status in legacy_completed or current_status in standard_completed:
-            print("  └─► Html Not parsed (data already available)")
+            status_msg = "Html Not parsed (data already available)"
+            print(f"  └─► {status_msg}")
+            summary_counts[status_msg] += 1
             skipped_count += 1
             continue
 
@@ -155,6 +167,7 @@ def process_single_movie_json(json_path, context):
             pub["critic_name"] = "Na"
             pub["star_rating"] = "Na"
             pub["json_ld_extraction_status"] = status_msg
+            summary_counts[status_msg] += 1
             skipped_count += 1
             continue
 
@@ -165,6 +178,7 @@ def process_single_movie_json(json_path, context):
             pub["critic_name"] = "Na"
             pub["star_rating"] = "Na"
             pub["json_ld_extraction_status"] = status_msg
+            summary_counts[status_msg] += 1
             skipped_count += 1
             continue
 
@@ -182,6 +196,7 @@ def process_single_movie_json(json_path, context):
                 pub["critic_name"] = "could not find from jsonld"
                 pub["star_rating"] = "could not find from jsonld"
                 pub["json_ld_extraction_status"] = status_msg
+                summary_counts[status_msg] += 1
                 skipped_count += 1
                 continue
 
@@ -200,6 +215,7 @@ def process_single_movie_json(json_path, context):
                 pub["critic_name"] = "could not find from jsonld"
                 pub["star_rating"] = "could not find from jsonld"
                 pub["json_ld_extraction_status"] = status_msg
+                summary_counts[status_msg] += 1
             else:
                 critic_names = list(dict.fromkeys(extracted_data.get("critic_names", [])))
                 star_ratings = list(dict.fromkeys(extracted_data.get("star_ratings", [])))
@@ -214,14 +230,17 @@ def process_single_movie_json(json_path, context):
                     status_msg = "Html parsed (both data found)"
                     print(f"  └─► {status_msg}")
                     pub["json_ld_extraction_status"] = status_msg
+                    summary_counts[status_msg] += 1
                 elif has_critic or has_rating:
                     status_msg = "Html parsed (partial data found)"
                     print(f"  └─► {status_msg}")
                     pub["json_ld_extraction_status"] = status_msg
+                    summary_counts[status_msg] += 1
                 else:
                     status_msg = "Html parsed (no data found)"
                     print(f"  └─► {status_msg}")
                     pub["json_ld_extraction_status"] = status_msg
+                    summary_counts[status_msg] += 1
 
             parsed_count += 1
 
@@ -231,12 +250,18 @@ def process_single_movie_json(json_path, context):
             pub["critic_name"] = "could not find from jsonld"
             pub["star_rating"] = "could not find from jsonld"
             pub["json_ld_extraction_status"] = status_msg
+            summary_counts[status_msg] += 1
 
     # Save updated JSON state back to the exact target file
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
+    # FINAL LOG SUMMARY OUTPUT
     print(f"\n[{movie_slug}] PARSING COMPLETE -> Parsed: {parsed_count} | Skipped: {skipped_count}")
+    print("-" * 60)
+    for category, count in summary_counts.items():
+        print(f"{category} : {count}")
+    print("=" * 60)
 
 
 def parse_all_live_movies():
