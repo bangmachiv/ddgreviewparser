@@ -44,7 +44,7 @@ def main():
             movie_year = movie_date[:4] if movie_date and len(movie_date) >= 4 else ""
 
             print("\n" + "=" * 80)
-            print(movie_name)
+            print(f"{movie_name} ({movie_year})" if movie_year else movie_name)
             print("=" * 80)
 
             # -----------------------------
@@ -104,74 +104,121 @@ def main():
 
                 domain = urlparse(publisher["url"]).netloc.replace("www.", "")
 
-                # -------------------------------------------------------------
-                # QUERY 1: Standard Search (exact_match: false)
-                # -------------------------------------------------------------
-                query_broad = f'{movie_name} {movie_year} movie review site:{domain}'.strip() if movie_year else f'{movie_name} movie review site:{domain}'
-
-                print(f"Searching {publisher['name']} (Broad)...")
-
                 publisher_result = {
                     "publisher_id": publisher["id"],
                     "publisher_name": publisher["name"],
                     "publisher_url": publisher["url"],
-                    "query": query_broad,
+                    "queries_used": {},
+                    "query_status": {},
                     "results": []
                 }
 
-                try:
-                    results_broad = list(ddgs.text(
-                                        query_broad, 
-                                        region="in-en",       
-                                        backend="html",       
-                                        max_results=5
-                                    ))
-
-                    for rank, r in enumerate(results_broad, start=1):
-                        publisher_result["results"].append({
-                            "rank": rank,
-                            "title": r.get("title", ""),
-                            "url": r.get("href", ""),
-                            "snippet": r.get("body", ""),
-                            "exact_match": False
-                        })
-
-                except Exception as e:
-                    publisher_result["error"] = str(e)
+                seen_urls = set()
+                current_rank = 1
 
                 # -------------------------------------------------------------
-                # QUERY 2: Exact Match Search (exact_match: true)
+                # QUERY 1: Generic with html label (Legacy Backend)
                 # -------------------------------------------------------------
-                query_exact = f'"{movie_name}" {movie_year} movie review site:{domain}'.strip() if movie_year else f'"{movie_name}" movie review site:{domain}'
+                type_1 = "Generic with html label"
+                query_1 = f'{movie_name} {movie_year} movie review site:{domain}'.strip() if movie_year else f'{movie_name} movie review site:{domain}'
+                publisher_result["queries_used"][type_1] = query_1
 
-                print(f"Searching {publisher['name']} (Exact Match)...")
-
+                print(f"Searching {publisher['name']} [{type_1}]...")
                 try:
-                    results_exact = list(ddgs.text(
-                                        query_exact, 
-                                        region="in-en",       
-                                        backend="html",       
-                                        max_results=5
-                                    ))
-                # NEW: Catch the 0-results case and log it for CI/CD visibility
-                    if not results_exact:
-                        print(f"  [!] 0 exact match results for: {domain}")
-
-                
-                    current_rank = len(publisher_result["results"]) + 1
-                    for r in results_exact:
-                        publisher_result["results"].append({
-                            "rank": current_rank,
-                            "title": r.get("title", ""),
-                            "url": r.get("href", ""),
-                            "snippet": r.get("body", ""),
-                            "exact_match": True
-                        })
-                        current_rank += 1
-
+                    results_1 = list(ddgs.text(query_1, region="in-en", backend="html", max_results=5))
+                    if not results_1:
+                        print(f"  [!] 0 results for: {domain} ({type_1})")
+                        publisher_result["query_status"][type_1] = "0 results"
+                    else:
+                        added = 0
+                        for r in results_1:
+                            url = r.get("href", "")
+                            if url and url not in seen_urls:
+                                publisher_result["results"].append({
+                                    "rank": current_rank,
+                                    "title": r.get("title", ""),
+                                    "url": url,
+                                    "snippet": r.get("body", ""),
+                                    "exact_match": False,
+                                    "search_type": type_1
+                                })
+                                seen_urls.add(url)
+                                current_rank += 1
+                                added += 1
+                        publisher_result["query_status"][type_1] = f"Found {added} results"
                 except Exception as e:
-                    if "error" not in publisher_result:
-                        publisher_result["error"] = str(e)
+                    print(f"  [X] Error ({type_1}): {e}")
+                    publisher_result["query_status"][type_1] = f"Error: {str(e)}"
+
+                # -------------------------------------------------------------
+                # QUERY 2: Generic without html label (Modern API)
+                # -------------------------------------------------------------
+                type_2 = "Generic without html label"
+                # site: placed at the front for maximum modern API compatibility
+                query_2 = f'site:{domain} {movie_name} {movie_year} movie review'.strip() if movie_year else f'site:{domain} {movie_name} movie review'
+                publisher_result["queries_used"][type_2] = query_2
+
+                print(f"Searching {publisher['name']} [{type_2}]...")
+                try:
+                    results_2 = list(ddgs.text(query_2, region="in-en", max_results=5))
+                    if not results_2:
+                        print(f"  [!] 0 results for: {domain} ({type_2})")
+                        publisher_result["query_status"][type_2] = "0 results"
+                    else:
+                        added = 0
+                        for r in results_2:
+                            url = r.get("href", "")
+                            if url and url not in seen_urls:
+                                publisher_result["results"].append({
+                                    "rank": current_rank,
+                                    "title": r.get("title", ""),
+                                    "url": url,
+                                    "snippet": r.get("body", ""),
+                                    "exact_match": False,
+                                    "search_type": type_2
+                                })
+                                seen_urls.add(url)
+                                current_rank += 1
+                                added += 1
+                        publisher_result["query_status"][type_2] = f"Found {added} new results"
+                except Exception as e:
+                    print(f"  [X] Error ({type_2}): {e}")
+                    publisher_result["query_status"][type_2] = f"Error: {str(e)}"
+
+                # -------------------------------------------------------------
+                # QUERY 3: Specific without html label (Modern API)
+                # -------------------------------------------------------------
+                type_3 = "Specific without html label"
+                # site: placed at the front, movie name inside quotes
+                query_3 = f'site:{domain} "{movie_name}" {movie_year} movie review'.strip() if movie_year else f'site:{domain} "{movie_name}" movie review'
+                publisher_result["queries_used"][type_3] = query_3
+
+                print(f"Searching {publisher['name']} [{type_3}]...")
+                try:
+                    results_3 = list(ddgs.text(query_3, region="in-en", max_results=5))
+                    if not results_3:
+                        print(f"  [!] 0 results for: {domain} ({type_3})")
+                        publisher_result["query_status"][type_3] = "0 results"
+                    else:
+                        added = 0
+                        for r in results_3:
+                            url = r.get("href", "")
+                            if url and url not in seen_urls:
+                                publisher_result["results"].append({
+                                    "rank": current_rank,
+                                    "title": r.get("title", ""),
+                                    "url": url,
+                                    "snippet": r.get("body", ""),
+                                    "exact_match": True,
+                                    "search_type": type_3
+                                })
+                                seen_urls.add(url)
+                                current_rank += 1
+                                added += 1
+                        publisher_result["query_status"][type_3] = f"Found {added} new results"
+                except Exception as e:
+                    print(f"  [X] Error ({type_3}): {e}")
+                    publisher_result["query_status"][type_3] = f"Error: {str(e)}"
 
                 output["publishers"].append(publisher_result)
 
