@@ -6,6 +6,26 @@
     },
     "publishers": [
         {
+            "publisher_id": "aaj-tak",
+            "publisher_name": "Aaj Tak",
+            "review_url": "NA",
+            "review_title": "NA",
+            "search_rank": "NA",
+            "critic_name": "Na",
+            "star_rating": "Na",
+            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+        },
+        {
+            "publisher_id": "abp",
+            "publisher_name": "ABP",
+            "review_url": "NA",
+            "review_title": "NA",
+            "search_rank": "NA",
+            "critic_name": "Na",
+            "star_rating": "Na",
+            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+        },
+        {
             "publisher_id": "amar-ujala",
             "publisher_name": "Amar Ujala",
             "review_url": "https://www.amarujala.com/entertainment/movie-review/bhai-tera-star-hai-hindi-review-starring-raghav-juyal-sanjay-kapoor-nikki-walia-to-niharika-nm-2026-07-30",
@@ -28,6 +48,16 @@
             "json_ld_extraction_status": "Found full data from json ld by JS"
         },
         {
+            "publisher_id": "bollyspice",
+            "publisher_name": "BollySpice",
+            "review_url": "NA",
+            "review_title": "NA",
+            "search_rank": "NA",
+            "critic_name": "Na",
+            "star_rating": "Na",
+            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+        },
+        {
             "publisher_id": "business-standard",
             "publisher_name": "Business Standard",
             "review_url": "NA",
@@ -47,6 +77,16 @@
             "critic_name": "BH Harsh",
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "Found partial data from json ld by JS"
+        },
+        {
+            "publisher_id": "cinetales",
+            "publisher_name": "Cinetales",
+            "review_url": "NA",
+            "review_title": "NA",
+            "search_rank": "NA",
+            "critic_name": "Na",
+            "star_rating": "Na",
+            "json_ld_extraction_status": "Html Not parsed (Url not available)"
         },
         {
             "publisher_id": "dainik-bhaskar",
@@ -112,6 +152,17 @@
             "json_ld_extraction_status": "Html Not parsed (Url not available)"
         },
         {
+            "publisher_id": "free-press-journal",
+            "publisher_name": "Free Press Journal",
+            "review_url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-review-did-raghav-juyals-big-leap-into-solo-superstardom-just-turn-into-superstar-doom",
+            "review_title": "Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into ...",
+            "search_rank": 1,
+            "webpage_extraction_successful": "Y",
+            "critic_name": "Satish Sundaresan",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "Html parsed (partial data found)"
+        },
+        {
             "publisher_id": "hindustan",
             "publisher_name": "Hindustan",
             "review_url": "NA",
@@ -131,6 +182,16 @@
             "critic_name": "Na",
             "star_rating": "Na",
             "json_ld_extraction_status": "Html Not parsed (Webpage not available)"
+        },
+        {
+            "publisher_id": "ians-live",
+            "publisher_name": "IANS Live",
+            "review_url": "NA",
+            "review_title": "NA",
+            "search_rank": "NA",
+            "critic_name": "Na",
+            "star_rating": "Na",
+            "json_ld_extraction_status": "Html Not parsed (Url not available)"
         },
         {
             "publisher_id": "india-today",
@@ -157,6 +218,16 @@
         {
             "publisher_id": "lensmen-reviews",
             "publisher_name": "Lensmen Reviews",
+            "review_url": "NA",
+            "review_title": "NA",
+            "search_rank": "NA",
+            "critic_name": "Na",
+            "star_rating": "Na",
+            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+        },
+        {
+            "publisher_id": "lokmat",
+            "publisher_name": "Lokmat",
             "review_url": "NA",
             "review_title": "NA",
             "search_rank": "NA",
@@ -281,6 +352,16 @@
             "critic_name": "Nandini Ramnath",
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "Found partial data from json ld by JS"
+        },
+        {
+            "publisher_id": "south-asian-herald",
+            "publisher_name": "South Asian Herald",
+            "review_url": "NA",
+            "review_title": "NA",
+            "search_rank": "NA",
+            "critic_name": "Na",
+            "star_rating": "Na",
+            "json_ld_extraction_status": "Html Not parsed (Url not available)"
         },
         {
             "publisher_id": "the-economic-times",

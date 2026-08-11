@@ -6,6 +6,182 @@
   },
   "publishers": [
     {
+      "publisher_id": "aaj-tak",
+      "publisher_name": "Aaj Tak",
+      "publisher_url": "https://www.aajtak.in",
+      "query": "Bhai Tera Star Hai 2026 movie review site:aajtak.in",
+      "results": [
+        {
+          "rank": 1,
+          "title": "Bhai Tera Star Hai Trailer: 'लूजर' एक्टर की कहानी में हीरो ...",
+          "url": "https://www.aajtak.in/entertainment/bollywood-news/story/bhai-tera-star-hai-trailer-raghav-juyal-loser-actor-solid-comedy-release-date-tmovk-dskc-2597510-2026-07-09",
+          "snippet": "Jul 9, 2026 · Bhai Tera Star Hai Trailer: 'लूजर' एक्टर की कहानी में हीरो बने राघव जुयाल, मजेदार है कॉमेडी",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 2,
+          "title": "Movie Reviews in Hindi (मूवी रिव्यू): Latest Film Review ...Hindi news, हिंदी न्यूज़ , Hindi Samachar, हिंदी समाचार ...Satluj Review: पंजाब के एक और भयानक जख्म की तस्वीर बने दिलजीत ...Dhurandhar 2 Review: किलिंग मशीन हमजा ने कराची में मचाया कहर ...Dhurandhar Review: कराची की गैंगस्टरबाजी, आतंकवाद की जड़ें ...",
+          "url": "https://www.aajtak.in/entertainment/film-review",
+          "snippet": "4 days ago · Movie Review (मूवी रिव्यू हिंदी) in Hindi: Get latest bollywood, hollywood film reviews (फिल्म समीक्षा) and ratings and web series review in Hindi at Aaj Tak online. AajTak: Hindi news (हिंदी समाचार) website, watch live tv coverages, Latest Khabar, Breaking news in Hindi of India, World, Sports, business, film and Entertainment. आज तक पर पढ़ें ताजा समाचार देश और दुनिया से, जाने व्यापार, बॉलीवुड, खेल और ... Jul 5, 2026 · Satluj Review: पंजाब के एक और भयानक जख्म की तस्वीर बने दिलजीत, इमोशनली झिंझोड़ देगी फिल्म Mar 18, 2026 · Dhurandhar 2 Movie Review in Hindi: फिल्म ‘धुरंधर 2’ शुरू होते ही आप उसी कहानी में वापस पहुंच जाते हैं, जिसने दिसंबर में साढ़े तीन घंटे के लिए जनता को सीटों से चिपका कर रख दिया ... Dec 5, 2025 · Dhurandhar Review: कराची की गैंगस्टरबाजी, आतंकवाद की जड़ें, इंडियन मिशन से दमदार बनी फिल्म, रणवीर का धांसू काम",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 3,
+          "title": "Satluj Review: पंजाब के एक और भयानक जख्म की तस्वीर बने दिलजीत ...",
+          "url": "https://www.aajtak.in/entertainment/film-review/story/satluj-paints-horrific-insurgency-era-punjab-with-diljit-dosanjh-acing-performance-again-tmovk-dskc-2594286-2026-07-05",
+          "snippet": "Jul 5, 2026 · Satluj Review: पंजाब के एक और भयानक जख्म की तस्वीर बने दिलजीत, इमोशनली झिंझोड़ देगी फिल्म",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 4,
+          "title": "Dhurandhar 2 Review: किलिंग मशीन हमजा ने कराची में मचाया कहर ...",
+          "url": "https://www.aajtak.in/entertainment/film-review/story/dhurandhar-2-movie-review-in-hindi-ranveer-singh-aditya-dhar-tmovk-dskc-2500365-2026-03-18",
+          "snippet": "Mar 18, 2026 · Dhurandhar 2 Movie Review in Hindi: फिल्म ‘धुरंधर 2’ शुरू होते ही आप उसी कहानी में वापस पहुंच जाते हैं, जिसने दिसंबर में साढ़े तीन घंटे के लिए जनता को सीटों से चिपका कर रख दिया ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 5,
+          "title": "Dhurandhar Review: कराची की गैंगस्टरबाजी, आतंकवाद की जड़ें ...",
+          "url": "https://www.aajtak.in/entertainment/film-review/story/dhurandhar-movie-review-ranveer-singh-solid-acting-powerful-starcast-ntcpsm-dskc-2404348-2025-12-05",
+          "snippet": "Dec 5, 2025 · Dhurandhar Review: कराची की गैंगस्टरबाजी, आतंकवाद की जड़ें, इंडियन मिशन से दमदार बनी फिल्म, रणवीर का धांसू काम",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Movie Reviews in Hindi (मूवी रिव्यू): Latest Film Review ...",
+          "url": "https://www.aajtak.in/entertainment/film-review",
+          "snippet": "4 days ago · Movie Review (मूवी रिव्यू हिंदी) in Hindi: Get latest bollywood, hollywood film reviews (फिल्म समीक्षा) and ratings and web series review in Hindi at Aaj Tak online.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Satluj Review: पंजाब के एक और भयानक जख्म की तस्वीर बने दिलजीत ...",
+          "url": "https://www.aajtak.in/entertainment/film-review/story/satluj-paints-horrific-insurgency-era-punjab-with-diljit-dosanjh-acing-performance-again-tmovk-dskc-2594286-2026-07-05",
+          "snippet": "Jul 5, 2026 · Satluj Review: पंजाब के एक और भयानक जख्म की तस्वीर बने दिलजीत, इमोशनली झिंझोड़ देगी फिल्म",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "Dhurandhar Review: कराची की गैंगस्टरबाजी, आतंकवाद की जड़ें ...",
+          "url": "https://www.aajtak.in/entertainment/film-review/story/dhurandhar-movie-review-ranveer-singh-solid-acting-powerful-starcast-ntcpsm-dskc-2404348-2025-12-05",
+          "snippet": "Dec 5, 2025 · Dhurandhar Review: कराची की गैंगस्टरबाजी, आतंकवाद की जड़ें, इंडियन मिशन से दमदार बनी फिल्म, रणवीर का धांसू काम",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Bhai Tera Star Hai Trailer: 'लूजर' एक्टर की कहानी में हीरो बने राघव......",
+          "url": "https://www.aajtak.in/entertainment/bollywood-news/story/bhai-tera-star-hai-trailer-raghav-juyal-loser-actor-solid-comedy-release-date-tmovk-dskc-2597510-2026-07-09",
+          "snippet": "टीवी रियलिटी शोज से निकलकर, अपनी दमदार एक्टिंग का लोहा मनवा चुके राघव जुयाल अब बतौर लीड हीरो अपनी पहली फिल्म 'भाई तेरा स्टार है' लेकर आ रहे हैं.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "'मिस इंडिया वर्ल्ड' बनकर ब्यूटी पेजेंट्स में छाई, पर फिल्मों ...",
+          "url": "https://www.aajtak.in/entertainment/bollywood-news/story/meet-miss-india-world-parvathy-omanakuttan-bhai-tera-star-hai-film-tmovf-dskc-2614621-2026-08-04",
+          "snippet": "Aug 4, 2026 · आजतक एंटरटेनमेंट डेस्क नई दिल्ली, 04 अगस्त 2026, (अपडेटेड 04 अगस्त 2026, 10: ...",
+          "exact_match": true,
+          "is_review": "N"
+        }
+      ]
+    },
+    {
+      "publisher_id": "abp",
+      "publisher_name": "ABP",
+      "publisher_url": "https://www.abplive.com",
+      "query": "Bhai Tera Star Hai 2026 movie review site:abplive.com",
+      "results": [
+        {
+          "rank": 1,
+          "title": "Raghav Juyal का नया अंदाज, Bhai Tera Star Hai का ट्रेलर रिलीज़ | Raghav Juyal Shines In The Bhai Tera Star Hai Trailer",
+          "url": "https://www.abplive.com/short-videos/entertainment/raghav-juyal-shines-in-the-bhai-tera-star-hai-trailer-3157484",
+          "snippet": "July 9, 2026 - Bhai Tera Star Hai का ट्रेलर रिलीज़ हो गया है। इसमें Raghav Juyal एक नए और मजेदार अंदाज में नजर आ रहे हैं। ट्रेलर में उनका किरदार मुश्किलों का सामना करता है, लेकिन हर हाल में हंसते हुए आगे बढ़ता है...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 2,
+          "title": "Box Office: 'स्पाइडर मैन' के आगे पहले ही दिन पिटी 'भाई तेरा स्टार है', लाखों कमाने भी हुए मुश्किल | Bhai Tera Star Hai Box Office Collection Opening Day 1 Raghav Juyal film first day collection Net in India",
+          "url": "https://www.abplive.com/entertainment/bollywood/bhai-tera-star-hai-box-office-collection-opening-day-1-raghav-juyal-film-first-day-collection-net-in-india-3168416",
+          "snippet": "2 weeks ago - Bhai Tera Star Hai BO Opening Day 1 Collection: 'स्पाइडर-मैन ब्रांड न्यू डे' के आगे 'भाई तेरा स्टार है' रिलीज के पहले दिन ही पिट ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 3,
+          "title": "Niharika NM: कौन हैं निहारिका एनएम? राघव जुयाल की फिल्म 'भाई तेरा स्टार है' में आएंगी नजर | Who Is Niharika NM Everything to Know About Actress Starring in Raghav Juyal Bhai Tera Star Hai",
+          "url": "https://www.abplive.com/entertainment/bollywood/who-is-niharika-nm-everything-to-know-about-actress-starring-in-raghav-juyal-bhai-tera-star-hai-3157781",
+          "snippet": "July 10, 2026 - Who Is Niharika NM: निहारिका एनएम जल्द ही राघव जुयाल की फिल्म 'भाई तेरा स्टार है' में नजर आएंगी.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 4,
+          "title": "Bambai Meri Jaan Review: Kay Kay Menon, Avinash Tiwary saved the series, what will happen in season 2? | Bambai Meri Jaan Review: Kay Kay Menon, Avinash Tiwary ने बचाया सीरीज को, सीजन 2 में क्या होगा?",
+          "url": "https://www.abplive.com/videos/entertainment/bambai-meri-jaan-review-kay-kay-menon-avinash-tiwary-saved-the-series-what-will-happen-in-season-2-2497283",
+          "snippet": "September 19, 2023 - Raghav Juyal का दमदार अंदाज़, Bhai Tera Star Hai का ट्रेलर रिलीज़",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 5,
+          "title": "'भाभीजी घर पर हैं' फिल्म का ट्रेलर रिलीज, अंगूरी और अनीता भाभी के दो नए आशिकों की भी हुई एंट्री | Bhabiji Ghar Par Hain trailer out Movie Starring Ravi Kishan Shubhangi Atre Asif Shaikh",
+          "url": "https://www.abplive.com/entertainment/bhabiji-ghar-par-hain-trailer-out-movie-starring-ravi-kishan-shubhangi-atre-asif-shaikh-3075211",
+          "snippet": "January 16, 2026 - Raghav Juyal का दमदार अंदाज़, Bhai Tera Star Hai का ट्रेलर रिलीज़",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Raghav Juyal का नया अंदाज, Bhai Tera Star Hai का ट्रेलर रिलीज़ | Raghav Juyal Shines In The Bhai Tera Star Hai Trailer",
+          "url": "https://www.abplive.com/short-videos/entertainment/raghav-juyal-shines-in-the-bhai-tera-star-hai-trailer-3157484",
+          "snippet": "July 9, 2026 - Bhai Tera Star Hai का ट्रेलर रिलीज़ हो गया है। इसमें Raghav Juyal एक नए और मजेदार अंदाज में नजर आ रहे हैं। ट्रेलर में उनका किरदार मुश्किलों का सामना करता है, लेकिन हर हाल में हंसते हुए आगे बढ़ता है...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Box Office: 'स्पाइडर मैन' के आगे पहले ही दिन पिटी 'भाई तेरा स्टार है', लाखों कमाने भी हुए मुश्किल | Bhai Tera Star Hai Box Office Collection Opening Day 1 Raghav Juyal film first day collection Net in India",
+          "url": "https://www.abplive.com/entertainment/bollywood/bhai-tera-star-hai-box-office-collection-opening-day-1-raghav-juyal-film-first-day-collection-net-in-india-3168416",
+          "snippet": "2 weeks ago - Bhai Tera Star Hai BO Opening Day 1 Collection: 'स्पाइडर-मैन ब्रांड न्यू डे' के आगे 'भाई तेरा स्टार है' रिलीज के पहले दिन ही पिट ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "Niharika NM: कौन हैं निहारिका एनएम? राघव जुयाल की फिल्म 'भाई तेरा स्टार है' में आएंगी नजर | Who Is Niharika NM Everything to Know About Actress Starring in Raghav Juyal Bhai Tera Star Hai",
+          "url": "https://www.abplive.com/entertainment/bollywood/who-is-niharika-nm-everything-to-know-about-actress-starring-in-raghav-juyal-bhai-tera-star-hai-3157781",
+          "snippet": "July 10, 2026 - Who Is Niharika NM: निहारिका एनएम जल्द ही राघव जुयाल की फिल्म 'भाई तेरा स्टार है' में नजर आएंगी.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Bambai Meri Jaan Review: Kay Kay Menon, Avinash Tiwary saved the series, what will happen in season 2? | Bambai Meri Jaan Review: Kay Kay Menon, Avinash Tiwary ने बचाया सीरीज को, सीजन 2 में क्या होगा?",
+          "url": "https://www.abplive.com/videos/entertainment/bambai-meri-jaan-review-kay-kay-menon-avinash-tiwary-saved-the-series-what-will-happen-in-season-2-2497283",
+          "snippet": "September 19, 2023 - Raghav Juyal का दमदार अंदाज़, Bhai Tera Star Hai का ट्रेलर रिलीज़",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "'भाभीजी घर पर हैं' फिल्म का ट्रेलर रिलीज, अंगूरी और अनीता भाभी के दो नए आशिकों की भी हुई एंट्री | Bhabiji Ghar Par Hain trailer out Movie Starring Ravi Kishan Shubhangi Atre Asif Shaikh",
+          "url": "https://www.abplive.com/entertainment/bhabiji-ghar-par-hain-trailer-out-movie-starring-ravi-kishan-shubhangi-atre-asif-shaikh-3075211",
+          "snippet": "January 16, 2026 - Raghav Juyal का दमदार अंदाज़, Bhai Tera Star Hai का ट्रेलर रिलीज़",
+          "exact_match": true,
+          "is_review": "N"
+        }
+      ]
+    },
+    {
       "publisher_id": "amar-ujala",
       "publisher_name": "Amar Ujala",
       "publisher_url": "https://www.amarujala.com",
@@ -182,6 +358,94 @@
       ]
     },
     {
+      "publisher_id": "bollyspice",
+      "publisher_name": "BollySpice",
+      "publisher_url": "https://bollyspice.com/",
+      "query": "Bhai Tera Star Hai 2026 movie review site:bollyspice.com",
+      "results": [
+        {
+          "rank": 1,
+          "title": "Movie Reviews | BollySpice.com – The latest movies ...",
+          "url": "https://bollyspice.com/category/movie-reviews/page/3/",
+          "snippet": "Feb 15, 2026 · Every 20 minutes, the screen in Anubhav Sinha’s hard-hitting thappad of a film goes red and blank with the reminder…",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 2,
+          "title": "Stars Look Back At 2025 and onto 2026 - bollyspice.com",
+          "url": "https://bollyspice.com/stars-look-back-at-2025-and-onto-2026/",
+          "snippet": "Jan 1, 2026 · Stars Look Back At 2025 and onto 2026 Movies, News, Stars | January 1, 2026 | | by Subhash K Jha [socialBuzz]",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 3,
+          "title": "“Tu Meri Main Tera Main Tera Tu Meri , Kartik Aaryan Romances ...",
+          "url": "https://bollyspice.com/tu-meri-main-tera-main-tera-tu-meri-kartik-aaryan-romances-the-romcom-with-relish-a-subhash-k-jha-review/",
+          "snippet": "Dec 24, 2025 · Outwardly, Tu Meri Main Tera Main Tera Tu Meri suffers a personality disorder. The first, frivolous half about a romantic writer running into a wedding planner on an international airport, and the ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 4,
+          "title": "Hindi Film Review: ? | BollySpice.com – The latest movies ...",
+          "url": "https://bollyspice.com/hindi-film-review/",
+          "snippet": "Feb 17, 2012 · Footage Compiled by Yash & Allison It is rare for horror in Bollywood to not appear horrific in ways that the genre was never meant to be. More often than not, horror films in India rely on stock ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 5,
+          "title": "Special 26 Movie Review | BollySpice.com – The latest movies ...",
+          "url": "https://bollyspice.com/special-26-movie-review/",
+          "snippet": "Feb 8, 2013 · In the late 80s, a gang of four con-men Ajay (Akshay Kumar), Sharma (Anupam Kher), Iqbal (Kishore Kadam) and Joginder (Rajesh Sharma) followed a unique modus-operandi of carrying out fake raids ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Lalit Pandit On His Mixed Feelings On The Remix Of His Song In Bhai Tera Star Hai | BollySpice.com – The latest movies, interviews in Bollywood",
+          "url": "https://bollyspice.com/lalit-pandit-on-his-mixed-feelings-on-the-remix-of-his-song-in-bhai-tera-star-hai/",
+          "snippet": "1 day ago - Movies, Music, News | August 10, 2026 | | by Subhash K Jha ... Lalit Pandit spoke to Subhash K Jha about his feelings about remixes of his songs, and especially talks about the new version of ‘Aankhon Se Tune Yeh Kya Keh Diya’ from 1998’s Ghulam in Bhai Tera Star Hai.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Hindi Film Review: ? | BollySpice.com – The latest movies ...",
+          "url": "https://bollyspice.com/hindi-film-review/",
+          "snippet": "Feb 17, 2012 · Footage Compiled by Yash & Allison It is rare for horror in Bollywood to not appear horrific in ways that the genre was never meant to be. More often than not, horror films in India rely on stock ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "Haider Movie Review | BollySpice.com – The latest movies ...",
+          "url": "https://bollyspice.com/haider-movie-review/",
+          "snippet": "Oct 2, 2014 · “To be, or not to be: that is the question…” To watch Haider, or not: that is the question. Prologue ‘Hamlet’ is a Shakespearean tragedy adapted countless times, on stages and cel…",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Talaash Movie Review | BollySpice.com – The latest movies ...",
+          "url": "https://bollyspice.com/talaash-movie-review/",
+          "snippet": "Nov 30, 2012 · One the most keenly anticipated films of the year, Talaash has hit the big screen. Directed by Reema Kagti, who wrote the screenplay with Zoya Akhtar, the film stars three of the best in the busine…",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "Special 26 Movie Review | BollySpice.com – The latest movies ...",
+          "url": "https://bollyspice.com/special-26-movie-review/",
+          "snippet": "Feb 8, 2013 · In the late 80s, a gang of four con-men Ajay (Akshay Kumar), Sharma (Anupam Kher), Iqbal (Kishore Kadam) and Joginder (Rajesh Sharma) followed a unique modus-operandi of carrying out fake raids ...",
+          "exact_match": true,
+          "is_review": "N"
+        }
+      ]
+    },
+    {
       "publisher_id": "business-standard",
       "publisher_name": "Business Standard",
       "publisher_url": "https://www.business-standard.com",
@@ -189,73 +453,83 @@
       "results": [
         {
           "rank": 1,
-          "title": "Latest Entertainment News: Movie Reviews, Bollywood & Hollywood Updates ...",
-          "url": "https://www.business-standard.com/entertainment",
-          "snippet": "Discover the Latest Entertainment News - Movie Reviews, Bollywood & Hollywood Updates, Celeb Gossip, and More with Business Standard.",
-          "exact_match": false
-        },
-        {
-          "rank": 2,
-          "title": "'Tera Surroor': An abysmal attempt (IANS Review, Rating: *)",
-          "url": "https://www.business-standard.com/article/news-ians/tera-surroor-an-abysmal-attempt-ians-review-rating-116031101011_1.html",
-          "snippet": "\"Tera Surroor\" is a love story treated like an action thriller, meshed with music and revenge as its sub-plot. With this blend, we land up watching an abominable kitsch. The amateurishly directed assassination in the first scene of the film lays the foundation for what's in store for the viewers.",
-          "exact_match": false
-        },
-        {
-          "rank": 3,
-          "title": "Business Standard - Business News, Finance News, India News, Stock ...",
-          "url": "https://www.business-standard.com/",
-          "snippet": "Business News: Get latest news on share market, personal finance news, economy news, stock market updates, company news, election results, politics news, breaking news at Business Standard. Catch all the latest Nifty Sensex news live updates.",
-          "exact_match": false
-        },
-        {
-          "rank": 4,
-          "title": "Hurun Rich List 2026: India now has 308 billionaires, ranks third ...",
-          "url": "https://www.business-standard.com/india-news/hurun-rich-list-2026-india-now-has-308-billionaires-ranks-third-globally-126030700305_1.html",
-          "snippet": "India's billionaire count has increased to 308, up by 24 from last year, reflecting strong wealth creation and sustained economic momentum, according to the Hurun Global Rich List 2026 released Saturday. The new additions to the ranks pushed up India to third position globally in terms of the ...",
-          "exact_match": false
-        },
-        {
-          "rank": 5,
-          "title": "Union Budget 2026: From semiconductors to rare-earth hubs, key ...",
-          "url": "https://www.business-standard.com/budget/news/union-budget-2026-nirmala-sitharaman-major-schemes-all-announcements-126020100681_1.html",
-          "snippet": "Finance Minister Nirmala Sitharaman on Sunday presented the Union Budget for the financial year 2026-27 in the Lok Sabha. This was her ninth consecutive Budget. The Budget focused on boosting manufacturing, infrastructure, technology, healthcare and skilling, while pushing India's long-term growth ...",
-          "exact_match": false
-        },
-        {
-          "rank": 6,
           "title": "Bhaiaji Superhit Is goofy zany outrageous fun (Movie Review ***)",
           "url": "https://www.business-standard.com/article/news-ians/bhaiaji-superhit-is-goofy-zany-outrageous-fun-movie-review-118112201223_1.html",
           "snippet": "November 22, 2018 - If you are not too sold on refined humour and if you can appreciate a comedy of errors that does not resort to double meanings then Bhaiaji Superhit could provide you with some amount of of hilarity.",
-          "exact_match": true
+          "exact_match": false,
+          "is_review": "N"
         },
         {
-          "rank": 7,
+          "rank": 2,
           "title": "Badhaai Ho Movie review: Rating, Star Cast, Story, Verdict, Songs | Entertainment News - Business Standard",
           "url": "https://www.business-standard.com/article/entertainment/badhaai-ho-movie-review-rating-star-cast-story-verdict-songs-ayushmann-s-latest-is-refreshingly-honest-entertaining-118101800184_1.html",
           "snippet": "October 18, 2018 - Ayushman Khurrana and Sanya Malhotra as Renee his colleague, make a cute pair and their love story plays a pleasant sub-plot to the narrative. Read Badhaai Ho movie review here.",
-          "exact_match": true
+          "exact_match": false,
+          "is_review": "N"
         },
         {
-          "rank": 8,
+          "rank": 3,
           "title": "Movie review: Babumoshai Bandookbaaz misses the target",
           "url": "https://www.business-standard.com/article/current-affairs/movie-review-babumoshai-bandookbaaz-misses-the-target-117082600006_1.html",
           "snippet": "August 26, 2017 - Though it has the trappings of cult gangster and hinterland films, movie lacks any punch",
-          "exact_match": true
+          "exact_match": false,
+          "is_review": "N"
         },
         {
-          "rank": 9,
+          "rank": 4,
           "title": "'Babumoshai Bandookbaaz': Gore is a bore (Review)",
           "url": "https://www.business-standard.com/article/news-ians/babumoshai-bandookbaaz-gore-is-a-bore-review-117082700309_1.html",
           "snippet": "August 27, 2017 - The body-count and the bawdy encounters are high... so high that you sometimes feel the writer and director pile them on only so we can be shocked out of our senses. But beyond a point, the gore is a bore. And the sex is... yawn. The much-discussed lovemaking between the eager-to-score Nawazuddin and his eager-to-oblige co-star Bidita are as erotic and titillating as two canines on heat, doing it on the road because....",
-          "exact_match": true
+          "exact_match": false,
+          "is_review": "N"
         },
         {
-          "rank": 10,
+          "rank": 5,
           "title": "Bajrangi Bhaijaan completes 9 years, makers drop behind-the-scenes video | Entertainment News - Business Standard",
           "url": "https://www.business-standard.com/entertainment/bajrangi-bhaijaan-completes-9-years-makers-drop-behind-the-scenes-video-124071700732_1.html",
           "snippet": "July 17, 2024 - Kabir Khan-directed Bajrangi Bhaijaan movie narrates the story of Pavan (Salman Khan), a devotee of Lord Hanuman, who took a challenge to send a Pakistani girl, called Munni (Harshaali Malhotra) with her family to Pakistan.",
-          "exact_match": true
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Latest Entertainment News: Movie Reviews, Bollywood ...",
+          "url": "https://www.business-standard.com/entertainment",
+          "snippet": "Jul 29, 2026 · Discover the Latest Entertainment News - Movie Reviews, Bollywood & Hollywood Updates, Celeb Gossip, and More with Business Standard.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Business News, Finance News, India News, Stock Markets BSE ...",
+          "url": "https://www.business-standard.com/",
+          "snippet": "Business News: Get latest news on share market, personal finance news, economy news, stock market updates, company news, election results, politics news, breaking news at Business Standard. Catch all the latest Nifty Sensex news live updates.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "Govt committee backs retaining OTT ban on Satluj over ...",
+          "url": "https://www.business-standard.com/entertainment/govt-committee-backs-retaining-ott-ban-on-satluj-over-security-concerns-126071100410_1.html",
+          "snippet": "Jul 11, 2026 · A committee set up by the Centre to examine the content of the Diljit Dosanjh-starrer film 'Satluj' is learnt to have recommended that the ban on its public access through online streaming platforms should remain as the film allegedly goes against India's sovereignty and integrity, government ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Odyssey India Box Office Collection Day 3: Christopher Nolan ...",
+          "url": "https://www.business-standard.com/entertainment/the-odyssey-india-box-office-collection-nolan-s-film-crosses-50-crore-milestone-nc-126072000826_1.html",
+          "snippet": "Jul 20, 2026 · Christopher Nolan's The Odyssey crosses ₹50 crore at India box office The Odyssey has been hailed as Nolan's best film in recent years. The action-fantasy epic was released across India on July 17, 2026, in English, Hindi, Tamil, and Telugu",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "OTT releases this week: Peddi OTT to Pati Patni Aur Woh Do ...",
+          "url": "https://www.business-standard.com/entertainment/ott-releases-this-week-peddi-ott-to-pati-patni-aur-woh-do-more-to-watch-nc-126071000398_1.html",
+          "snippet": "Jul 10, 2026 · · Release Date: July 11, 2026 · Platform: JioHotstar With Pati Patni Aur Woh Do, comedy takes centre stage and offers a new perspective on family life and relationships. The movie, which is full of amusing miscommunications, surprising circumstances, and light-hearted moments, is intended for those seeking a fun weekend viewing experience.",
+          "exact_match": true,
+          "is_review": "N"
         }
       ]
     },
@@ -342,6 +616,94 @@
           "title": "Ram Setu Movie Review: Akshay Kumar and logic go out to sea",
           "url": "https://www.cinemaexpress.com/hindi/review/2022/Oct/25/ram-setu-movie-review-akshay-kumar-35970.html",
           "snippet": "Bhai Tera Star Hai Movie Review: Too wacky for its own good.",
+          "exact_match": true,
+          "is_review": "N"
+        }
+      ]
+    },
+    {
+      "publisher_id": "cinetales",
+      "publisher_name": "Cinetales",
+      "publisher_url": "https://www.cine-tales.com",
+      "query": "Bhai Tera Star Hai 2026 movie review site:cine-tales.com",
+      "results": [
+        {
+          "rank": 1,
+          "title": "Reviews: Movie Review, Web Series Reviews",
+          "url": "https://www.cine-tales.com/category/reviews/",
+          "snippet": "Jul 9, 2026 · Omlo Movie Review: Sonu Randeep Choudhary Delivers A Thought-Provoking Tale Of Patriarchy, Trauma, And Hope Praneet Samaiya July 4, 2026 1.63K",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 2,
+          "title": "Tauba Tera Jalwa Movie Review: An Entertaining Film Filled ...",
+          "url": "https://www.cine-tales.com/tauba-tera-jalwa-movie-review/",
+          "snippet": "Jan 6, 2024 · Tauba Tera Jalwa, a 2024 romantic comedy film in Hindi, comes to life through the creative vision of writer-director Akashaditya Lama. Additionally, the film is brought to the screen by the collaborative efforts of Naresh Bansal and Madanlal Khurana. They produce it under the banners of Shreeram Productions and Victorious Enterprises. Headlined by Jatin Khurana, Ameesha Patel, and Angela ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 3,
+          "title": "Awarapan 2 Teaser Review: Emraan Hashmi Returns As Shivam ...",
+          "url": "https://www.cine-tales.com/awarapan-2-teaser-review-emraan-hashmi-disha/",
+          "snippet": "Jun 29, 2026 · The dialogue in Emraan Hashmi’s voice, “Maut bhi ajeeb hai, usne mujhe chuaa, par apnaya nahi” instantly gives you goosebumps The teaser gradually builds towards its most powerful moment. Shivam visits Aaliyah’s grave and places a single red rose before uttering the dialogue that instantly gives fans goosebumps.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 4,
+          "title": "Hai Jawani Toh Ishq Hona Hai Movie Review: Varun Dhawan ...",
+          "url": "https://www.cine-tales.com/hai-jawani-toh-ishq-hona-hai-movie-review-varun/",
+          "snippet": "Jun 5, 2026 · Over the years, the father-son duo has delivered entertainers like Main Tera Hero and Judwaa 2, and with Hai Jawani Toh Ishq Hona Hai, they return to familiar territory filled with confusion, misunderstandings, romance, music, and complete madness.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 5,
+          "title": "Dhurandhar The Revenge Review: Ranveer Singh Shines In Aditya ...",
+          "url": "https://www.cine-tales.com/dhurandhar-the-revenge-review-ranveer-singh/",
+          "snippet": "Mar 18, 2026 · Dhurandhar The Revenge has arrived at the cinemas. Dhurandhar 2 stars Ranveer Singh, R Madhavan, Arjun Rampal, Sanjay Dutt, Gaurav Gera, Sara Arjun, Rakesh Bedi, Danish Pandor, Manav Gohil, and Udaybir Sandhu. Directed by Aditya Dhar and headlined by Ranveer Singh, the film continues the high-stakes espionage saga that captivated audiences last year. The expectations were sky-high after the ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Reviews: Movie Review, Web Series Reviews",
+          "url": "https://www.cine-tales.com/category/reviews/",
+          "snippet": "Jul 9, 2026 · Omlo Movie Review: Sonu Randeep Choudhary Delivers A Thought-Provoking Tale Of Patriarchy, Trauma, And Hope Praneet Samaiya July 4, 2026 1.63K",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Tauba Tera Jalwa Movie Review: An Entertaining Film Filled ...",
+          "url": "https://www.cine-tales.com/tauba-tera-jalwa-movie-review/",
+          "snippet": "Jan 6, 2024 · Tauba Tera Jalwa, a 2024 romantic comedy film in Hindi, comes to life through the creative vision of writer-director Akashaditya Lama. Additionally, the film is brought to the screen by the collaborative efforts of Naresh Bansal and Madanlal Khurana. They produce it under the banners of Shreeram Productions and Victorious Enterprises. Headlined by Jatin Khurana, Ameesha Patel, and Angela ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "Awarapan 2 Teaser Review: Emraan Hashmi Returns As Shivam ...",
+          "url": "https://www.cine-tales.com/awarapan-2-teaser-review-emraan-hashmi-disha/",
+          "snippet": "Jun 29, 2026 · The sequel promises to expand the emotional journey of Shivam Pandit while retaining the music, romance, action, and heartbreak that made the original film a cult favourite. Awarapan 2 is scheduled to release in theatres on August 14, 2026.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Heer Sara Movie Review: Maanvi Gagroo And Patralekhaa Shine ...",
+          "url": "https://www.cine-tales.com/heer-sara-review-maanvi-gagroo-patralekhaa/",
+          "snippet": "Jun 12, 2026 · Heer Sara Movie Review: Maanvi Gagroo And Patralekhaa Shine In This Warm Tale Of Friendship And Self-Discovery Two women, one life-changing road trip, and a heartfelt journey of friendship, healing, self-discovery, and finding the courage to move forward. Read our full Heer Sara movie review. Praneet Samaiya June 12, 2026 1.19K Views",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "Dhurandhar The Revenge Review: Ranveer Singh Shines In Aditya ...",
+          "url": "https://www.cine-tales.com/dhurandhar-the-revenge-review-ranveer-singh/",
+          "snippet": "Mar 18, 2026 · Dhurandhar The Revenge has arrived at the cinemas. Dhurandhar 2 stars Ranveer Singh, R Madhavan, Arjun Rampal, Sanjay Dutt, Gaurav Gera, Sara Arjun, Rakesh Bedi, Danish Pandor, Manav Gohil, and Udaybir Sandhu. Directed by Aditya Dhar and headlined by Ranveer Singh, the film continues the high-stakes espionage saga that captivated audiences last year. The expectations were sky-high after the ...",
           "exact_match": true,
           "is_review": "N"
         }
@@ -452,73 +814,83 @@
       "results": [
         {
           "rank": 1,
-          "title": "Movie Reviews | Bollywood | Hollywood | Kollywood | Tollywood | Deccan Chronicle",
-          "url": "https://www.deccanchronicle.com/entertainment/movie-review?pg=47",
-          "snippet": "The story revolves around a wealthy businessman trying to escape massive income tax troubles. To safeguard his fortune, · 26 Jun 2026 6:03 PM IST",
-          "exact_match": false
+          "title": "Khalin Joshi Dominates at Royal Springs, Clinches J&K Open 2026 in...",
+          "url": "https://www.deccanchronicle.com/sports/khalin-joshi-dominates-at-royal-springs-clinches-jk-open-2026-in-style-1977391",
+          "snippet": "7 Aug 2026 5:13 PM IST7 Aug 2026 5:13 PM IST. Joshi’s dominant week earned him ₹ 15 lakh and propelled him five spots up the DP World PGTI Rankings—from 13th to eighth—taking his season earnings to ₹ 34,85,575.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 2,
-          "title": "Read all Latest Updates on and about movie review",
-          "url": "https://www.deccanchronicle.com/tags/movie-review",
-          "snippet": "The film starts off with the affluent and corrupt Kunwar Kuldeep (Govind Namdev) who literally shoots out a raiding team...",
-          "exact_match": false
+          "title": "Private Schools Directed to Publicly Disclose 2026-27 Fee Structure or...",
+          "url": "https://www.deccanchronicle.com/southern-states/telangana/private-schools-directed-to-publicly-disclose-2026-27-fee-structure-or-face-action-1977535",
+          "snippet": "Hyderabad:Private unaided schools must publicly disclose their 2026-27 fee structure on notice boards, school websites and the school education department portal. The department has warned that non-compliance will invite show-cause notices and action under existing rules.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 3,
-          "title": "Book Review | Biopics of Legends Between Covers",
-          "url": "https://www.deccanchronicle.com/lifestyle/booksart/book-review-biopics-of-legends-between-covers-1943730",
-          "snippet": "March 14, 2026 - Therefore I, for one, am delighted to hold in my hands the journey of the legends who brought this about. For, we may have grown up singing Paan Banaraswala or gyrating to Disco Dancer, but how many of us know of Sohrab Modi whose one-liner, “Tera khoon khoon hai, mera khoon paani!” outlives so many Yahudis?",
-          "exact_match": false
+          "title": "Deccan Chronicle - News Headlines | Today Headlines | Hyderabad...",
+          "url": "https://www.deccanchronicle.com/",
+          "snippet": "Movie Reviews. Television.Netanyahu Calls Up Modi, Discusses Developments in West Asia. They also reviewed sustained progress in India-Israel Special Strategic Partnership. 6 Aug 2026 8:40 PM IST.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
-          "title": "Read all Latest Updates on and about telugu movie review",
-          "url": "https://www.deccanchronicle.com/tags/telugu-movie-review",
-          "snippet": "Get Latest News, Breaking News about telugu movie review. Stay connected to all updated on telugu movie review",
-          "exact_match": false
+          "title": "US Senate Clears Russia Sanctions Bill, Eyes 100% Tariffs on India",
+          "url": "https://www.deccanchronicle.com/world/americas/us-senate-clears-russia-sanctions-bill-eyes-100-tariffs-on-india-four-others-1977560",
+          "snippet": "The bill, renamed the Lindsey O. Graham Sanctioning Russia and Iran Act of 2026, was approved by the Senate by an 86-11 vote. It allows President Donald Trump to impose 100 per cent tariffs on goods from countries that are top five importers of Russian oil and gas.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 5,
-          "title": "Read all Latest Updates on and about MovieReview",
-          "url": "https://www.deccanchronicle.com/tags/moviereview",
-          "snippet": "Get Latest News, Breaking News about MovieReview. Stay connected to all updated on MovieReview",
-          "exact_match": false
+          "title": "Sircilla: Ambulance Breaks Down, Woman Shifted to Another 108",
+          "url": "https://www.deccanchronicle.com/southern-states/telangana/108-ambulance-breaks-down-while-carrying-injured-woman-in-sircilla-1977582",
+          "snippet": "Movie Reviews. Television. Music.Movie Reviews. Television.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 6,
-          "title": "Movie Reviews | Bollywood | Hollywood | Kollywood | Tollywood | Deccan Chronicle",
-          "url": "https://www.deccanchronicle.com/entertainment/movie-review?pg=47",
-          "snippet": "The story revolves around a wealthy businessman trying to escape massive income tax troubles. To safeguard his fortune, · 26 Jun 2026 6:03 PM IST",
-          "exact_match": true
+          "title": "M4M Movie Review: A Gripping Suspense Thriller Around ...",
+          "url": "https://www.deccanchronicle.com/entertainment/m4m-movie-review-a-gripping-suspense-thriller-around-artistic-murders-1955428",
+          "snippet": "May 8, 2026 · M4M keeps the audience engaged throughout with its gripping screenplay and suspense-filled narration.",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 7,
-          "title": "Read all Latest Updates on and about movie review",
-          "url": "https://www.deccanchronicle.com/tags/movie-review",
-          "snippet": "The film starts off with the affluent and corrupt Kunwar Kuldeep (Govind Namdev) who literally shoots out a raiding team...",
-          "exact_match": true
+          "title": "Namrata Shirodkar Rules Out Movie Comeback Alongside Mahesh ...",
+          "url": "https://www.deccanchronicle.com/entertainment/tollywood/namrata-shirodkar-rules-out-movie-comeback-alongside-mahesh-babu-as-old-video-resurfaces-1976988",
+          "snippet": "5 days ago · While Namrata no longer acts in movies, she remains active in business, managing the work and ventures of both Mahesh Babu and their daughter, Sitara.",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 8,
-          "title": "Book Review | Biopics of Legends Between Covers",
-          "url": "https://www.deccanchronicle.com/lifestyle/booksart/book-review-biopics-of-legends-between-covers-1943730",
-          "snippet": "March 14, 2026 - Therefore I, for one, am delighted to hold in my hands the journey of the legends who brought this about. For, we may have grown up singing Paan Banaraswala or gyrating to Disco Dancer, but how many of us know of Sohrab Modi whose one-liner, “Tera khoon khoon hai, mera khoon paani!” outlives so many Yahudis?",
-          "exact_match": true
+          "title": "Yash to Return With Toxic: IMDb's Top List Secured",
+          "url": "https://www.deccanchronicle.com/entertainment/tollywood/yash-to-return-with-toxic-imdbs-top-list-secured-1970743",
+          "snippet": "Produced by KVN Productions and Monster Mind Creations, Toxic is scheduled to hit theatres on August 26, 2026.",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 9,
-          "title": "Read all Latest Updates on and about telugu movie review",
-          "url": "https://www.deccanchronicle.com/tags/telugu-movie-review",
-          "snippet": "Get Latest News, Breaking News about telugu movie review. Stay connected to all updated on telugu movie review",
-          "exact_match": true
+          "title": "Official Trailer Release Date Announced for Yash’s Toxic",
+          "url": "https://www.deccanchronicle.com/entertainment/sandalwood/official-trailer-release-date-announced-for-yashs-toxic-1975747",
+          "snippet": "Aug 1, 2026 · Every now and then, they are treating fans by unveiling songs or posters from the movie. The makers have officially announced that the trailer for Toxic will be released on August 8, 2026, exactly ...",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 10,
-          "title": "Read all Latest Updates on and about MovieReview",
-          "url": "https://www.deccanchronicle.com/tags/moviereview",
-          "snippet": "Get Latest News, Breaking News about MovieReview. Stay connected to all updated on MovieReview",
-          "exact_match": true
+          "title": "Toxic Trailer and Launch Event Set for August 8",
+          "url": "https://www.deccanchronicle.com/entertainment/kollywood/toxic-trailer-and-launch-event-set-for-august-8-1971940",
+          "snippet": "Jul 18, 2026 · Yash is awaiting the release of his highly anticipated movie Toxic. The film is set for a grand theatrical release on August 26, 2026. According to reports, the Toxic trailer is likely to be ...",
+          "exact_match": true,
+          "is_review": "N"
         }
       ]
     },
@@ -530,41 +902,85 @@
       "results": [
         {
           "rank": 1,
-          "title": "'Jo Tera Hai Woh Mera Hai' movie review: In pursuit of the Mumbai dream home",
-          "url": "https://www.deccanherald.com//entertainment/jo-tera-hai-woh-mera-hai-movie-review-in-pursuit-of-the-mumbai-dream-home-3200160",
-          "snippet": "September 20, 2024 - Jo Tera Hai Woh Mera Hai has too many subplots and themes — a happy family, a mistress, a Baba and a bunch of gullible devotees, cricket, betting, stock market manipulation, exam malpractices and vicious moneylenders.",
-          "exact_match": false
+          "title": "'Balan: The Boy' movie review: A melodrama that took too long",
+          "url": "https://www.deccanherald.com/entertainment/balan-the-boy-movie-review-a-melodrama-that-took-too-long-4094548",
+          "snippet": "Aug 1, 2026 · Conflicts in melodrama become the symphony that ebbs and flows through the waves of emotions that carry the audience from the quiet ache of private sorrow to the crashing crescendo of public ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 2,
-          "title": "'Bhaiyya Ji' movie review: Bajpayee’s 100th film fails to deliver",
-          "url": "https://www.deccanherald.com/entertainment/bhaiyya-ji-movie-review-bajpayee-s-100th-film-fails-to-deliver-3038058",
-          "snippet": "May 24, 2024 - Assembly Polls 2026 · Bengaluru · Technology · Lifestyle · Trending · Photos · DH Brandspot · Home · News Shots · Epaper · Menu · × · ADVERTISEMENT · ADVERTISEMENT · Homeentertainment · One might think it a remake of a south Indian film. The similarities are many. Taher Ahmed · Last Updated : 24 May 2024, 23:28 IST · ADVERTISEMENT · Join Us · Prefer · Comments · Bhaiyya Ji ·",
-          "exact_match": false
+          "title": "Top Movie Reviews News: Movie Reviews News Today, Movie ...",
+          "url": "https://www.deccanherald.com/entertainment-movie-reviews",
+          "snippet": "Movie Reviews 'Alley Cats' movie review: Profanity is the plot, dammit! 'Ohh My Dog' movie review: An underdog story worth chasing",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 3,
-          "title": "Movie Review",
-          "url": "https://www.deccanherald.com/tags/movie-review",
-          "snippet": "Read stories listed under on Movie Review",
-          "exact_match": false
+          "title": "2026 Movie Lineup Biggest Releases: Vijay's Final, Toxic ...",
+          "url": "https://www.deccanherald.com/entertainment/jananayagan-toxic-ntrneel-to-border-2-a-peek-into-2026s-biggest-releases-3826141",
+          "snippet": "Dec 9, 2025 · Jana Nayagan, the highly anticipated political action thriller, is set to be Superstar Thalapathy Vijay's final film before his full-time entry into politics. Directed by H. Vinoth and co-starring ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
-          "title": "Film Review",
-          "url": "https://www.deccanherald.com/tags/film-review",
-          "snippet": "Read stories listed under on Film Review",
-          "exact_match": false
+          "title": "2026 Movies: Biggest returns and sequels to watch in cinemas ...",
+          "url": "https://www.deccanherald.com/entertainment/from-riveting-returns-to-slated-sequels-a-film-lovers-guide-to-the-2026-ahead-3894613",
+          "snippet": "Feb 16, 2026 · Hollywood Sequels: From King and Devil Wears Prada 2 to Dhurandhar 2, Michael, Jana Nayagan and Avengers: Doomsday, 2026 promises star-studded returns, franchise expansions and high-stakes drama ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 5,
-          "title": "Bollywood sequels: 5 much-awaited Hindi film sequels releasing in 2026; Full guide",
-          "url": "https://www.deccanherald.com/entertainment/cocktail-2-to-drishyam-3-5-much-awaited-bollywood-film-sequels-of-this-year-3957511",
-          "snippet": "April 6, 2026 - Hindi films: From Drishyam 3 and Dhamaal 4 to Cocktail 2, a packed slate of Bollywood sequels promises romance, comedy and action in 2026, with release dates, cast updates and delays shaping the year’s biggest box office line-up.",
-          "exact_match": false
+          "title": "Bollywood Movies 2026: Ramayana, King, Awarapan 2 lead big ...",
+          "url": "https://www.deccanherald.com/entertainment/from-ramayana-to-awarapan-2-top-6-most-anticipated-bollywood-movies-of-this-year-3956762",
+          "snippet": "Apr 4, 2026 · Upcoming Bollywood films: From Ramayana and King to Awarapan 2 and Drishyam 3, 2026 brings big-ticket releases across action, drama and comedy. With stars like Shah Rukh Khan, Salman Khan and ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "'Balan: The Boy' movie review: A melodrama that took too long",
+          "url": "https://www.deccanherald.com/entertainment/balan-the-boy-movie-review-a-melodrama-that-took-too-long-4094548",
+          "snippet": "Aug 1, 2026 · Conflicts in melodrama become the symphony that ebbs and flows through the waves of emotions that carry the audience from the quiet ache of private sorrow to the crashing crescendo of public ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Brahmastra 2 2026: Ranbir, Deepika reunite as filming begins ...",
+          "url": "https://www.deccanherald.com/entertainment/ranbir-deepika-reunite-after-11-years-for-brahmastra-2-filming-starts-by-2026-end-3967392",
+          "snippet": "Apr 13, 2026 · Ranbir Deepika film: Ranbir Kapoor and Deepika Padukone reunite for Brahmastra 2, with Ayan Mukerji directing as shooting is set for late 2026. The sequel expands the Astraverse, focusing on Dev ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "Top Movie Reviews News: Movie Reviews News Today, Movie ...",
+          "url": "https://www.deccanherald.com/entertainment-movie-reviews",
+          "snippet": "Movie Reviews 'Alley Cats' movie review: Profanity is the plot, dammit! 'Ohh My Dog' movie review: An underdog story worth chasing",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Ramayana Movie: Epic as Empty Spectacle Analysis",
+          "url": "https://www.deccanherald.com/opinion/epic-as-empty-spectacle-3956589",
+          "snippet": "Apr 5, 2026 · Ramayana Film Review: Discover why the new Ramayana movie misses out on intellectual engagement and depth in its storytelling.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "Shraddha Kapoor: Eetha first look stuns fans ahead of August ...",
+          "url": "https://www.deccanherald.com/entertainment/shraddha-kapoor-leaves-fans-spellbound-in-eetha-first-look-4044951",
+          "snippet": "Jun 18, 2026 · Eetha teaser: Shraddha Kapoor transforms into Lavani icon Vithabai in Laxman Utekar's biographical drama. The first look shows her performing while pregnant, with Ajay-Atul's score, Randeep Hooda ...",
+          "exact_match": true,
+          "is_review": "N"
         }
-      ],
-      "error": "No results found."
+      ]
     },
     {
       "publisher_id": "filmfare",
@@ -665,38 +1081,170 @@
           "title": "'Hai Jawani To Ishq Hona Hai' Movie Review: David Dhawan-Varun...",
           "url": "https://www.firstpost.com/entertainment/hai-jawani-to-ishq-hona-hai-movie-review-david-dhawan-varun-dhawan-reunite-for-one-of-worst-films-of-2026-so-far-14018973.html",
           "snippet": "But it’s worse when you have to do all the introspection instead of the makers who have made this happen in 2026. So let’s drop some truth bombs. Do Knot Disturb was bad, Rascals was worse.Rating: 1.5 (out of 5 stars). Hai Jawani To Ishq Hona Hai is now playing in cinemas.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 2,
           "title": "Latest News Today: Breaking News, Top Headlines from... | Firstpost",
           "url": "https://www.firstpost.com/",
           "snippet": "Ugandan Football Star Owori Killed | Firstpost Africa.BMW owners furious after Spider-Man movie ad appears on dashboard screens. Why India is refusing to open its ethanol market to the US. India's bid to cut China's rare-earth grip faces one big hurdle.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 3,
           "title": "Moviereview | World News, Latest and Breaking News, Top... - Firstpost",
           "url": "https://www.firstpost.com/tag/moviereview/",
           "snippet": "Moviereview | Breaking news headlines, stories and live updates on current affairs from across the globe. Complete coverage on the latest top stories, business, sports, entertainment, and world politics news headlines.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
-          "title": "Ganesh Aaglave : Latest World News, Breaking Updates... | Firstpost",
-          "url": "https://www.firstpost.com/author/ganesh-aaglave/",
-          "snippet": ". 'Bugonia' Movie Review: Emma Stone starrer black comedy is absurd, unique & mind bending. . Ek Deewane Ki Deewaniyat beats Sanam Teri Kasam to become Harshvardhan Rane's highest grosser of all-time at the box office.",
-          "exact_match": false
-        },
-        {
-          "rank": 5,
           "title": "Layoffs Explained: Why Tech Jobs Are Disappearing in 2026 | Spotlight",
           "url": "https://www.firstpost.com/web-show/general-news-videos/layoffs-explained-why-tech-jobs-are-disappearing-in-2026-spotlight-vd2058428-shorts.html",
           "snippet": "The global tech industry is facing a major layoff wave in 2026, with more than 125,000 jobs lost so far. May was the peak, with nearly 29,000 tech jobs cut in a single month. From Amazon and Meta to Oracle and TikTok, companies are restructuring...",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 5,
+          "title": "Ganesh Aaglave : Latest World News, Breaking Updates... | Firstpost",
+          "url": "https://www.firstpost.com/author/ganesh-aaglave/",
+          "snippet": ". 'Bugonia' Movie Review: Emma Stone starrer black comedy is absurd, unique & mind bending. . Ek Deewane Ki Deewaniyat beats Sanam Teri Kasam to become Harshvardhan Rane's highest grosser of all-time at the box office.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Operation Safed Sagar review: A war drama that makes its ...",
+          "url": "https://www.firstpost.com/lifestyle/netflixs-operation-safed-sagar-review-a-war-drama-that-makes-their-heroes-humane-14036659.html",
+          "snippet": "3 days ago · Operation Safed Sagar review: Netflix's Kargil War drama avoids jingoism and larger-than-life heroics, choosing instead to humanise its soldiers through grounded, emotionally resonant storytelling.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "'Dhurandhar 2' Movie Review: Ranveer Singh, R. Madhavan ...",
+          "url": "https://www.firstpost.com/entertainment/ranveer-singhs-dhurandhar-2-movie-review-the-film-gets-sharper-engaging-and-more-entertaining-13990990.html",
+          "snippet": "Mar 18, 2026 · 'Dhurandhar 2' Movie Review: Ranveer Singh, R. Madhavan & Arjun Rampal’s performances get sharper, engaging and more entertaining! 'Dhurandhar 2: The Revenge' Movie Review: Not just Ranveer Singh; R. Madhavan, Arjun Rampal, and Rakesh Bedi’s performances were absolutely mind-blowing!",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "‘Everybody Loves Sohrab Handa’ Movie Review: Vinay Pathak’s ...",
+          "url": "https://www.firstpost.com/entertainment/vinay-pathaks-rajat-kapoors-everybody-loves-sohrab-handa-movie-review-a-portrayal-of-interpersonal-relationship-13998744.html",
+          "snippet": "Apr 10, 2026 · The takeaway from Rajat Kapoor’s crime drama ‘Everybody Loves Sohrab Handa’ is its portrayal of interpersonal relationships. It is not glossy, but the dynamics between individuals among a large group of friends is seamless. This movie was shown at Jio MAMI Mumbai Film Festival 2023 and is now streaming on Zee5.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "‘Michael’ Movie Review: A ‘whitewashed’ and 'clichéd ...",
+          "url": "https://www.firstpost.com/entertainment/michael-movie-review-jaafar-jackson-did-a-great-job-but-a-whitewashed-depiction-of-the-pop-icons-life-14003494.html",
+          "snippet": "Apr 23, 2026 · Follow Firstpost on Google for the latest updates from the world of Entertainment, including breaking stories from Hollywood and Bollywood, new film and OTT releases, exclusive celebrity interviews, movie reviews, international film festivals, world cinema, music, pop culture, fashion trends, major entertainment events, and unique travel, food ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "From Ranveer Singh's 'Dhurandhar 2' to Yash's 'Toxic': Movies ...",
+          "url": "https://www.firstpost.com/entertainment/from-ranveer-singhs-dhurandhar-2-to-yashs-toxic-movies-to-watch-out-for-in-march-2026-13958359.html",
+          "snippet": "Dec 10, 2025 · Directed by Aditya Dhar, the new installment starring Ranveer Singh is slated to release on March 19, 2026. Peddi Peddi is shaping up to be one of the most eagerly awaited films in Indian cinema, starring global sensation Ram Charan alongside the talented Janhvi Kapoor. The film’s songs have already taken over music charts.",
+          "exact_match": true,
+          "is_review": "N"
         }
-      ],
-      "error": "No results found."
+      ]
+    },
+    {
+      "publisher_id": "free-press-journal",
+      "publisher_name": "Free Press Journal",
+      "publisher_url": "https://www.freepressjournal.in",
+      "query": "Bhai Tera Star Hai 2026 movie review site:freepressjournal.in",
+      "results": [
+        {
+          "rank": 1,
+          "title": "Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into ...",
+          "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-review-did-raghav-juyals-big-leap-into-solo-superstardom-just-turn-into-superstar-doom",
+          "snippet": "Jul 30, 2026 · Bhai Tera Star Hai wastes Raghav Juyal’s potential with an inconsistent screenplay and underwhelming performance. The London-set film revolves around an aspiring actor trying to escape trouble ...",
+          "exact_match": false,
+          "is_review": "Y"
+        },
+        {
+          "rank": 2,
+          "title": "Bhai Tera Star Hai Box Office Collection Day 1: Raghav Juyal ...",
+          "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-box-office-collection-day-1-raghav-juyals-film-takes-low-opening-earns-approximately-25-lakh",
+          "snippet": "Jul 31, 2026 · Raghav Juyal's first movie as a solo lead actor, titled Bhai Tera Star Hai, was released on Thursday, July 30, 2026. The film failed to generate good pre-release buzz, and it has received mostly ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 3,
+          "title": "Movie Reviews and Ratings, Latest Movie Reviews | The Free ...",
+          "url": "https://www.freepressjournal.in/movie-review",
+          "snippet": "Jul 30, 2026 · Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom? 30 July 2026, 09:12 AM",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 4,
+          "title": "Bhai Tera Star Hai Box Office Collection Day 2: Raghav Juyal ...",
+          "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-box-office-collection-day-2-raghav-juyal-starrer-stays-steady-collects-25-lakh-on-friday",
+          "snippet": "Aug 1, 2026 · Reportedly, poor reviews and weak word of mouth continue to affect its performance. Murtuza Iqbal Updated: Saturday, August 01, 2026, 10:20 AM IST Bhai Tera Star Hai Box Office Collection | YouTube",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 5,
+          "title": "Bhai Tera Star Hai Box Office Day 3: Collection Of Raghav ...",
+          "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-box-office-day-3-collection-of-raghav-juyals-film-remains-disappointing-as-it-earns-only-84-lakh",
+          "snippet": "Aug 2, 2026 · Bhai Tera Star Hai collected Rs 24 lakh on Day 3, taking its total India net collection to Rs 84 lakh. Starring Raghav Juyal and Niharika M, the film has struggled since release due to poor ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into Solo...",
+          "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-review-did-raghav-juyals-big-leap-into-solo-superstardom-just-turn-into-superstar-doom",
+          "snippet": "Bhai Tera Star Hai wastes Raghav Juyal’s potential with an inconsistent screenplay and underwhelming performance. The London-set film revolves around an aspiring actor trying to escape trouble after a costly cricket wager.",
+          "exact_match": true,
+          "is_review": "Y"
+        },
+        {
+          "rank": 7,
+          "title": "'Kuch To Log Kahenge, Logo Ka Kaam Hai Kehna...': Raghav ...Dhurandhar 2, Bhooth Bangla, Hai Jawani Toh Ishq Hona Hai ...",
+          "url": "https://www.freepressjournal.in/entertainment/kuch-to-log-kahenge-logo-ka-kaam-hai-kehna-raghav-juyal-niharika-nm-reveal-how-they-deal-with-trolls-on-social-media-watch-video",
+          "snippet": "6 days ago · Bhai Tera Star Hai has received mostly negative reviews from critics. The Free Press Journal reviewer gave the film 1.5 stars. The movie has also failed to make a mark at the box office. Jul 1, 2026 · The only films that left a strong mark at the box office in the first half of 2026 were Border 2, Dhurandhar The Revenge, Bhooth Bangla, and Haunted 3D: Echoes of the Past. Clearly, January-June ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "'Woh Mera Bahot Achcha Dost Hai...': Shehnaaz Gill Reacts When...",
+          "url": "https://www.freepressjournal.in/entertainment/woh-mera-bahot-achcha-dost-hai-shehnaaz-gill-reacts-when-asked-about-raghav-juyal",
+          "snippet": "As dating rumours with Raghav Juyal continued, Shehnaaz Gill urged fans to support his upcoming film, Bhai Tera Star Hai, during an interview. Calling him a \"very good friend\", she avoided commenting on the speculation directly.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Bhai Tera Star Hai Box Office Collection Day 1: Raghav Juyal ...",
+          "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-box-office-collection-day-1-raghav-juyals-film-takes-low-opening-earns-approximately-25-lakh",
+          "snippet": "Jul 31, 2026 · Raghav Juyal's first movie as a solo lead actor, titled Bhai Tera Star Hai, was released on Thursday, July 30, 2026. The film failed to generate good pre-release buzz, and it has received mostly ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "Movie Reviews and Ratings, Latest Movie Reviews | The Free ...",
+          "url": "https://www.freepressjournal.in/movie-review",
+          "snippet": "Jul 30, 2026 · Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom? 30 July 2026, 09:12 AM",
+          "exact_match": true,
+          "is_review": "N"
+        }
+      ]
     },
     {
       "publisher_id": "hindustan",
@@ -706,41 +1254,85 @@
       "results": [
         {
           "rank": 1,
-          "title": "Hindi News Live, हिंदी न्यूज़, Hindi Samachar आज, 11 अगस्त 2026, की...",
-          "url": "https://www.livehindustan.com/",
-          "snippet": "EntertainmentEntertainment News TV News Web Series Movie Review Bigg Boss.",
-          "exact_match": false
+          "title": "Oscars 2026 Winners: ऑस्कर 2026 के विनर्स की लिस्ट, इस फिल्म ...",
+          "url": "https://www.livehindustan.com/entertainment/bollywood/oscars-2026-winners-live-updates-know-who-won-best-film-best-actor-best-actress-award-201773620078163.html",
+          "snippet": "Mar 16, 2026 · Oscars 2026 Winners List: 98वें एकेडमी अवाॅर्ड्स को कोनन ओ'ब्रायन ने होस्ट किया। एमी मैडिगन ने 'बेस्ट सपोर्टिंग एक्ट्रेस' का अवाॅर्ड जीता है, वहीं शॉन पेन ने 'बेस्ट ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 2,
-          "title": "Astrology News Hindi (पढ़ें 7 अगस्त 2026 धर्म की ताजा खबर) - Astrology...",
-          "url": "https://www.livehindustan.com/astrology",
-          "snippet": "CricketCricket Schedule Live Cricket Score Women T20 World Cup 2026 Women T20 World Cup 2026 Schedule Women T20 World Cup 2026 Points Table Women T20 World Cup 2026 Stats दिल्ली प्रीमियर लीग 2026 DPL 2026 पॉइंट्स टेबल शेड्यूल.",
-          "exact_match": false
+          "title": "Tu Meri Main Tera Main Tera Tu Meri Day 1 box office ...",
+          "url": "https://www.livehindustan.com/entertainment/bollywood/tu-meri-main-tera-main-tera-tu-meri-day-1-box-office-collection-prediction-kartik-aaryan-ananya-panday-rom-com-movie-201766583963836.html",
+          "snippet": "Dec 24, 2025 · Tu Meri Main Tera Main Tera Tu Meri: रणवीर सिंह की ‘धुरंधर’ बॉक्स ऑफिस पर तहलका मचा रही है। इस फिल्म के तूफान से कार्तिक आर्यन और अनन्या पांडे की फिल्म ‘तू मेरी मैं तेरा मैं ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 3,
-          "title": "Chandra Grahan : कुछ देर में चंद्रग्रहण होगा शुरू, कहां किस समय दिखेगा, अब...",
-          "url": "https://www.livehindustan.com/astrology/chandra-grahan-2026-live-update-3-march-2026-lunar-eclipse-time-in-india-sutak-timing-effect-rashifal-live-blog-201772428695203.html",
-          "snippet": "CricketCricket Schedule Live Cricket Score Women T20 World Cup 2026 Women T20 World Cup 2026 Schedule Women T20 World Cup 2026 Points Table Women T20 World Cup 2026 Stats दिल्ली प्रीमियर लीग 2026 DPL 2026 पॉइंट्स टेबल शेड्यूल.",
-          "exact_match": false
+          "title": "Tu Meri Main Tera Main Tera Tu Meri Film Review ... - Hindustan",
+          "url": "https://www.livehindustan.com/entertainment/bollywood/tu-meri-main-tera-main-tera-tu-meri-film-review-kartik-aaryan-jackie-shroff-ananya-panday-holiday-love-story-201766644274059.html",
+          "snippet": "Dec 25, 2025 · कार्तिक आर्यन और अनन्या पांडे की फिल्म तू मेरी मैं तेरा मैं तेरा तू मेरी सिनेमाघरों में रिलीज हो चुकी है। इस फिल्म में जैकी श्रॉफ भी नजर आए हैं। आइए ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
-          "title": "भागलपुर में कांग्रेस का प्रशिक्षण शिविर, राजेश राम ने कार्यकर्ताओं से चुनावी...",
-          "url": "https://www.livehindustan.com/videos/bihar/bhagalpur-congress-training-camp-rajesh-ram-election-preparation-modi-shah-201786100131190.html",
-          "snippet": "Aug 07, 2026 04:29 pm ISTAbhinav Srivastavaलाइव हिन्दुस्तान. Subscribe Now Share.",
-          "exact_match": false
+          "title": "कैसी है राजकुमार राव की 2 घंटे 5 मिनट की ‘टोस्टर’, IMDb पर इस ...",
+          "url": "https://www.livehindustan.com/entertainment/film-review/toaster-review-rajkummar-rao-sanya-malhotra-abhishek-banerjee-dark-comedy-crime-thriller-released-netflix-imdb-rating-201776300441761.html",
+          "snippet": "Apr 16, 2026 · Netflix Movie Review: राजकुमार राव और सान्या मल्होत्रा की फिल्म टोस्टर नेटफ्लिक्स पर रिलीज हो गई है। फिल्म 15 अप्रैल को ओटीटी पर आई है। इस वीकेंड अगर आप फिल्म को ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 5,
-          "title": "श्योपुर के कराहल में खाद-बीज दुकानों की जांच के दौरान कृषि विभाग की टीम से...",
-          "url": "https://www.livehindustan.com/videos/madhya-pradesh/sheopur-karahal-agriculture-team-attacked-during-fertilizer-seed-shop-inspection-201786114716331.html",
-          "snippet": "CricketCricket Schedule Live Cricket Score Women T20 World Cup 2026 Women T20 World Cup 2026 Schedule Women T20 World Cup 2026 Points Table Women T20 World Cup 2026 Stats दिल्ली प्रीमियर लीग 2026 DPL 2026 पॉइंट्स टेबल शेड्यूल.",
-          "exact_match": false
+          "title": "Dhurandhar 2: रकुल प्रीत सिंह ने किया धुरंधर-2 का रिव्यू ...",
+          "url": "https://www.livehindustan.com/entertainment/bollywood/dhurandhar-2-review-by-rakul-preet-singh-praised-ranveer-singh-says-nobody-is-like-you-201774108312672.html",
+          "snippet": "Mar 21, 2026 · Dhurandhar 2 Review: एक्ट्रेस रकुल प्रीत सिंह ने फिल्म धुरंधर-2 देखने के बाद इसका रिव्यू किया है। एक्ट्रेस ने रणवीर सिंह और डायरेक्टर आदित्य धर की जमकर तारीफ की है ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Dhurandhar 2 Review: बॉक्स ऑफिस पर फिर आएगी 'सुनामी', तरण ...",
+          "url": "https://www.livehindustan.com/entertainment/bollywood/dhurandhar-2-review-trade-expert-taran-adarsh-calls-it-a-masterpiece-predicts-a-tsunami-on-box-office-201773844307973.html",
+          "snippet": "Mar 18, 2026 · Dhurandhar 2 Review: रणवीर सिंह की फिल्म धुरंधर-2 बॉक्स ऑफिस पर कल रिलीज होने जा रही है। फिल्म देखने के बाद ट्रेड विशेषज्ञ तरण आदर्श ने इसका रिव्यू जारी किया है। तरण ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Dhurandhar 2: रकुल प्रीत सिंह ने किया धुरंधर-2 का रिव्यू ...",
+          "url": "https://www.livehindustan.com/entertainment/bollywood/dhurandhar-2-review-by-rakul-preet-singh-praised-ranveer-singh-says-nobody-is-like-you-201774108312672.html",
+          "snippet": "Mar 21, 2026 · Dhurandhar 2 Review: एक्ट्रेस रकुल प्रीत सिंह ने फिल्म धुरंधर-2 देखने के बाद इसका रिव्यू किया है। एक्ट्रेस ने रणवीर सिंह और डायरेक्टर आदित्य धर की जमकर तारीफ की है ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "'मेरा छक्का पाकिस्तान में गिरा ', सचिन तेंदुलकर ने की 'धुरंधर ...",
+          "url": "https://www.livehindustan.com/entertainment/bollywood/rakesh-bedi-reveals-sachin-tendulkar-told-called-to-praise-his-work-in-dhurandhar-201775392687998.html",
+          "snippet": "Apr 5, 2026 · 'धुरंधर 2' बॉक्स ऑफिस पर भी गदर काट रही है। इस फिल्म की तारीफ फैंस और स्टार्स ही नहीं, बल्कि सचिन तेंदुलकर ने भी। हाल ही में इस बात का खुलासा खुद राकेश बेदी ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "कैसी है राजकुमार राव की 2 घंटे 5 मिनट की ‘टोस्टर’, IMDb पर इस ...",
+          "url": "https://www.livehindustan.com/entertainment/film-review/toaster-review-rajkummar-rao-sanya-malhotra-abhishek-banerjee-dark-comedy-crime-thriller-released-netflix-imdb-rating-201776300441761.html",
+          "snippet": "Apr 16, 2026 · Netflix Movie Review: राजकुमार राव और सान्या मल्होत्रा की फिल्म टोस्टर नेटफ्लिक्स पर रिलीज हो गई है। फिल्म 15 अप्रैल को ओटीटी पर आई है। इस वीकेंड अगर आप फिल्म को ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "VFX नहीं था 'धुरंधर-2' में रणवीर का घोस्ट लुक, BTS वीडियो ...",
+          "url": "https://www.livehindustan.com/entertainment/bollywood/ranveer-singh-ghost-look-in-dhurandhar-2-was-not-vfx-or-cgi-bts-video-shows-the-truth-201774185163502.html",
+          "snippet": "Mar 22, 2026 · Dhurandhar 2: फिल्म धुरंधर-2 से रणवीर सिंह का घोस्ट लुक काफी चर्चा में रहा है, लेकिन क्या आपको पता है कि उनका यह लुक VFX की देन नहीं था। अब एक BTS वीडियो में दिखाया गया ...",
+          "exact_match": true,
+          "is_review": "N"
         }
-      ],
-      "error": "No results found."
+      ]
     },
     {
       "publisher_id": "hindustan-times",
@@ -825,6 +1417,94 @@
           "title": "Raghav Juyal says audiences need Govinda-style entertainers again...",
           "url": "https://www.hindustantimes.com/entertainment/bollywood/raghav-juyal-says-audiences-need-govinda-style-entertainers-again-people-need-to-forget-their-tension-bhai-tera-star-hai-101784215529140.html",
           "snippet": "About Bhai Tera Star Hai. After leaving audiences stunned with his intense performances in Kill and The Ba***ds of Bollywood, Raghav Juyal is ready to show a completely different side of himself.",
+          "exact_match": true,
+          "is_review": "N"
+        }
+      ]
+    },
+    {
+      "publisher_id": "ians-live",
+      "publisher_name": "IANS Live",
+      "publisher_url": "https://ianslive.in",
+      "query": "Bhai Tera Star Hai 2026 movie review site:ianslive.in",
+      "results": [
+        {
+          "rank": 1,
+          "title": "Raghav Juyal calls his ‘Bhai Tera Star Hai’ character ‘unapologetically...",
+          "url": "https://ianslive.in/raghav-juyal-calls-his-bhai-tera-star-hai-character-is-unapologetically-over-the-top-endlessly-entertaining--20260709114823",
+          "snippet": "Director Vivek B. Agrawal added: “Bhai Tera Star Hai is a celebration of pure entertainment. It doesn’t take itself too seriously, and that’s exactly what makes it so much fun. We promise a laughter-filled ride with quirky characters, unexpected twists, and nonstop entertainment.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 2,
+          "title": "Raghav Juyal Reveals: Aryan Khan Loved This Comedy Film | Bhai...",
+          "url": "https://ianslive.in/shortvideos/raghavjuyal-aryankhan-bhaiterastarhai-bollywoodcomedy-entertainmentnews-31072026193846",
+          "snippet": "With Raghav’s comic timing and a fresh narrative, Bhai Tera Star Hai is expected to connect well with audiences who enjoy classic-style entertainers.Niharika also expressed her excitement about being part of the project, highlighting its relatable and entertaining...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 3,
+          "title": "From ‘Kill’ to Comedy: Raghav Juyal Talks Versatility | Bhai Tera Star...",
+          "url": "https://ianslive.in/shortvideos/raghavjuyal-bhaiterastarhai-bollywoodcomedy-killmovie-entertainmentnews-31072026193917",
+          "snippet": "With this film, Raghav aims to reconnect with audiences through humor and showcase his natural comic timing.Bhai Tera Star Hai promises a refreshing mix of entertainment, fun, and engaging storytelling, marking a shift back to light-hearted Bollywood cinema.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 4,
+          "title": "Screening of Bhai Tera Star Hai",
+          "url": "https://ianslive.in/webstories/screening-of-bhai-tera-star-hai",
+          "snippet": "Mumbai: Actress and film director Deepshikha Nagpal, along with her daughter, poses during the screening of the film 'Bhai Tera Star Hai' in Mumbai on Wednesday, July 29, 2026.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 5,
+          "title": "Niharika NM On Working With Raghav Juyal | Bhai Tera Star Hai...",
+          "url": "https://ianslive.in/shortvideos/niharikanm-raghavjuyal-bhaiterastarhai-bollywoodcomedy-entertainmentnews-31072026193742",
+          "snippet": "Mumbai, Maharashtra: Actor Raghav Juyal and actress Niharika NM, in an exclusive conversation with IANS, shared insights about their upcoming film ‘Bhai Tera Star Hai’ and their on-screen collaboration.Talking about her experience, Niharika NM said, “It was a great experience...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Raghav Juyal, Sanjay Kapoor, Chandan Roy Sanyal to star in ...",
+          "url": "https://ianslive.in/raghav-juyal-sanjay-kapoor-chandan-roy-sanyal-to-star-in-comic-entertainer-bhai-tera-star-hai--20260707152045",
+          "snippet": "Jul 7, 2026 · Mumbai, July 7 (IANS) Actors Raghav Juyal, Sanjay Kapoor and Chandan Roy Sanyal will be seen in the upcoming film ‘Bhai Tera Star Hai,’ a comic entertainer, directed by Vivek B. Agrawal.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Niharika NM shares why ‘Bhai Tera Star Hai’ stood out for her ...",
+          "url": "https://ianslive.in/niharika-nm-shares-why-bhai-tera-star-hai-stood-out-for-her-amid-todays-comedies--20260721154203",
+          "snippet": "Jul 21, 2026 · Mumbai, July 21 (IANS) Actress Niharika NM has opened up about her upcoming film ‘Bhai Tera Star Hai’ and revealed what made the project special for her.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "Raghav Juyal calls his ‘Bhai Tera Star Hai’ character ...",
+          "url": "https://ianslive.in/raghav-juyal-calls-his-bhai-tera-star-hai-character-is-unapologetically-over-the-top-endlessly-entertaining--20260709114823",
+          "snippet": "Jul 9, 2026 · Mumbai, July 9 (IANS) The makers of ‘Bhai Tera Star Hai’ on Thursday unveiled the trailer of the upcoming entertainer. The film's lead actor, Raghav Juyal, has given a deep dive into his ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Screening of Bhai Tera Star Hai - ianslive.in",
+          "url": "https://ianslive.in/webstories/screening-of-bhai-tera-star-hai",
+          "snippet": "Mumbai: Actress and film director Deepshikha Nagpal, along with her daughter, poses during the screening of the film 'Bhai Tera Star Hai' in Mumbai on Wednesday, July 29, 2026.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "'Bhai Tera Star Hai' actress Niharika NM reveals why Sai ...",
+          "url": "https://ianslive.in/bhai-tera-star-hai-actress-niharika-nm-reveals-why-sai-pallavi-inspires-her--20260731155403",
+          "snippet": "Jul 31, 2026 · Mumbai, July 31 (IANS) Actress and content creator Niharika NM has opened up about her admiration for South actress Sai Pallavi.",
           "exact_match": true,
           "is_review": "N"
         }
@@ -1017,38 +1697,170 @@
           "title": "Lensmen Reviews - Malayalam, Tamil, Hindi & English Content Reviews",
           "url": "https://lensmenreviews.com/",
           "snippet": "At Lensmen Reviews, we provide a craft-oriented analysis of movies released. Malayalam, Tamil, Hindi, and English movies and series are covered here.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 2,
           "title": "Lensmen Reviews - Page 285 of 334 - Malayalam, Tamil, Hindi...",
           "url": "https://lensmenreviews.com/page/285/",
           "snippet": "At Lensmen Reviews, we provide a craft-oriented analysis of movies released. Malayalam, Tamil, Hindi, and English movies and series are covered here.Disclosure Day Review | Spielberg’s New Alien Tale Is an Intriguingly Crafted, Unsurprising Movie. June 15, 2026.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 3,
           "title": "Lensmen Reviews - Page 253 of 334 - Malayalam, Tamil, Hindi...",
           "url": "https://lensmenreviews.com/page/253/",
           "snippet": "At Lensmen Reviews, we provide a craft-oriented analysis of movies released. Malayalam, Tamil, Hindi, and English movies and series are covered here.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
           "title": "Hindi Movie Reviews | Lensmen Movie Review Center",
           "url": "https://lensmenreviews.com/hindi/",
           "snippet": "Up to date and articulated reviews of Hindi movies based on the quality of entertainment of each one. Visit here and decide which movie is going to make you feel worth spending your time and money.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 5,
           "title": "Lensmen Reviews - Page 280 of 335 - Malayalam, Tamil, Hindi...",
           "url": "https://lensmenreviews.com/page/280/",
           "snippet": "At Lensmen Reviews, we provide a craft-oriented analysis of movies released. Malayalam, Tamil, Hindi, and English movies and series are covered here.July 3, 2026. Supergirl Review | A Dull and Inconsequential Superhero Origin Movie.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Malayalam Movie Reviews | Lensmen Movie Review Center",
+          "url": "https://lensmenreviews.com/malayalam/",
+          "snippet": "Jul 30, 2026 · Up to date and articulated reviews of Malayalam movies based on the quality of entertainment of each one. Visit here and decide which movie is going to make you feel worth spending your time and money.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Hindi Movie Reviews | Lensmen Movie Review Center",
+          "url": "https://lensmenreviews.com/hindi/",
+          "snippet": "Jul 6, 2026 · Up to date and articulated reviews of Hindi movies based on the quality of entertainment of each one. Visit here and decide which movie is going to make you feel worth spending your time and money.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "Spider-Man: Brand New Day Review | A Fun Entertainer That ...",
+          "url": "https://lensmenreviews.com/spider-man-brand-new-day-english-movie-review-2026/",
+          "snippet": "Jul 30, 2026 · The latest movie in the franchise, Spider-Man: Brand New Day, also wants to tap into a similar space where the loneliness of the character adds to the depth, and his powers add to the fun part of it.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Lensmen Reviews - Malayalam, Tamil, Hindi & English Content ...",
+          "url": "https://lensmenreviews.com/",
+          "snippet": "At Lensmen Reviews, we provide a craft-oriented analysis of movies released. Malayalam, Tamil, Hindi, and English movies and series are covered here.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "Uyir Review | A Tale of Empathy Derailed by Unnecessary ...",
+          "url": "https://lensmenreviews.com/uyir-malayalam-movie-review-2026/",
+          "snippet": "Jun 26, 2026 · Uyir Review | A Tale of Empathy Derailed by Unnecessary Thriller Elements Uyir, the latest Malayalam police story starring Roshan Mathew, is based on a true story, and the story credit is given to the police officer whose",
+          "exact_match": true,
+          "is_review": "N"
         }
-      ],
-      "error": "No results found."
+      ]
+    },
+    {
+      "publisher_id": "lokmat",
+      "publisher_name": "Lokmat",
+      "publisher_url": "https://www.lokmat.com",
+      "query": "Bhai Tera Star Hai 2026 movie review site:lokmat.com",
+      "results": [
+        {
+          "rank": 1,
+          "title": "National Handloom Day 2026 : अहिल्याबाई होळकरांच्या स्मृती जपणारी...",
+          "url": "https://www.lokmat.com/sakhi/fashion/national-handloom-day-maheshwari-saree-a-glorious-tradition-of-handloom-a-a602/",
+          "snippet": "Shopping Website Comparison | Travel Bags | Review | HR2.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 2,
+          "title": "Most Sixes In T20s 2026 : मिचेल मार्शनं 'बेबी बॉस' वैभव सूर्यवंशीला टा...",
+          "url": "https://www.lokmat.com/cricket/photos/mitchell-marsh-overtakes-vaibhav-suryavanshi-who-has-hit-the-most-sixes-in-t20s-this-year-see-list-a-a1004/",
+          "snippet": "Afghanistan tour of India, 2026. Indian Premier League, 2026.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 3,
+          "title": "Lokmat Chhatrapati Sambhajinagar Main Newspaper | Chhatrapati...",
+          "url": "https://epaper.lokmat.com/main-editions/Chhatrapati+Sambhajinagar+Main/2026-02-12/12",
+          "snippet": "These websites have their own policies regarding privacy, which you should review before visiting them. We have no responsibility for linked websites and provide these links solely for the convenience and information of our visitors.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 4,
+          "title": "वरुण धवनला पाहून प्रेक्षकांची उडणार घाबरगुंडी; अभिनेत्याची हॉरर चित्रपटांच्या...",
+          "url": "https://www.lokmat.com/filmy/bollywood/bollywood-actor-varun-dhawan-enter-in-horror-world-in-yrf-will-be-release-in-2027-says-report-a-a991/",
+          "snippet": "Web Summary : Varun Dhawan is set to star in Yash Raj Films' first horror movie, directed by Abhay Pannu. This marks Dhawan's entry into the horror genre and his second collaboration with YRF.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 5,
+          "title": "संकटात पुन्हा धावून आला भाईजान! आसाममधील पुरग्रस्तांसाठी आता सलमान खान...",
+          "url": "https://www.lokmat.com/filmy/bollywood/bollywood-actor-salman-khan-help-to-assam-flood-victims-500-homes-to-build-a-a991/",
+          "snippet": "South Movies. Reviews. Hollywood. 'रामायण' चित्रपट.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Ranveer Singh Dhurandhar Movie Alam Bhai Tea Stall Real ...",
+          "url": "https://www.lokmat.com/filmy/bollywood/ranveer-singh-dhurandhar-movie-alam-bhai-tea-stall-real-location-leh-ladakh-viral-video-a-a988/",
+          "snippet": "May 18, 2026 · Ranveer Singh Dhurandhar Movie Alam Bhai Tea Stall Real Location Leh Ladakh Viral Video video : 'धुरंधर'मधील आलम भाईंची 'ती' चहाची टपरी खरीच! बायकरनं शोधलं लोकेशन; गौरव गेराचीही प्रतिक्रिया",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "इंटिमेट सीनमुळे चित्रपटाची ऑफर नाकारली अन्...; बॉलिवूड ...",
+          "url": "https://www.lokmat.com/filmy/bollywood/bhai-tera-star-hai-movie-fame-niharika-nm-reveals-about-rejecting-films-because-intimate-scene-says-a-a991/",
+          "snippet": "Jul 28, 2026 · Web Title: bhai tera star hai movie fame niharika nm reveals about rejecting films because intimate scene says Click here to add Lokmat as your preferred news source on Google. Get Latest Marathi News , Maharashtra News and Live Marathi News Headlines from Politics, Sports, Entertainment, Business and hyperlocal news from all cities of Maharashtra.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "\"आता 'ॲनिमल' सारखे सिनेमे नको, तुझी वाणी...\", नीतिश भारद्वाज ...",
+          "url": "https://www.lokmat.com/filmy/bollywood/nitish-bharadwaj-take-on-ramayana-trailer-gives-advice-to-ranbir-kapoor-praises-nitesh-tiwari-a-a945/",
+          "snippet": "Jul 31, 2026 · Lokmat Filmy बॉलीवुड nitish bharadwaj take on ramayana trailer gives advice to ranbir kapoor praises nitesh tiwari \"आता 'ॲनिमल' सारखे सिनेमे नको, तुझी वाणी...\", नीतिश भारद्वाज यांचा रणबीर कपूरला सल्ला By ऑनलाइन लोकमत | Updated: July ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "मुंबईत १० मुलांसोबत एका खोलीत राहिला, वडापाव खाऊन काढले दिवस ...",
+          "url": "https://www.lokmat.com/filmy/photos/bollywood/bollywood-actor-bhai-tera-star-hai-movie-fame-raghav-juyal-struggle-know-about-her-film-industry-journey-a-a991/",
+          "snippet": "Jul 23, 2026 · bollywood actor bhai tera star hai movie fame raghav juyal struggle know about her film industry journey. हिंदी ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "आभासी दुनियेतील गर्लफ्रेंडनं दिला धोका; AI च्या प्रेमात ...",
+          "url": "https://www.lokmat.com/crime/girlfriend-in-virtual-world-threatened-young-man-takes-extreme-step-in-love-with-ai-what-happened-a-a629/",
+          "snippet": "Apr 15, 2026 · Girlfriend in virtual world threatened; Young man takes extreme step in love with AI, what happened?. सुरुवातीला जोनाथनने AI ला मेसेज करत मानसिक शांततेसाठी बोलणं सुरू केले होते. परंतु हळूहळू तो एआयसोबत त्याच्या ...",
+          "exact_match": true,
+          "is_review": "N"
+        }
+      ]
     },
     {
       "publisher_id": "mid-day",
@@ -1146,45 +1958,83 @@
       "results": [
         {
           "rank": 1,
-          "title": "Gold Rate Today in India 6 August 2026. Live Gold Prices of 18, 22...",
-          "url": "https://www.livemint.com/gold-prices",
-          "snippet": "Gadgets. Tech Reviews. Sports.Gold Rate Today (as on 6 Aug, 2026).",
-          "exact_match": false
+          "title": "Bhai Tera Star Hai Twitter review: Raghav Juyal delivers ...",
+          "url": "https://www.livemint.com/entertainment/bhai-tera-star-hai-twitter-review-raghav-juyal-delivers-sincere-performance-but-the-movie-11785420710380.html",
+          "snippet": "Jul 30, 2026 · Raghav Juyal’s first solo-hero movie, Bhai Tera Star Hai, was released on 30 July. The dancer-turned-actor has impressed millions with his performances in recent times.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 2,
-          "title": "आज सोने चांदी का रेट 7 अगस्त 2026: सोना 1000 हुआ महंगी, चांदी में 5000 का...",
-          "url": "https://www.livemint.com/hindi/money/gold-becomes-dearer-by-1000-silver-sees-a-surge-of-5000-check-rates-in-your-city-241786083506075.html",
-          "snippet": "Shivam Shukla. पब्लिश्ड7 Aug 2026, 12:06 PM IST.भारत में आज सोने का भाव 7 अगस्त 2026 (Gold Rate in India 7 August 2026).",
-          "exact_match": false
+          "title": "Top movies, OTT releases in 2026: King, The Devil ... - Mint",
+          "url": "https://www.livemint.com/entertainment/top-movies-ott-releases-in-2026-king-the-devil-wears-prada-2-peddi-wuthering-heights-bridgerton-dune-3-more-11769405543234.html",
+          "snippet": "Jan 26, 2026 · Top movies, OTT releases in 2026: King, The Devil Wears Prada 2, Peddi, Wuthering Heights, Bridgerton, Dune 3 & more The market’s in doldrums, the rebel superstar’s latest is a dud, Netflix ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 3,
-          "title": "Link to livemint.com",
-          "url": "https://www.livemint.com/Companies/2BySOtmkLEpXeDyiEf7kgL/20-movie-film-box-office-collections-rajinikanth-akshay.html",
-          "snippet": "The site owner hides the web page description.",
-          "exact_match": false
+          "title": "‘Mera Bacha Hai Tu’: Rakesh Bedi turns brand ... - Mint",
+          "url": "https://www.livemint.com/entertainment/mera-bacha-hai-tu-dhurandhar-2-star-rakesh-bedi-jameel-jamali-becomes-new-brand-favourite-11774599313917.html",
+          "snippet": "Mar 27, 2026 · ‘Mera Bacha Hai Tu’: Rakesh Bedi turns brand favourite; adman Sandeep Goyal decodes Dhurandhar 2 star's pivotal break Rakesh Bedi is the new social media superstar, thanks to the success of ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
-          "title": "SBI Clerk Recruitment 2026: 1,538 backlog vacancies announced in...",
-          "url": "https://www.livemint.com/education/sbi-clerk-recruitment-2026-1-538-backlog-vacancies-announced-in-special-drive-check-eligibility-how-to-apply-11786098325770.html",
-          "snippet": "Eligible candidates, aged between 20 and 28 years, can visit the official website at sbi.bank.in to fill out the SBI Clerk 2026 application form.",
-          "exact_match": false
+          "title": "Bhartha Mahasayulaki Wignyapthi Twitter review: Ravi Teja's ...",
+          "url": "https://www.livemint.com/entertainment/bhartha-mahasayulaki-wignyapthi-twitter-review-ravi-tejas-film-fails-to-impress-dubbed-dull-over-the-top-11768275681899.html",
+          "snippet": "Jan 13, 2026 · Bhartha Mahasayulaki Wignyapthi Twitter review: Actor Ravi Teja 's latest film, Bhartha Mahasayulaki Wignyapthi, is here. The Telugu comedy drama film was released on 13 January in theatres. Going ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 5,
-          "title": "Market News: Share Market Today, NIFTY, BSE/NSE LIVE, Sensex...",
-          "url": "https://www.livemint.com/market",
-          "snippet": "4 min read5 Aug 2026. Sun Pharma’s premium push cushions US generics pain, but valuations look full.Ardee Industries IPO Day 2 LIVE: Issue booked 3.08x so far. Check key dates, review. Apply or skip? Ardee Industries IPO opened on August 5, priced between ₹50 and ₹53.",
-          "exact_match": false
+          "title": "Mayasabha review: Did Tumbbad director outdo himself or is ...",
+          "url": "https://www.livemint.com/entertainment/mayasabha-review-did-tumbbad-director-outdo-himself-or-is-jaaved-jaaferi-movie-dressed-up-to-go-nowhere-x-reacts-11769770547558.html",
+          "snippet": "Jan 30, 2026 · Mayasabha review: Besides Jaaved Jaaferi, the movie also stars Mohammad Samad, Veena Jamkar, and Deepak Damle in pivotal roles. Read to know more about the netizens' pulse about the movie as the ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 6,
-          "title": "3M India Bonus: 3M India Bonus Shares, Bonus Issue, Upcoming...",
-          "url": "https://www.livemint.com/3m-india/bonus/companyid-s0003818",
-          "snippet": "Spider-Man Brand New Day review: A heartfelt sequel with soul Bhai Tera Star Hai Twitter review: Raghav Juyal delivers sincere performance Max Clark promoted by Detroit Tigers: Top prospect set for Major League debut GSTN again defers...",
-          "exact_match": true
+          "title": "Bhai Tera Star Hai Twitter review: Raghav Juyal delivers ...",
+          "url": "https://www.livemint.com/entertainment/bhai-tera-star-hai-twitter-review-raghav-juyal-delivers-sincere-performance-but-the-movie-11785420710380.html",
+          "snippet": "Jul 30, 2026 · Raghav Juyal’s first solo-hero movie, Bhai Tera Star Hai, was released on 30 July. The dancer-turned-actor has impressed millions with his performances in recent times.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Ustaad Bhagat Singh movie review: Pawan Kalyan lost acting ...",
+          "url": "https://www.livemint.com/entertainment/ustaad-bhagat-singh-movie-review-pawan-kalyan-lost-acting-touch-netizes-divided-about-telugu-entertainer-11773895415060.html",
+          "snippet": "Mar 19, 2026 · Ustaad Bhagat Singh stars Pawan Kalyan in the lead alongside Sreeleela and Raashii Khanna. Releasing on Thursday, it is clashing with Dhurandhar 2 in the Telugu-speaking belt.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "LIK X review: Fans deem Pradeep's Love Insurance ... - Mint",
+          "url": "https://www.livemint.com/entertainment/lik-x-review-fans-deem-pradeeps-love-insurance-kompany-a-blockbuster-call-it-lighthearted-black-mirror-11775803090140.html",
+          "snippet": "Apr 10, 2026 · LIK X review: Fans deem Pradeep's Love Insurance Kompany a ‘blockbuster,’ call it ‘Lighthearted Black Mirror’ LIK, promising a fresh blend of science fiction and romantic comedy, has ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Oscars 2026 Highlights: One Battle After Another wins Best ...",
+          "url": "https://www.livemint.com/us/hollywood/oscars-2026-winners-list-live-updates-nominations-winners-acadamy-awards-red-carpet-11773604894079.html",
+          "snippet": "Mar 16, 2026 · Oscars 2026 Highlights: The ceremony kicked off with the first category awards. Paul Thomas Anderson’s One Battle After Another won most awards across categories, including Best Adapted ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "Madharaasi Twitter review: Sivakarthikeyan–Murugadoss combo ...",
+          "url": "https://www.livemint.com/entertainment/madharaasi-twitter-review-sivakarthikeyan-murugadoss-combo-gets-mixed-response-11757047034043.html",
+          "snippet": "Sep 5, 2025 · The much-awaited collaboration between actor Sivakarthikeyan and veteran director A. R. Murugadoss, Madharaasi, has finally reached theatres. Early reviews have started pouring in for the big ...",
+          "exact_match": true,
+          "is_review": "N"
         }
       ]
     },
@@ -1636,73 +2486,83 @@
       "results": [
         {
           "rank": 1,
-          "title": "Bhai Tera Star Hai First Look: Raghav Juyal's New... | Outlook India",
+          "title": "Bhai Tera Star Hai First Look: Raghav Juyal’s Bollywood ...",
           "url": "https://www.outlookindia.com/art-entertainment/bhai-tera-star-hai-first-look-raghav-juyals-bollywood-dreamer-ajay-singh-shines-in-london-set-entertainer",
-          "snippet": "Bhai Tera Star Hai unveils Raghav Juyal's first look as ambitious dreamer Ajay Singh.London-set entertainer features Niharika NM alongside an ensemble cast with comedy and music.",
-          "exact_match": false
+          "snippet": "Jun 30, 2026 · Raghav Juyal's new movie brings Bollywood dreams to London Directed by Vivek B Agrawal and written by Sudipto Sarkar and Vivek B Agrawal, Bhai Tera Star Hai stars Raghav Juyal opposite Niharika NM.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 2,
-          "title": "Bhai Tera Star Hai Trailer: Raghav Juyal Stars in New... | Outlook India",
+          "title": "Bhai Tera Star Hai Trailer: Raghav Juyal Stars in New Comedy ...",
           "url": "https://www.outlookindia.com/art-entertainment/bhai-tera-star-hai-trailer-raghav-juyal-stars-in-new-comedy",
-          "snippet": "The official trailer for Bhai Tera Star Hai has been released.The comedy film stars Raghav Juyal as Ajay Singh.",
-          "exact_match": false
+          "snippet": "Jul 9, 2026 · The official trailer for Bhai Tera Star Hai is out! It stars Raghav Juyal as Ajay Singh. Directed by Vivek B. Agrawal, the comedy film releases in theatres this July.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 3,
-          "title": "'Kill' Trailer Review: Lakshya And Raghav Juyal Battle It... | Outlook...",
-          "url": "https://www.outlookindia.com/art-entertainment/kill-trailer-review-lakshya-and-raghav-juyal-battle-it-out-on-a-train-in-this-gory-action-flick",
-          "snippet": "Starring Raghav Juyal, Lakshya, and Tanya Maniktala, the trailer of 'Kill' is here. The movie will be released on July 4.",
-          "exact_match": false
+          "title": "BTS 2026 Return: How HYBE Uses Synergy to Lift All Labels ...",
+          "url": "https://respawn.outlookindia.com/pop-culture/pop-culture-news/bts-2026-return-reshapes-hybe-and-k-pops-release-playbook",
+          "snippet": "Feb 10, 2026 · BTS returns March 20, 2026, with ARIRANG. Learn how HYBE reshapes K-pop through \"intended proximity\" to boost revenue for TXT, ENHYPEN, and beyond.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
-          "title": "Tu Meri Main Tera Main Tera Tu Meri Advance Booking... | Outlook India",
-          "url": "https://www.outlookindia.com/art-entertainment/tu-meri-main-tera-main-tera-tu-meri-advance-booking-report-for-day-1",
-          "snippet": "Bhai Tera Star Hai trailer out - YouTube.Bhai Tera Star Hai First Look: Raghav Juyal’s Bollywood Dreamer Ajay Singh Shines In London-Set Entertainer.",
-          "exact_match": false
+          "title": "BTS World Tour 2026 Announced, India Missing From Asia Leg ...",
+          "url": "https://respawn.outlookindia.com/pop-culture/pop-culture-news/bts-world-tour-2026-india-absent-in-the-79-show-global-comeback",
+          "snippet": "Jan 14, 2026 · BTS World Tour 2026 has been announced with a 79-show tour spanning five continents. India is absent from the first Asia leg as global dates roll out.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 5,
-          "title": "Bollywood Movies To Watch In December 2025... | Outlook India",
-          "url": "https://www.outlookindia.com/art-entertainment/bollywood-movies-to-watch-in-december-2025",
-          "snippet": "Bhai Tera Star Hai First Look: Raghav Juyal’s Bollywood Dreamer Ajay Singh Shines In London-Set Entertainer.",
-          "exact_match": false
+          "title": "OTT And Theatrical Releases In January 2026 | Outlook India",
+          "url": "https://www.outlookindia.com/art-entertainment/ott-and-theatrical-releases-in-january-2026",
+          "snippet": "Jan 5, 2026 · OTT And Theatrical Releases In January 2026: Dhurandhar, Tere Ishk Mein, The Raja Saab, Jana Nayagan And More Here’s your go-to guide of the best films and web series releasing in January across ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 6,
-          "title": "Bhai Tera Star Hai First Look: Raghav Juyal's New... | Outlook India",
+          "title": "Bhai Tera Star Hai First Look: Raghav Juyal's New Film ...",
           "url": "https://www.outlookindia.com/art-entertainment/bhai-tera-star-hai-first-look-raghav-juyals-bollywood-dreamer-ajay-singh-shines-in-london-set-entertainer",
-          "snippet": "Bhai Tera Star Hai unveils Raghav Juyal's first look as ambitious dreamer Ajay Singh.London-set entertainer features Niharika NM alongside an ensemble cast with comedy and music.",
-          "exact_match": true
+          "snippet": "Jun 30, 2026 · Bhai Tera Star Hai reveals Raghav Juyal in a fresh avatar as Ajay Singh, a young talent determined to become a Bollywood star. Set largely in London and co-starring Niharika NM, the film promises ...",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 7,
-          "title": "Bhai Tera Star Hai Trailer: Raghav Juyal Stars in New... | Outlook India",
+          "title": "Bhai Tera Star Hai Trailer: Raghav Juyal Stars in New Comedy ...",
           "url": "https://www.outlookindia.com/art-entertainment/bhai-tera-star-hai-trailer-raghav-juyal-stars-in-new-comedy",
-          "snippet": "The official trailer for Bhai Tera Star Hai is out! It stars Raghav Juyal as Ajay Singh. Directed by Vivek B. Agrawal, the comedy film releases in theatres this July.",
-          "exact_match": true
+          "snippet": "Jul 9, 2026 · The official trailer for Bhai Tera Star Hai is out! It stars Raghav Juyal as Ajay Singh. Directed by Vivek B. Agrawal, the comedy film releases in theatres this July.",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 8,
-          "title": "Tu Meri Main Tera Main Tera Tu Meri Advance Booking... | Outlook India",
-          "url": "https://www.outlookindia.com/art-entertainment/tu-meri-main-tera-main-tera-tu-meri-advance-booking-report-for-day-1",
-          "snippet": "Bhai Tera Star Hai trailer out - YouTube.Jannik Sinner Vs Alexander Zverev, Wimbledon 2026 Final: Italian Star Defends Title, Clinches His Fifth Grand Slam. Wimbledon 2026: Linda Noskova Defeats Fellow Czech Karolina Muchova To Win Her First Grand Slam Title.",
-          "exact_match": true
+          "title": "South OTT And Theatrical Releases This Week (July 13-19, 2026 ...",
+          "url": "https://www.outlookindia.com/art-entertainment/south-cinema/south-ott-and-theatrical-releases-this-week-july-13-19-2026-maa-inti-bangaaram-pavithram-season-2-gdn-and-more",
+          "snippet": "Jul 14, 2026 · South OTT and Theatrical Releases This Week: From Samantha's Maa Inti Bangaaram to R Madhavan's GDN, here's the list of major releases.",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 9,
-          "title": "Bollywood Movies To Watch In December 2025... | Outlook India",
-          "url": "https://www.outlookindia.com/art-entertainment/bollywood-movies-to-watch-in-december-2025",
-          "snippet": "Related Content. Bhai Tera Star Hai First Look - Instagram.Alexander Zverev Vs Marcos Giron Highlights, Wimbledon 2026: German Star Storms Into Fourth Round With Straight-Sets Win. Williams Sisters, Serena And Venus Withdraw From Wimbledon 2026 Doubles Due To Knee Injury.",
-          "exact_match": true
+          "title": "Balan: The Boy Review – Haunting Malayalam Mother-Son ...",
+          "url": "https://www.outlookindia.com/art-entertainment/movie-review/balan-the-boy-review-a-haunting-mother-son-survival-story-that-loses-its-way",
+          "snippet": "Jun 20, 2026 · Read our review of Chidambaram’s 2026 Malayalam drama Balan: The Boy, a haunting mother-son survival story with powerful performances by Farzana Palathingal and Adhisheshan, stunning ...",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 10,
-          "title": "Ananya Panday To Star Opposite Kartik Aaryan In Tu Meri Main Tera...",
-          "url": "https://www.outlookindia.com/art-entertainment/ananya-panday-to-star-opposite-kartik-aaryan-in-tu-meri-main-tera-main-tera-tu-meri-release-date-announced",
-          "snippet": "Ananya Panday has joined Kartik Aaryan in Tu Meri Main Tera Main Tera Tu Meri, which will hit the screens on February 13, 2026.",
-          "exact_match": true
+          "title": "Critics’ Choice Awards 2026 Full Winners List: Homebound ...",
+          "url": "https://www.outlookindia.com/art-entertainment/critics-choice-awards-2026-full-winners-list-2",
+          "snippet": "Mar 25, 2026 · Critics Choice Awards 2026 full winners list: In the feature film category, Neeraj Ghaywan’s Homebound, which led with six nominations, won four major awards. Black Warrant dominated in the web ...",
+          "exact_match": true,
+          "is_review": "N"
         }
       ]
     },
@@ -1717,70 +2577,80 @@
           "title": "The monsoon just found its anthem! ‘Aankhon Se Tune 2.0’ from Bhai...",
           "url": "https://www.peepingmoon.com/entertainment-news/news/82198/The-monsoon-just-found-its-anthem-Aankhon-Se-Tune--from-Bhai-Tera-Star-Hai-revives-a-timeless-classic-with-a-fresh-romantic-twist.html",
           "snippet": "Bhai Tera Star Hai releases in cinemas on 30th July 2026.Alpha Movie Review: YRF’s Spy Universe delivers its biggest disappointment.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 2,
           "title": "Bollywood News, Entertainment News, TV News... - peepingmoon.com",
           "url": "https://www.peepingmoon.com/category/webcast-news/webcast-reviews/page/8",
           "snippet": "Checkout Bollywood and Television News and Gossip, bollywood breaking news, movie reviews, TV serial news, entertainment news, celebrity photos and videos at Peepingmoon.com.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 3,
           "title": "Bollywood News, Entertainment News, TV News... - peepingmoon.com",
           "url": "https://www.peepingmoon.com/category/webcast-news/page/8",
           "snippet": "Checkout Bollywood and Television News and Gossip, bollywood breaking news, movie reviews, TV serial news, entertainment news, celebrity photos and videos at Peepingmoon.com.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
           "title": "Raghav juyal LED comedy bhai tera star hai goes on floors in london",
           "url": "https://www.peepingmoon.com/entertainment-news/news/81656/RAGHAV-JUYAL-LED-COMEDY-BHAI-TERA-STAR-HAI-GOES-ON-FLOORS-IN-LONDON.html",
           "snippet": "Produced by Eastwood Pictures / Indian Stories2, Bhai Tera Star Hai is slated for a 2026 release. Further details will be announced closer to the film’s release.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 5,
           "title": "Vivek B Agrawal Unveil First Poster of Bhai Tera Star Hai.. Talent...",
           "url": "https://www.peepingmoon.com/entertainment-news/news/82130/Vivek-B-Agrawal-Unveil-First-Poster-of-Bhai-Tera-Star-Hai-Talent-Loading.html",
           "snippet": "Bhai Tera Star Hai is presented by Eastwood Pictures and produced by Eastwood Pictures & Indian Stories 2.Bandar Movie Review: Anurag Kashyap crafts a dark, haunting crime thriller led by Bobby Deol’s career-defining performance.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 6,
-          "title": "The monsoon just found its anthem! ‘Aankhon Se Tune 2.0’ from Bhai...",
-          "url": "https://www.peepingmoon.com/entertainment-news/news/82198/The-monsoon-just-found-its-anthem-Aankhon-Se-Tune--from-Bhai-Tera-Star-Hai-revives-a-timeless-classic-with-a-fresh-romantic-twist.html",
-          "snippet": "on July 22, 2026 05:18:37 PM. The monsoon just found its anthem!After setting the mood with the energetic Nach Le Lalariya, the makers of Bhai Tera Star Hai have unveiled the film’s romantic track, Aankhon Se Tune 2.0.",
-          "exact_match": true
+          "title": "Raghav Juyal’s Bhai Tera Star Hai Trailer to Release Tomorrow",
+          "url": "https://www.peepingmoon.com/entertainment-news/news/82166/Raghav-Juyals-Bhai-Tera-Star-Hai-Trailer-to-Release-Tomorrow.html",
+          "snippet": "Jul 8, 2026 · Raghav Juyal is all set to bring the dreamer Ajay Singh to life in Bhai Tera Star Hai, an out and out entertainer that celebrates ambition, hope and the magic of believing in yourself. Directed by Vivek B Agrawal, the film also stars Sanjay Kapoor, Niharika NM, Barkha Singh, Vikalp Mehta and an ensemble cast in pivotal roles. Following the response to its teaser and character introductions ...",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 7,
-          "title": "Raghav juyal LED comedy bhai tera star hai goes on floors in london",
-          "url": "https://www.peepingmoon.com/entertainment-news/news/81656/RAGHAV-JUYAL-LED-COMEDY-BHAI-TERA-STAR-HAI-GOES-ON-FLOORS-IN-LONDON.html",
-          "snippet": "Produced by Eastwood Pictures / Indian Stories2, Bhai Tera Star Hai is slated for a 2026 release. Further details will be announced closer to the film’s release.",
-          "exact_match": true
+          "title": "Raghav Juyal’s Biggest Leap Yet: Bhai Tera Star Hai Marks a ...",
+          "url": "https://www.peepingmoon.com/entertainment-news/news/82173/Raghav-Juyals-Biggest-Leap-Yet-Bhai-Tera-Star-Hai-Marks-a-Major-New-Chapter-in-His-Career.html",
+          "snippet": "Jul 11, 2026 · As Bhai Tera Star Hai gears up for its theatrical release on 30 July 2026, the film represents an exciting new milestone in Raghav Juyal’s journey as an entertainer. With its mix of comedy, emotion and a vibrant ensemble, the film aims to bring audiences a wholesome theatrical experience while showcasing a new side of Raghav as a leading man.",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 8,
-          "title": "Bollywood News, Entertainment News, TV News... - peepingmoon.com",
-          "url": "https://www.peepingmoon.com/category/webcast-news/page/8",
-          "snippet": "Checkout Bollywood and Television News and Gossip, bollywood breaking news, movie reviews, TV serial news, entertainment news, celebrity photos and videos at Peepingmoon.com.",
-          "exact_match": true
+          "title": "‘Bhai Tera Star Hai’ Trailer Out Now: Raghav Juyal Brings ...",
+          "url": "https://www.peepingmoon.com/entertainment-news/news/82168/Bhai-Tera-Star-Hai-Trailer-Out-Now-Raghav-Juyal-Brings-Comedy-And-Chaos-To-The-Big-Screen.html",
+          "snippet": "Jul 9, 2026 · After building excitement with the teaser, the makers of Bhai Tera Star Hai have unveiled the much-anticipated trailer of the film, giving audiences a hilarious glimpse into the outrageous world of Ajay Singh. After winning unanimous praise for his performances in Kill and Bads of Bollywood, Raghav Juyal returns in a completely new avatar with an out-and-out comic entertainer.",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 9,
-          "title": "Vivek B Agrawal Unveil First Poster of Bhai Tera Star Hai.. Talent...",
-          "url": "https://www.peepingmoon.com/entertainment-news/news/82130/Vivek-B-Agrawal-Unveil-First-Poster-of-Bhai-Tera-Star-Hai-Talent-Loading.html",
-          "snippet": "on June 30, 2026 01:28:14 PM.Set against the vibrant backdrop of London, Bhai Tera Star Hai promises a fresh, energetic, and laugh-out-loud entertainer packed with memorable characters, infectious music, and. youthful charm.",
-          "exact_match": true
+          "title": "RAGHAV JUYAL LED COMEDY BHAI TERA STAR HAI GOES ON FLOORS IN ...",
+          "url": "https://www.peepingmoon.com/entertainment-news/news/81656/RAGHAV-JUYAL-LED-COMEDY-BHAI-TERA-STAR-HAI-GOES-ON-FLOORS-IN-LONDON.html",
+          "snippet": "Mar 4, 2026 · An exciting new comedy, Bhai Tera Star Hai, has officially gone on floors in London. The film brings together a diverse mix of actors, led by Raghav Juyal, alongside Sanjay Kapoor, Niki Aneja, Niharika NM, Barkha Singh, Vivaan Bhatena, Vikalp Mehta, The Jordindians, Parvathy Omanakuttan, Tina Desai and Chandan Roy Sanyal among others.",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 10,
-          "title": "Bollywood News, Entertainment News, TV News... - peepingmoon.com",
-          "url": "https://www.peepingmoon.com/category/Peepingmoon-Videos/page/32",
-          "snippet": "Checkout Bollywood and Television News and Gossip, bollywood breaking news, movie reviews, TV serial news, entertainment news, celebrity photos and videos at Peepingmoon.com.",
-          "exact_match": true
+          "title": "’Bhai Tera Star Hai’ introduces its vibrant ensemble cast ...",
+          "url": "https://www.peepingmoon.com/entertainment-news/news/82162/Bhai-Tera-Star-Hai-introduces-its-vibrant-ensemble-cast-featuring-Raghav-Juyal-Sanjay-Kapoor-Barkha-Singh-and-more.html",
+          "snippet": "Jul 7, 2026 · After creating buzz with its first poster and quirky teaser, the makers of Bhai Tera Star Hai have now unveiled the film’s vibrant ensemble cast, giving audiences a closer look at the talented faces who will bring this comic entertainer to life.",
+          "exact_match": true,
+          "is_review": "N"
         }
       ]
     },
@@ -1961,6 +2831,94 @@
       ]
     },
     {
+      "publisher_id": "south-asian-herald",
+      "publisher_name": "South Asian Herald",
+      "publisher_url": "https://southasianherald.com",
+      "query": "Bhai Tera Star Hai 2026 movie review site:southasianherald.com",
+      "results": [
+        {
+          "rank": 1,
+          "title": "Film Review Archives - South Asian Herald",
+          "url": "https://southasianherald.com/category/film-review/",
+          "snippet": "4 days ago · Film Review: Dhamaal 4 is About Entertainment for Kids of all Ages, Not for Intellectuals by Rajiv Vijayakar July 14, 2026 4 minutes read",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 2,
+          "title": "Reflections on Cinema 2026 - South Asian Herald",
+          "url": "https://southasianherald.com/reflections-on-cinema-2026/",
+          "snippet": "Feb 24, 2026 · Cinema 2026 continues to intrigue me. Having watched two films that were pitiably poor, I thought I should reflect on them together rather than splurge my time writing individual reviews…",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 3,
+          "title": "Film Review: The Taj Story Investigates, Illustrates ...",
+          "url": "https://southasianherald.com/film-review-the-taj-story-investigates-illustrates-instructs-but/",
+          "snippet": "Nov 5, 2025 · Surrounded by the hit Thamma and also the projected small-town success of Ek Deewane Ki Deewaniyat, and co-released with Bahubali—The Epic, one would have expected The Taj Story, a saga sans stars, to go unnoticed…",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 4,
+          "title": "Film Reviews: Main Vaapas Aaunga; Governor; and Bharat ...",
+          "url": "https://southasianherald.com/film-reviews-main-vaapas-aaunga-governor-and-bharat-bhhagya-viddhaata/",
+          "snippet": "Jun 17, 2026 · Film Reviews: Main Vaapas Aaunga; Governor; and Bharat Bhhagya Viddhaata By Rajiv Vijayakar June 17, 2026 0 comments 6 minutes read",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 5,
+          "title": "First Half 2026: A Unique Six-Month - South Asian Herald",
+          "url": "https://southasianherald.com/first-half-2026-a-unique-six-month/",
+          "snippet": "Jul 7, 2026 · At face value, the first half of 2026 was like any other six months: it had great, good, mediocre, bad and execrable films of all hues, some released on OTT, some dubbed regional films (including this time—Surprise! Surprise!—a Gujarati blockbuster dubbed in Hindi— Laalo— and a Marathi movie). But in some ways, it was also unusual or ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Reflections on Cinema 2026 - South Asian Herald",
+          "url": "https://southasianherald.com/reflections-on-cinema-2026/",
+          "snippet": "Feb 24, 2026 · Cinema 2026 continues to intrigue me. Having watched two films that were pitiably poor, I thought I should reflect on them together rather than splurge my time writing individual reviews…",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Rajiv Vijayakar - southasianherald.com",
+          "url": "https://southasianherald.com/author/r_v/",
+          "snippet": "Jul 23, 2026 · Film Review: Dhamaal 4 is About Entertainment for Kids of all Ages, Not for Intellectuals by Rajiv Vijayakar July 14, 2026 4 minutes read",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "First Half 2026: A Unique Six-Month - South Asian Herald",
+          "url": "https://southasianherald.com/first-half-2026-a-unique-six-month/",
+          "snippet": "Jul 7, 2026 · At face value, the first half of 2026 was like any other six months: it had great, good, mediocre, bad and execrable films of all hues, some released on OTT, some dubbed regional films (including this time—Surprise! Surprise!—a Gujarati blockbuster dubbed in Hindi— Laalo— and a Marathi movie). But in some ways, it was also unusual or ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Film Reviews: Main Vaapas Aaunga; Governor; and Bharat ...",
+          "url": "https://southasianherald.com/film-reviews-main-vaapas-aaunga-governor-and-bharat-bhhagya-viddhaata/",
+          "snippet": "Jun 17, 2026 · Film Reviews: Main Vaapas Aaunga; Governor; and Bharat Bhhagya Viddhaata By Rajiv Vijayakar June 17, 2026 0 comments 6 minutes read",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "Film Review: Dhamaal 4 is About Entertainment for Kids of all ...",
+          "url": "https://southasianherald.com/film-review-dhamaal-4-is-about-entertainment-for-kids-of-all-ages-not-for-intellectuals/",
+          "snippet": "Jul 14, 2026 · Dhamaal 4 Film Review Films India South Asia 0 Rajiv Vijayakar Rajiv Vijayakar is the Entertainment Editor at South Asian Herald. He has been a journalist and critic for over 25 years and was part of the National Film Awards Jury in India in 2011 and 2015.",
+          "exact_match": true,
+          "is_review": "N"
+        }
+      ]
+    },
+    {
       "publisher_id": "the-economic-times",
       "publisher_name": "The Economic Times",
       "publisher_url": "https://economictimes.indiatimes.com",
@@ -1968,41 +2926,85 @@
       "results": [
         {
           "rank": 1,
-          "title": "tu meri main tera main tera tu meri: Latest News & Videos, Photos...",
-          "url": "https://economictimes.indiatimes.com/topic/tu-meri-main-tera-main-tera-tu-meri",
-          "snippet": "Tu Yaa Main, starring Adarsh Gourav and Shanaya Kapoor, releases in theatres on February 13, 2026, and will stream after that. Directed by Bejoy Nambiar, the Gen Z survival thriller follows two social media influencers trapped by a crocodile in the wild, testing their survival instincts...",
-          "exact_match": false
-        },
-        {
-          "rank": 2,
           "title": "tu meri main tera main tera tu meri collection: Latest News & Videos...",
           "url": "https://economictimes.indiatimes.com/topic/tu-meri-main-tera-main-tera-tu-meri-collection",
           "snippet": "04 Jul, 2026, 01:29 PM IST. Alpha box office collection day 1: Alia Bhatt, Sharvari's action movie opens on slow note, earns Rs 9 crore in India.30 Jun, 2026, 09:33 PM IST. Awarapan 2 teaser review: Emraan Hashmi is back after 19 years as Shivam Pandit with Disha Patani.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 2,
+          "title": "tu meri main tera main tera tu meri: Latest News & Videos, Photos...",
+          "url": "https://economictimes.indiatimes.com/topic/tu-meri-main-tera-main-tera-tu-meri",
+          "snippet": "Tu Yaa Main, starring Adarsh Gourav and Shanaya Kapoor, releases in theatres on February 13, 2026, and will stream after that. Directed by Bejoy Nambiar, the Gen Z survival thriller follows two social media influencers trapped by a crocodile in the wild, testing their survival instincts...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 3,
-          "title": "tu meri main tera main tera tu meri streaming: Latest News & Videos...",
-          "url": "https://economictimes.indiatimes.com/topic/tu-meri-main-tera-main-tera-tu-meri-streaming",
-          "snippet": "Satellite imagery confirmed the significant damage to the strategic aircraft on July 16, 2026. This strike demonstrated Ukraine's expanding long-range attack capabilities deep inside Russian territory.",
-          "exact_match": false
+          "title": "New Zealand changes parent visa rules from October 2026: 90% by...",
+          "url": "https://economictimes.indiatimes.com/nri/migrate/new-zealand-changes-parent-visa-rules-from-october-2026-90-by-queue-10-via-ballot-system/articleshow/133049998.cms",
+          "snippet": "New Zealand will implement a hybrid selection system for its Parent Resident Visa category starting October 5, 2026. Approximately ninety percent of expressions of interest will be selected by date order, while ten percent will use a ballot.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
-          "title": "Riyadh Air aims to add 2nd India destination by end-2026: Senior...",
-          "url": "https://economictimes.indiatimes.com/nri/visit/riyadh-air-aims-to-add-2nd-india-destination-by-end-2026-senior-executive/articleshow/133031254.cms",
-          "snippet": "Horoscope Tomorrow, 8 August 2026 Horoscope Today, August 7, 2026 RBI MPC Meeting 2026 Live Animal Kingdom Bigg Boss 20 Teaser Sensex Nifty 50 LIVE Updates...",
-          "exact_match": false
-        },
-        {
-          "rank": 5,
           "title": "Business News Live, Share Market News - Read Latest Finance News...",
           "url": "https://economictimes.indiatimes.com/",
           "snippet": "National Handloom Day 2026: Theme, significance, history and celebrations. On August 7, 2026, India will proudly commemorate National Handloom Day, showcasing its vibrant handloom legacy. This year's celebration underscores innovation and sustainability in the handloom industry.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 5,
+          "title": "22k gold rate today: Check 24, 22k, 20k, 18k gold prices...",
+          "url": "https://economictimes.indiatimes.com/wealth/invest/22k-gold-rate-today-check-24-22k-20k-18k-gold-prices-august-8-2026-at-tanishq-malabar-gold-diamonds-joyalukkas-kalyan-jewellers-and-ibja/articleshow/133047702.cms",
+          "snippet": "Gold rate today: On Saturday, August 8, 2026, gold prices saw a notable increase. If you are planning to buy gold jewellery, here is a look at the latest 22K gold rates today at Tanishq, Malabar Gold & Diamonds, Joyalukkas, Kalyan Jewellers and IBJA.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "star review: 'Star' review: Kavin's stellar performance earns ...",
+          "url": "https://economictimes.indiatimes.com/magazines/panache/star-review-kavins-stellar-performance-earns-blockbuster-ratings-netizens-call-it-a-must-watch/articleshow/110000735.cms",
+          "snippet": "May 10, 2024 · Kavin's latest film 'Star' has garnered widespread acclaim for its engaging storyline, impressive performances, and Yuvan Shankar Raja's exceptional music. Directed by Elan, the movie is hailed as one of Kollywood's best in 2024, with viewers praising Kavin's role and the film's motivational message. 'Star' has quickly become a box office hit, resonating with audiences and earning praise for ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Father’s Day 2026: 5 must-watch movies that celebrate ...",
+          "url": "https://economictimes.indiatimes.com/news/india/fathers-day-2026-5-must-watch-movies-that-celebrate-fatherhood-and-the-bond-between-fathers-and-children/these-5-fathers-day-movies-prove-a-fathers-love-knows-no-limits/slideshow/131875462.cms",
+          "snippet": "Jun 20, 2026 · Father's Day is the perfect time to celebrate the love, sacrifices and guidance that fathers bring into their children's lives. While gifts and family gatherings are common ways to mark the occasion, watching a meaningful film together can be just as special. From emotional stories to inspiring journeys, these movies highlight the unique bond between fathers and their children. These 5 Father ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "Six must-watch 2026 horror movies to stream on OTT if you ...",
+          "url": "https://economictimes.indiatimes.com/magazines/panache/six-best-2026-horror-movies-to-watch-on-ott-if-you-cannot-get-over-the-highest-rated-movie-obsession-send-help-to-backrooms/articleshow/132178249.cms",
+          "snippet": "Jul 4, 2026 · After its blockbuster run in theatres, Obsession is finally available to watch digitally. If you're looking for more scares, 2026 has plenty to offer. From Send Help and Hokum to 28 Years Later: The Bone Temple, They Will Kill You and Backrooms, these horror films promise thrills, suspense and unforgettable chills. Read on to know when and where to watch these online.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "bahan bhai ki chudai movie: Latest News & Videos, Photos ...",
+          "url": "https://economictimes.indiatimes.com/topic/bahan-bhai-ki-chudai-movie",
+          "snippet": "Aug 1, 2026 · bahan bhai ki chudai movie Latest Breaking News, Pictures, Videos, and Special Reports from The Economic Times. bahan bhai ki chudai movie Blogs, Comments and Archive News on Economictimes.com",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "BAHAN BHAI KI CHUDAI MOVIE - The Economic Times",
+          "url": "https://economictimes.indiatimes.com/topic/bahan-bhai-ki-chudai-movie/videos",
+          "snippet": "Jul 29, 2026 · SEARCHED FOR: BAHAN BHAI KI CHUDAI MOVIE ‘Kisi Ka Bhai Kisi Ki Jaan’: Actors Salman Khan, Pooja Hegde and others attend trailer launch in Mumbai 11 Apr, 2023, 11:25 AM IST",
+          "exact_match": true,
+          "is_review": "N"
         }
-      ],
-      "error": "No results found."
+      ]
     },
     {
       "publisher_id": "the-federal",
@@ -2103,38 +3105,82 @@
           "title": "Letters to The Editor — August 8, 2026 - The Hindu",
           "url": "https://www.thehindu.com/opinion/letters/letters-to-the-editor-august-8-2026/article71319025.ece",
           "snippet": "The Hindu On Books Books of the week, reviews, excerpts, new titles and features.Published - August 08, 2026 12:24 am IST. Read Comments. Copy link.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 2,
           "title": "The Hindu: Latest News today from India and the World, Breaking...",
           "url": "https://www.thehindu.com/",
           "snippet": "Entertainment Art Dance Movies Music Reviews Theatre. NEWSLETTER. First Day First Show News and reviews from the world of cinema and streaming. See all newsletters.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 3,
           "title": "Paavni Jain-The Hindu",
           "url": "https://www.thehindu.com/profile/author/paavni-jain-30424/",
           "snippet": "Entertainment Art Dance Movies Music Reviews Theatre. NEWSLETTER. First Day First Show News and reviews from the world of cinema and streaming.August 7, 2026e-Paper.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
-          "title": "India’s National Fortnightly Magazine | Frontline",
-          "url": "https://frontline.thehindu.com/",
-          "snippet": "Frontline, the fortnightly English magazine from The Hindu, since 1984. Covering politics, social issues, environment, finance, business, economy, science, technology, art, culture, movies, entertainment, and social media.",
-          "exact_match": false
+          "title": "The Hindu",
+          "url": "https://epaper.thehindu.com/Home/ShareArticle?OrgId=GMI9DVA06.1&imageview=0",
+          "snippet": "BusinessLine India's leading website for business and financial news, BSE and NSE quotes, stock recommendations, market analysis and research, politics, ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 5,
-          "title": "G.M. Khadar Nawaz-The Hindu",
-          "url": "https://www.thehindu.com/profile/author/g-m-khadar-nawaz-30362/",
-          "snippet": "Literary Review. NEWSLETTER. The Hindu On Books Books of the week, reviews, excerpts, new titles and features.August 7, 2026e-Paper. Search for topics, people, articles...",
-          "exact_match": false
+          "title": "India’s National Fortnightly Magazine | Frontline",
+          "url": "https://frontline.thehindu.com/",
+          "snippet": "Frontline, the fortnightly English magazine from The Hindu, since 1984. Covering politics, social issues, environment, finance, business, economy, science, technology, art, culture, movies, entertainment, and social media.",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "Movie Reviews and Latest Movie Ratings - The Hindu",
+          "url": "https://www.thehindu.com/entertainment/reviews/",
+          "snippet": "Find the latest reviews and ratings for movies, music, books, and art from Hollywood, Bollywood, Kollywood, and more at The Hindu.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "‘Blast’ movie review: An unlikely family packs a punch in ...",
+          "url": "https://www.thehindu.com/entertainment/movies/blast-movie-review-arjun-preity-mukundhan-abhirami-ravi-basrur/article71036533.ece",
+          "snippet": "May 29, 2026 · ‘Blast’ movie review: An unlikely family packs a punch in this largely gripping but patchy film A potent premise and a riveting Preity Mukundhan power this martial arts actioner with explosive ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "‘Satluj’ movie review: The anatomy of state violence",
+          "url": "https://www.thehindu.com/entertainment/satluj-movie-review-the-anatomy-of-state-violencediljit-dosanjh-panjab-95-honey-trehan/article71182649.ece",
+          "snippet": "Jul 4, 2026 · ‘Satluj’ movie review: The anatomy of state violence Diljit Dosanjh shines as a solitary lamp whose conviction outlasts the darkest night in this moving tribute to social activist Jaswant ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Movies | Latest News, Reviews, and Updates - The Hindu",
+          "url": "https://www.thehindu.com/entertainment/movies/",
+          "snippet": "Stay updated with the latest movie news, reviews, and updates from The Hindu. Explore articles, features, and interviews on Bollywood, Hollywood, and regional cinema. Get insights into the latest ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "‘Toaster’ movie review: Rajkummar Rao shoulders a laborious ...",
+          "url": "https://www.thehindu.com/entertainment/movies/toaster-movie-review-rajkummar-rao-sanya-malhotra-archana-puran-singh-netflix/article70864351.ece",
+          "snippet": "Apr 15, 2026 · ‘Toaster’ movie review: Rajkummar Rao shoulders a laborious dark comedy Directed by Vivek Daschaudary, the film delivers on the laughs even when the writing remains largely perfunctory as it ...",
+          "exact_match": true,
+          "is_review": "N"
         }
-      ],
-      "error": "No results found."
+      ]
     },
     {
       "publisher_id": "the-indian-express",
@@ -2208,41 +3254,85 @@
       "results": [
         {
           "rank": 1,
-          "title": "Movie Reviews and Ratings: Bollywood, Hollywood Movies Reviews...",
-          "url": "https://fithindi.thequint.com/entertainment/movie-reviews",
-          "snippet": "Movie Reviews. 'IC 814: The Kandahar Hijack' – Flawless Cast Leads Gripping Hijack Thriller. Why ‘Laal Singh Chaddha’ is the Best Possible Adaptation of ‘Forrest Gump’.",
-          "exact_match": false
+          "title": "Tu Meri Main Tera... Review: Kartik Aaryan & Ananya Panday ...",
+          "url": "https://www.thequint.com/entertainment/movie-reviews/tu-meri-main-tera-review-kartik-aaryan-ananya-panday-bore-in-love",
+          "snippet": "Dec 26, 2025 · An unwieldy title is the least of this film’s problems. Marathi filmmaker Sameer Vidwans’s second Hindi movie Tu Meri Main Tera Main Tera Tu Meri—after the well-intentioned but misguided ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 2,
-          "title": "Why 2026 Is the Best Time for NRIs to Send Money to India",
-          "url": "https://www.thequint.com/brandstudio/partner-why-2026-is-the-best-time-for-nris-to-send-money-to-india",
-          "snippet": "Factors making 2026 an ideal time for NRI remittances. In 2026, several factors have created a favourable environment for NRIs sending money to India, including tax reforms, attractive returns on NRE accounts, and faster digital remittance services.",
-          "exact_match": false
+          "title": "'Ek Din' Review : Sai Pallavi and Junaid Khan Star in an ...",
+          "url": "https://www.thequint.com/entertainment/movie-reviews/ek-din-review-aamir-khan-junaid-sai-pallavi",
+          "snippet": "May 1, 2026 · Review of Ek Din: This Japan-set romance, adapted from Thai film One Day, leans on transient global amnesia, clichéd office characters and dull performances, resulting in a shallow, tedious watch.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 3,
-          "title": "Review: ‘Running Shaadi’ Sleepwalks To The Finish in Slow-Mo",
-          "url": "https://www.thequint.com/entertainment/bollywood/running-shaadi-movie-review-shoojit-sircar-taapsee-pannu-amit-sadh",
-          "snippet": "Not only do his ease and subtle humour add to the film but he also utters the most poignant line when he asks in a huff: “Bhai tu ker kya raha hai?” Well, that’s a question this reviewer would like to ask as well. ‘Running Shaadi’ gets nothing more than 2 Quints OUT OF 5.",
-          "exact_match": false
+          "title": "'Dhurandhar 2' Review: Hamza’s Path Too Easy Without a ...",
+          "url": "https://www.thequint.com/entertainment/movie-reviews/dhurandhar-2-the-revenge-review-ranveer-singh-show",
+          "snippet": "Mar 19, 2026 · Even at its most flaccid, Dhurandhar 2 is a Ranveer Singh show all the way. He’s in almost every frame and powers the conclusion with fury. Unlike the first film, The Revenge sees him front and ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
-          "title": "Latest News, Breaking News LIVE, Top News Headlines... - The Quint",
-          "url": "https://www.thequint.com/",
-          "snippet": "Get latest news, breaking news and today’s news headlines at The Quint. Read all exclusive news stories, opinions and analysis on politics, sports, entertainment, health, business, gender and culture and much more from India and World at thequint.com...",
-          "exact_match": false
+          "title": "Movie Reviews and Ratings: Bollywood, Hollywood Movies ...",
+          "url": "https://www.thequint.com/entertainment/movie-reviews",
+          "snippet": "Movie Reviews and Ratings: Follow thequint.com for all the Latest Latest Movies Web-Series Reviews, Bollywood and Hollywood Films Reviews.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 5,
-          "title": "Entertainment News, Latest Entertainment News Headlines, Actor...",
-          "url": "https://www.thequint.com/entertainment",
-          "snippet": "Get Bollywood, Hollywood news and latest celeb gossips and Latest updates on new Hindi movie, Web Series reviews, box office collection and releases at Thequint.com.",
-          "exact_match": false
+          "title": "'Dhurandhar' Review: Ranveer Singh Leads A Tedious, Rage-Bait ...",
+          "url": "https://www.thequint.com/entertainment/bollywood/dhurandhar-review-ranveer-singh-sanjay-dutt-arun-rampal-read-now",
+          "snippet": "Dec 5, 2025 · There's much to be said about 'Dhurandhar's' angry, hateful storytelling—this is some of the most charged rage-bait filmmaking I’ve seen come out of modern Hindi cinema in a blockbuster of ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "'Kartavya' Review: A Solid Saif Ali Khan Steers a Familiar ...",
+          "url": "https://www.thequint.com/entertainment/movie-reviews/kartavya-film-review-saif-ali-khan-netflix-thriller",
+          "snippet": "May 15, 2026 · 'Kartavya' Review: A Solid Saif Ali Khan Steers a Familiar But Effective Thriller Writer-director Pulkit has quietly become one of the most prolific filmmakers strutting around Hindi cinema these ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "'Dhurandhar 2' Review: Hamza’s Path Too Easy Without a ...",
+          "url": "https://www.thequint.com/entertainment/movie-reviews/dhurandhar-2-the-revenge-review-ranveer-singh-show",
+          "snippet": "Mar 19, 2026 · Even at its most flaccid, Dhurandhar 2 is a Ranveer Singh show all the way. He’s in almost every frame and powers the conclusion with fury. Unlike the first film, The Revenge sees him front and ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "Movie Reviews and Ratings: Bollywood, Hollywood Movies ...",
+          "url": "https://www.thequint.com/entertainment/movie-reviews",
+          "snippet": "Movie Reviews and Ratings: Follow thequint.com for all the Latest Latest Movies Web-Series Reviews, Bollywood and Hollywood Films Reviews.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "'Raakh' Review: Ali Fazal, Sonali Bendre in a Mystery ...",
+          "url": "https://www.thequint.com/entertainment/movie-reviews/raakh-amazon-prime-ali-fazal-sonali-bendre-review",
+          "snippet": "Jun 12, 2026 · 'Raakh' Review: Ali Fazal, Sonali Bendre in a Mystery Redeemed By Grief 'Raakh' effectively portrays the corrosive power of toxic masculinity and how it punishes homosexuality.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "‘Brown’ Review: Karisma Kapoor Stars In ZEE5’s Been-There ...",
+          "url": "https://www.thequint.com/entertainment/movie-reviews/brown-review-karisma-kapoor-abhinay-deo-tropes",
+          "snippet": "Jun 5, 2026 · ‘Brown’ Review: Karisma Kapoor Stars in a Been-There-Done-That Whodunnit 'Brown' shows its age. It feels dated as a crime thriller that struggles to be greater than the sum of its tropes.",
+          "exact_match": true,
+          "is_review": "N"
         }
-      ],
-      "error": "No results found."
+      ]
     },
     {
       "publisher_id": "the-telegraph",
@@ -2255,56 +3345,80 @@
           "title": "telegraphindia.com",
           "url": "http://www.telegraphindia.com/",
           "snippet": "\"Звуки музыки Ведущая пара мега Gaaner Oparey из STAR Jalsha\".",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 2,
-          "title": "Seat Matrix MHT CET 2026 | MHT CET 2026 CAP... - Telegraph India",
-          "url": "https://www.telegraphindia.com/edugraph/news/mht-cet-2026-cap-round-2-seat-matrix-released-at-fe2026-mahacet-org-54700-vacant-engineering-seats-available/cid/2173843",
-          "snippet": "MHT CET 2026 CAP Round 2 Seat Matrix Released; 54,700 Vacant Engineering Seats Available.Review the list of selected choices carefully. Click on “Confirm/Lock Option Form” to submit the preferences. Download and save the confirmation page for future reference.",
-          "exact_match": false
-        },
-        {
-          "rank": 3,
           "title": "Telegraph India Epaper - Calcutta Edition, Saturday, 08 Aug, 2026",
           "url": "https://epaper.telegraphindia.com/calcutta-edition/29/2026-08-08/page-11.html",
           "snippet": "Top news headlines of Calcutta Edition, Review - Page 11. Stay updated with today's latest news from The Telegraph India ePaper Calcutta Edition along with exclusive opinions and editorials.The Telegraph e-paper 8th Aug 2026. Front Page. Foreign.",
-          "exact_match": false
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 3,
+          "title": "SBI Clerk Notification 2026 | State Bank of India... - Telegraph India",
+          "url": "https://www.telegraphindia.com/edugraph/news/state-bank-of-india-begins-sbi-clerk-recruitment-2026-registration-check-vacancy/cid/2174001",
+          "snippet": "A total of 1,538 vacancies are to be filled through the recruitment exercise. Eligible candidates can submit their applications through the bank's official portal, sbi.bank.in, with the application window scheduled to remain open until August 27, 2026.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
-          "title": "SAMS Odisha PG Seat Allotment Result 2026 - Telegraph India",
-          "url": "https://www.telegraphindia.com/edugraph/news/sams-odisha-pg-admission-2026-round-1-seat-allotment-result-today-check-details/cid/2173855",
-          "snippet": "The Department of Higher Education, Odisha, is set to release the first-round provisional seat allotment result for SAMS Odisha PG Admissions 2026 today, August 7, 2026, at 4 pm.",
-          "exact_match": false
+          "title": "Bhai Tera Star Hai trailer | ‘Bhai Tera Star Hai’ trailer ...",
+          "url": "https://www.telegraphindia.com/entertainment/bhai-tera-star-hai-trailer-raghav-juyal-lands-a-chance-to-play-salman-khans-brother/cid/2169331",
+          "snippet": "Jul 9, 2026 · Raghav Juyal plays an aspiring actor who goes about life as though he is already a movie star in the trailer of Bhai Tera Star Hai, dropped by the makers on Thursday. The two-minute-32-second-long video introduces Raghav as an aspiring actor. Living like a star despite his struggles, he finds ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 5,
-          "title": "Telegraph India | Latest News, Top Stories, Opinion, News Analysis...",
-          "url": "https://www.telegraphindia.com/?ref=hm-Footer",
-          "snippet": "Raghav’s new film ‘Bhai Tera Star Hai’ is currently running in cinemas. Stills of Ravi Kishan's popular memes. ‘Mein viral material hoon!’",
-          "exact_match": true
+          "title": "Dhurandhar 2 | ‘Baccha hain tu mera’: Memes fly as Jameel ...",
+          "url": "https://www.telegraphindia.com/entertainment/baccha-hain-tu-mera-memes-fly-as-jameel-jamalis-dhurandhar-dialogue-goes-viral/cid/2153114",
+          "snippet": "Mar 25, 2026 · This time, it’s Rakesh Bedi stealing the spotlight with his iconic Jameel Jamali line, ‘Baccha hain tu Mera’, which has now taken over meme culture. This dialogue was frequently used by Rakesh Bedi’s character in both the Dhurandhar films.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 6,
-          "title": "Entertainment News - Latest Bollywood, Hollywood... - Telegraph India",
-          "url": "https://www.telegraphindia.com/entertainment/freeze-frame-kajol-to-star-with-riddhi-sen-231509",
-          "snippet": "Entertainment News - Get the latest entertainment news, hot gossips, celebrity new, from bollywood, hollywood and TV. Watch Movie trailer, Movie release on The Telegraph.",
-          "exact_match": true
+          "title": "Phera review | Phera review - Sanjay Mishra makes a memorable ...",
+          "url": "https://www.telegraphindia.com/entertainment/phera-review-sanjay-mishra-makes-a-memorable-bengali-debut-in-a-tender-story-about-belonging/cid/2163310",
+          "snippet": "May 31, 2026 · ‘Phera’ review: Sanjay Mishra’s makes a memorable Bengali debut in a tender story about belonging The slice-of-life-drama is directed by Pritha Chakraborty, who returns to filmmaking nearly seven years after ‘Mukherjee Dar Bou’",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 7,
-          "title": "CELEBSPACE - Telegraph India",
-          "url": "https://www.telegraphindia.com/entertainment/celebspace/cid/1658815",
-          "snippet": "‘Bhai Tera Star Hai’ trailer: Raghav Juyal dreams big, lands a chance to play Salman Khan’s brother. Sidharth Malhotra’s ‘Vvaan’ gets new release date, set to hit theatres in September. Bonnie Tyler, ‘Total Eclipse of the Heart’ singer, dies at 75.",
-          "exact_match": true
+          "title": "Bhai Tera Star Hai trailer | ‘Bhai Tera Star Hai’ trailer ...",
+          "url": "https://www.telegraphindia.com/entertainment/bhai-tera-star-hai-trailer-raghav-juyal-lands-a-chance-to-play-salman-khans-brother/cid/2169331",
+          "snippet": "Jul 9, 2026 · Raghav Juyal plays an aspiring actor who goes about life as though he is already a movie star in the trailer of Bhai Tera Star Hai, dropped by the makers on Thursday. The two-minute-32-second-long video introduces Raghav as an aspiring actor. Living like a star despite his struggles, he finds ...",
+          "exact_match": true,
+          "is_review": "N"
         },
         {
           "rank": 8,
-          "title": "India's Got Latent Season 2 | Samay Raina jokes... - Telegraph India",
-          "url": "https://www.telegraphindia.com/entertainment/samay-raina-jokes-about-munawar-faruqis-marriages-takes-swipe-at-alia-bhatts-alpha/cid/2172219",
-          "snippet": "In the latest episode, Raina treated his fans with an engaging episode packed with hilarious moments. It was attended by Raghav Juyal and Niharika NM to promote their film Bhai Tera Superstar.",
-          "exact_match": true
+          "title": "Indian Film Festival of Melbourne 2026 | ‘Sitaare Zameen Par ...",
+          "url": "https://www.telegraphindia.com/entertainment/sitaare-zameen-par-saiyaara-kantara-chapter-1-lead-indian-film-festival-of-melbourne-nominations/cid/2169283",
+          "snippet": "Jul 9, 2026 · Nominated for Best Director are Mohit Suri for Saiyaara, Rishab Shetty for Kantara: A Legend – Chapter 1, R.S. Prasanna for Sitaare Zameen Par, Shazia Iqbal for Dhadak 2, Rima Das for Not a Hero. Also in contention are Ashwiny Iyer Tiwari for the OTT series System, and Ramalingam Gowtham for the Tamil film Members of the Problematic Family.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Dhurandhar 2 | ‘Baccha hain tu mera’: Memes fly as Jameel ...",
+          "url": "https://www.telegraphindia.com/entertainment/baccha-hain-tu-mera-memes-fly-as-jameel-jamalis-dhurandhar-dialogue-goes-viral/cid/2153114",
+          "snippet": "Mar 25, 2026 · This time, it’s Rakesh Bedi stealing the spotlight with his iconic Jameel Jamali line, ‘Baccha hain tu Mera’, which has now taken over meme culture. This dialogue was frequently used by Rakesh Bedi’s character in both the Dhurandhar films.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "Sharthopor review | Koel Mallick, Koushik Sen-starrer Bengali ...",
+          "url": "https://www.telegraphindia.com/entertainment/koel-mallick-koushik-sen-starrer-bengali-film-is-the-perfect-family-watch-this-bhai-phonta/cid/2129029",
+          "snippet": "Oct 22, 2025 · There couldn’t have been a better time for Sharthopor to arrive on screens. This family drama starring Koel Mallick and Koushik Sen is rooted in emotions and peels back the layers of sibling love — it is the perfect family drama to watch this Bhai Phonta. Annapurna Basu’s debut feature film as ...",
+          "exact_match": true,
+          "is_review": "N"
         }
       ]
     },
@@ -2404,41 +3518,85 @@
       "results": [
         {
           "rank": 1,
-          "title": "tribuneindia.com/2002/20021001/ncr3.htm",
-          "url": "https://www.tribuneindia.com/2002/20021001/ncr3.htm",
-          "snippet": "Sachin Rana stars for R P Academy.",
-          "exact_match": false
+          "title": "‘Bhai Tera Star Hai’: More madness than amusement",
+          "url": "https://www.tribuneindia.com/news/movie-review/bhai-tera-star-hai-more-madness-than-amusement",
+          "snippet": "Jul 31, 2026 · The good news is ‘Bhai Tera Star Hai’ is not your regular underdog story of an upstart reaching for the stars, even though the opening song would have you believe so. The not-so-good news ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 2,
-          "title": "tribuneindia.com/2000/20000415/cth2.htm",
-          "url": "https://www.tribuneindia.com/2000/20000415/cth2.htm",
-          "snippet": "3 ‘stars’ selected.",
-          "exact_match": false
+          "title": "Movie Reviews Today | Tribune India: Latest Film Ratings ...",
+          "url": "https://www.tribuneindia.com/news/reviews/movie-review",
+          "snippet": "4 days ago · Read the latest movie reviews today on Tribune India. Explore in-depth critiques and ratings of new film releases across genres, from Bollywood blockbusters to independent films.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 3,
-          "title": "tribuneindia.com/2010/20100401/cth1.htm",
-          "url": "https://www.tribuneindia.com/2010/20100401/cth1.htm",
-          "snippet": "Officials review preparations.",
-          "exact_match": false
+          "title": "Raghav Juyal and Niharika NM promise chaos, comedy and a ...",
+          "url": "https://www.tribuneindia.com/news/entertainment/raghav-juyal-and-niharika-nm-promise-chaos-comedy-and-a-whole-lot-of-laughs-with-bhai-tera-star-hai/",
+          "snippet": "Jul 24, 2026 · At a time when thrillers, action spectacles and larger-than-life dramas dominate the marquee, actors Raghav Juyal and Niharika NM are betting on laughter with 'Bhai Tera Star Hai'.",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 4,
-          "title": "The Tribune: Today's Latest News, Breaking News, Top Headlines...",
-          "url": "https://www.tribuneindia.com/",
-          "snippet": "Trending. 'Darta kaun hai?' Haryana grandfather goes skydiving from 18,000 ft in Australia, yells 'Jai Bharat!' The video was shared by Ankit on Instagram, who revealed that this was not his grandfather's first skydive.Movie Review View More. featured-img_2745121.",
-          "exact_match": false
+          "title": "Raghav Juyal and Niharika NM bring laughter, chaos and ...",
+          "url": "https://www.tribuneindia.com/videos/raghav-juyal-and-niharika-nm-bring-laughter-chaos-and-chemistry-with-bhai-tera-star-hai/",
+          "snippet": "Jul 24, 2026 · In this episode of #TheTribuneInterview, Raghav Juyal and Niharika NM talk about their upcoming comedy Bhai Tera Star Hai and why, amid the stress of everyday life, films that make people laugh ...",
+          "exact_match": false,
+          "is_review": "N"
         },
         {
           "rank": 5,
-          "title": "Clipping of Tribune India - Jalandhar Edition",
-          "url": "https://epaper.tribuneindia.com/c/79321437",
-          "snippet": "Feedback. Please use this for website related issues only. For other messages, please write in the comments section. Powered by Readwhere digital publishing platform. Learn more. Download Readwhere app to read on the go.",
-          "exact_match": false
+          "title": "Tribune India",
+          "url": "https://www.tribuneindia.com/sortd-service/imaginary/v22-01/jpg/large/high?url=dGhldHJpYnVuZS1zb3J0ZC1wcm8tcHJvZC1zb3J0ZC9tZWRpYWI2Njk5MjcwLTNkMGMtMTFmMS1hMjhiLThiZWUzODg3Y2VjMC5qcGc=",
+          "snippet": "ß‰'Êà§_Ý Î±' ]…æöqÝ… !,qs 0Î«“í »üi^ÒK†…ZVAßƒ €*{1'ë2?! ñ ÙRC’3à¿Ê³úrõ 7jø÷ åCVñ nbUŽÃ˜šRNÉ#ç•‚'L» Þ§· Ö ...",
+          "exact_match": false,
+          "is_review": "N"
+        },
+        {
+          "rank": 6,
+          "title": "‘Bhai Tera Star Hai’: More madness than amusement",
+          "url": "https://www.tribuneindia.com/news/movie-review/bhai-tera-star-hai-more-madness-than-amusement",
+          "snippet": "Jul 31, 2026 · The good news is ‘Bhai Tera Star Hai’ is not your regular underdog story of an upstart reaching for the stars, even though the opening song would have you believe so. The not-so-good news ...",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 7,
+          "title": "Movie Reviews Today | Tribune India: Latest Film Ratings ...",
+          "url": "https://www.tribuneindia.com/news/reviews/movie-review",
+          "snippet": "4 days ago · Read the latest movie reviews today on Tribune India. Explore in-depth critiques and ratings of new film releases across genres, from Bollywood blockbusters to independent films.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 8,
+          "title": "Raghav Juyal and Niharika NM promise chaos, comedy and a ...",
+          "url": "https://www.tribuneindia.com/news/entertainment/raghav-juyal-and-niharika-nm-promise-chaos-comedy-and-a-whole-lot-of-laughs-with-bhai-tera-star-hai/",
+          "snippet": "Jul 24, 2026 · At a time when thrillers, action spectacles and larger-than-life dramas dominate the marquee, actors Raghav Juyal and Niharika NM are betting on laughter with 'Bhai Tera Star Hai'.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 9,
+          "title": "Raghav Juyal turns 35 with ‘Bhai Tera Star Hai’ trailer ...",
+          "url": "https://www.tribuneindia.com/news/lifestyle/raghav-juyal-turns-35-with-bhai-tera-star-hai-trailer-release-actor-promises-dose-of-comedy-chaos/",
+          "snippet": "Jul 10, 2026 · Raghav Juyal turned 35 on July 10, and the actor marked his birthday with a special surprise for his fans as the trailer of his upcoming comedy Bhai Tera Star Hai was released a day earlier on July 9.",
+          "exact_match": true,
+          "is_review": "N"
+        },
+        {
+          "rank": 10,
+          "title": "Raghav Juyal and Niharika NM bring laughter, chaos and ...",
+          "url": "https://www.tribuneindia.com/videos/raghav-juyal-and-niharika-nm-bring-laughter-chaos-and-chemistry-with-bhai-tera-star-hai/",
+          "snippet": "Jul 24, 2026 · In this episode of #TheTribuneInterview, Raghav Juyal and Niharika NM talk about their upcoming comedy Bhai Tera Star Hai and why, amid the stress of everyday life, films that make people laugh ...",
+          "exact_match": true,
+          "is_review": "N"
         }
-      ],
-      "error": "No results found."
+      ]
     }
   ]
 }
