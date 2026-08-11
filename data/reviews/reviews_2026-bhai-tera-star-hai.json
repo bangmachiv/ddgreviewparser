@@ -13,7 +13,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "abp",
@@ -23,7 +24,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "amar-ujala",
@@ -34,7 +36,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Kiran Vinod Kumar Jain",
             "star_rating": "1",
-            "json_ld_extraction_status": "Found full data from json ld by JS"
+            "json_ld_extraction_status": "Found full data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai Hindi Review Starring Raghav Juyal Sanjay Kapoor Nikki Walia To Niharika Nm - Entertainment News: Amar Ujala - Bhai Tera Star Hai Review:राघव जुयाल की कॉमेडी ने दिया सिरदर्द, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा"
         },
         {
             "publisher_id": "bollywood-hungama",
@@ -45,7 +48,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Bollywood Hungama News Network",
             "star_rating": "1.5",
-            "json_ld_extraction_status": "Found full data from json ld by JS"
+            "json_ld_extraction_status": "Found full data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai Movie Review: BHAI TERA STAR HAI is a chaotic and unfunny comedy"
         },
         {
             "publisher_id": "bollyspice",
@@ -55,7 +59,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "business-standard",
@@ -65,7 +70,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "cinema-express",
@@ -76,7 +82,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "BH Harsh",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Found partial data from json ld by JS"
+            "json_ld_extraction_status": "Found partial data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai Movie Review: Too wacky for its own good"
         },
         {
             "publisher_id": "cinetales",
@@ -86,7 +93,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "dainik-bhaskar",
@@ -97,7 +105,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "दिव्य मराठी",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Found partial data from json ld by JS"
+            "json_ld_extraction_status": "Found partial data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal Solo Lead Fails To Impress"
         },
         {
             "publisher_id": "dainik-jagran",
@@ -108,7 +117,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Rinki Tiwari",
             "star_rating": "3",
-            "json_ld_extraction_status": "Found full data from json ld by JS"
+            "json_ld_extraction_status": "Found full data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai Review: कॉमेडी के नाम पर फूहड़ता, बेकार कहानी... राघव जुयाल से नहीं थी ऐसी उम्मीद! - bhai tera star hai film review raghav juyal performance not appealing storyline also bad"
         },
         {
             "publisher_id": "deccan-chronicle",
@@ -118,7 +128,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "deccan-herald",
@@ -128,7 +139,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "filmfare",
@@ -139,7 +151,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Devesh Sharma",
             "star_rating": "2.5",
-            "json_ld_extraction_status": "Found full data from json ld by JS"
+            "json_ld_extraction_status": "Found full data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai Review: A Bumbling Comedy of Errors | Filmfare.com"
         },
         {
             "publisher_id": "firstpost",
@@ -149,7 +162,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "free-press-journal",
@@ -160,7 +174,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Satish Sundaresan",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Html parsed (partial data found)"
+            "json_ld_extraction_status": "Html parsed (partial data found)",
+            "article_title": "Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?"
         },
         {
             "publisher_id": "hindustan",
@@ -170,7 +185,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "hindustan-times",
@@ -181,7 +197,8 @@
             "webpage_extraction_successful": "N",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Webpage not available)"
+            "json_ld_extraction_status": "Html Not parsed (Webpage not available)",
+            "article_title": null
         },
         {
             "publisher_id": "ians-live",
@@ -191,7 +208,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "india-today",
@@ -202,7 +220,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Anisha Rao",
             "star_rating": "1",
-            "json_ld_extraction_status": "Found full data from json ld by JS"
+            "json_ld_extraction_status": "Found full data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai review: The only star was Vijay Deverakonda in Vijay Sales ad - India Today"
         },
         {
             "publisher_id": "koimoi",
@@ -213,7 +232,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Rajiv Vijayakar",
             "star_rating": "1",
-            "json_ld_extraction_status": "Found full data from json ld by JS"
+            "json_ld_extraction_status": "Found full data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal's Film Is Unfunny, Aimless &amp; Pointless!"
         },
         {
             "publisher_id": "lensmen-reviews",
@@ -223,7 +243,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "lokmat",
@@ -233,7 +254,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "mid-day",
@@ -244,7 +266,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Aakruti Bagla",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Found partial data from json ld by JS"
+            "json_ld_extraction_status": "Found partial data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai movie review: Raghav Juyal’s comic timing can’t save this film"
         },
         {
             "publisher_id": "mint",
@@ -254,7 +277,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "moneycontrol",
@@ -265,7 +289,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "could not find from jsonld",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "no data found from json ld by js"
+            "json_ld_extraction_status": "no data found from json ld by js",
+            "article_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal leads a comedy where the jokes need their own rescue mission"
         },
         {
             "publisher_id": "movie-talkies",
@@ -276,7 +301,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Sameer Ahire",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Found partial data from json ld by JS"
+            "json_ld_extraction_status": "Found partial data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai Review: A painful blow to filmmaking standards –"
         },
         {
             "publisher_id": "navbharat-times",
@@ -287,7 +313,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "रेखा खान",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Found partial data from json ld by JS"
+            "json_ld_extraction_status": "Found partial data from json ld by JS",
+            "article_title": "मूवी रिव्यू: भाई तेरा स्टार है, रेटिंग:{2/5} , bhai tera star hai movie review in hindi starring raghav juyal sanjay kapoor niki walia niharika nm directed by vivek b agrawal, Rating:{2/5} : राघव जुयाल,संजय कपूर,निकी वालिया,निहारिका एनएम,बरखा सिंह,विवान भटेना,पार्वती ओमनाकुट्टन,विकल्प मेहता स्टार | Navbharat Times"
         },
         {
             "publisher_id": "ndtv",
@@ -298,7 +325,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Saibal Chatterjee",
             "star_rating": "2",
-            "json_ld_extraction_status": "Found full data from json ld by JS"
+            "json_ld_extraction_status": "Found full data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai Review: Raghav Juyal Shines, But The Comedy Falls Flat"
         },
         {
             "publisher_id": "news18-showsha",
@@ -309,7 +337,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Titas Chowdhury",
             "star_rating": "2.5",
-            "json_ld_extraction_status": "Found full data from json ld by JS"
+            "json_ld_extraction_status": "Found full data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai Movie Review And Rating: Raghav Juyal Is On Fire But This Slapstick Comedy Runs Out of Steam Too Soon | Bollywood News - News18"
         },
         {
             "publisher_id": "outlook",
@@ -319,7 +348,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "peepingmoon",
@@ -329,7 +359,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "rediff",
@@ -340,7 +371,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "MAYUR SANAP",
             "star_rating": "1.5",
-            "json_ld_extraction_status": "Found full data from json ld by JS"
+            "json_ld_extraction_status": "Found full data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai Review: Raghav Juyal's Film Is Absurd - Rediff.com movies"
         },
         {
             "publisher_id": "scroll-in",
@@ -351,7 +383,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Nandini Ramnath",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Found partial data from json ld by JS"
+            "json_ld_extraction_status": "Found partial data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai film review: Pointless comedy strains patience levels"
         },
         {
             "publisher_id": "south-asian-herald",
@@ -361,7 +394,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "the-economic-times",
@@ -371,7 +405,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "the-federal",
@@ -382,7 +417,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Swaroop Kodur",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Found partial data from json ld by JS"
+            "json_ld_extraction_status": "Found partial data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai review: Raghav Juyal's comedy promises a lot, delivers little"
         },
         {
             "publisher_id": "the-hindu",
@@ -392,7 +428,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "the-indian-express",
@@ -403,7 +440,8 @@
             "webpage_extraction_successful": "N",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Webpage not available)"
+            "json_ld_extraction_status": "Html Not parsed (Webpage not available)",
+            "article_title": null
         },
         {
             "publisher_id": "the-quint",
@@ -413,7 +451,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "the-telegraph",
@@ -423,7 +462,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "the-times-of-india",
@@ -434,7 +474,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "Ronak Kotecha",
             "star_rating": "2.0",
-            "json_ld_extraction_status": "Found full data from json ld by JS"
+            "json_ld_extraction_status": "Found full data from json ld by JS",
+            "article_title": "Bhai Tera Star Hai Movie Review: A nightmare of a comedy that drags on"
         },
         {
             "publisher_id": "the-tribune",
@@ -444,7 +485,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         }
     ]
 }
