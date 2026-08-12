@@ -308,13 +308,8 @@
             "publisher_name": "Navbharat Times",
             "review_url": "https://navbharattimes.indiatimes.com/entertainment/movie-review/bhai-tera-star-hai-movie-review-in-hindi-starring-raghav-juyal-sanjay-kapoor-niki-walia-niharika-nm-directed-by-vivek-b-agrawal/moviereview/132732860.cms",
             "review_title": "Bhai Tera Star Hai Movie Review In Hindi Rating {2.0/5} |भाई तेरा स्टार...",
-            "search_rank": 1,
-            "webpage_extraction_successful": "Y",
-            "critic_name": "रेखा खान",
-            "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Found partial data from json ld by JS",
-            "article_title": "मूवी रिव्यू: भाई तेरा स्टार है, रेटिंग:{2/5} , bhai tera star hai movie review in hindi starring raghav juyal sanjay kapoor niki walia niharika nm directed by vivek b agrawal, Rating:{2/5} : राघव जुयाल,संजय कपूर,निकी वालिया,निहारिका एनएम,बरखा सिंह,विवान भटेना,पार्वती ओमनाकुट्टन,विकल्प मेहता स्टार | Navbharat Times",
-            "clean_title": "मूवी रिव्यू: भाई तेरा स्टार है, रेटिंग:{2/5}"
+            "search_rank": 1
+            
         },
         {
             "publisher_id": "ndtv",
