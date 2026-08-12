@@ -6,7 +6,7 @@ import time
 import google.generativeai as genai
 
 # ---------------------------------------------------------------------------
-# Gemini API Setup
+# Gemini API & File Setup
 # ---------------------------------------------------------------------------
 API_KEY = os.environ.get("GEMINI_API_KEY")
 if not API_KEY:
@@ -15,38 +15,28 @@ if not API_KEY:
 
 genai.configure(api_key=API_KEY)
 
+PROMPT_FILE = "prompt_clean_titles.txt"
+
 # Priority-ordered model configuration
 MODEL_CONFIG = [
     {
         "name": "models/gemini-3.6-flash",
         "priority": 1,
-        "rpm": 15,
-        "rpd": 1500,
-        "web_search": False,
         "enabled": True
     },
     {
         "name": "models/gemini-3.5-flash",
         "priority": 2,
-        "rpm": 15,
-        "rpd": 1500,
-        "web_search": False,
         "enabled": True
     },
     {
         "name": "models/gemini-3.5-flash-lite",
         "priority": 3,
-        "rpm": 15,
-        "rpd": 1000,
-        "web_search": False,
         "enabled": True
     },
     {
         "name": "models/gemini-3.1-flash-lite",
         "priority": 4,
-        "rpm": 15,
-        "rpd": 1000,
-        "web_search": False,
         "enabled": True
     }
 ]
@@ -80,7 +70,7 @@ def validate_cleaned_title(cleaned_title, original_title):
     # Strict check: Every word in the output MUST exist in the original title
     for word in clean_words:
         if word not in original_words_set:
-            print(f"      [Validation Fail] Word '{word}' is not in article_title!")
+            print(f"      [Validation Fail] Word '{word}' is not in the original title!")
             return False
 
     return True
@@ -89,24 +79,15 @@ def validate_cleaned_title(cleaned_title, original_title):
 # ---------------------------------------------------------------------------
 # Core Gemini Cleaning Logic
 # ---------------------------------------------------------------------------
-def clean_title_with_gemini(movie_name, raw_title, models_config):
+def clean_title_with_gemini(movie_name, raw_title, models_config, prompt_template):
     """Iterates through enabled models by priority to extract cleaned title."""
     active_models = sorted(
         [m for m in models_config if m.get("enabled", True)],
         key=lambda x: x.get("priority", 999)
     )
 
-    prompt = f"""You are a strict text extraction assistant. Your task is to extract ONLY the portion of the given article title that contains the critic's core opinion, verdict, or sentiment.
-
-Movie Name: "{movie_name}"
-Raw Title: "{raw_title}"
-
-STRICT EXTRACTION RULES:
-1. Every word in your output MUST be copied verbatim from the Raw Title. Do NOT summarize, paraphrase, or introduce new words.
-2. Remove the movie name, publisher branding, star ratings, dates, and filler keywords (e.g. "movie review", "hindi news", "trailer out").
-3. Do NOT use external search or web search tools.
-4. If there is no clear opinion or verdict in the Raw Title, return nothing.
-5. Output ONLY the extracted string without quotes or conversational text."""
+    # Inject the variables into the template loaded from the text file
+    prompt = prompt_template.format(movie_name=movie_name, raw_title=raw_title)
 
     for model_info in active_models:
         model_name = model_info["name"]
@@ -126,7 +107,7 @@ STRICT EXTRACTION RULES:
                 if (cleaned.startswith('"') and cleaned.endswith('"')) or (cleaned.startswith("'") and cleaned.endswith("'")):
                     cleaned = cleaned[1:-1].strip()
 
-                # CHECK 1 & 2: Non-null and strict word containment check
+                # CHECK: Non-null and strict word containment check
                 if validate_cleaned_title(cleaned, raw_title):
                     print(f"      [Success with {model_name}]")
                     return cleaned
@@ -136,7 +117,9 @@ STRICT EXTRACTION RULES:
         except Exception as e:
             print(f"      [API Error on {model_name}]: {e}")
 
-        time.sleep(1)  # Brief pause before model fallback
+        # 5-SECOND GAP: Pause before attempting a fallback model
+        print("      [Waiting 5 seconds before model fallback attempt...]")
+        time.sleep(5)  
 
     return None
 
@@ -167,7 +150,7 @@ def get_live_movie_slugs():
     return list(set(slugs))
 
 
-def process_cleaning_for_movie(json_path):
+def process_cleaning_for_movie(json_path, prompt_template):
     print("\n" + "="*80)
     print(f" CLEANING TITLES FOR LIVE MOVIE FILE: {json_path}")
     print("="*80)
@@ -202,7 +185,7 @@ def process_cleaning_for_movie(json_path):
         print(f"\n  [*] Processing [{pub_id}]...")
         print(f"      Raw Title: {raw_title}")
 
-        cleaned = clean_title_with_gemini(movie_name, raw_title, MODEL_CONFIG)
+        cleaned = clean_title_with_gemini(movie_name, raw_title, MODEL_CONFIG, prompt_template)
 
         if cleaned:
             pub["clean_title"] = cleaned
@@ -215,7 +198,9 @@ def process_cleaning_for_movie(json_path):
             print(f"      [DISCARDED] Output invalid or null. 'clean_title' field omitted.")
             summary_counts["Discarded (Failed validation / Null)"] += 1
 
-        time.sleep(1)
+        # 13-SECOND GAP: Ensures max ~4.6 RPM to strictly respect the 5 RPM free-tier limit
+        print("      [Waiting 13 seconds before next API call...]")
+        time.sleep(13)
 
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
@@ -228,7 +213,15 @@ def process_cleaning_for_movie(json_path):
 
 
 def main():
-    print("[STEP 1] Fetching live movies for title cleaning...")
+    print("[STEP 1] Loading prompt template...")
+    if not os.path.exists(PROMPT_FILE):
+        print(f"[ERROR] Prompt file '{PROMPT_FILE}' not found! Please create it.")
+        return
+        
+    with open(PROMPT_FILE, "r", encoding="utf-8") as pf:
+        prompt_template = pf.read()
+
+    print("[STEP 2] Fetching live movies for title cleaning...")
     live_slugs = get_live_movie_slugs()
 
     if not live_slugs:
@@ -241,9 +234,9 @@ def main():
         if os.path.exists(review_file):
             target_files.append(review_file)
 
-    print("\n[STEP 2] Running Gemini cleaning pipeline...")
+    print("\n[STEP 3] Running Gemini cleaning pipeline...")
     for json_path in target_files:
-        process_cleaning_for_movie(json_path)
+        process_cleaning_for_movie(json_path, prompt_template)
 
 
 if __name__ == "__main__":
