@@ -180,9 +180,29 @@ def process_cleaning_for_movie(json_path, prompt_template):
     print("=" * 60)
 
 def main():
+    print("================================================================")
+    print(" FORENSIC DEBUGGING LOG: PATHS & FILESYSTEM")
+    print("================================================================")
+    print(f"[*] Raw __file__ path : {__file__}")
+    print(f"[*] Base Directory    : {BASE_DIR}")
+    print(f"[*] Expected Prompt   : {PROMPT_FILE}")
+    print("\n[*] Python's view of files in Base Directory:")
+    
+    try:
+        files = os.listdir(BASE_DIR)
+        for f in files:
+            # Highlight anything that has 'prompt' in the name to catch typos
+            if "prompt" in f.lower():
+                print(f"    ---> SUSPECT FOUND: '{f}'")
+            else:
+                print(f"    - {f}")
+    except Exception as e:
+        print(f"    [ERROR] Could not read directory: {e}")
+    print("================================================================\n")
+
     print("[STEP 1] Loading prompt template...")
     if not os.path.exists(PROMPT_FILE):
-        print(f"[ERROR] Prompt file '{PROMPT_FILE}' not found! I am looking in exactly this folder: {BASE_DIR}")
+        print(f"[FATAL ERROR] The exact file '{PROMPT_FILE}' does not exist according to Python.")
         return
         
     with open(PROMPT_FILE, "r", encoding="utf-8") as pf:
