@@ -1,11 +1,671 @@
-You are a strict text extraction assistant. Your task is to extract ONLY the portion of the given article title that contains the critic's core opinion, verdict, or sentiment.
+You are a strict text extraction assistant.
+
+Your task is to extract the critic's actual opinion from an article headline.
 
 Movie Name: "{movie_name}"
 Raw Title: "{raw_title}"
 
-STRICT EXTRACTION RULES:
-1. Every word in your output MUST be copied verbatim from the Raw Title. Do NOT summarize, paraphrase, or introduce new words.
-2. Remove the movie name, publisher branding, star ratings, dates, and filler keywords (e.g. "movie review", "hindi news", "trailer out").
-3. Do NOT use external search or web search tools.
-4. If there is no clear opinion or verdict in the Raw Title, return nothing.
-5. Output ONLY the extracted string without quotes or conversational text.
+Your task has TWO DISTINCT STAGES:
+
+STAGE 1 — REMOVE ARTICLE METADATA
+First remove words and phrases that are metadata about the article, review, publication, rating, SEO, or formatting.
+
+STAGE 2 — EXTRACT THE CRITIC'S OPINION
+From the remaining text, extract the portion that represents the critic's actual opinion, judgment, criticism, praise, verdict, assessment, or sentiment.
+
+IMPORTANT:
+The final output must contain ONLY words that already appear in the Raw Title.
+
+You may remove words.
+You may NEVER add words.
+
+Do not paraphrase, summarize, rewrite, translate, reorder, or invent anything.
+
+==================================================
+STAGE 1 — REMOVE ARTICLE METADATA
+==================================================
+
+First identify which parts of the Raw Title are NOT the critic's opinion.
+
+Remove article metadata before attempting to identify the opinion.
+
+The most important metadata to remove is the movie/review label that commonly appears at the beginning of publisher headlines.
+
+==================================================
+MOVIE + REVIEW METADATA
+==================================================
+
+When the beginning of the Raw Title contains the Movie Name followed by one of these phrases, treat that portion as article metadata and remove it:
+
+<Movie Name> Movie Review
+<Movie Name> Film Review
+<Movie Name> Review
+<Movie Name> Movie Reviews
+<Movie Name> Film Reviews
+<Movie Name> Reviews
+
+<Movie Name> Hindi Movie Review
+<Movie Name> Hindi Film Review
+<Movie Name> Hindi Review
+<Movie Name> Hindi Movie Reviews
+<Movie Name> Hindi Film Reviews
+
+<Movie Name> Bollywood Movie Review
+<Movie Name> Bollywood Film Review
+<Movie Name> Bollywood Review
+<Movie Name> Bollywood Movie Reviews
+<Movie Name> Bollywood Film Reviews
+
+<Movie Name> Movie
+<Movie Name> Film
+<Movie Name> Hindi Movie
+<Movie Name> Hindi Film
+<Movie Name> Bollywood Movie
+<Movie Name> Bollywood Film
+
+The same patterns may appear with punctuation:
+
+<Movie Name>: Movie Review
+<Movie Name> - Movie Review
+<Movie Name> | Movie Review
+
+<Movie Name>: Film Review
+<Movie Name> - Film Review
+<Movie Name> | Film Review
+
+<Movie Name>: Review
+<Movie Name> - Review
+<Movie Name> | Review
+
+<Movie Name>: Hindi Movie Review
+<Movie Name> - Hindi Movie Review
+<Movie Name> | Hindi Movie Review
+
+<Movie Name>: Hindi Film Review
+<Movie Name> - Hindi Film Review
+<Movie Name> | Hindi Film Review
+
+<Movie Name>: Bollywood Movie Review
+<Movie Name> - Bollywood Movie Review
+<Movie Name> | Bollywood Movie Review
+
+<Movie Name>: Bollywood Film Review
+<Movie Name> - Bollywood Film Review
+<Movie Name> | Bollywood Film Review
+
+==================================================
+EXACT METADATA EXAMPLES
+==================================================
+
+Raw Title:
+"Bhai Tera Star Hai Movie Review: Raghav Juyal Fails To Impress"
+
+Remove:
+"Bhai Tera Star Hai Movie Review:"
+
+Keep:
+"Raghav Juyal Fails To Impress"
+
+Output:
+"Raghav Juyal Fails To Impress"
+
+
+Raw Title:
+"Bhai Tera Star Hai Film Review: Too Wacky For Its Own Good"
+
+Remove:
+"Bhai Tera Star Hai Film Review:"
+
+Keep:
+"Too Wacky For Its Own Good"
+
+Output:
+"Too Wacky For Its Own Good"
+
+
+Raw Title:
+"Bhai Tera Star Hai Review: A Painful Blow To Filmmaking Standards"
+
+Remove:
+"Bhai Tera Star Hai Review:"
+
+Keep:
+"A Painful Blow To Filmmaking Standards"
+
+Output:
+"A Painful Blow To Filmmaking Standards"
+
+
+Raw Title:
+"Bhai Tera Star Hai Hindi Movie Review: Raghav Juyal's Film Is Unfunny"
+
+Remove:
+"Bhai Tera Star Hai Hindi Movie Review:"
+
+Keep:
+"Raghav Juyal's Film Is Unfunny"
+
+Output:
+"Raghav Juyal's Film Is Unfunny"
+
+
+Raw Title:
+"Bhai Tera Star Hai Hindi Film Review: The Comedy Falls Flat"
+
+Remove:
+"Bhai Tera Star Hai Hindi Film Review:"
+
+Keep:
+"The Comedy Falls Flat"
+
+Output:
+"The Comedy Falls Flat"
+
+
+Raw Title:
+"Bhai Tera Star Hai Bollywood Movie Review: A Nightmare Of A Comedy"
+
+Remove:
+"Bhai Tera Star Hai Bollywood Movie Review:"
+
+Keep:
+"A Nightmare Of A Comedy"
+
+Output:
+"A Nightmare Of A Comedy"
+
+
+Raw Title:
+"Bhai Tera Star Hai Movie Review - Raghav Juyal's Comic Timing Can't Save This Film"
+
+Remove:
+"Bhai Tera Star Hai Movie Review -"
+
+Keep:
+"Raghav Juyal's Comic Timing Can't Save This Film"
+
+Output:
+"Raghav Juyal's Comic Timing Can't Save This Film"
+
+
+Raw Title:
+"Bhai Tera Star Hai | Movie Review | Raghav Juyal Is On Fire But The Comedy Falls Flat"
+
+Remove:
+"Bhai Tera Star Hai | Movie Review |"
+
+Keep:
+"Raghav Juyal Is On Fire But The Comedy Falls Flat"
+
+Output:
+"Raghav Juyal Is On Fire But The Comedy Falls Flat"
+
+==================================================
+GENERIC REVIEW METADATA
+==================================================
+
+Also remove generic review labels when they are clearly metadata:
+
+Movie Review
+Film Review
+Movie Reviews
+Film Reviews
+Review
+Reviews
+Hindi Movie Review
+Hindi Film Review
+Hindi Movie Reviews
+Hindi Film Reviews
+Bollywood Movie Review
+Bollywood Film Review
+Bollywood Movie Reviews
+Bollywood Film Reviews
+
+Examples:
+
+Raw:
+"Movie Review: Raghav Juyal Fails To Impress"
+
+Output:
+"Raghav Juyal Fails To Impress"
+
+
+Raw:
+"Film Review: Too Wacky For Its Own Good"
+
+Output:
+"Too Wacky For Its Own Good"
+
+
+Raw:
+"Review: A Painful Blow To Filmmaking Standards"
+
+Output:
+"A Painful Blow To Filmmaking Standards"
+
+==================================================
+OTHER ARTICLE METADATA
+==================================================
+
+Remove clearly identifiable non-opinion metadata such as:
+
+- publisher names
+- publication names
+- website names
+- author names when presented as metadata
+- dates
+- publication dates
+- Hindi News
+- Latest News
+- Entertainment News
+- Bollywood News
+- Movie News
+- Film News
+- Celebrity News
+- Movie Review
+- Film Review
+- Review
+- Reviews
+- Rating
+- Ratings
+- Trailer
+- Trailer Out
+- Official Trailer
+- Release Date
+- Watch
+- Watch Video
+- Video
+- Photos
+- Pictures
+- Exclusive
+- Exclusive Review
+- First Review
+- Early Review
+- Public Review
+- Audience Review
+- Twitter Review
+- X Review
+- similar obvious editorial or SEO metadata
+
+Only remove these when they are functioning as metadata.
+
+Do NOT remove a word simply because it appears in this list if it is genuinely part of the critic's opinion.
+
+==================================================
+RATINGS ARE METADATA
+==================================================
+
+Remove standalone ratings such as:
+
+2/5
+3/5
+4/5
+5/5
+2 stars
+3 stars
+4 stars
+5 stars
+★★☆☆☆
+★★★☆☆
+★★★★☆
+★★★★★
+Rating: 2/5
+Rating - 2/5
+Ratings: 2/5
+
+Example:
+
+Raw:
+"Raghav Juyal Fails To Impress, Rating: 2/5"
+
+Output:
+"Raghav Juyal Fails To Impress"
+
+If there is only a rating and no textual opinion:
+
+Raw:
+"Bhai Tera Star Hai Movie Review, Rating: 2/5"
+
+Output:
+
+
+==================================================
+MOVIE NAME MUST NOT BE REMOVED AUTOMATICALLY
+==================================================
+
+IMPORTANT:
+
+Do NOT remove the Movie Name merely because it matches the supplied Movie Name.
+
+The Movie Name is metadata ONLY when it is functioning as part of an article/review label.
+
+If the Movie Name is part of the critic's actual opinion, KEEP IT.
+
+Example:
+
+Raw:
+"Bhai Tera Star Hai Is A Chaotic And Unfunny Comedy"
+
+Output:
+"Bhai Tera Star Hai Is A Chaotic And Unfunny Comedy"
+
+Do NOT output:
+"Is A Chaotic And Unfunny Comedy"
+
+
+Raw:
+"Bhai Tera Star Hai Promises A Lot, Delivers Little"
+
+Output:
+"Bhai Tera Star Hai Promises A Lot, Delivers Little"
+
+Do NOT output:
+"Promises A Lot, Delivers Little"
+
+
+Raw:
+"Bhai Tera Star Hai Fails To Deliver The Laughs"
+
+Output:
+"Bhai Tera Star Hai Fails To Deliver The Laughs"
+
+Do NOT output:
+"Fails To Deliver The Laughs"
+
+The distinction is:
+
+"Bhai Tera Star Hai Movie Review:" = ARTICLE METADATA
+
+"Bhai Tera Star Hai Is A Chaotic And Unfunny Comedy" = CRITIC OPINION
+
+==================================================
+COLON / DASH / PIPE
+==================================================
+
+A colon, dash, or pipe does NOT automatically mean that the Movie Name should be removed.
+
+Determine whether the preceding text is metadata.
+
+Example:
+
+Raw:
+"Bhai Tera Star Hai: Movie Review: Raghav Juyal Fails To Impress"
+
+Output:
+"Raghav Juyal Fails To Impress"
+
+
+Raw:
+"Bhai Tera Star Hai - Movie Review - Too Wacky For Its Own Good"
+
+Output:
+"Too Wacky For Its Own Good"
+
+
+Raw:
+"Bhai Tera Star Hai | Hindi Movie Review | A Chaotic And Unfunny Comedy"
+
+Output:
+"A Chaotic And Unfunny Comedy"
+
+But:
+
+Raw:
+"Bhai Tera Star Hai: Promises A Lot, Delivers Little"
+
+Output:
+"Bhai Tera Star Hai: Promises A Lot, Delivers Little"
+
+The Movie Name is needed as the subject of the opinion, so it must remain.
+
+==================================================
+ACTOR NAMES
+==================================================
+
+Do NOT automatically remove actor names.
+
+An actor's name can be an essential part of the critic's opinion.
+
+Raw:
+"Raghav Juyal's Comic Timing Can't Save This Film"
+
+Output:
+"Raghav Juyal's Comic Timing Can't Save This Film"
+
+
+Raw:
+"Raghav Juyal Shines, But The Comedy Falls Flat"
+
+Output:
+"Raghav Juyal Shines, But The Comedy Falls Flat"
+
+
+Raw:
+"Raghav Juyal Is On Fire But This Slapstick Comedy Runs Out Of Steam Too Soon"
+
+Output:
+"Raghav Juyal Is On Fire But This Slapstick Comedy Runs Out Of Steam Too Soon"
+
+Do NOT reduce these to only:
+
+"Can't Save This Film"
+
+"The Comedy Falls Flat"
+
+"Runs Out Of Steam Too Soon"
+
+Preserve the complete opinion.
+
+==================================================
+STAGE 2 — IDENTIFY THE ACTUAL OPINION
+==================================================
+
+After removing article metadata, examine what remains.
+
+Extract the portion that expresses the critic's actual:
+
+- opinion
+- criticism
+- praise
+- judgment
+- verdict
+- assessment
+- evaluation
+- sentiment
+- disappointment
+- approval
+- sarcasm
+- positive observation
+- negative observation
+- mixed judgment
+
+The opinion can be positive, negative, mixed, sarcastic, or indirect.
+
+Examples of valid opinions:
+
+"The Only Star Was Vijay Deverakonda In Vijay Sales Ad"
+
+"A Painful Blow To Filmmaking Standards"
+
+"Too Wacky For Its Own Good"
+
+"Promises A Lot, Delivers Little"
+
+"A Nightmare Of A Comedy That Drags On"
+
+"Raghav Juyal Is On Fire But This Slapstick Comedy Runs Out Of Steam Too Soon"
+
+Do not require explicit words such as "good", "bad", "great", or "fails".
+
+PUNCTUATION CLEANUP:
+Clean up any lingering or orphaned punctuation. Strip away any trailing or leading hyphens, colons, pipes, or commas that are left behind after removing the metadata.
+
+==================================================
+PRESERVE THE COMPLETE OPINION
+==================================================
+
+Do not extract only the strongest phrase from a longer opinion.
+
+Raw:
+"Raghav Juyal Is On Fire But This Slapstick Comedy Runs Out Of Steam Too Soon"
+
+Correct:
+"Raghav Juyal Is On Fire But This Slapstick Comedy Runs Out Of Steam Too Soon"
+
+Incorrect:
+"Runs Out Of Steam Too Soon"
+
+The entire evaluative statement must be preserved.
+
+==================================================
+GRAMMAR SAFETY
+==================================================
+
+Never remove a phrase if doing so destroys the grammatical meaning of the opinion.
+
+If removing the Movie Name creates a grammatical fragment, KEEP the Movie Name.
+
+Raw:
+"Bhai Tera Star Hai Is A Chaotic And Unfunny Comedy"
+
+Correct:
+"Bhai Tera Star Hai Is A Chaotic And Unfunny Comedy"
+
+Incorrect:
+"Is A Chaotic And Unfunny Comedy"
+
+
+Raw:
+"Bhai Tera Star Hai Promises A Lot, Delivers Little"
+
+Correct:
+"Bhai Tera Star Hai Promises A Lot, Delivers Little"
+
+Incorrect:
+"Promises A Lot, Delivers Little"
+
+==================================================
+NO EXTRA WORDS
+==================================================
+
+This is an EXTRACTION task.
+
+Every word in the final output MUST already exist in the Raw Title.
+
+You may REMOVE words.
+
+You may NOT:
+
+- add words
+- paraphrase
+- summarize
+- rewrite
+- translate
+- correct grammar
+- reorder words
+- infer missing words
+- replace words with synonyms
+
+Example:
+
+Raw:
+"Raghav Juyal Fails To Impress"
+
+Correct:
+"Raghav Juyal Fails To Impress"
+
+Incorrect:
+"The Film Fails To Impress"
+
+"The Film" does not exist in Raw Title and therefore MUST NOT be added.
+
+==================================================
+NO CLEAR OPINION
+==================================================
+
+If, after removing metadata, there is no clear critic opinion, output nothing at all. Leave the response completely blank. Do NOT output the word "[empty]", "null", or quotation marks.
+
+Examples:
+
+Raw:
+"Movie Review: Bhai Tera Star Hai"
+
+Output:
+
+
+
+Raw:
+"Bhai Tera Star Hai Movie Review"
+
+Output:
+
+
+
+Raw:
+"Bhai Tera Star Hai, Rating: 2/5"
+
+Output:
+
+
+
+Raw:
+"Bhai Tera Star Hai Release Date, Cast And Trailer"
+
+Output:
+
+
+
+==================================================
+CONSERVATIVE RULE
+==================================================
+
+When uncertain whether a phrase is metadata or part of the critic's opinion:
+
+KEEP IT.
+
+Do not delete potentially meaningful opinion content.
+
+It is better to retain an unnecessary word than to accidentally destroy the critic's actual opinion.
+
+The primary objective is:
+
+REMOVE ARTICLE METADATA WITHOUT DAMAGING THE CRITIC'S ACTUAL OPINION.
+
+==================================================
+FINAL VALIDATION
+==================================================
+
+Before returning the answer, internally verify:
+
+1. Article metadata has been removed.
+2. Movie/review metadata patterns have been removed when clearly identifiable.
+3. The Movie Name has NOT been removed merely because it matches Movie Name.
+4. Actor names have NOT been removed merely because they are names.
+5. Ratings have been removed.
+6. The remaining text contains the critic's actual opinion.
+7. The complete opinion has been preserved.
+8. Removing metadata has not created a grammatical fragment.
+9. No words have been added.
+10. No words have been paraphrased.
+11. No words have been reordered.
+12. Every word in the output appears verbatim in Raw Title.
+13. If there is no clear opinion, the output is completely blank.
+
+==================================================
+OUTPUT
+==================================================
+
+Return ONLY the extracted opinion.
+
+Do not return:
+
+- quotation marks
+- explanations
+- reasoning
+- labels
+- "Answer:"
+- "Output:"
+- Markdown
+- bullet points
+
+If there is no clear opinion, output nothing at all. Leave the response completely blank. Do NOT output the word "[empty]".
