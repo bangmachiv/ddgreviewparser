@@ -24,12 +24,32 @@ jobs:
           python -m pip install --upgrade pip
           pip install google-genai
           
+      - name: Deep Debugging - File System Check
+        run: |
+          echo "--- Current Working Directory ---"
+          pwd
+          
+          echo "--- Listing All Root Files ---"
+          ls -la
+          
+          echo "--- Searching for ANY file with 'prompt' in the name ---"
+          find . -type f -iname "*prompt*"
+          
+          echo "--- Strict Existence Test ---"
+          if [ -f "prompt_clean_titles.txt" ]; then
+              echo "SUCCESS: Linux sees 'prompt_clean_titles.txt' perfectly."
+          else
+              echo "FATAL: Linux CANNOT find exactly 'prompt_clean_titles.txt'."
+          fi
+
       - name: Run title cleaning script
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python clean_titles.py
+        # The '|| exit 1' ensures the workflow officially fails if Python crashes
+        run: python clean_titles.py || { echo "Python script crashed!"; exit 1; }
 
       - name: Commit and push changes
+        if: success() # Only runs if the step above does not crash
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
