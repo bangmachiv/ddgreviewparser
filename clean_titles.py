@@ -3,90 +3,63 @@ import os
 import glob
 import re
 import time
-import google.generativeai as genai
+from google import genai
+from google.genai import errors
 
 # ---------------------------------------------------------------------------
-# Gemini API & File Setup
+# Bulletproof Absolute Paths
+# ---------------------------------------------------------------------------
+# This forces Python to use the exact folder where this script lives as the base
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROMPT_FILE = os.path.join(BASE_DIR, "prompt_clean_titles.txt")
+
+# ---------------------------------------------------------------------------
+# Gemini API Setup
 # ---------------------------------------------------------------------------
 API_KEY = os.environ.get("GEMINI_API_KEY")
 if not API_KEY:
     print("[ERROR] GEMINI_API_KEY environment variable not found!")
     exit(1)
 
-genai.configure(api_key=API_KEY)
+client = genai.Client(api_key=API_KEY)
 
-PROMPT_FILE = "prompt_clean_titles.txt"
-
-# Priority-ordered model configuration
 MODEL_CONFIG = [
-    {
-        "name": "models/gemini-3.6-flash",
-        "priority": 1,
-        "enabled": True
-    },
-    {
-        "name": "models/gemini-3.5-flash",
-        "priority": 2,
-        "enabled": True
-    },
-    {
-        "name": "models/gemini-3.5-flash-lite",
-        "priority": 3,
-        "enabled": True
-    },
-    {
-        "name": "models/gemini-3.1-flash-lite",
-        "priority": 4,
-        "enabled": True
-    }
+    {"name": "gemini-3.6-flash", "priority": 1, "enabled": True},
+    {"name": "gemini-3.5-flash", "priority": 2, "enabled": True},
+    {"name": "gemini-3.5-flash-lite", "priority": 3, "enabled": True},
+    {"name": "gemini-3.1-flash-lite", "priority": 4, "enabled": True}
 ]
-
 
 # ---------------------------------------------------------------------------
 # Validation Helpers
 # ---------------------------------------------------------------------------
 def extract_words(text):
-    """Extracts lowercased unicode word tokens from text, ignoring punctuation."""
     if not text:
         return []
     return re.findall(r'\w+', text.lower(), re.UNICODE)
 
-
 def validate_cleaned_title(cleaned_title, original_title):
-    """
-    Validates that:
-    1. Cleaned title is non-empty.
-    2. EVERY word in cleaned_title exists in original_title.
-    """
     if not cleaned_title or not cleaned_title.strip():
         return False
-
     clean_words = extract_words(cleaned_title)
     if not clean_words:
         return False
-
     original_words_set = set(extract_words(original_title))
-
-    # Strict check: Every word in the output MUST exist in the original title
     for word in clean_words:
         if word not in original_words_set:
             print(f"      [Validation Fail] Word '{word}' is not in the original title!")
             return False
-
     return True
-
 
 # ---------------------------------------------------------------------------
 # Core Gemini Cleaning Logic
 # ---------------------------------------------------------------------------
 def clean_title_with_gemini(movie_name, raw_title, models_config, prompt_template):
-    """Iterates through enabled models by priority to extract cleaned title."""
     active_models = sorted(
         [m for m in models_config if m.get("enabled", True)],
         key=lambda x: x.get("priority", 999)
     )
 
-    # Inject the variables into the template loaded from the text file
     prompt = prompt_template.format(movie_name=movie_name, raw_title=raw_title)
 
     for model_info in active_models:
@@ -94,42 +67,39 @@ def clean_title_with_gemini(movie_name, raw_title, models_config, prompt_templat
         print(f"      [Attempting Model: {model_name}]")
 
         try:
-            # Instantiate model without tools or web search parameters
-            model = genai.GenerativeModel(model_name)
-            
-            # Explicit call with NO tools parameter specified
-            response = model.generate_content(prompt)
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt
+            )
 
             if response and response.text:
                 cleaned = response.text.strip()
-                
-                # Strip wrapping quotes if added by model
                 if (cleaned.startswith('"') and cleaned.endswith('"')) or (cleaned.startswith("'") and cleaned.endswith("'")):
                     cleaned = cleaned[1:-1].strip()
 
-                # CHECK: Non-null and strict word containment check
                 if validate_cleaned_title(cleaned, raw_title):
                     print(f"      [Success with {model_name}]")
                     return cleaned
                 else:
                     print(f"      [Output Rejected] Output failed strict word containment check.")
 
+        except errors.APIError as e:
+            print(f"      [API Error on {model_name}]: Status Code {e.code} - {e.message}")
         except Exception as e:
-            print(f"      [API Error on {model_name}]: {e}")
+            print(f"      [Unexpected Error on {model_name}]: {e}")
 
-        # 5-SECOND GAP: Pause before attempting a fallback model
         print("      [Waiting 5 seconds before model fallback attempt...]")
         time.sleep(5)  
 
     return None
-
 
 # ---------------------------------------------------------------------------
 # File Processing & Pipeline Integration
 # ---------------------------------------------------------------------------
 def get_live_movie_slugs():
     slugs = []
-    live_master_file = "data/movies/movies-live-today.json"
+    live_master_file = os.path.join(BASE_DIR, "data", "movies", "movies-live-today.json")
+    
     if os.path.exists(live_master_file):
         with open(live_master_file, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -138,7 +108,8 @@ def get_live_movie_slugs():
                 if isinstance(movie, dict) and "slug" in movie:
                     slugs.append(movie["slug"])
     else:
-        for file_path in glob.glob("data/movies/*.json"):
+        search_path = os.path.join(BASE_DIR, "data", "movies", "*.json")
+        for file_path in glob.glob(search_path):
             with open(file_path, "r", encoding="utf-8") as f:
                 try:
                     data = json.load(f)
@@ -149,10 +120,9 @@ def get_live_movie_slugs():
                     pass
     return list(set(slugs))
 
-
 def process_cleaning_for_movie(json_path, prompt_template):
     print("\n" + "="*80)
-    print(f" CLEANING TITLES FOR LIVE MOVIE FILE: {json_path}")
+    print(f" CLEANING TITLES FOR LIVE MOVIE FILE: {os.path.basename(json_path)}")
     print("="*80)
 
     with open(json_path, "r", encoding="utf-8") as f:
@@ -192,13 +162,11 @@ def process_cleaning_for_movie(json_path, prompt_template):
             print(f"      Saved clean_title: {cleaned}")
             summary_counts["Cleaned successfully"] += 1
         else:
-            # DISCARD STEP: Ensure clean_title field is completely omitted/removed
             if "clean_title" in pub:
                 del pub["clean_title"]
             print(f"      [DISCARDED] Output invalid or null. 'clean_title' field omitted.")
             summary_counts["Discarded (Failed validation / Null)"] += 1
 
-        # 13-SECOND GAP: Ensures max ~4.6 RPM to strictly respect the 5 RPM free-tier limit
         print("      [Waiting 13 seconds before next API call...]")
         time.sleep(13)
 
@@ -211,11 +179,10 @@ def process_cleaning_for_movie(json_path, prompt_template):
         print(f"{category} : {count}")
     print("=" * 60)
 
-
 def main():
     print("[STEP 1] Loading prompt template...")
     if not os.path.exists(PROMPT_FILE):
-        print(f"[ERROR] Prompt file '{PROMPT_FILE}' not found! Please create it.")
+        print(f"[ERROR] Prompt file '{PROMPT_FILE}' not found! I am looking in exactly this folder: {BASE_DIR}")
         return
         
     with open(PROMPT_FILE, "r", encoding="utf-8") as pf:
@@ -230,14 +197,13 @@ def main():
 
     target_files = []
     for slug in live_slugs:
-        review_file = f"data/reviews/reviews_{slug}.json"
+        review_file = os.path.join(BASE_DIR, "data", "reviews", f"reviews_{slug}.json")
         if os.path.exists(review_file):
             target_files.append(review_file)
 
     print("\n[STEP 3] Running Gemini cleaning pipeline...")
     for json_path in target_files:
         process_cleaning_for_movie(json_path, prompt_template)
-
 
 if __name__ == "__main__":
     main()
