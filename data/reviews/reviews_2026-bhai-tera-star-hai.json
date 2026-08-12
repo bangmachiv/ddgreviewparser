@@ -13,7 +13,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "abp",
@@ -23,7 +24,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "amar-ujala",
@@ -59,7 +61,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "business-standard",
@@ -69,7 +72,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "cinema-express",
@@ -92,7 +96,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "dainik-bhaskar",
@@ -128,7 +133,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "deccan-herald",
@@ -138,7 +144,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "filmfare",
@@ -161,7 +168,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "free-press-journal",
@@ -184,7 +192,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "hindustan-times",
@@ -206,7 +215,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "india-today",
@@ -242,7 +252,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "lokmat",
@@ -252,7 +263,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "mid-day",
@@ -275,7 +287,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "moneycontrol",
@@ -312,7 +325,8 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "could not find from jsonld",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Html parsed (no data found)"
+            "json_ld_extraction_status": "Html parsed (no data found)",
+            "article_title": "'भाई तेरा स्‍टार है' रिव्यू: लाउड कॉमेडी और लचर स्‍क्रीनप्‍ले, 'स्टार' नहीं बन पाए राघव जुयाल - bhai tera star hai movie review in hindi starring raghav juyal sanjay kapoor niki walia niharika nm directed by vivek b agrawal - Navbharat Times"
         },
         {
             "publisher_id": "ndtv",
@@ -348,7 +362,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "peepingmoon",
@@ -358,7 +373,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "rediff",
@@ -394,7 +410,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "the-economic-times",
@@ -404,7 +421,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "the-federal",
@@ -427,7 +445,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "the-indian-express",
@@ -449,7 +468,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "the-telegraph",
@@ -459,7 +479,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         },
         {
             "publisher_id": "the-times-of-india",
@@ -482,7 +503,8 @@
             "search_rank": "NA",
             "critic_name": "Na",
             "star_rating": "Na",
-            "json_ld_extraction_status": "Html Not parsed (Url not available)"
+            "json_ld_extraction_status": "Html Not parsed (Url not available)",
+            "article_title": null
         }
     ]
 }
