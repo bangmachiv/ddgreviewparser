@@ -93,11 +93,29 @@ def process_single_movie(json_path, context):
         # Primary Attempt: Playwright
         try:
             page = context.new_page()
-            # Block heavy assets to speed up downloading
-            page.route("**/*.{png,jpg,jpeg,gif,svg,woff,woff2,css}", lambda route: route.abort())
+            
+            # ADVANCED INTERCEPTOR: Block media, styling, AND heavy ad networks
+            def intercept_route(route):
+                request = route.request
+                resource_type = request.resource_type
+                url = request.url.lower()
+                
+                # Strip heavy visual assets
+                if resource_type in ["image", "media", "font", "stylesheet"]:
+                    route.abort()
+                # Strip known third-party ad and tracking scripts that stall the JS thread
+                elif any(ad in url for ad in ["doubleclick", "google-analytics", "taboola", "outbrain", "facebook", "criteo"]):
+                    route.abort()
+                else:
+                    route.continue_()
 
-            page.goto(review_url, wait_until="commit", timeout=25000)
-            page.wait_for_timeout(2000)
+            page.route("**/*", intercept_route)
+
+            # FIX: 'domcontentloaded' ensures the raw HTML is fully parsed before waiting
+            page.goto(review_url, wait_until="domcontentloaded", timeout=25000)
+            
+            # FIX: Wait a hard 3 seconds to give React/Vue time to hydrate the DOM
+            page.wait_for_timeout(3000)
 
             temp_content = page.content()
             page.close()
@@ -137,12 +155,7 @@ def process_single_movie(json_path, context):
 def main():
     print("[STEP 1] Scanning for review JSON files...")
 
-    # Automatically find every JSON file in the reviews folder
     target_files = glob.glob("data/reviews/reviews_*.json")
-
-    # If you ONLY want to process movies based on a master list in `data/movies/`, 
-    # you can filter `target_files` here. But scanning `data/reviews/` ensures 
-    # we process every movie that currently has a reviews JSON generated.
     
     if not target_files:
         print("[ERROR] No JSON files found in data/reviews/ directory.")
@@ -159,7 +172,6 @@ def main():
             extra_http_headers={"Referer": "https://www.google.com/"},
         )
 
-        # Loop through every movie found
         for json_path in target_files:
             process_single_movie(json_path, context)
 
