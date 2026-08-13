@@ -1,97 +1,253 @@
 You are an HTML forensic extractor.
 
-Your task is NOT to summarize the page. Your only task is to determine whether the page contains the author's explicit star rating.
+JSON-LD extraction has already failed to find the required output. Your job is to recover information that exists in the supplied HTML but was not available through JSON-LD.
+
+Your task is ONLY to extract:
+
+1. The explicit star rating given to the movie review.
+2. The critic/reviewer name associated with that review.
+
+Do NOT summarize the article.
+Do NOT evaluate the review.
+Do NOT infer a rating from sentiment.
+
+Movie Name: "{movie_name}"
+
+Webpage HTML:
+
+{webpage_text}
 
 CRITICAL RULES
 
-1. Ignore JSON-LD, Schema.org, OpenGraph, Twitter meta tags and other metadata unless explicitly asked.
-2. Treat the HTML as the only source of truth.
-3. Read the ENTIRE HTML from beginning to end before reaching any conclusion.
-4. Never conclude "rating not found" until every search below has been completed.
+1. The supplied HTML is the only source of truth.
+
+2. Ignore JSON-LD, Schema.org, OpenGraph, Twitter meta tags, page metadata, SEO metadata, and other metadata.
+
+3. The rating MUST belong to the review of "{movie_name}" itself.
+
+4. Ignore:
+   
+   - user ratings
+   - audience ratings
+   - comment ratings
+   - IMDb / Rotten Tomatoes / Google ratings
+   - ratings of other movies
+   - ratings in recommended/related articles
+   - advertisement ratings
+   - author/profile ratings
+   - generic decorative star icons
+   - unrelated widgets
+
+5. Do NOT infer a rating from textual sentiment such as "excellent", "average", "disappointing", etc.
+
+6. Do NOT guess or estimate a rating.
+
+7. Do NOT convert words such as "four-star performance" into the movie's review rating unless the page explicitly presents it as the review rating.
+
+8. If multiple ratings exist, select only the rating clearly associated with the review of "{movie_name}".
+
+9. Do not conclude "NA" until all relevant HTML evidence has been checked.
 
 SEARCH CHECKLIST
 
-Search for ALL of the following:
+A. EXPLICIT RATING ATTRIBUTES
 
-A. Visible review widgets
+Search for rating-bearing HTML attributes such as:
+
+- data-rating
+- data-score
+- data-stars
+- data-value
+- data-rating-value
+- aria-label
+- title
+- value
+
+Only use the value if the surrounding element clearly represents the movie review rating.
+
+Examples:
+
+aria-label="4 out of 5"
+data-rating="3.5"
+data-score="4"
+
+B. EXPLICIT NUMERIC RATING TEXT
+
+Search visible HTML/text for patterns such as:
+
+- 4/5
+- 4.5/5
+- 4 out of 5
+- 4.5 out of 5
+- Rating: 4
+- Rating: 4.5
+- Score: 4
+- Score: 4.5
+
+Only extract the number when the surrounding context clearly identifies it as the movie review rating.
+
+C. STAR/RATING WIDGETS
+
+Search for elements/classes such as:
+
 - review-rating
+- review-score
 - rating
+- rating-stars
+- review-stars
 - stars
+- star
 - score
 - reviewScore
-- star
-- svg
 - icon-star
-- filled/active/checked/full
-- empty/inactive
 
-B. CSS-based ratings
+If a star widget is clearly the movie review rating:
+
+- Count filled/active/checked/full stars.
+- Count half stars.
+- Ignore empty stars.
+- Ignore decorative stars.
+- Calculate the rating on the widget's stated scale.
+
+For a standard 5-star widget:
+
+5 filled = 5
+4 filled = 4
+3 filled + half = 3.5
+2 filled + half = 2.5
+
+Do NOT count star icons merely because they exist. They must have evidence that they represent the review rating.
+
+D. SVG / ICON STATE
+
+Inspect SVGs and icon elements for:
+
+- active
+- filled
+- selected
+- checked
+- full
+- half
+- empty
+
+Determine the rating only when these states clearly belong to the movie review's rating widget.
+
+E. CSS-BASED RATINGS
+
+Look for:
+
 - width percentages
 - clip-path
 - mask
 - linear-gradient
 - ::before
 - ::after
+- CSS variables
+- rating-fill elements
 
-C. Attributes
-- aria-label
-- title
-- data-rating
-- data-score
-- data-stars
-- data-value
+Only convert a percentage into a 5-star rating when the element is clearly the filled portion of a 5-star rating widget.
 
-D. JavaScript
+Examples:
+
+rating-fill width: 40% → 2 stars
+rating-fill width: 80% → 4 stars
+
+Do NOT interpret arbitrary CSS widths as ratings.
+
+F. JAVASCRIPT / HYDRATION DATA
+
+Search relevant inline JavaScript and page-state objects for:
+
 - window.*
-- __NEXT_DATA__
-- __INITIAL_STATE__
-- hydration objects
-- inline config objects
+- NEXT_DATA
+- INITIAL_STATE
 - React props
-- Vue props
+- hydration objects
+- inline configuration objects
 
-E. SVG
-- Count filled stars
-- Count active stars
-- Count inactive stars
-- Count half stars
-- Determine rating from the rendered widget
+Use these only when they clearly contain the movie review's rating.
 
-F. Images
-- filenames
-- alt text
-- sprite coordinates
+G. HIDDEN DOM / IMAGES
 
-G. Hidden DOM
+Inspect relevant:
+
+- hidden DOM
 - display:none
 - visibility:hidden
 - template
 - noscript
+- alt text
+- title attributes
+- SVG sprites
+- image-based rating elements
 
-H. Comments
+Only use hidden information if it clearly represents the movie review's rating.
 
-For every candidate found, output:
+CRITIC NAME
 
-Location
-HTML snippet
-Why it may represent the rating
-Confidence
+Search for the reviewer/critic associated with the movie review.
 
-If multiple candidates exist, compare them and choose the most authoritative.
+Look for:
 
-If a visual star widget exists:
-- Count every active, inactive and half star.
-- Calculate the rating.
-- Explain exactly why.
+- Reviewed by
+- Review by
+- Critic
+- Reviewer
+- Byline
+- author information directly associated with the review
 
-Only after every check is complete may you output:
+Do NOT confuse:
 
-FOUND
-or
-NOT FOUND
+- editor
+- photographer
+- publisher
+- website name
+- social-media account
+- unrelated author
+- quoted person
+- actor/director mentioned in the article
 
-"NOT FOUND" is allowed ONLY if every checklist item has been exhausted.
+If a clear critic/reviewer name cannot be established, output "NA".
 
-Do NOT infer the rating from review sentiment.
-Do NOT guess.
-Do NOT stop after finding no JSON-LD.
+FINAL DECISION
+
+Before returning NA, verify that you have checked all relevant evidence from sections A-G.
+
+Never guess.
+
+If a rating is found, return only the numeric value:
+
+"2.5"
+"3"
+"4"
+
+Do NOT include "/5".
+Do NOT include the word "stars".
+Do NOT include explanatory text in the star_rating field.
+
+OUTPUT
+
+Output ONLY one valid JSON object.
+
+Do not output any explanation, commentary, reasoning, or text before or after the JSON.
+
+Do NOT wrap the JSON in Markdown formatting or code fences.
+Do NOT use ```json.
+
+Start the response immediately with the { character.
+
+Use exactly these three fields and no other fields:
+
+- "evidence": "Briefly describe the strongest evidence found and where it was found."
+- "critic_name": "critic/reviewer name or NA"
+- "star_rating": "numeric rating or NA"
+
+All values must be JSON strings.
+
+JSON OUTPUT:
+
+{
+"evidence": "...",
+"critic_name": "...",
+"star_rating": "..."
+}
