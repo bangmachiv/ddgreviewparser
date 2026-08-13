@@ -84,9 +84,11 @@
             "webpage_extraction_successful": "Y",
             "critic_name": "BH Harsh",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Found partial data from json ld by JS",
+            "json_ld_extraction_status": "Found partial data from json ld by JS | Augmented by Gemini",
             "article_title": "Bhai Tera Star Hai Movie Review: Too wacky for its own good",
-            "clean_title": "Too wacky for its own good"
+            "clean_title": "Too wacky for its own good",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "found one"
         },
         {
             "publisher_id": "cinetales",
@@ -106,11 +108,13 @@
             "review_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal Solo Lead Fails To...",
             "search_rank": 2,
             "webpage_extraction_successful": "Y",
-            "critic_name": "दिव्य मराठी",
+            "critic_name": "आशीष तिवारी",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Found partial data from json ld by JS",
+            "json_ld_extraction_status": "Found partial data from json ld by JS | Augmented by Gemini",
             "article_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal Solo Lead Fails To Impress",
-            "clean_title": "Raghav Juyal Solo Lead Fails To Impress"
+            "clean_title": "Raghav Juyal Solo Lead Fails To Impress",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "found one"
         },
         {
             "publisher_id": "dainik-jagran",
@@ -182,7 +186,9 @@
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "Html parsed (partial data found)",
             "article_title": "Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?",
-            "clean_title": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?"
+            "clean_title": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "failed to parse"
         },
         {
             "publisher_id": "hindustan",
@@ -205,7 +211,8 @@
             "critic_name": "Na",
             "star_rating": "Na",
             "json_ld_extraction_status": "Html Not parsed (Webpage not available)",
-            "article_title": null
+            "article_title": null,
+            "ai_extraction_attempt_count": 1
         },
         {
             "publisher_id": "ians-live",
@@ -277,7 +284,9 @@
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "Found partial data from json ld by JS",
             "article_title": "Bhai Tera Star Hai movie review: Raghav Juyal’s comic timing can’t save this film",
-            "clean_title": "Raghav Juyal’s comic timing can’t save this film"
+            "clean_title": "Raghav Juyal’s comic timing can’t save this film",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "failed to parse"
         },
         {
             "publisher_id": "mint",
@@ -301,7 +310,9 @@
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "no data found from json ld by js",
             "article_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal leads a comedy where the jokes need their own rescue mission",
-            "clean_title": "Raghav Juyal leads a comedy where the jokes need their own rescue mission"
+            "clean_title": "Raghav Juyal leads a comedy where the jokes need their own rescue mission",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "failed to parse"
         },
         {
             "publisher_id": "movie-talkies",
@@ -314,7 +325,9 @@
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "Found partial data from json ld by JS",
             "article_title": "Bhai Tera Star Hai Review: A painful blow to filmmaking standards –",
-            "clean_title": "A painful blow to filmmaking standards"
+            "clean_title": "A painful blow to filmmaking standards",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "failed to parse"
         },
         {
             "publisher_id": "navbharat-times",
@@ -327,7 +340,9 @@
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "Html parsed (no data found)",
             "article_title": "'भाई तेरा स्‍टार है' रिव्यू: लाउड कॉमेडी और लचर स्‍क्रीनप्‍ले, 'स्टार' नहीं बन पाए राघव जुयाल - bhai tera star hai movie review in hindi starring raghav juyal sanjay kapoor niki walia niharika nm directed by vivek b agrawal - Navbharat Times",
-            "clean_title": "लाउड कॉमेडी और लचर स्‍क्रीनप्‍ले, 'स्टार' नहीं बन पाए राघव जुयाल"
+            "clean_title": "लाउड कॉमेडी और लचर स्‍क्रीनप्‍ले, 'स्टार' नहीं बन पाए राघव जुयाल",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "failed to parse"
         },
         {
             "publisher_id": "ndtv",
@@ -401,7 +416,9 @@
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "Found partial data from json ld by JS",
             "article_title": "Bhai Tera Star Hai film review: Pointless comedy strains patience levels",
-            "clean_title": "Pointless comedy strains patience levels"
+            "clean_title": "Pointless comedy strains patience levels",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "failed to parse"
         },
         {
             "publisher_id": "south-asian-herald",
@@ -436,7 +453,9 @@
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "Found partial data from json ld by JS",
             "article_title": "Bhai Tera Star Hai review: Raghav Juyal's comedy promises a lot, delivers little",
-            "clean_title": "Raghav Juyal's comedy promises a lot, delivers little"
+            "clean_title": "Raghav Juyal's comedy promises a lot, delivers little",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "failed to parse"
         },
         {
             "publisher_id": "the-hindu",
@@ -459,7 +478,8 @@
             "critic_name": "Na",
             "star_rating": "Na",
             "json_ld_extraction_status": "Html Not parsed (Webpage not available)",
-            "article_title": null
+            "article_title": null,
+            "ai_extraction_attempt_count": 1
         },
         {
             "publisher_id": "the-quint",
