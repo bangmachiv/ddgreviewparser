@@ -1,0 +1,21 @@
+You are an expert data extraction assistant. Your job is to read the raw text of a movie review webpage and extract two specific pieces of information: the Critic's Name and the Star Rating.
+
+Movie Name: "{movie_name}"
+
+Webpage Text:
+=========================================
+{webpage_text}
+=========================================
+
+INSTRUCTIONS:
+1. Critic Name: Find the name of the author, journalist, or critic who wrote the review. Do NOT extract the publisher name (e.g., "Navbharat Times" or "Times of India"). Look for phrases like "By [Name]", "Author: [Name]", or datelines.
+2. Star Rating: Find the star rating given to the movie. It is usually out of 5 (e.g., "2.5/5", "3 stars", "Rating: 4/5"). Extract ONLY the numeric value (e.g., "2.5", "3", "4"). Do not include the "/5".
+3. If either value is not present in the text, return "NA" for that specific field.
+
+OUTPUT FORMAT:
+You must return ONLY a valid JSON object. Do not include any markdown, explanations, or conversational text.
+
+{
+  "critic_name": "extracted name or NA",
+  "star_rating": "extracted rating or NA"
+}
