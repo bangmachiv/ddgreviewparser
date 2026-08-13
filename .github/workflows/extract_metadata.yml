@@ -1,0 +1,59 @@
+name: Extract Missing Metadata with Gemini
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract-metadata:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-genai beautifulsoup4 lxml
+          
+      - name: Deep Debugging - File System Check
+        run: |
+          echo "--- Current Working Directory ---"
+          pwd
+          
+          echo "--- Listing All Root Files ---"
+          ls -la
+          
+          echo "--- Searching for ANY file with 'prompt' in the name ---"
+          find . -type f -iname "*prompt*"
+          
+          echo "--- Strict Existence Test ---"
+          if [ -f "prompt_missing_metadata.txt" ]; then
+              echo "SUCCESS: Linux sees 'prompt_missing_metadata.txt' perfectly."
+          else
+              echo "FATAL: Linux CANNOT find exactly 'prompt_missing_metadata.txt'."
+          fi
+
+      - name: Run metadata extraction script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        # The '|| exit 1' ensures the workflow officially fails if Python crashes
+        run: python extract_missing_metadata.py || { echo "Python script crashed!"; exit 1; }
+
+      - name: Commit and push changes
+        if: success() # Only runs if the step above does not crash
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data/reviews/
+          git status
+          git commit -m "Extract missing critic names and ratings using Gemini" || echo "No changes to commit"
+          git push origin HEAD:${{ github.ref }}
