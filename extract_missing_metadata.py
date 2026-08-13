@@ -3,7 +3,6 @@ import os
 import glob
 import time
 import re
-from bs4 import BeautifulSoup
 from google import genai
 from google.genai import errors
 
@@ -27,13 +26,16 @@ MODEL_NAME = "gemini-3.5-flash-lite"
 # Helpers
 # ---------------------------------------------------------------------------
 def clean_html_to_text(html_content):
-    """Strips tags, scripts, and styles to return pure readable text."""
-    soup = BeautifulSoup(html_content, "lxml")
-    for script_or_style in soup(["script", "style", "noscript", "meta", "head"]):
-        script_or_style.decompose()
-    text = soup.get_text(separator=' ', strip=True)
-    # Truncate to roughly 50,000 characters to stay well within token limits
-    return text[:50000] 
+    """
+    Returns the raw HTML, lightly cleaned to remove massive base64 images 
+    to save tokens and bandwidth, while preserving the DOM, scripts, and 
+    styles for forensic LLM analysis.
+    """
+    # Strip out giant base64 image strings which waste tokens
+    cleaned_html = re.sub(r'data:image\/[^;]+;base64,[^"\'\s]+', '', html_content)
+    
+    # Return up to 300,000 characters of the RAW HTML so Gemini can see tags, CSS, and JS
+    return cleaned_html[:300000]
 
 def needs_extraction(pub):
     """Determines if a publisher needs Gemini fallback extraction and is eligible."""
@@ -92,7 +94,6 @@ def extract_metadata_with_gemini(movie_name, html_text, prompt_template):
         print(f"      [Unexpected Error]: {e}")
         
     return None
-
 
 # ---------------------------------------------------------------------------
 # Main Logic
