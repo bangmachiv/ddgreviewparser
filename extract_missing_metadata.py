@@ -57,7 +57,8 @@ def needs_extraction(pub):
     return True
 
 def extract_metadata_with_gemini(movie_name, html_text, prompt_template):
-    prompt = prompt_template.format(movie_name=movie_name, webpage_text=html_text)
+    # [FIX 1]: Use .replace() instead of .format() so Python ignores JSON curly braces
+    prompt = prompt_template.replace("{movie_name}", str(movie_name)).replace("{webpage_text}", str(html_text))
     
     try:
         response = client.models.generate_content(
@@ -66,25 +67,32 @@ def extract_metadata_with_gemini(movie_name, html_text, prompt_template):
         )
         
         if response and response.text:
-            # Clean markdown code blocks if the LLM includes them
+            # Clean markdown code blocks if the LLM ignores our rules
             raw_json = response.text.strip()
             if raw_json.startswith("```json"):
                 raw_json = raw_json[7:]
-            if raw_json.startswith("```"):
+            elif raw_json.startswith("```"):
                 raw_json = raw_json[3:]
             if raw_json.endswith("```"):
                 raw_json = raw_json[:-3]
                 
-            return json.loads(raw_json.strip())
+            raw_json = raw_json.strip()
+            
+            # [FIX 2]: If the AI started right after the '{' from our prompt, re-attach it!
+            if not raw_json.startswith("{"):
+                raw_json = "{" + raw_json
+                
+            return json.loads(raw_json)
             
     except errors.APIError as e:
         print(f"      [API Error]: Status Code {e.code} - {e.message}")
-    except json.JSONDecodeError:
-        print(f"      [JSON Parse Error]: The model did not return valid JSON.")
+    except json.JSONDecodeError as e:
+        print(f"      [JSON Parse Error]: {e} \n      [Raw Output]: {raw_json[:100]}...")
     except Exception as e:
         print(f"      [Unexpected Error]: {e}")
         
     return None
+
 
 # ---------------------------------------------------------------------------
 # Main Logic
