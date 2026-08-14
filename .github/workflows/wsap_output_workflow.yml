@@ -3,6 +3,10 @@ name: Generate WhatsApp Messages
 on:
   workflow_dispatch: # Allows you to manually trigger this test from the GitHub Actions tab
 
+# 🚨 CRITICAL: You must explicitly grant the Action permission to push code back to your repo
+permissions:
+  contents: write
+
 jobs:
   build-wsap-messages:
     runs-on: ubuntu-latest
@@ -16,37 +20,34 @@ jobs:
         with:
           python-version: '3.10'
 
-      # (Optional) If your script requires external dependencies, uncomment the next line:
-      # - name: Install dependencies
-      #   run: pip install -r requirements.txt
-
       - name: Run WhatsApp Generator for all live movies
         run: |
           echo "Looking for review JSON files..."
           
           # Loop through every movie JSON file in the reviews folder
           for json_file in data/reviews/reviews_*.json; do
-            
-            # Check if the file actually exists to prevent glob errors
             if [ -f "$json_file" ]; then
               echo "========================================"
               echo " Generating WhatsApp msg for: $json_file"
               echo "========================================"
-              
-              # Run your script with the exact updated filename
               python wsap_output_creator.py "$json_file"
             fi
-            
           done
 
-      - name: Verify File Creation
+      - name: Commit and Push to Repository
         run: |
-          echo "Checking contents of data/output/wsap/ ..."
-          ls -la data/output/wsap/
-
-      - name: Upload WhatsApp text files as Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: whatsapp-ready-messages
-          path: data/output/wsap/*.txt
-          retention-days: 5 # Keeps the files available for download for 5 days
+          # 1. Identify the bot performing the commit
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 2. Stage the newly created text files in the wsap output folder
+          git add data/output/wsap/*.txt
+          
+          # 3. Check if any files were actually changed/created to avoid failing on empty commits
+          if git diff --staged --quiet; then
+            echo "No new WhatsApp messages generated or updated. Skipping commit."
+          else
+            git commit -m "chore: auto-generate WhatsApp review output files"
+            git push
+            echo "Successfully committed and pushed new output files to the repository!"
+          fi
