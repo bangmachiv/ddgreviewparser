@@ -1,0 +1,52 @@
+name: Generate WhatsApp Messages
+
+on:
+  workflow_dispatch: # Allows you to manually trigger this test from the GitHub Actions tab
+
+jobs:
+  build-wsap-messages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # (Optional) If your script requires external dependencies, uncomment the next line:
+      # - name: Install dependencies
+      #   run: pip install -r requirements.txt
+
+      - name: Run WhatsApp Generator for all live movies
+        run: |
+          echo "Looking for review JSON files..."
+          
+          # Loop through every movie JSON file in the reviews folder
+          for json_file in data/reviews/reviews_*.json; do
+            
+            # Check if the file actually exists to prevent glob errors
+            if [ -f "$json_file" ]; then
+              echo "========================================"
+              echo " Generating WhatsApp msg for: $json_file"
+              echo "========================================"
+              
+              # Run your script with the exact updated filename
+              python wsap_output_creator.py "$json_file"
+            fi
+            
+          done
+
+      - name: Verify File Creation
+        run: |
+          echo "Checking contents of data/output/wsap/ ..."
+          ls -la data/output/wsap/
+
+      - name: Upload WhatsApp text files as Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: whatsapp-ready-messages
+          path: data/output/wsap/*.txt
+          retention-days: 5 # Keeps the files available for download for 5 days
