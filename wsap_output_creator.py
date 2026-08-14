@@ -1,6 +1,7 @@
 import json
 import sys
 import os
+import traceback
 
 def generate_whatsapp_message(json_data):
     """
@@ -118,7 +119,12 @@ def generate_whatsapp_message(json_data):
         else:
             emoji = format_stars(item["rating"])
             
-        lines = [f"{emoji} *{title}*", f"`{pub_name}`"]
+        # Updated to place stars and title on separate lines
+        lines = [
+            emoji, 
+            f"*{title}*", 
+            f"`{pub_name}`"
+        ]
         
         # Determine if critic should be omitted
         if critic and critic.lower() not in ("na", "null", "none", ""):
@@ -155,28 +161,49 @@ def generate_whatsapp_message(json_data):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python generate_wsap.py <path_to_json>")
+        sys.stderr.write("[ERROR] Missing JSON input path argument.\n")
+        sys.stderr.write("Usage: python wsap_output_creator.py <path_to_json>\n")
         sys.exit(1)
         
     input_path = sys.argv[1]
+    sys.stderr.write(f"\n[DEBUG] Starting processing for input file: {input_path}\n")
     
-    with open(input_path, 'r', encoding='utf-8') as f:
-        json_data = json.load(f)
+    try:
+        with open(input_path, 'r', encoding='utf-8') as f:
+            json_data = json.load(f)
+    except Exception as e:
+        sys.stderr.write(f"[ERROR] Failed to read or parse input JSON: {str(e)}\n")
+        sys.exit(1)
         
     wsap_msg, slug = generate_whatsapp_message(json_data)
     
-    # Create the output folder and save the file securely 
     try:
-        out_dir = os.path.join("data", "output", "wsap")
+        # Build absolute path to guarantee correct directory targeting
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        sys.stderr.write(f"[DEBUG] Script Base Directory resolved to: {BASE_DIR}\n")
+        
+        out_dir = os.path.join(BASE_DIR, "data", "output", "wsap")
+        sys.stderr.write(f"[DEBUG] Target Output Directory: {out_dir}\n")
+        
+        # Force creation of directory structure
         os.makedirs(out_dir, exist_ok=True)
+        sys.stderr.write(f"[DEBUG] Target directory verified/created successfully.\n")
+        
+        # Write to file
         out_path = os.path.join(out_dir, f"wsap_{slug}.txt")
+        sys.stderr.write(f"[DEBUG] Attempting to write file: {out_path}\n")
+        
         with open(out_path, 'w', encoding='utf-8') as f:
             f.write(wsap_msg)
-    except Exception:
-        # Ignore write errors to guarantee the single print standard out target is not polluted
-        pass
+            
+        sys.stderr.write(f"[SUCCESS] File successfully written to: {out_path}\n")
+        
+    except Exception as e:
+        sys.stderr.write(f"[FATAL ERROR] Failed to save output file!\n")
+        sys.stderr.write(f"[EXCEPTION DETAILS]: {str(e)}\n")
+        traceback.print_exc(file=sys.stderr)
 
-    # 12. Print only the final WhatsApp message
+    # Print only the final WhatsApp message to standard output
     print(wsap_msg)
 
 if __name__ == "__main__":
