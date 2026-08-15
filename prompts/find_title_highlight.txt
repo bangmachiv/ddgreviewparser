@@ -41,6 +41,7 @@ EXTRACTION RULES
 2. NUMBER OF TERMS
 - STRICTLY PREFER returning ONLY 1 term. 
 - If 1 word or 1 short phrase captures the core emotion or verdict, DO NOT find another. Return only 1.
+- CRITICAL EXCEPTION: If the title explicitly contrasts two ideas (e.g., uses "but", "yet", "however"), you MUST extract both sides to avoid misrepresenting the overall verdict.
 - Only select 2 or 3 terms if the title contains completely distinct, non-redundant, or contrasting sentiments (e.g., a mix of praise and criticism).
 - Never select more than 3.
 - If the title contains absolutely no meaningful emotional, critical, or distinctive terms (e.g., a purely factual title like "Movie Review"), you MUST return an empty array: []
@@ -61,6 +62,8 @@ Use your judgment. A strong term may express or strongly suggest:
 - A memorable idea
 - A striking characterization
 - A particularly important phrase in the headline
+
+Self-Contained Meaning: Ensure the extracted phrase retains its critical meaning when standing alone. Avoid orphaned nouns that lose their critical context without surrounding words.
 
 There is no fixed list of words that qualifies. A term does not need to belong to a predefined sentiment category. If it is one of the most striking or meaningful parts of the title, it may be selected.
 
@@ -162,6 +165,8 @@ Before responding, silently verify:
 - No term has been translated, corrected, paraphrased, or invented.
 - The selected term is the most impactful available part of the title.
 - Have I stopped at 1 term if it captures the core meaning?
+- Does the extracted term retain its meaning when standing alone?
+- Have I extracted both sides if the title explicitly contrasts ideas (e.g., "but", "yet")?
 - The language and script have been preserved.
 - The output contains only 0, 1, 2, or 3 terms.
 - The response is ONLY the JSON array.
