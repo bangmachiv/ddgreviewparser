@@ -1,229 +1,263 @@
 import json
+import sys
 import os
-import glob
 import re
-import time
-from google import genai
-from google.genai import errors
+import math
+import traceback
+import html
 
-# ---------------------------------------------------------------------------
-# Bulletproof Absolute Paths
-# ---------------------------------------------------------------------------
-# This forces Python to use the exact folder where this script lives as the base
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROMPT_FILE = os.path.join(BASE_DIR, "prompt_clean_titles.txt")
+def parse_rating(val):
+    if val in (None, "", "Na", "NA", "null") or "could not find" in str(val).lower():
+        return None
+    try:
+        return float(val)
+    except ValueError:
+        return None
 
-# ---------------------------------------------------------------------------
-# Gemini API Setup
-# ---------------------------------------------------------------------------
-API_KEY = os.environ.get("GEMINI_API_KEY")
-if not API_KEY:
-    print("[ERROR] GEMINI_API_KEY environment variable not found!")
-    exit(1)
-
-client = genai.Client(api_key=API_KEY)
-
-MODEL_CONFIG = [
-    {"name": "gemini-3.6-flash", "priority": 1, "enabled": True},
-    {"name": "gemini-3.5-flash", "priority": 2, "enabled": True},
-    {"name": "gemini-3.5-flash-lite", "priority": 3, "enabled": True},
-    {"name": "gemini-3.1-flash-lite", "priority": 4, "enabled": True}
-]
-
-# ---------------------------------------------------------------------------
-# Validation Helpers
-# ---------------------------------------------------------------------------
-def extract_words(text):
-    if not text:
-        return []
-    return re.findall(r'\w+', text.lower(), re.UNICODE)
-
-def validate_cleaned_title(cleaned_title, original_title):
-    if not cleaned_title or not cleaned_title.strip():
-        return False
-    clean_words = extract_words(cleaned_title)
-    if not clean_words:
-        return False
-    original_words_set = set(extract_words(original_title))
-    for word in clean_words:
-        if word not in original_words_set:
-            print(f"      [Validation Fail] Word '{word}' is not in the original title!")
-            return False
-    return True
-
-# ---------------------------------------------------------------------------
-# Core Gemini Cleaning Logic
-# ---------------------------------------------------------------------------
-def clean_title_with_gemini(movie_name, raw_title, models_config, prompt_template):
-    active_models = sorted(
-        [m for m in models_config if m.get("enabled", True)],
-        key=lambda x: x.get("priority", 999)
-    )
-
-    prompt = prompt_template.format(movie_name=movie_name, raw_title=raw_title)
-
-    for model_info in active_models:
-        model_name = model_info["name"]
-        print(f"      [Attempting Model: {model_name}]")
-
-        try:
-            response = client.models.generate_content(
-                model=model_name,
-                contents=prompt
-            )
-
-            if response and response.text:
-                cleaned = response.text.strip()
-                if (cleaned.startswith('"') and cleaned.endswith('"')) or (cleaned.startswith("'") and cleaned.endswith("'")):
-                    cleaned = cleaned[1:-1].strip()
-
-                if validate_cleaned_title(cleaned, raw_title):
-                    print(f"      [Success with {model_name}]")
-                    return cleaned
-                else:
-                    print(f"      [Output Rejected] Output failed strict word containment check.")
-
-        except errors.APIError as e:
-            print(f"      [API Error on {model_name}]: Status Code {e.code} - {e.message}")
-        except Exception as e:
-            print(f"      [Unexpected Error on {model_name}]: {e}")
-
-        print("      [Waiting 5 seconds before model fallback attempt...]")
-        time.sleep(5)  
-
-    return None
-
-# ---------------------------------------------------------------------------
-# File Processing & Pipeline Integration
-# ---------------------------------------------------------------------------
-def get_live_movie_slugs():
-    slugs = []
-    live_master_file = os.path.join(BASE_DIR, "data", "movies", "movies-live-today.json")
+def classify_unrated(title):
+    t = title.lower()
+    bad_phrases = ["pointless", "painful", "fails to impress", "can't save this film",
+                   "delivers little", "unfunny", "absurd", "nightmare",
+                   "strains patience", "bad", "poor", "disappointing"]
+    good_phrases = ["excellent", "brilliant", "outstanding", "terrific",
+                    "superb", "delightful", "impressive", "entertaining"]
     
-    if os.path.exists(live_master_file):
-        with open(live_master_file, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            movie_list = data if isinstance(data, list) else data.get("movies", [])
-            for movie in movie_list:
-                if isinstance(movie, dict) and "slug" in movie:
-                    slugs.append(movie["slug"])
-    else:
-        search_path = os.path.join(BASE_DIR, "data", "movies", "*.json")
-        for file_path in glob.glob(search_path):
-            with open(file_path, "r", encoding="utf-8") as f:
-                try:
-                    data = json.load(f)
-                    slug = data.get("slug") or data.get("movie", {}).get("slug")
-                    if slug:
-                        slugs.append(slug)
-                except Exception:
-                    pass
-    return list(set(slugs))
+    for b in bad_phrases:
+        if b in t: return "BAD"
+    for g in good_phrases:
+        if g in t: return "GOOD"
+    return "NEUTRAL"
 
-def process_cleaning_for_movie(json_path, prompt_template):
-    print("\n" + "="*80)
-    print(f" CLEANING TITLES FOR LIVE MOVIE FILE: {os.path.basename(json_path)}")
-    print("="*80)
+def format_subgroup_rating(rating):
+    if rating == 0:
+        return "☆☆☆☆☆"
+    if rating == 0.5:
+        return "½"
+        
+    full = int(rating)
+    half = (rating - full) >= 0.5
+    
+    stars = "★" * full
+    if half:
+        stars += "½"
+    return stars
 
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    movie_name = data.get("movie", {}).get("name")
-    movie_slug = data.get("movie", {}).get("slug")
-    publishers = data.get("publishers", [])
-
-    summary_counts = {
-        "Skipped (No article_title)": 0,
-        "Skipped (Already cleaned)": 0,
-        "Cleaned successfully": 0,
-        "Discarded (Failed validation / Null)": 0
-    }
-
-    for pub in publishers:
-        pub_id = pub.get("publisher_id")
-        raw_title = pub.get("article_title")
-        existing_clean_title = pub.get("clean_title")
-
-        if not raw_title:
-            summary_counts["Skipped (No article_title)"] += 1
+def generate_whatsapp_message(data):
+    # --- Data Extraction ---
+    movie = data.get("movie", {})
+    movie_name = str(movie.get("name", "Unknown Movie")).strip()
+    movie_slug = str(movie.get("slug", "unknown_slug")).strip()
+    
+    # Extract Year
+    date_str = str(movie.get("date", "")).strip()
+    year = date_str[:4] if len(date_str) >= 4 else "YYYY"
+    
+    valid_reviews = []
+    rated_count = 0
+    total_rating_sum = 0.0
+    
+    for pub in data.get("publishers", []):
+        url = pub.get("review_url")
+        raw_title = pub.get("clean_title")
+        
+        # Exclude invalid reviews
+        if not url or str(url).strip().upper() == "NA":
             continue
-
-        if existing_clean_title:
-            summary_counts["Skipped (Already cleaned)"] += 1
+        if not raw_title or not str(raw_title).strip():
             continue
-
-        print(f"\n  [*] Processing [{pub_id}]...")
-        print(f"      Raw Title: {raw_title}")
-
-        cleaned = clean_title_with_gemini(movie_name, raw_title, MODEL_CONFIG, prompt_template)
-
-        if cleaned:
-            pub["clean_title"] = cleaned
-            print(f"      Saved clean_title: {cleaned}")
-            summary_counts["Cleaned successfully"] += 1
+            
+        # Decode HTML entities (e.g. &amp; -> &) right after validation
+        title = html.unescape(str(raw_title).strip())
+            
+        rating = parse_rating(pub.get("star_rating"))
+        
+        # Normalize Publisher Name (Space + Period + Space)
+        pub_name = str(pub.get("publisher_name", "")).strip()
+        pub_name = re.sub(r'\s*\.\s*', ' . ', pub_name)
+        
+        if rating is not None:
+            rated_count += 1
+            total_rating_sum += rating
+            if rating >= 4:
+                cat = "GOOD"
+            elif rating >= 3:
+                cat = "NEUTRAL"
+            else:
+                cat = "BAD"
         else:
-            if "clean_title" in pub:
-                del pub["clean_title"]
-            print(f"      [DISCARDED] Output invalid or null. 'clean_title' field omitted.")
-            summary_counts["Discarded (Failed validation / Null)"] += 1
+            cat = classify_unrated(str(title))
+            
+        valid_reviews.append({
+            'title': title,
+            'publisher': pub_name,
+            'rating': rating,
+            'category': cat
+        })
 
-        print("      [Waiting 13 seconds before next API call...]")
-        time.sleep(13)
+    total_reviews = len(valid_reviews)
+    
+    # --- Header Math ---
+    avg_rating = 0.0
+    if rated_count > 0:
+        avg_rating = round(total_rating_sum / rated_count, 1)
+        
+    if avg_rating >= 4:
+        overall_verdict = "GOOD"
+    elif avg_rating >= 3:
+        overall_verdict = "NEUTRAL"
+    else:
+        overall_verdict = "BAD"
+        
+    # --- Rating Distribution ---
+    dist_counts = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0, 0: 0}
+    for r in valid_reviews:
+        if r['rating'] is not None:
+            bucket = math.floor(r['rating'])
+            if bucket > 5: bucket = 5
+            if bucket < 0: bucket = 0
+            dist_counts[bucket] += 1
 
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
+    def dist_stars(b):
+        return ("★" * b) + ("☆" * (5 - b))
+        
+    dist_rows = []
+    for b in [5, 4, 3, 2, 1]:
+        c = dist_counts[b]
+        dist_rows.append(f"`{dist_stars(b)}  {c} review{'s' if c != 1 else ''}`")
+        
+    if dist_counts[0] > 0:
+        c = dist_counts[0]
+        dist_rows.append(f"`☆☆☆☆☆  {c} review{'s' if c != 1 else ''}`")
+        
+    # --- Message Construction ---
+    lines = []
+    
+    # 1. HEADER
+    lines.append(f"*{movie_name}* ({year})")
+    lines.append("")
+    lines.append(f"*{avg_rating:.1f}/5 • {overall_verdict}*")
+    lines.append(f"{rated_count} ratings · {total_reviews} reviews")
+    lines.append("")
+    lines.append("*RATING DISTRIBUTION*")
+    lines.append("")
+    for row in dist_rows:
+        lines.append(row)
+    
+    # Two blank lines after final distribution row
+    lines.extend(["", ""])
+    
+    # 2. BODY CATEGORIES
+    categories = {"GOOD": [], "NEUTRAL": [], "BAD": []}
+    for r in valid_reviews:
+        categories[r['category']].append(r)
+        
+    for cat_name in ["GOOD", "NEUTRAL", "BAD"]:
+        cat_reviews = categories[cat_name]
+        cat_count = len(cat_reviews)
+        
+        # Category Header
+        if cat_name == "GOOD":
+            lines.append(f"👍 *Good* • {cat_count} Review{'s' if cat_count != 1 else ''}")
+        elif cat_name == "NEUTRAL":
+            lines.append(f"🤞 *Neutral* • {cat_count} Review{'s' if cat_count != 1 else ''}")
+        else:
+            lines.append(f"👎 *Bad* • {cat_count} Review{'s' if cat_count != 1 else ''}")
+            
+        lines.append("")
+        
+        # Zero Reviews Handle
+        if cat_count == 0:
+            lines.append("No Reviews")
+            lines.extend(["", ""])
+            continue
+            
+        # Group Subgroups
+        rated_groups = {}
+        unrated = []
+        for r in cat_reviews:
+            if r['rating'] is not None:
+                if r['rating'] not in rated_groups:
+                    rated_groups[r['rating']] = []
+                rated_groups[r['rating']].append(r)
+            else:
+                unrated.append(r)
+                
+        # Sort rated subgroups descending
+        sorted_ratings = sorted(rated_groups.keys(), reverse=True)
+        
+        # Print Rated Subgroups
+        for rating in sorted_ratings:
+            group = rated_groups[rating]
+            c = len(group)
+            lines.append(f"*{format_subgroup_rating(rating)}* • {c} Review{'s' if c != 1 else ''}")
+            lines.append("")
+            
+            for idx, r in enumerate(group):
+                lines.append(r['title'])
+                lines.append(f"`{r['publisher']}`")
+                
+                # 1 blank line between reviews
+                if idx < len(group) - 1:
+                    lines.append("")
+            
+            # 2 blank lines after subgroup finishes
+            lines.extend(["", ""])
+            
+        # Print Unrated Subgroup
+        if unrated:
+            c = len(unrated)
+            lines.append(f"*UNRATED* · {c} Review{'s' if c != 1 else ''}")
+            lines.append("")
+            
+            for idx, r in enumerate(unrated):
+                lines.append(r['title'])
+                lines.append(f"`{r['publisher']}`")
+                
+                # 1 blank line between reviews
+                if idx < len(unrated) - 1:
+                    lines.append("")
+            
+            # 2 blank lines after subgroup finishes
+            lines.extend(["", ""])
 
-    print("\n" + "-" * 60)
-    print(f"SUMMARY FOR: {movie_slug}")
-    for category, count in summary_counts.items():
-        print(f"{category} : {count}")
-    print("=" * 60)
+    return "\n".join(lines).strip(), movie_slug
 
 def main():
-    print("================================================================")
-    print(" FORENSIC DEBUGGING LOG: PATHS & FILESYSTEM")
-    print("================================================================")
-    print(f"[*] Raw __file__ path : {__file__}")
-    print(f"[*] Base Directory    : {BASE_DIR}")
-    print(f"[*] Expected Prompt   : {PROMPT_FILE}")
-    print("\n[*] Python's view of files in Base Directory:")
+    if len(sys.argv) < 2:
+        sys.stderr.write("[ERROR] Missing JSON input path argument.\n")
+        sys.stderr.write("Usage: python wsap_output_creator.py <path_to_json>\n")
+        sys.exit(1)
+        
+    input_path = sys.argv[1]
+    sys.stderr.write(f"\n[DEBUG] Starting processing for input file: {input_path}\n")
     
     try:
-        files = os.listdir(BASE_DIR)
-        for f in files:
-            # Highlight anything that has 'prompt' in the name to catch typos
-            if "prompt" in f.lower():
-                print(f"    ---> SUSPECT FOUND: '{f}'")
-            else:
-                print(f"    - {f}")
+        with open(input_path, 'r', encoding='utf-8') as f:
+            json_data = json.load(f)
     except Exception as e:
-        print(f"    [ERROR] Could not read directory: {e}")
-    print("================================================================\n")
-
-    print("[STEP 1] Loading prompt template...")
-    if not os.path.exists(PROMPT_FILE):
-        print(f"[FATAL ERROR] The exact file '{PROMPT_FILE}' does not exist according to Python.")
-        return
+        sys.stderr.write(f"[ERROR] Failed to read or parse input JSON: {str(e)}\n")
+        sys.exit(1)
         
-    with open(PROMPT_FILE, "r", encoding="utf-8") as pf:
-        prompt_template = pf.read()
+    wsap_msg, slug = generate_whatsapp_message(json_data)
+    
+    # --- File Saving Logic ---
+    try:
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        out_dir = os.path.join(BASE_DIR, "data", "output", "wsap")
+        os.makedirs(out_dir, exist_ok=True)
+        
+        out_path = os.path.join(out_dir, f"wsap_{slug}.txt")
+        with open(out_path, 'w', encoding='utf-8') as f:
+            f.write(wsap_msg)
+            
+        sys.stderr.write(f"[SUCCESS] File successfully written to: {out_path}\n")
+    except Exception as e:
+        sys.stderr.write(f"[FATAL ERROR] Failed to save output file!\n")
+        sys.stderr.write(f"[EXCEPTION DETAILS]: {str(e)}\n")
+        traceback.print_exc(file=sys.stderr)
 
-    print("[STEP 2] Fetching live movies for title cleaning...")
-    live_slugs = get_live_movie_slugs()
-
-    if not live_slugs:
-        print("[ERROR] No live movies found. Exiting.")
-        return
-
-    target_files = []
-    for slug in live_slugs:
-        review_file = os.path.join(BASE_DIR, "data", "reviews", f"reviews_{slug}.json")
-        if os.path.exists(review_file):
-            target_files.append(review_file)
-
-    print("\n[STEP 3] Running Gemini cleaning pipeline...")
-    for json_path in target_files:
-        process_cleaning_for_movie(json_path, prompt_template)
+    # Output strict final WhatsApp message to standard out
+    print(wsap_msg)
 
 if __name__ == "__main__":
     main()
