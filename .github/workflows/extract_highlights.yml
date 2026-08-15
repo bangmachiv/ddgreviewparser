@@ -1,11 +1,8 @@
 name: Extract Title Highlights
 
 on:
-  workflow_dispatch: # Run manually from the Actions tab
-  # schedule:
-  #   - cron: '0 2 * * *' # Uncomment to run automatically at a specific time
+  workflow_dispatch:
 
-# 🚨 CRITICAL: Grants the action permission to push code back to the repo
 permissions:
   contents: write
 
@@ -23,26 +20,23 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        # The script requires the new Gemini SDK
         run: pip install google-genai 
 
       - name: Run Highlight Extractor
         env:
-          # Passes your secret API key safely to the Python script
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} 
         run: |
-          python ddgreviewparser/highlight_extractor.py
+          # REMOVED "ddgreviewparser/" prefix here
+          python highlight_extractor.py
 
       - name: Commit and Push to Repository
         run: |
-          # 1. Identity for the commit
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           
-          # 2. Stage the updated JSON files
-          git add ddgreviewparser/data/reviews/*.json
+          # REMOVED "ddgreviewparser/" prefix here
+          git add data/reviews/*.json
           
-          # 3. Check if any files were actually changed
           if git diff --staged --quiet; then
             echo "No new highlights were added. Skipping commit."
           else
