@@ -1,163 +1,222 @@
 import json
 import sys
 import os
+import re
+import math
 import traceback
 
-def generate_whatsapp_message(json_data):
-    """
-    Takes a parsed JSON dictionary, processes it deterministically,
-    and returns a WhatsApp-formatted plain-text string.
-    """
-    movie_name = json_data.get("movie", {}).get("name", "Unknown Movie")
-    movie_slug = json_data.get("movie", {}).get("slug", "unknown_slug")
+def parse_rating(val):
+    if val in (None, "", "Na", "NA", "null") or "could not find" in str(val).lower():
+        return None
+    try:
+        return float(val)
+    except ValueError:
+        return None
+
+def classify_unrated(title):
+    t = title.lower()
+    bad_phrases = ["pointless", "painful", "fails to impress", "can't save this film",
+                   "delivers little", "unfunny", "absurd", "nightmare",
+                   "strains patience", "bad", "poor", "disappointing"]
+    good_phrases = ["excellent", "brilliant", "outstanding", "terrific",
+                    "superb", "delightful", "impressive", "entertaining"]
     
-    # 1 & 2: Parse JSON and identify valid reviews
-    valid_reviews = []
-    
-    for idx, pub in enumerate(json_data.get("publishers", [])):
-        review_url = pub.get("review_url")
-        clean_title = pub.get("clean_title")
+    for b in bad_phrases:
+        if b in t: return "BAD"
+    for g in good_phrases:
+        if g in t: return "GOOD"
+    return "NEUTRAL"
+
+def format_subgroup_rating(rating):
+    if rating == 0:
+        return "☆☆☆☆☆"
+    if rating == 0.5:
+        return "½"
         
-        # Exclude records with missing URLs/NA or missing/empty clean_title
-        if not review_url or str(review_url).strip().upper() == "NA":
+    full = int(rating)
+    half = (rating - full) >= 0.5
+    
+    stars = "★" * full
+    if half:
+        stars += "½"
+    return stars
+
+def generate_whatsapp_message(data):
+    # --- Data Extraction ---
+    movie = data.get("movie", {})
+    movie_name = str(movie.get("name", "Unknown Movie")).strip()
+    movie_slug = str(movie.get("slug", "unknown_slug")).strip()
+    
+    # Extract Year
+    date_str = str(movie.get("date", "")).strip()
+    year = date_str[:4] if len(date_str) >= 4 else "YYYY"
+    
+    valid_reviews = []
+    rated_count = 0
+    total_rating_sum = 0.0
+    
+    for pub in data.get("publishers", []):
+        url = pub.get("review_url")
+        title = pub.get("clean_title")
+        
+        # Exclude invalid reviews
+        if not url or str(url).strip().upper() == "NA":
             continue
-        if not clean_title or not str(clean_title).strip():
+        if not title or not str(title).strip():
             continue
             
-        valid_reviews.append((idx, pub))
+        rating = parse_rating(pub.get("star_rating"))
         
-    # 4. Parse numeric ratings safely
-    def get_rating(val):
-        if val in (None, "", "Na", "NA", "null") or "could not find" in str(val).lower():
-            return None
-        try:
-            return float(val)
-        except ValueError:
-            return None
-
-    # 8. Categorise unrated reviews based on clean-title sentiment
-    def classify_unrated(title):
-        title_lower = title.lower()
-        bad_phrases = ["pointless", "painful", "fails to impress", "can't save this film", 
-                       "delivers little", "unfunny", "absurd", "nightmare", 
-                       "strains patience", "bad", "poor", "disappointing"]
-        good_phrases = ["excellent", "brilliant", "outstanding", "terrific", 
-                        "superb", "delightful", "impressive", "entertaining"]
-        
-        for bp in bad_phrases:
-            if bp in title_lower:
-                return "BAD"
-        for gp in good_phrases:
-            if gp in title_lower:
-                return "GOOD"
-        return "NEUTRAL"
-        
-    rated_count = 0
-    total_rating = 0.0
-    
-    categories = {
-        "GOOD": [],
-        "NEUTRAL": [],
-        "BAD": []
-    }
-    
-    # 7 & 8: Categorise all valid reviews
-    for idx, rev in valid_reviews:
-        rating = get_rating(rev.get("star_rating"))
+        # Normalize Publisher Name (Space + Period + Space)
+        pub_name = str(pub.get("publisher_name", "")).strip()
+        pub_name = re.sub(r'\s*\.\s*', ' . ', pub_name)
         
         if rating is not None:
-            # 6. Count only valid numeric ratings for the average
             rated_count += 1
-            total_rating += rating
-            if rating > 3.5:
+            total_rating_sum += rating
+            if rating >= 4:
                 cat = "GOOD"
-            elif rating >= 2.5:
+            elif rating >= 3:
                 cat = "NEUTRAL"
             else:
                 cat = "BAD"
-                
-            categories[cat].append({
-                "is_unrated": False,
-                "rating": rating,
-                "idx": idx,
-                "data": rev
-            })
         else:
-            cat = classify_unrated(str(rev.get("clean_title", "")))
-            categories[cat].append({
-                "is_unrated": True,
-                "rating": -1.0, # Dummy sorting value
-                "idx": idx,
-                "data": rev
-            })
+            cat = classify_unrated(str(title))
             
-    # 5. Calculate Average 
+        valid_reviews.append({
+            'title': str(title).strip(),
+            'publisher': pub_name,
+            'rating': rating,
+            'category': cat
+        })
+
+    total_reviews = len(valid_reviews)
+    
+    # --- Header Math ---
     avg_rating = 0.0
     if rated_count > 0:
-        avg_rating = round(total_rating / rated_count, 1)
+        avg_rating = round(total_rating_sum / rated_count, 1)
         
-    # Helper to generate exact WhatsApp star emoji representation
-    def format_stars(rating):
-        if rating == 0.5:
-            return "💫"
-        full = int(rating)
-        half = rating - full
-        stars = "⭐" * full
-        if half >= 0.5:
-            stars += "💫"
-        return stars
+    if avg_rating >= 4:
+        overall_verdict = "GOOD"
+    elif avg_rating >= 3:
+        overall_verdict = "NEUTRAL"
+    else:
+        overall_verdict = "BAD"
         
-    def format_review_block(item, cat):
-        rev = item["data"]
-        # 3. Extract exact clean_title
-        title = str(rev.get("clean_title", "")).strip()
-        pub_name = str(rev.get("publisher_name", "")).strip()
-        critic = str(rev.get("critic_name", "")).strip()
+    # --- Rating Distribution ---
+    dist_counts = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0, 0: 0}
+    for r in valid_reviews:
+        if r['rating'] is not None:
+            bucket = math.floor(r['rating'])
+            if bucket > 5: bucket = 5
+            if bucket < 0: bucket = 0
+            dist_counts[bucket] += 1
+
+    def dist_stars(b):
+        return ("★" * b) + ("☆" * (5 - b))
         
-        if item["is_unrated"]:
-            emoji = {"GOOD": "🙂", "NEUTRAL": "😐", "BAD": "☹️"}[cat]
+    dist_rows = []
+    for b in [5, 4, 3, 2, 1]:
+        c = dist_counts[b]
+        dist_rows.append(f"`{dist_stars(b)}  {c} review{'s' if c != 1 else ''}`")
+        
+    if dist_counts[0] > 0:
+        c = dist_counts[0]
+        dist_rows.append(f"`☆☆☆☆☆  {c} review{'s' if c != 1 else ''}`")
+        
+    # --- Message Construction ---
+    lines = []
+    
+    # 1. HEADER
+    lines.append(f"*{movie_name}* ({year})")
+    lines.append("")
+    lines.append(f"*{avg_rating:.1f}/5 • {overall_verdict}*")
+    lines.append(f"{rated_count} ratings · {total_reviews} reviews")
+    lines.append("")
+    lines.append("*RATING DISTRIBUTION*")
+    lines.append("")
+    for row in dist_rows:
+        lines.append(row)
+    
+    # Two blank lines after final distribution row
+    lines.extend(["", ""])
+    
+    # 2. BODY CATEGORIES
+    categories = {"GOOD": [], "NEUTRAL": [], "BAD": []}
+    for r in valid_reviews:
+        categories[r['category']].append(r)
+        
+    for cat_name in ["GOOD", "NEUTRAL", "BAD"]:
+        cat_reviews = categories[cat_name]
+        cat_count = len(cat_reviews)
+        
+        # Category Header
+        if cat_name == "GOOD":
+            lines.append(f"👍 *Good* • {cat_count} Review{'s' if cat_count != 1 else ''}")
+        elif cat_name == "NEUTRAL":
+            lines.append(f"🤞 *Neutral* • {cat_count} Review{'s' if cat_count != 1 else ''}")
         else:
-            emoji = format_stars(item["rating"])
+            lines.append(f"👎 *Bad* • {cat_count} Review{'s' if cat_count != 1 else ''}")
             
-        # Updated to place stars and title on separate lines
-        lines = [
-            emoji, 
-            f"*{title}*", 
-            f"`{pub_name}`"
-        ]
+        lines.append("")
         
-        # Determine if critic should be omitted
-        if critic and critic.lower() not in ("na", "null", "none", ""):
-            lines.append(f"_{critic}_")
+        # Zero Reviews Handle
+        if cat_count == 0:
+            lines.append("No Reviews")
+            lines.extend(["", ""])
+            continue
             
-        return "\n".join(lines)
+        # Group Subgroups
+        rated_groups = {}
+        unrated = []
+        for r in cat_reviews:
+            if r['rating'] is not None:
+                if r['rating'] not in rated_groups:
+                    rated_groups[r['rating']] = []
+                rated_groups[r['rating']].append(r)
+            else:
+                unrated.append(r)
+                
+        # Sort rated subgroups descending
+        sorted_ratings = sorted(rated_groups.keys(), reverse=True)
         
-    # 10. Sort each category correctly
-    for cat in ["GOOD", "NEUTRAL", "BAD"]:
-        # Sort by: Rated first (False < True), then Highest Rating, then Original JSON order
-        categories[cat].sort(key=lambda x: (x["is_unrated"], -x["rating"], x["idx"]))
-        
-    # 11. Generate final WhatsApp formatting
-    out = []
-    out.append(f"*{movie_name}*")
-    out.append("")
-    out.append(f"Average Rating : *{avg_rating:.1f}/5* `{rated_count} Reviews`")
-    
-    emoji_map = {"GOOD": "🟢", "NEUTRAL": "🟡", "BAD": "🔴"}
-    
-    # Strictly respect the 1. GOOD, 2. NEUTRAL, 3. BAD category order
-    for cat in ["GOOD", "NEUTRAL", "BAD"]:
-        items = categories[cat]
-        
-        # 9. Count ALL reviews in each category
-        out.append("")
-        out.append(f"*{emoji_map[cat]} {cat} ({len(items)})*")
-        
-        for item in items:
-            out.append("")
-            out.append(format_review_block(item, cat))
+        # Print Rated Subgroups
+        for rating in sorted_ratings:
+            group = rated_groups[rating]
+            c = len(group)
+            lines.append(f"*{format_subgroup_rating(rating)}* • {c} Review{'s' if c != 1 else ''}")
+            lines.append("")
             
-    return "\n".join(out), movie_slug
+            for idx, r in enumerate(group):
+                lines.append(r['title'])
+                lines.append(f"`{r['publisher']}`")
+                
+                # 1 blank line between reviews
+                if idx < len(group) - 1:
+                    lines.append("")
+            
+            # 2 blank lines after subgroup finishes
+            lines.extend(["", ""])
+            
+        # Print Unrated Subgroup
+        if unrated:
+            c = len(unrated)
+            lines.append(f"*UNRATED* · {c} Review{'s' if c != 1 else ''}")
+            lines.append("")
+            
+            for idx, r in enumerate(unrated):
+                lines.append(r['title'])
+                lines.append(f"`{r['publisher']}`")
+                
+                # 1 blank line between reviews
+                if idx < len(unrated) - 1:
+                    lines.append("")
+            
+            # 2 blank lines after subgroup finishes
+            lines.extend(["", ""])
+
+    return "\n".join(lines).strip(), movie_slug
 
 def main():
     if len(sys.argv) < 2:
@@ -177,33 +236,23 @@ def main():
         
     wsap_msg, slug = generate_whatsapp_message(json_data)
     
+    # --- File Saving Logic ---
     try:
-        # Build absolute path to guarantee correct directory targeting
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        sys.stderr.write(f"[DEBUG] Script Base Directory resolved to: {BASE_DIR}\n")
-        
         out_dir = os.path.join(BASE_DIR, "data", "output", "wsap")
-        sys.stderr.write(f"[DEBUG] Target Output Directory: {out_dir}\n")
-        
-        # Force creation of directory structure
         os.makedirs(out_dir, exist_ok=True)
-        sys.stderr.write(f"[DEBUG] Target directory verified/created successfully.\n")
         
-        # Write to file
         out_path = os.path.join(out_dir, f"wsap_{slug}.txt")
-        sys.stderr.write(f"[DEBUG] Attempting to write file: {out_path}\n")
-        
         with open(out_path, 'w', encoding='utf-8') as f:
             f.write(wsap_msg)
             
         sys.stderr.write(f"[SUCCESS] File successfully written to: {out_path}\n")
-        
     except Exception as e:
         sys.stderr.write(f"[FATAL ERROR] Failed to save output file!\n")
         sys.stderr.write(f"[EXCEPTION DETAILS]: {str(e)}\n")
         traceback.print_exc(file=sys.stderr)
 
-    # Print only the final WhatsApp message to standard output
+    # Output strict final WhatsApp message to standard out
     print(wsap_msg)
 
 if __name__ == "__main__":
