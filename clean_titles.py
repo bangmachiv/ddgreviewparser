@@ -3,6 +3,7 @@ import os
 import glob
 import re
 import time
+import html  # <--- ADDED IMPORT
 from google import genai
 from google.genai import errors
 
@@ -158,6 +159,10 @@ def process_cleaning_for_movie(json_path, prompt_template):
         cleaned = clean_title_with_gemini(movie_name, raw_title, MODEL_CONFIG, prompt_template)
 
         if cleaned:
+            # <--- ADDED UNESCAPE HERE --->
+            # Decode HTML entities right before assigning to the pub dictionary
+            cleaned = html.unescape(cleaned)
+            
             pub["clean_title"] = cleaned
             print(f"      Saved clean_title: {cleaned}")
             summary_counts["Cleaned successfully"] += 1
