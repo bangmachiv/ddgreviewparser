@@ -66,9 +66,10 @@ def generate_whatsapp_message(data):
         if not raw_title or not str(raw_title).strip():
             continue
             
-        # Determine which title to display
+        # Determine which title to display and format it
         if highlighted_title and str(highlighted_title).strip():
-            display_title = str(highlighted_title).strip()
+            # Convert *word* to _word_ to use WhatsApp italics instead of bold
+            display_title = re.sub(r'\*(.*?)\*', r'_\1_', str(highlighted_title).strip())
         else:
             display_title = str(raw_title).strip()
             
@@ -88,7 +89,7 @@ def generate_whatsapp_message(data):
             else:
                 cat = "BAD"
         else:
-            # Use raw_title for classification to prevent *asterisks* from breaking the match
+            # Use raw_title for classification to prevent formatting tags from breaking the match
             cat = classify_unrated(str(raw_title))
             
         valid_reviews.append({
