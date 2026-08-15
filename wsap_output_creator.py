@@ -57,13 +57,20 @@ def generate_whatsapp_message(data):
     
     for pub in data.get("publishers", []):
         url = pub.get("review_url")
-        title = pub.get("clean_title")
+        raw_title = pub.get("clean_title")
+        highlighted_title = pub.get("clean_highlighted_title")
         
         # Exclude invalid reviews
         if not url or str(url).strip().upper() == "NA":
             continue
-        if not title or not str(title).strip():
+        if not raw_title or not str(raw_title).strip():
             continue
+            
+        # Determine which title to display
+        if highlighted_title and str(highlighted_title).strip():
+            display_title = str(highlighted_title).strip()
+        else:
+            display_title = str(raw_title).strip()
             
         rating = parse_rating(pub.get("star_rating"))
         
@@ -81,10 +88,11 @@ def generate_whatsapp_message(data):
             else:
                 cat = "BAD"
         else:
-            cat = classify_unrated(str(title))
+            # Use raw_title for classification to prevent *asterisks* from breaking the match
+            cat = classify_unrated(str(raw_title))
             
         valid_reviews.append({
-            'title': str(title).strip(),
+            'title': display_title,
             'publisher': pub_name,
             'rating': rating,
             'category': cat
