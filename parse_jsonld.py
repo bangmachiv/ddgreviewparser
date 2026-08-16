@@ -120,14 +120,16 @@ def process_single_movie_json(json_path, context):
     parsed_count = 0
     skipped_count = 0
     
-    # Dictionary to track our final summary logs
+    # Dictionary to track our final summary logs based on the new rigorous rules
     summary_counts = {
-        "Html Not parsed (Url not available)": 0,
-        "Html Not parsed (Webpage not available)": 0,
-        "Html Not parsed (data already available)": 0,
-        "Html parsed (no data found)": 0,
-        "Html parsed (partial data found)": 0,
-        "Html parsed (both data found)": 0
+        "Skipped (URL missing)": 0,
+        "Skipped (Webpage missing)": 0,
+        "Skipped (Already successfully parsed)": 0,
+        "no data found": 0,
+        "one data found (critic name)": 0,
+        "one data found (star rating)": 0,
+        "both data found": 0,
+        "Error during parsing": 0
     }
 
     for index, pub in enumerate(publishers, start=1):
@@ -137,70 +139,51 @@ def process_single_movie_json(json_path, context):
 
         print(f"\n--- [{index}/{len(publishers)}] Processing: {pub_id} ---")
 
-        # 1. SKIP CHECK: Ensure 0, 1, and 2 data states are locked in, catching all legacy JSON statuses
+        # 1. SKIP CHECK: If we already have one of the 4 valid statuses, skip entirely
         current_status = str(pub.get("json_ld_extraction_status", "")).strip()
         
-        legacy_completed = [
-            "Found full data from json ld by JS",
-            "Found partial data from json ld by JS",
-            "no data found from json ld by js",
-            "Could not find data from json ld by JS"
-        ]
-        
-        standard_completed = [
-            "Html parsed (both data found)",
-            "Html parsed (partial data found)",
-            "Html parsed (no data found)"
+        valid_statuses = [
+            "no data found",
+            "both data found",
+            "one data found (star rating)",
+            "one data found (critic name)"
         ]
 
-        if current_status in legacy_completed or current_status in standard_completed:
-            status_msg = "Html Not parsed (data already available)"
-            print(f"  └─► {status_msg}")
-            summary_counts[status_msg] += 1
+        if current_status in valid_statuses:
+            print(f"  └─► Skipped (Already parsed: '{current_status}')")
+            summary_counts["Skipped (Already successfully parsed)"] += 1
             skipped_count += 1
             continue
 
-        # 2. CHECK PRE-REQUISITES: Url not available
+        # 2. CHECK PRE-REQUISITES: URL not available -> Do NOT modify pub, just skip
         if not review_url or review_url == "NA":
-            status_msg = "Html Not parsed (Url not available)"
-            print(f"  └─► {status_msg}")
-            pub["critic_name"] = "Na"
-            pub["star_rating"] = "Na"
-            pub["json_ld_extraction_status"] = status_msg
-            summary_counts[status_msg] += 1
+            print("  └─► Skipped (URL missing)")
+            summary_counts["Skipped (URL missing)"] += 1
             skipped_count += 1
             continue
 
-        # 3. CHECK PRE-REQUISITES: Webpage not downloaded
+        # 3. CHECK PRE-REQUISITES: Webpage not downloaded -> Do NOT modify pub, just skip
         if str(is_download_successful).upper() != "Y":
-            status_msg = "Html Not parsed (Webpage not available)"
-            print(f"  └─► {status_msg}")
-            pub["critic_name"] = "Na"
-            pub["star_rating"] = "Na"
-            pub["json_ld_extraction_status"] = status_msg
-            summary_counts[status_msg] += 1
+            print("  └─► Skipped (Webpage missing)")
+            summary_counts["Skipped (Webpage missing)"] += 1
             skipped_count += 1
             continue
 
+        # 4. VERIFY HTML EXISTS ON DISK -> Do NOT modify pub, just skip if absent
         html_file_name = f"webpage_{pub_id}_{movie_slug}.html"
         html_file_path = os.path.join(html_dir, html_file_name)
 
-        # Fallback path check
         if not os.path.exists(html_file_path):
             alt_file_path = os.path.join(html_dir, f"webpage_{pub_id}.html")
             if os.path.exists(alt_file_path):
                 html_file_path = alt_file_path
             else:
-                status_msg = "Html Not parsed (Webpage not available)"
-                print(f"  └─► {status_msg}")
-                pub["critic_name"] = "could not find from jsonld"
-                pub["star_rating"] = "could not find from jsonld"
-                pub["json_ld_extraction_status"] = status_msg
-                summary_counts[status_msg] += 1
+                print("  └─► Skipped (HTML file not found on disk)")
+                summary_counts["Skipped (Webpage missing)"] += 1
                 skipped_count += 1
                 continue
 
-        # 4. EXECUTE HTML PARSING VIA PLAYWRIGHT
+        # 5. EXECUTE HTML PARSING VIA PLAYWRIGHT
         try:
             page = context.new_page()
             file_url = f"file://{os.path.abspath(html_file_path)}"
@@ -210,11 +193,11 @@ def process_single_movie_json(json_path, context):
             page.close()
 
             if "error" in extracted_data:
-                status_msg = "Html parsed (no data found)"
-                print(f"  └─► {status_msg}")
+                status_msg = "no data found"
                 pub["critic_name"] = "could not find from jsonld"
                 pub["star_rating"] = "could not find from jsonld"
                 pub["json_ld_extraction_status"] = status_msg
+                print(f"  └─► {status_msg}")
                 summary_counts[status_msg] += 1
             else:
                 critic_names = list(dict.fromkeys(extracted_data.get("critic_names", [])))
@@ -223,34 +206,31 @@ def process_single_movie_json(json_path, context):
                 has_critic = len(critic_names) > 0
                 has_rating = len(star_ratings) > 0
 
+                # Assign extracted values or default empty state
                 pub["critic_name"] = critic_names[0] if has_critic else "could not find from jsonld"
                 pub["star_rating"] = star_ratings[0] if has_rating else "could not find from jsonld"
 
+                # Assign strict status based on analysis
                 if has_critic and has_rating:
-                    status_msg = "Html parsed (both data found)"
-                    print(f"  └─► {status_msg}")
-                    pub["json_ld_extraction_status"] = status_msg
-                    summary_counts[status_msg] += 1
-                elif has_critic or has_rating:
-                    status_msg = "Html parsed (partial data found)"
-                    print(f"  └─► {status_msg}")
-                    pub["json_ld_extraction_status"] = status_msg
-                    summary_counts[status_msg] += 1
+                    status_msg = "both data found"
+                elif has_rating and not has_critic:
+                    status_msg = "one data found (star rating)"
+                elif has_critic and not has_rating:
+                    status_msg = "one data found (critic name)"
                 else:
-                    status_msg = "Html parsed (no data found)"
-                    print(f"  └─► {status_msg}")
-                    pub["json_ld_extraction_status"] = status_msg
-                    summary_counts[status_msg] += 1
+                    status_msg = "no data found"
+
+                pub["json_ld_extraction_status"] = status_msg
+                print(f"  └─► {status_msg}")
+                summary_counts[status_msg] += 1
 
             parsed_count += 1
 
         except Exception as e:
-            status_msg = "Html Not parsed (Webpage not available)"
-            print(f"  └─► {status_msg}")
-            pub["critic_name"] = "could not find from jsonld"
-            pub["star_rating"] = "could not find from jsonld"
-            pub["json_ld_extraction_status"] = status_msg
-            summary_counts[status_msg] += 1
+            # If Playwright crashes, do NOT modify pub so it can retry later
+            print(f"  └─► Error during parsing: {e}")
+            summary_counts["Error during parsing"] += 1
+            skipped_count += 1
 
     # Save updated JSON state back to the exact target file
     with open(json_path, "w", encoding="utf-8") as f:
@@ -260,7 +240,8 @@ def process_single_movie_json(json_path, context):
     print(f"\n[{movie_slug}] PARSING COMPLETE -> Parsed: {parsed_count} | Skipped: {skipped_count}")
     print("-" * 60)
     for category, count in summary_counts.items():
-        print(f"{category} : {count}")
+        if count > 0:
+            print(f"{category} : {count}")
     print("=" * 60)
 
 
