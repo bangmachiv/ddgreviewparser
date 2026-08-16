@@ -5,7 +5,6 @@ on:
   # schedule:
   #   - cron: '30 2 * * *' # Uncomment to run automatically
 
-# 🚨 CRITICAL: Grants the action permission to push code back to the repo
 permissions:
   contents: write
 
@@ -29,7 +28,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} 
         run: |
-          python classify_reviews_ai.py
+          python ai_sentiment_classifier.py
 
       - name: Commit and Push to Repository
         run: |
