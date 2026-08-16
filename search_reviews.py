@@ -7,17 +7,19 @@ from datetime import datetime
 from ddgs import DDGS
 
 # -----------------------------------------------------------------------------
-# Configuration
+# Configuration & Absolute Pathing for GitHub Actions
 # -----------------------------------------------------------------------------
-PUBLISHERS_FILE = "publishers.json"
-MOVIES_FILE = "data/movies/movies-live-today.json"
-REVIEWS_DIR = "data/reviews"
-OUTPUT_DIR = "data/searches"
+BASE_DIR = os.getcwd()
+PUBLISHERS_FILE = os.path.join(BASE_DIR, "publishers.json")
+MOVIES_FILE = os.path.join(BASE_DIR, "data", "movies", "movies-live-today.json")
+REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
+OUTPUT_DIR = os.path.join(BASE_DIR, "data", "searches")
 
 def main():
     # -----------------------------
     # 1. Setup & Load Core Data
     # -----------------------------
+    # Forcefully create the directories at the repo root
     os.makedirs(REVIEWS_DIR, exist_ok=True)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -97,9 +99,14 @@ def main():
             reviews_data["publishers"] = synced_reviews_list
 
             # SAVE #1: Lock in the skeleton before searching.
-            with open(reviews_file_path, "w", encoding="utf-8") as rf:
-                json.dump(reviews_data, rf, ensure_ascii=False, indent=4)
-            print(f"[SYNC] reviews_{movie_slug}.json securely synced with {len(active_publishers)} publishers.")
+            os.makedirs(os.path.dirname(reviews_file_path), exist_ok=True)
+            try:
+                with open(reviews_file_path, "w", encoding="utf-8") as rf:
+                    json.dump(reviews_data, rf, ensure_ascii=False, indent=4)
+                print(f"[SYNC] reviews_{movie_slug}.json securely synced with {len(active_publishers)} publishers.")
+            except Exception as e:
+                print(f"[FATAL ERROR] GitHub Actions failed to create file '{reviews_file_path}'. Reason: {e}")
+                continue # Skip to next movie if file creation hard-fails
 
             # ---------------------------------------------------------
             # PHASE B: DETERMINE WHO NEEDS SEARCHING
@@ -208,10 +215,12 @@ def main():
             reviews_data["Last searched"] = datetime.now().astimezone().strftime("%d %m %Y %H %M")
             reviews_data["Search results"] = searches_executed_count
             
+            os.makedirs(os.path.dirname(reviews_file_path), exist_ok=True)
             with open(reviews_file_path, "w", encoding="utf-8") as rf:
                 json.dump(reviews_data, rf, ensure_ascii=False, indent=4)
             
             # 2. Dump the raw search results
+            os.makedirs(os.path.dirname(searches_file_path), exist_ok=True)
             with open(searches_file_path, "w", encoding="utf-8") as f:
                 json.dump(new_searches_data, f, ensure_ascii=False, indent=4)
             
