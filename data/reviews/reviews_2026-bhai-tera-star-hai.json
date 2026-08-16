@@ -28,6 +28,20 @@
             "json_ld_extraction_status": "Html Not parsed (Url not available)"
         },
         {
+            "publisher_id": "amar-ujala",
+            "publisher_name": "Amar Ujala",
+            "review_url": "https://www.amarujala.com/entertainment/movie-review/bhai-tera-star-hai-hindi-review-starring-raghav-juyal-sanjay-kapoor-nikki-walia-to-niharika-nm-2026-07-30",
+            "review_title": "Bhai Tera Star Hai Hindi Review Starring Raghav Juyal Sanjay ...",
+            "search_rank": 1,
+            "webpage_extraction_successful": "Y",
+            "article_title": "Bhai Tera Star Hai Hindi Review Starring Raghav Juyal Sanjay Kapoor Nikki Walia To Niharika Nm - Entertainment News: Amar Ujala - Bhai Tera Star Hai Review:राघव जुयाल की कॉमेडी ने दिया सिरदर्द, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा",
+            "clean_title": "राघव जुयाल की कॉमेडी ने दिया सिरदर्द, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा",
+            "clean_highlighted_title": "राघव जुयाल की कॉमेडी ने दिया *सिरदर्द*, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा",
+            "critic_name": "Kiran Vinod Kumar Jain",
+            "star_rating": "1",
+            "json_ld_extraction_status": "Html parsed (both data found)"
+        },
+        {
             "publisher_id": "bollywood-hungama",
             "publisher_name": "Bollywood Hungama",
             "review_url": "https://www.bollywoodhungama.com/movie/bhai-tera-star-hai/critic-review/bhai-tera-star-hai-movie-review/bhai-tera-star-hai-is-a-chaotic-and-unfunny-comedy/",
@@ -71,13 +85,14 @@
             "search_rank": 6,
             "webpage_extraction_successful": "Y",
             "critic_name": "BH Harsh",
-            "star_rating": "2",
-            "json_ld_extraction_status": "Html parsed (partial data found) | Augmented by Gemini",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "Html parsed (partial data found)",
             "article_title": "Bhai Tera Star Hai Movie Review: Too wacky for its own good",
             "clean_title": "Too wacky for its own good",
             "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found both",
-            "clean_highlighted_title": "*Too wacky* for its own good"
+            "clean_highlighted_title": "*Too wacky* for its own good",
+            "ai_assigned_category": "BAD"
         },
         {
             "publisher_id": "cinetales",
@@ -176,13 +191,14 @@
             "search_rank": 1,
             "webpage_extraction_successful": "Y",
             "critic_name": "Satish Sundaresan",
-            "star_rating": "1.5",
-            "json_ld_extraction_status": "Html parsed (partial data found) | Augmented by Gemini",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "Html parsed (partial data found)",
             "article_title": "Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?",
             "clean_title": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?",
             "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found both",
-            "clean_highlighted_title": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into *Superstar-Doom*?"
+            "clean_highlighted_title": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into *Superstar-Doom*?",
+            "ai_assigned_category": "BAD"
         },
         {
             "publisher_id": "hindustan",
@@ -203,13 +219,14 @@
             "search_rank": 6,
             "webpage_extraction_successful": "Y",
             "critic_name": "Rishabh Suri",
-            "star_rating": "1.5",
-            "json_ld_extraction_status": "Html parsed (partial data found) | Augmented by Gemini",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "Html parsed (partial data found)",
             "article_title": "Bhai Tera Star Hai review: This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?' | Bollywood",
             "ai_extraction_attempt_count": 5,
             "clean_title": "This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?'",
             "clean_highlighted_title": "This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... *'Why?'*",
-            "ai_extraction_status": "found both"
+            "ai_extraction_status": "found both",
+            "ai_assigned_category": "BAD"
         },
         {
             "publisher_id": "ians-live",
@@ -307,14 +324,15 @@
             "review_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal leads a comedy...",
             "search_rank": 1,
             "webpage_extraction_successful": "Y",
-            "critic_name": "Abhishek Srivastava",
-            "star_rating": "1.5",
-            "json_ld_extraction_status": "Html parsed (no data found) | Augmented by Gemini",
+            "critic_name": "could not find from jsonld",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "Html parsed (no data found)",
             "article_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal leads a comedy where the jokes need their own rescue mission",
             "clean_title": "Raghav Juyal leads a comedy where the jokes need their own rescue mission",
             "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found both",
-            "clean_highlighted_title": "Raghav Juyal leads a comedy where the jokes need their own *rescue mission*"
+            "clean_highlighted_title": "Raghav Juyal leads a comedy where the jokes need their own *rescue mission*",
+            "ai_assigned_category": "BAD"
         },
         {
             "publisher_id": "movie-talkies",
@@ -324,13 +342,14 @@
             "search_rank": 1,
             "webpage_extraction_successful": "Y",
             "critic_name": "Sameer Ahire",
-            "star_rating": "1",
-            "json_ld_extraction_status": "Html parsed (partial data found) | Augmented by Gemini",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "Html parsed (partial data found)",
             "article_title": "Bhai Tera Star Hai Review: A painful blow to filmmaking standards –",
             "clean_title": "A painful blow to filmmaking standards",
             "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found both",
-            "clean_highlighted_title": "A *painful blow* to filmmaking standards"
+            "clean_highlighted_title": "A *painful blow* to filmmaking standards",
+            "ai_assigned_category": "BAD"
         },
         {
             "publisher_id": "navbharat-times",
@@ -339,14 +358,15 @@
             "review_title": "Bhai Tera Star Hai Movie Review In Hindi Rating {2.0/5} |भाई तेरा स्टार...",
             "search_rank": 1,
             "webpage_extraction_successful": "Y",
-            "critic_name": "रेखा खान",
-            "star_rating": "2",
-            "json_ld_extraction_status": "Html parsed (no data found) | Augmented by Gemini",
+            "critic_name": "could not find from jsonld",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "Html parsed (no data found)",
             "article_title": "'भाई तेरा स्‍टार है' रिव्यू: लाउड कॉमेडी और लचर स्‍क्रीनप्‍ले, 'स्टार' नहीं बन पाए राघव जुयाल - bhai tera star hai movie review in hindi starring raghav juyal sanjay kapoor niki walia niharika nm directed by vivek b agrawal - Navbharat Times",
             "clean_title": "लाउड कॉमेडी और लचर स्‍क्रीनप्‍ले, 'स्टार' नहीं बन पाए राघव जुयाल",
             "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found both",
-            "clean_highlighted_title": "लाउड कॉमेडी और *लचर स्‍क्रीनप्‍ले*, 'स्टार' नहीं बन पाए राघव जुयाल"
+            "clean_highlighted_title": "लाउड कॉमेडी और *लचर स्‍क्रीनप्‍ले*, 'स्टार' नहीं बन पाए राघव जुयाल",
+            "ai_assigned_category": "BAD"
         },
         {
             "publisher_id": "ndtv",
