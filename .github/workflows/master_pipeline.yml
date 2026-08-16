@@ -15,7 +15,7 @@ permissions:
 jobs:
   execute-pipeline:
     runs-on: ubuntu-latest
-    timeout-minutes: 60 # Slightly increased to account for the Gemini rate-limit wait times
+    timeout-minutes: 180 # Increased to handle 13-second AI rate-limit delays across multiple scripts
 
     steps:
       - name: Checkout repository
@@ -30,11 +30,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests playwright playwright-stealth duckduckgo-search ddgs google-genai beautifulsoup4 lxml
+          # Added curl_cffi for WAF bypass and ensured all AI/Scraping tools are present
+          pip install requests playwright playwright-stealth curl_cffi duckduckgo-search google-genai beautifulsoup4 lxml
           playwright install --with-deps chromium
-          
-          # Optional: If you have a requirements.txt, you can also run:
-          # pip install -r requirements.txt
 
       - name: Step 1 - Search for Reviews
         run: python search_reviews.py
@@ -43,6 +41,8 @@ jobs:
         run: python classify_reviews.py
 
       - name: Step 3 - Download HTML Webpages
+        env:
+          SCRAPE_DO_TOKEN: ${{ secrets.SCRAPE_DO_TOKEN }}
         run: python download_html.py
 
       - name: Step 4 - Parse JSON-LD Data for Ratings
@@ -51,11 +51,36 @@ jobs:
       - name: Step 5 - Extract Raw Article Titles
         run: python extract_titles.py
 
-      - name: Step 6 - Clean Titles with Gemini
+      - name: Step 6 - Extract Missing Metadata
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        # The '|| exit 1' ensures the workflow officially fails if Python crashes
-        run: python clean_titles.py || { echo "Gemini title cleaning script crashed!"; exit 1; }
+        run: python extract_missing_metadata.py || { echo "Metadata extraction crashed!"; exit 1; }
+
+      - name: Step 7 - Clean Titles with Gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python clean_titles.py || { echo "Gemini title cleaning crashed!"; exit 1; }
+
+      - name: Step 8 - Extract Highlighted Titles
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python highlight_extractor.py || { echo "Highlight extraction crashed!"; exit 1; }
+
+      - name: Step 9 - Classify Unrated Sentiments
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python ai_sentiment_classifier.py || { echo "AI Sentiment classification crashed!"; exit 1; }
+
+      - name: Step 10 - Generate WhatsApp Outputs
+        run: |
+          # wsap_output_creator.py requires an input file argument, 
+          # so we loop through all generated review JSONs and process them.
+          for file in data/reviews/reviews_*.json; do
+            if [ -f "$file" ]; then
+              echo "Generating WhatsApp output for $file"
+              python wsap_output_creator.py "$file"
+            fi
+          done
 
       - name: Sync and Push Output Data
         if: success() || failure()
@@ -63,12 +88,13 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
+          # Stages all modified data files (JSONs, Webpages, and Text outputs)
           git add data/
           
           if git diff --cached --quiet; then
             echo "No changes were made by the scripts. Skipping commit."
           else
-            git commit -m "Automated Pipeline Update: Searches, Webpages, Extractions, and Cleaned Titles"
+            git commit -m "chore: Automated Pipeline Update - Searches, Extractions, and Outputs"
             git pull origin ${{ github.ref_name }} --rebase --autostash
             git push origin HEAD:${{ github.ref }}
           fi
