@@ -15,7 +15,7 @@ permissions:
 jobs:
   execute-pipeline:
     runs-on: ubuntu-latest
-    timeout-minutes: 180 # Increased to handle 13-second AI rate-limit delays across multiple scripts
+    timeout-minutes: 180 # Increased to safely accommodate Gemini rate-limiting wait times
 
     steps:
       - name: Checkout repository
@@ -30,51 +30,67 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          # Added curl_cffi for WAF bypass and ensured all AI/Scraping tools are present
-          pip install requests playwright playwright-stealth curl_cffi duckduckgo-search google-genai beautifulsoup4 lxml
+          
+          # 1. Install base scraping dependencies from the repo file (if it exists)
+          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
+          
+          # 2. Force install all known external libraries for AI and Web Automation
+          pip install requests playwright playwright-stealth curl_cffi duckduckgo-search ddgs google-genai beautifulsoup4 lxml
+          
+          # 3. Install headless browser components
           playwright install --with-deps chromium
 
-      - name: Step 1 - Search for Reviews
+      # ----------------------------------------------------
+      # 1. PREP SUBFLOW
+      # ----------------------------------------------------
+      - name: Prep 1 - Search for Reviews
         run: python search_reviews.py
 
-      - name: Step 2 - Classify and Filter Valid Reviews
+      - name: Prep 2 - Classify and Filter Valid Reviews
         run: python classify_reviews.py
 
-      - name: Step 3 - Download HTML Webpages
+      - name: Prep 3 - Download HTML Webpages
         env:
           SCRAPE_DO_TOKEN: ${{ secrets.SCRAPE_DO_TOKEN }}
         run: python download_html.py
 
-      - name: Step 4 - Parse JSON-LD Data for Ratings
-        run: python parse_jsonld.py
-
-      - name: Step 5 - Extract Raw Article Titles
+      # ----------------------------------------------------
+      # 2. TITLE SUBFLOW
+      # ----------------------------------------------------
+      - name: Title 1 - Extract Raw Article Titles
         run: python extract_titles.py
 
-      - name: Step 6 - Extract Missing Metadata
+      - name: Title 2 - Clean Titles with Gemini
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python extract_missing_metadata.py || { echo "Metadata extraction crashed!"; exit 1; }
+        run: python clean_titles.py || { echo "Gemini title cleaning script crashed!"; exit 1; }
 
-      - name: Step 7 - Clean Titles with Gemini
+      - name: Title 3 - Extract Highlighted Titles
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python clean_titles.py || { echo "Gemini title cleaning crashed!"; exit 1; }
+        run: python highlight_extractor.py || { echo "Highlight extraction script crashed!"; exit 1; }
 
-      - name: Step 8 - Extract Highlighted Titles
+      # ----------------------------------------------------
+      # 3. RATING SUBFLOW
+      # ----------------------------------------------------
+      - name: Rating 1 - Parse JSON-LD Data for Ratings
+        run: python parse_jsonld.py
+
+      - name: Rating 2 - Extract Missing Metadata (Ratings/Critics)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python highlight_extractor.py || { echo "Highlight extraction crashed!"; exit 1; }
+        run: python extract_missing_metadata.py || { echo "Metadata extraction script crashed!"; exit 1; }
 
-      - name: Step 9 - Classify Unrated Sentiments
+      - name: Rating 3 - Classify Unrated Sentiments
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python ai_sentiment_classifier.py || { echo "AI Sentiment classification crashed!"; exit 1; }
+        run: python ai_sentiment_classifier.py || { echo "AI Sentiment classification script crashed!"; exit 1; }
 
-      - name: Step 10 - Generate WhatsApp Outputs
+      # ----------------------------------------------------
+      # 4. OUTPUT SUBFLOW
+      # ----------------------------------------------------
+      - name: Output 1 - Generate WhatsApp Messages
         run: |
-          # wsap_output_creator.py requires an input file argument, 
-          # so we loop through all generated review JSONs and process them.
           for file in data/reviews/reviews_*.json; do
             if [ -f "$file" ]; then
               echo "Generating WhatsApp output for $file"
@@ -82,19 +98,21 @@ jobs:
             fi
           done
 
+      # ----------------------------------------------------
+      # COMMIT & PUSH (Runs even if a script fails)
+      # ----------------------------------------------------
       - name: Sync and Push Output Data
         if: success() || failure()
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          # Stages all modified data files (JSONs, Webpages, and Text outputs)
           git add data/
           
           if git diff --cached --quiet; then
             echo "No changes were made by the scripts. Skipping commit."
           else
-            git commit -m "chore: Automated Pipeline Update - Searches, Extractions, and Outputs"
+            git commit -m "chore: Automated Pipeline Update - Prep, Titles, Ratings, Outputs"
             git pull origin ${{ github.ref_name }} --rebase --autostash
             git push origin HEAD:${{ github.ref }}
           fi
