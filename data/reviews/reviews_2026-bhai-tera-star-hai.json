@@ -118,7 +118,8 @@
             "clean_title": "Raghav Juyal Solo Lead Fails To Impress",
             "ai_extraction_attempt_count": 3,
             "ai_extraction_status": "found one",
-            "clean_highlighted_title": "Raghav Juyal Solo Lead *Fails To Impress*"
+            "clean_highlighted_title": "Raghav Juyal Solo Lead *Fails To Impress*",
+            "ai_assigned_category": "BAD"
         },
         {
             "publisher_id": "dainik-jagran",
@@ -296,7 +297,8 @@
             "clean_title": "Raghav Juyal’s comic timing can’t save this film",
             "ai_extraction_attempt_count": 3,
             "ai_extraction_status": "found one",
-            "clean_highlighted_title": "Raghav Juyal’s comic timing *can’t save* this film"
+            "clean_highlighted_title": "Raghav Juyal’s comic timing *can’t save* this film",
+            "ai_assigned_category": "BAD"
         },
         {
             "publisher_id": "mint",
@@ -435,7 +437,8 @@
             "clean_title": "Pointless comedy strains patience levels",
             "ai_extraction_attempt_count": 3,
             "ai_extraction_status": "found one",
-            "clean_highlighted_title": "*Pointless comedy* strains patience levels"
+            "clean_highlighted_title": "*Pointless comedy* strains patience levels",
+            "ai_assigned_category": "BAD"
         },
         {
             "publisher_id": "south-asian-herald",
@@ -473,7 +476,8 @@
             "clean_title": "Raghav Juyal's comedy promises a lot, delivers little",
             "ai_extraction_attempt_count": 3,
             "ai_extraction_status": "found one",
-            "clean_highlighted_title": "Raghav Juyal's comedy *promises a lot*, *delivers little*"
+            "clean_highlighted_title": "Raghav Juyal's comedy *promises a lot*, *delivers little*",
+            "ai_assigned_category": "BAD"
         },
         {
             "publisher_id": "the-hindu",
