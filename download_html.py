@@ -133,14 +133,18 @@ def process_single_movie(json_path, context):
             skipped_na_count += 1
             continue
 
-        is_successful = pub.get("webpage_extraction_successful")
-        if str(is_successful).upper() == "Y":
-            print("[SKIP] Already successfully extracted ('Y').")
-            skipped_already_y_count += 1
-            continue
-
+        # BUILD PATH FIRST to verify physical file existence
         output_file_name = f"webpage_{pub_id}_{movie_slug}.html"
         output_file_path = os.path.join(output_dir, output_file_name)
+
+        is_successful = pub.get("webpage_extraction_successful")
+        if str(is_successful).upper() == "Y":
+            if os.path.exists(output_file_path):
+                print("[SKIP] Already successfully extracted ('Y') and file exists.")
+                skipped_already_y_count += 1
+                continue
+            else:
+                print(f"[RECOVERY] JSON says 'Y' but {output_file_name} is missing on disk. Forcing re-download.")
 
         print(f"[FETCH] URL: {review_url}")
         html_content = None
