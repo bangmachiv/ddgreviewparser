@@ -1,0 +1,50 @@
+name: AI Sentiment Classifier
+
+on:
+  workflow_dispatch: # Run manually from the Actions tab
+  # schedule:
+  #   - cron: '30 2 * * *' # Uncomment to run automatically
+
+# 🚨 CRITICAL: Grants the action permission to push code back to the repo
+permissions:
+  contents: write
+
+jobs:
+  run-classifier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install google-genai 
+
+      - name: Run AI Classifier
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} 
+        run: |
+          python classify_reviews_ai.py
+
+      - name: Commit and Push to Repository
+        run: |
+          # 1. Identity for the commit
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 2. Stage the updated JSON files
+          git add data/reviews/*.json
+          
+          # 3. Check if any files were actually changed
+          if git diff --staged --quiet; then
+            echo "No new classifications were added. Skipping commit."
+          else
+            git commit -m "chore: auto-classify unrated reviews via AI"
+            git push
+            echo "Successfully committed and pushed updated JSON files!"
+          fi
