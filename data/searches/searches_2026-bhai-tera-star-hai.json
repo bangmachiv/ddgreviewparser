@@ -65,13 +65,6 @@
                     "url": "https://www.aajtak.in/education/results/story/uptet-2026-provisional-answer-key-download-objection-window-edmm-dskc-2597547-2026-07-09",
                     "snippet": "July 9, 2026 - Bhai Tera Star Hai Trailer: 'लूजर' एक्टर की कहानी में हीरो बने राघव जुयाल, मजेदार है कॉमेडी |",
                     "exact_match": true
-                },
-                {
-                    "rank": 9,
-                    "title": "",
-                    "url": "",
-                    "snippet": "",
-                    "exact_match": true
                 }
             ],
             "query_broad": "Bhai Tera Star Hai 2026 movie review site:aajtak.in",
@@ -112,9 +105,9 @@
                 },
                 {
                     "rank": 5,
-                    "title": "'भाभीजी घर पर हैं' फिल्म का ट्रेलर रिलीज, अंगूरी और अनीता भाभी के दो नए आशिकों की भी हुई एंट्री | Bhabiji Ghar Par Hain trailer out Movie Starring Ravi Kishan Shubhangi Atre Asif Shaikh",
-                    "url": "https://www.abplive.com/entertainment/bhabiji-ghar-par-hain-trailer-out-movie-starring-ravi-kishan-shubhangi-atre-asif-shaikh-3075211",
-                    "snippet": "January 16, 2026 - Raghav Juyal का दमदार अंदाज़, Bhai Tera Star Hai का ट्रेलर रिलीज़",
+                    "title": "Bhabiji Ghar par hain review: भाभीजी आप घर पर ही रहिए, थिएटर में नहीं, ये फिल्म टॉर्चर कर देगी | Bhabhiji Ghar Par Hain Review Starring Shubhangi Atre Vidisha Shrivastava Ravi Kishan Nirahua Asif Shaikh and Rohitashv Gour",
+                    "url": "https://www.abplive.com/movie-review/entertainment/movie-review-bhabhiji-ghar-par-hain-review-starring-shubhangi-atre-vidisha-shrivastava-ravi-kishan-nirahua-asif-shaikh-and-rohitashv-gour-3085436",
+                    "snippet": "February 6, 2026 - Bhabiji Ghar Par Hain Review: हर मर्द को हमेशा पड़ोसी की बीवी अच्छी लगी है, ये इस फिल्म के शुरू में कहा जाता है, लेकिन क्या हर मर्द ऐसा ...",
                     "exact_match": false
                 },
                 {
@@ -542,9 +535,9 @@
             "publisher_url": "https://timesofindia.indiatimes.com",
             "results": [],
             "query_broad": "Bhai Tera Star Hai 2026 movie review site:timesofindia.indiatimes.com",
-            "error_broad": "RemoteProtocolError: RemoteProtocolError('Server disconnected')",
+            "error_broad": "No results found.",
             "query_exact": "\"Bhai Tera Star Hai\" 2026 movie review site:timesofindia.indiatimes.com",
-            "error_exact": "Request timed out: ConnectTimeout('timed out')"
+            "error_exact": "No results found."
         },
         {
             "publisher_id": "the-tribune",
@@ -552,7 +545,7 @@
             "publisher_url": "https://www.tribuneindia.com",
             "results": [],
             "query_broad": "Bhai Tera Star Hai 2026 movie review site:tribuneindia.com",
-            "error_broad": "Request timed out: ConnectTimeout('timed out')",
+            "error_broad": "RemoteProtocolError: RemoteProtocolError('Server disconnected')",
             "query_exact": "\"Bhai Tera Star Hai\" 2026 movie review site:tribuneindia.com",
             "error_exact": "Request timed out: ConnectTimeout('timed out')"
         }
