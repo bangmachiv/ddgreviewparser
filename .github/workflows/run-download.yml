@@ -3,7 +3,7 @@ name: Download Publisher HTML
 on:
   workflow_dispatch:
 
-# REQUIRED: Grants permission to commit updated JSON flags back to the repo
+# REQUIRED: Grants permission to commit updated JSON and HTML back to the repo
 permissions:
   contents: write
 
@@ -31,14 +31,20 @@ jobs:
           SCRAPE_DO_TOKEN: ${{ secrets.SCRAPE_DO_TOKEN }}
         run: python download_html.py
 
-      # Commits the 'Y' and 'N' extraction flags to your reviews JSON files
-      - name: Commit updated JSON file
+      # Commits BOTH the 'Y'/'N' flags in the JSON and the physical HTML files
+      - name: Commit updated JSON and HTML files
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          # Stage the JSON file updates
           git add data/reviews/*.json
+          
+          # Stage the downloaded physical HTML files so they aren't lost
+          git add data/webpages/
+          
           git status
-          git commit -m "chore: auto-update extraction status (Y/N) in JSON" || echo "No changes to commit"
+          git commit -m "chore: auto-download HTML webpages and update JSON" || echo "No changes to commit"
           git push origin HEAD:${{ github.ref }}
 
       - name: Upload HTML Artifact
