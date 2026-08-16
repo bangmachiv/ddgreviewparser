@@ -4,7 +4,8 @@ import time
 import glob
 import requests
 from playwright.sync_api import sync_playwright
-from playwright_stealth import stealth_sync
+# Use the modern v2.x import
+from playwright_stealth import Stealth 
 
 # -----------------------------------------------------------------------------
 # Configuration
@@ -121,9 +122,6 @@ def process_single_movie(json_path, context):
         try:
             page = context.new_page()
             
-            # Apply stealth to this specific page instance
-            stealth_sync(page)
-            
             # Advanced Interceptor: Block media/ads but LEAVE scripts needed for bot verification
             def intercept_route(route):
                 request = route.request
@@ -193,8 +191,8 @@ def main():
 
     print("\n[STEP 2] Launching headless browser (Shared across all movies)...")
     
-    # Updated to standard playwright sync block
-    with sync_playwright() as p:
+    # NEW v2.x STEALTH METHOD: Wraps the entire sync_playwright() block
+    with Stealth().use_sync(sync_playwright()) as p:
         # THE MAGIC FLAG: Disables the "webdriver" flag Chrome sends to servers
         browser = p.chromium.launch(
             headless=True,
