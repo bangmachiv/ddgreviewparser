@@ -30,17 +30,19 @@ jobs:
         run: |
           python search_reviews.py
 
-      - name: Commit updated search files
+      - name: Commit updated search and review files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          # ADDED data/reviews/ to the Git staging area
           git add data/searches/*.json
+          git add data/reviews/*.json
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "Update search results"
+          git commit -m "Update search results and sync review skeletons"
           git push
