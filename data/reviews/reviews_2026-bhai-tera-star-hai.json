@@ -72,12 +72,14 @@
             "review_title": "Bhai Tera Star Hai Movie Review: Too wacky for its own good",
             "search_rank": 1,
             "webpage_extraction_successful": "Y",
-            "article_title": null,
-            "ai_extraction_attempt_count": 1,
+            "article_title": "Bhai Tera Star Hai Movie Review: Too wacky for its own good",
+            "ai_extraction_attempt_count": 2,
             "critic_name": "BH Harsh",
             "star_rating": "2",
             "ai_extraction_status": "found both",
-            "json_ld_extraction_status": " | Augmented by Gemini"
+            "json_ld_extraction_status": "one data found (critic name) | Augmented by Gemini",
+            "clean_title": "Too wacky for its own good",
+            "clean_highlighted_title": "*Too wacky* for its own good"
         },
         {
             "publisher_id": "cinetales",
@@ -100,7 +102,7 @@
             "critic_name": "आशीष तिवारी",
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "one data found (critic name)",
-            "ai_extraction_attempt_count": 2,
+            "ai_extraction_attempt_count": 3,
             "ai_extraction_status": "found one",
             "ai_assigned_category": "BAD"
         },
@@ -163,12 +165,14 @@
             "review_title": "Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into ...",
             "search_rank": 1,
             "webpage_extraction_successful": "Y",
-            "article_title": null,
-            "ai_extraction_attempt_count": 1,
+            "article_title": "Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?",
+            "ai_extraction_attempt_count": 2,
             "critic_name": "Satish Sundaresan",
             "star_rating": "1.5",
             "ai_extraction_status": "found both",
-            "json_ld_extraction_status": " | Augmented by Gemini"
+            "json_ld_extraction_status": "one data found (critic name) | Augmented by Gemini",
+            "clean_title": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?",
+            "clean_highlighted_title": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into *Superstar-Doom*?"
         },
         {
             "publisher_id": "hindustan",
@@ -186,7 +190,7 @@
             "search_rank": 1,
             "webpage_extraction_successful": "Y",
             "article_title": "Bhai Tera Star Hai review: This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?' | Bollywood",
-            "ai_extraction_attempt_count": 2,
+            "ai_extraction_attempt_count": 3,
             "critic_name": "Rishabh Suri",
             "star_rating": "1.5",
             "ai_extraction_status": "found both",
@@ -259,7 +263,7 @@
             "critic_name": "Aakruti Bagla",
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "one data found (critic name)",
-            "ai_extraction_attempt_count": 2,
+            "ai_extraction_attempt_count": 3,
             "ai_extraction_status": "found one",
             "ai_assigned_category": "BAD"
         },
@@ -284,7 +288,7 @@
             "critic_name": "Abhishek Srivastava",
             "star_rating": "1.5",
             "json_ld_extraction_status": "no data found | Augmented by Gemini",
-            "ai_extraction_attempt_count": 2,
+            "ai_extraction_attempt_count": 3,
             "ai_extraction_status": "found both"
         },
         {
@@ -374,7 +378,7 @@
             "critic_name": "Nandini Ramnath",
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "one data found (critic name)",
-            "ai_extraction_attempt_count": 2,
+            "ai_extraction_attempt_count": 3,
             "ai_extraction_status": "found one",
             "ai_assigned_category": "BAD"
         },
@@ -407,7 +411,7 @@
             "critic_name": "Swaroop Kodur",
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "one data found (critic name)",
-            "ai_extraction_attempt_count": 2,
+            "ai_extraction_attempt_count": 3,
             "ai_extraction_status": "found one",
             "ai_assigned_category": "BAD"
         },
