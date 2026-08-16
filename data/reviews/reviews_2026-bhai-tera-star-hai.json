@@ -89,7 +89,7 @@
             "json_ld_extraction_status": "Html parsed (partial data found) | Augmented by Gemini",
             "article_title": "Bhai Tera Star Hai Movie Review: Too wacky for its own good",
             "clean_title": "Too wacky for its own good",
-            "ai_extraction_attempt_count": 4,
+            "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found both",
             "clean_highlighted_title": "*Too wacky* for its own good"
         },
@@ -116,7 +116,7 @@
             "json_ld_extraction_status": "Html parsed (partial data found)",
             "article_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal Solo Lead Fails To Impress",
             "clean_title": "Raghav Juyal Solo Lead Fails To Impress",
-            "ai_extraction_attempt_count": 4,
+            "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found one",
             "clean_highlighted_title": "Raghav Juyal Solo Lead *Fails To Impress*",
             "ai_assigned_category": "BAD"
@@ -194,7 +194,7 @@
             "json_ld_extraction_status": "Html parsed (partial data found) | Augmented by Gemini",
             "article_title": "Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?",
             "clean_title": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?",
-            "ai_extraction_attempt_count": 4,
+            "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found both",
             "clean_highlighted_title": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into *Superstar-Doom*?"
         },
@@ -216,11 +216,14 @@
             "review_title": "Bhai Tera Star Hai review: This Raghav Juyal-Sanjay Kapoor comedy...",
             "search_rank": 6,
             "webpage_extraction_successful": "Y",
-            "critic_name": "could not find from jsonld",
-            "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Html Not parsed (Webpage not available)",
-            "article_title": null,
-            "ai_extraction_attempt_count": 4
+            "critic_name": "Rishabh Suri",
+            "star_rating": "1.5",
+            "json_ld_extraction_status": "Html parsed (partial data found) | Augmented by Gemini",
+            "article_title": "Bhai Tera Star Hai review: This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?' | Bollywood",
+            "ai_extraction_attempt_count": 5,
+            "clean_title": "This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?'",
+            "clean_highlighted_title": "This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... *'Why?'*",
+            "ai_extraction_status": "found both"
         },
         {
             "publisher_id": "ians-live",
@@ -295,7 +298,7 @@
             "json_ld_extraction_status": "Found partial data from json ld by JS",
             "article_title": "Bhai Tera Star Hai movie review: Raghav Juyal’s comic timing can’t save this film",
             "clean_title": "Raghav Juyal’s comic timing can’t save this film",
-            "ai_extraction_attempt_count": 4,
+            "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found one",
             "clean_highlighted_title": "Raghav Juyal’s comic timing *can’t save* this film",
             "ai_assigned_category": "BAD"
@@ -323,7 +326,7 @@
             "json_ld_extraction_status": "Html parsed (no data found) | Augmented by Gemini",
             "article_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal leads a comedy where the jokes need their own rescue mission",
             "clean_title": "Raghav Juyal leads a comedy where the jokes need their own rescue mission",
-            "ai_extraction_attempt_count": 4,
+            "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found both",
             "clean_highlighted_title": "Raghav Juyal leads a comedy where the jokes need their own *rescue mission*"
         },
@@ -339,7 +342,7 @@
             "json_ld_extraction_status": "Html parsed (partial data found) | Augmented by Gemini",
             "article_title": "Bhai Tera Star Hai Review: A painful blow to filmmaking standards –",
             "clean_title": "A painful blow to filmmaking standards",
-            "ai_extraction_attempt_count": 4,
+            "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found both",
             "clean_highlighted_title": "A *painful blow* to filmmaking standards"
         },
@@ -355,7 +358,7 @@
             "json_ld_extraction_status": "Html parsed (no data found) | Augmented by Gemini",
             "article_title": "'भाई तेरा स्‍टार है' रिव्यू: लाउड कॉमेडी और लचर स्‍क्रीनप्‍ले, 'स्टार' नहीं बन पाए राघव जुयाल - bhai tera star hai movie review in hindi starring raghav juyal sanjay kapoor niki walia niharika nm directed by vivek b agrawal - Navbharat Times",
             "clean_title": "लाउड कॉमेडी और लचर स्‍क्रीनप्‍ले, 'स्टार' नहीं बन पाए राघव जुयाल",
-            "ai_extraction_attempt_count": 4,
+            "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found both",
             "clean_highlighted_title": "लाउड कॉमेडी और *लचर स्‍क्रीनप्‍ले*, 'स्टार' नहीं बन पाए राघव जुयाल"
         },
@@ -435,7 +438,7 @@
             "json_ld_extraction_status": "Found partial data from json ld by JS",
             "article_title": "Bhai Tera Star Hai film review: Pointless comedy strains patience levels",
             "clean_title": "Pointless comedy strains patience levels",
-            "ai_extraction_attempt_count": 4,
+            "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found one",
             "clean_highlighted_title": "*Pointless comedy* strains patience levels",
             "ai_assigned_category": "BAD"
@@ -474,7 +477,7 @@
             "json_ld_extraction_status": "Found partial data from json ld by JS",
             "article_title": "Bhai Tera Star Hai review: Raghav Juyal's comedy promises a lot, delivers little",
             "clean_title": "Raghav Juyal's comedy promises a lot, delivers little",
-            "ai_extraction_attempt_count": 4,
+            "ai_extraction_attempt_count": 5,
             "ai_extraction_status": "found one",
             "clean_highlighted_title": "Raghav Juyal's comedy *promises a lot*, *delivers little*",
             "ai_assigned_category": "BAD"
@@ -497,11 +500,13 @@
             "review_title": "Bhai Tera Star Hai movie review: Raghav Juyal... - The Indian Express",
             "search_rank": 1,
             "webpage_extraction_successful": "Y",
-            "critic_name": "could not find from jsonld",
-            "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "Html Not parsed (Webpage not available)",
-            "article_title": null,
-            "ai_extraction_attempt_count": 2
+            "critic_name": "Shubhra Gupta",
+            "star_rating": "1.5",
+            "json_ld_extraction_status": "Html parsed (both data found)",
+            "article_title": "Bhai Tera Star Hai movie review: Raghav Juyal film is a comedy with scant laughs | Movie-review News - The Indian Express",
+            "ai_extraction_attempt_count": 2,
+            "clean_title": "Raghav Juyal film is a comedy with scant laughs",
+            "clean_highlighted_title": "Raghav Juyal film is a comedy with *scant laughs*"
         },
         {
             "publisher_id": "the-quint",
