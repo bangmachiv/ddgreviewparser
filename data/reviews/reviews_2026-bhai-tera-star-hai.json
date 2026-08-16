@@ -10,14 +10,16 @@
             "publisher_name": "Aaj Tak",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "abp",
             "publisher_name": "ABP",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "amar-ujala",
@@ -52,14 +54,16 @@
             "publisher_name": "BollySpice",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "business-standard",
             "publisher_name": "Business Standard",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "cinema-express",
@@ -80,7 +84,8 @@
             "publisher_name": "Cinetales",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "dainik-bhaskar",
@@ -95,7 +100,7 @@
             "critic_name": "आशीष तिवारी",
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "one data found (critic name)",
-            "ai_extraction_attempt_count": 1,
+            "ai_extraction_attempt_count": 2,
             "ai_extraction_status": "found one",
             "ai_assigned_category": "BAD"
         },
@@ -118,14 +123,16 @@
             "publisher_name": "Deccan Chronicle",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "deccan-herald",
             "publisher_name": "Deccan Herald",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "filmfare",
@@ -146,7 +153,8 @@
             "publisher_name": "Firstpost",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "free-press-journal",
@@ -167,7 +175,8 @@
             "publisher_name": "Hindustan",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "hindustan-times",
@@ -176,19 +185,22 @@
             "review_title": "Bhai Tera Star Hai review: This Raghav Juyal-Sanjay Kapoor ...",
             "search_rank": 1,
             "webpage_extraction_successful": "Y",
-            "article_title": null,
-            "ai_extraction_attempt_count": 1,
+            "article_title": "Bhai Tera Star Hai review: This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?' | Bollywood",
+            "ai_extraction_attempt_count": 2,
             "critic_name": "Rishabh Suri",
             "star_rating": "1.5",
             "ai_extraction_status": "found both",
-            "json_ld_extraction_status": " | Augmented by Gemini"
+            "json_ld_extraction_status": "one data found (critic name) | Augmented by Gemini",
+            "clean_title": "This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?'",
+            "clean_highlighted_title": "This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... *'Why?'*"
         },
         {
             "publisher_id": "ians-live",
             "publisher_name": "IANS Live",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "india-today",
@@ -223,14 +235,16 @@
             "publisher_name": "Lensmen Reviews",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "lokmat",
             "publisher_name": "Lokmat",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "mid-day",
@@ -245,7 +259,7 @@
             "critic_name": "Aakruti Bagla",
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "one data found (critic name)",
-            "ai_extraction_attempt_count": 1,
+            "ai_extraction_attempt_count": 2,
             "ai_extraction_status": "found one",
             "ai_assigned_category": "BAD"
         },
@@ -254,7 +268,8 @@
             "publisher_name": "Mint",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "moneycontrol",
@@ -269,7 +284,7 @@
             "critic_name": "Abhishek Srivastava",
             "star_rating": "1.5",
             "json_ld_extraction_status": "no data found | Augmented by Gemini",
-            "ai_extraction_attempt_count": 1,
+            "ai_extraction_attempt_count": 2,
             "ai_extraction_status": "found both"
         },
         {
@@ -277,14 +292,16 @@
             "publisher_name": "Movie Talkies",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "navbharat-times",
             "publisher_name": "Navbharat Times",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "ndtv",
@@ -319,14 +336,16 @@
             "publisher_name": "Outlook",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "peepingmoon",
             "publisher_name": "PeepingMoon",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "rediff",
@@ -355,7 +374,7 @@
             "critic_name": "Nandini Ramnath",
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "one data found (critic name)",
-            "ai_extraction_attempt_count": 1,
+            "ai_extraction_attempt_count": 2,
             "ai_extraction_status": "found one",
             "ai_assigned_category": "BAD"
         },
@@ -364,14 +383,16 @@
             "publisher_name": "South Asian Herald",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "the-economic-times",
             "publisher_name": "The Economic Times",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "the-federal",
@@ -386,7 +407,7 @@
             "critic_name": "Swaroop Kodur",
             "star_rating": "could not find from jsonld",
             "json_ld_extraction_status": "one data found (critic name)",
-            "ai_extraction_attempt_count": 1,
+            "ai_extraction_attempt_count": 2,
             "ai_extraction_status": "found one",
             "ai_assigned_category": "BAD"
         },
@@ -395,7 +416,8 @@
             "publisher_name": "The Hindu",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "the-indian-express",
@@ -416,14 +438,16 @@
             "publisher_name": "The Quint",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "the-telegraph",
             "publisher_name": "The Telegraph",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         },
         {
             "publisher_id": "the-times-of-india",
@@ -444,7 +468,8 @@
             "publisher_name": "The Tribune",
             "review_url": "NA",
             "review_title": "NA",
-            "search_rank": "NA"
+            "search_rank": "NA",
+            "article_title": null
         }
     ]
 }
