@@ -26,9 +26,9 @@ def is_valid_html(html_content):
     """Checks if the HTML is an actual article, or just a Cloudflare/Akamai bot challenge."""
     if not html_content or len(html_content) < MIN_VALID_HTML_BYTES:
         return False
-        
+
     lower_html = html_content.lower()
-    
+
     # Common WAF / Bot-Challenge signatures
     bad_signatures = [
         "<title>just a moment...</title>",
@@ -38,11 +38,11 @@ def is_valid_html(html_content):
         "challenge-platform",
         "verify you are human"
     ]
-    
+
     for sig in bad_signatures:
         if sig in lower_html:
             return False
-            
+
     return True
 
 def fallback_download(url):
@@ -53,7 +53,7 @@ def fallback_download(url):
         session = cffi_requests.Session(impersonate="chrome120")
         session.headers.update(HTTP_HEADERS)
         response = session.get(url, timeout=20)
-        
+
         if response.status_code == 200 and is_valid_html(response.text):
             print(f"    └─► [TIER 2 SUCCESS] Received {len(response.text)} characters.")
             return response.text
@@ -67,21 +67,21 @@ def fallback_download(url):
 def scrape_do_fallback(target_url):
     """Fallback Tier 3: Residential Proxy API via Scrape.do to bypass IP blocks."""
     print("    └─► [TIER 3 FALLBACK] Routing request through Scrape.do API...")
-    
+
     if not SCRAPE_DO_TOKEN:
         print("    └─► [TIER 3 ERROR] SCRAPE_DO_TOKEN environment variable is missing in GitHub Actions!")
         return None
 
     # URL encode the link so it doesn't break the API request structure
     encoded_url = urllib.parse.quote(target_url)
-    
-    # Passing &render=true so Scrape.do waits for JS bot challenges to pass
-    api_url = f"http://api.scrape.do/?token={SCRAPE_DO_TOKEN}&url={encoded_url}&render=true"
-    
+
+    # UPDATED: Added &super=true for Residential IPs and &render=true for JS execution
+    api_url = f"http://api.scrape.do/?token={SCRAPE_DO_TOKEN}&url={encoded_url}&render=true&super=true"
+
     try:
-        # We increase timeout to 45s because routing through proxies + rendering heavy JS takes time
-        response = standard_requests.get(api_url, timeout=45)
-        
+        # UPDATED: Increased timeout to 60s because rendering JS over residential proxies takes time
+        response = standard_requests.get(api_url, timeout=60)
+
         if response.status_code == 200 and is_valid_html(response.text):
             print(f"    └─► [TIER 3 SUCCESS] Received {len(response.text)} characters via Scrape.do.")
             return response.text
@@ -90,7 +90,7 @@ def scrape_do_fallback(target_url):
             if response.status_code == 401:
                 print("    └─► [TIER 3 FATAL] Invalid API Token or Scrape.do Credits Exhausted.")
             return None
-            
+
     except Exception as e:
         print(f"    └─► [TIER 3 ERROR] {e}")
         return None
@@ -105,7 +105,7 @@ def process_single_movie(json_path, context):
         data = json.load(f)
 
     movie_slug = data.get("movie", {}).get("slug")
-    
+
     if not movie_slug:
         print(f"[ERROR] Could not find 'slug' inside {json_path}. Skipping.")
         return
@@ -152,12 +152,12 @@ def process_single_movie(json_path, context):
         # TIER 1: Primary Attempt (Playwright with Stealth)
         try:
             page = context.new_page()
-            
+
             # Note: Network interception (blocking images/css) is removed!
             # Cloudflare checks if images load to verify if you are a real browser.
 
             page.goto(review_url, wait_until="domcontentloaded", timeout=30000)
-            
+
             # INCREASED WAIT: Give Cloudflare/Akamai 8 seconds to solve the JS challenge
             page.wait_for_timeout(8000)
 
@@ -175,7 +175,7 @@ def process_single_movie(json_path, context):
         # TIER 2: Secondary Attempt (curl_cffi)
         if not html_content:
             html_content = fallback_download(review_url)
-            
+
         # TIER 3: The Final Anti-IP-Ban Fallback (Scrape.do API)
         if not html_content:
             html_content = scrape_do_fallback(review_url)
@@ -205,7 +205,7 @@ def main():
     print("[STEP 1] Scanning for review JSON files...")
 
     target_files = glob.glob("data/reviews/reviews_*.json")
-    
+
     if not target_files:
         print("[ERROR] No JSON files found in data/reviews/ directory.")
         return
@@ -213,7 +213,7 @@ def main():
     print(f"[INFO] Found {len(target_files)} movie(s) to process.")
 
     print("\n[STEP 2] Launching headless browser (Shared across all movies)...")
-    
+
     with Stealth().use_sync(sync_playwright()) as p:
         browser = p.chromium.launch(
             headless=True,
@@ -223,7 +223,7 @@ def main():
                 "--disable-dev-shm-usage"
             ]
         )
-        
+
         context = browser.new_context(
             user_agent=HTTP_HEADERS["User-Agent"],
             viewport={"width": 1920, "height": 1080},
@@ -236,7 +236,7 @@ def main():
             process_single_movie(json_path, context)
 
         browser.close()
-    
+
     print("\n" + "=" * 40)
     print("ALL MOVIES BATCH DOWNLOAD COMPLETE")
     print("=" * 40)
