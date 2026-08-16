@@ -27,16 +27,28 @@ def is_valid_html(html_content):
     if not html_content or len(html_content) < MIN_VALID_HTML_BYTES:
         return False
 
+    # THE FIX: Cloudflare challenge pages are very small (5KB - 20KB).
+    # If the page is over 80KB, it is guaranteed to be a real article. Accept it immediately.
+    if len(html_content) > 80000:
+        return True
+
     lower_html = html_content.lower()
 
-    # Common WAF / Bot-Challenge signatures
-    bad_signatures = [
+    # For smaller pages, strictly check the <title> tag for WAF blocks
+    bad_titles = [
         "<title>just a moment...</title>",
         "<title>attention required!</title>",
+        "<title>security challenge</title>"
+    ]
+    
+    for title in bad_titles:
+        if title in lower_html:
+            return False
+
+    bad_signatures = [
         "enable javascript and cookies to continue",
         "please verify you are a human",
-        "challenge-platform",
-        "verify you are human"
+        "challenge-platform"
     ]
 
     for sig in bad_signatures:
@@ -75,11 +87,11 @@ def scrape_do_fallback(target_url):
     # URL encode the link so it doesn't break the API request structure
     encoded_url = urllib.parse.quote(target_url)
 
-    # UPDATED: Added &super=true for Residential IPs and &render=true for JS execution
-    api_url = f"http://api.scrape.do/?token={SCRAPE_DO_TOKEN}&url={encoded_url}&render=true&super=true"
+    # UPDATED: Added &geoCode=in for Indian IPs, &super=true for Residential, &render=true for JS
+    api_url = f"http://api.scrape.do/?token={SCRAPE_DO_TOKEN}&url={encoded_url}&render=true&super=true&geoCode=in"
 
     try:
-        # UPDATED: Increased timeout to 60s because rendering JS over residential proxies takes time
+        # Increased timeout to 60s because rendering JS over residential proxies takes time
         response = standard_requests.get(api_url, timeout=60)
 
         if response.status_code == 200 and is_valid_html(response.text):
