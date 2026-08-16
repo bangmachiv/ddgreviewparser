@@ -2,9 +2,9 @@ import json
 import os
 import time
 import glob
-import requests
+# Import curl_cffi to spoof TLS fingerprints against Cloudflare/Akamai 403s
+from curl_cffi import requests as cffi_requests
 from playwright.sync_api import sync_playwright
-# Use the modern v2.x import
 from playwright_stealth import Stealth 
 
 # -----------------------------------------------------------------------------
@@ -12,19 +12,10 @@ from playwright_stealth import Stealth
 # -----------------------------------------------------------------------------
 MIN_VALID_HTML_BYTES = 2000  # HTML smaller than this is treated as a WAF block
 
-# Richer, more authentic headers for the fallback
 HTTP_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.9",
-    "Upgrade-Insecure-Requests": "1",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "cross-site",
-    "Sec-Fetch-User": "?1",
-    "Sec-CH-UA": '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
-    "Sec-CH-UA-Mobile": "?0",
-    "Sec-CH-UA-Platform": '"Windows"',
     "Referer": "https://www.google.com/",
 }
 
@@ -51,10 +42,11 @@ def is_valid_html(html_content):
     return True
 
 def fallback_download(url):
-    """Fallback HTTP fetcher using a Session block for better connection persistence."""
-    print("    └─► [FALLBACK] Attempting direct HTTP request...")
+    """Fallback HTTP fetcher using curl_cffi to spoof Chrome TLS fingerprints."""
+    print("    └─► [FALLBACK] Attempting TLS-Spoofed HTTP request...")
     try:
-        session = requests.Session()
+        # impersonate="chrome120" mimics a real Chrome browser's raw network signature
+        session = cffi_requests.Session(impersonate="chrome120")
         session.headers.update(HTTP_HEADERS)
         response = session.get(url, timeout=20)
         
@@ -122,25 +114,13 @@ def process_single_movie(json_path, context):
         try:
             page = context.new_page()
             
-            # Advanced Interceptor: Block media/ads but LEAVE scripts needed for bot verification
-            def intercept_route(route):
-                request = route.request
-                resource_type = request.resource_type
-                url = request.url.lower()
-                
-                if resource_type in ["image", "media", "font", "stylesheet"]:
-                    route.abort()
-                elif any(ad in url for ad in ["doubleclick", "google-analytics", "taboola", "outbrain", "facebook"]):
-                    route.abort()
-                else:
-                    route.continue_()
-
-            page.route("**/*", intercept_route)
+            # Note: Network interception (blocking images/css) is removed!
+            # Cloudflare checks if images load to verify if you are a real browser.
 
             page.goto(review_url, wait_until="domcontentloaded", timeout=30000)
             
-            # INCREASED WAIT: Give Cloudflare/Akamai 5 seconds to solve the JS challenge
-            page.wait_for_timeout(5000)
+            # INCREASED WAIT: Give Cloudflare/Akamai 8 seconds to solve the JS challenge
+            page.wait_for_timeout(8000)
 
             temp_content = page.content()
             page.close()
@@ -153,7 +133,7 @@ def process_single_movie(json_path, context):
         except Exception as e:
             print(f"[WARNING] Playwright attempt failed: {e}")
 
-        # Secondary Attempt: Fallback
+        # Secondary Attempt: Fallback (curl_cffi)
         if not html_content:
             html_content = fallback_download(review_url)
 
@@ -191,9 +171,7 @@ def main():
 
     print("\n[STEP 2] Launching headless browser (Shared across all movies)...")
     
-    # NEW v2.x STEALTH METHOD: Wraps the entire sync_playwright() block
     with Stealth().use_sync(sync_playwright()) as p:
-        # THE MAGIC FLAG: Disables the "webdriver" flag Chrome sends to servers
         browser = p.chromium.launch(
             headless=True,
             args=[
@@ -207,7 +185,7 @@ def main():
             user_agent=HTTP_HEADERS["User-Agent"],
             viewport={"width": 1920, "height": 1080},
             extra_http_headers={"Referer": "https://www.google.com/"},
-            locale="en-IN", # Set locale to India to appear more authentic to HT/IE
+            locale="en-IN", 
             timezone_id="Asia/Kolkata" 
         )
 
