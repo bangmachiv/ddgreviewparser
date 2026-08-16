@@ -2,8 +2,10 @@ import json
 import os
 import time
 import glob
+import urllib.parse
 # Import curl_cffi to spoof TLS fingerprints against Cloudflare/Akamai 403s
 from curl_cffi import requests as cffi_requests
+import requests as standard_requests
 from playwright.sync_api import sync_playwright
 from playwright_stealth import Stealth 
 
@@ -11,6 +13,7 @@ from playwright_stealth import Stealth
 # Configuration
 # -----------------------------------------------------------------------------
 MIN_VALID_HTML_BYTES = 2000  # HTML smaller than this is treated as a WAF block
+SCRAPE_DO_TOKEN = os.environ.get("SCRAPE_DO_TOKEN")
 
 HTTP_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
@@ -32,7 +35,8 @@ def is_valid_html(html_content):
         "<title>attention required!</title>",
         "enable javascript and cookies to continue",
         "please verify you are a human",
-        "challenge-platform"
+        "challenge-platform",
+        "verify you are human"
     ]
     
     for sig in bad_signatures:
@@ -42,8 +46,8 @@ def is_valid_html(html_content):
     return True
 
 def fallback_download(url):
-    """Fallback HTTP fetcher using curl_cffi to spoof Chrome TLS fingerprints."""
-    print("    └─► [FALLBACK] Attempting TLS-Spoofed HTTP request...")
+    """Fallback Tier 2: HTTP fetcher using curl_cffi to spoof Chrome TLS fingerprints."""
+    print("    └─► [TIER 2 FALLBACK] Attempting TLS-Spoofed HTTP request...")
     try:
         # impersonate="chrome120" mimics a real Chrome browser's raw network signature
         session = cffi_requests.Session(impersonate="chrome120")
@@ -51,13 +55,44 @@ def fallback_download(url):
         response = session.get(url, timeout=20)
         
         if response.status_code == 200 and is_valid_html(response.text):
-            print(f"    └─► [FALLBACK SUCCESS] Received {len(response.text)} characters.")
+            print(f"    └─► [TIER 2 SUCCESS] Received {len(response.text)} characters.")
             return response.text
         else:
-            print(f"    └─► [FALLBACK FAILED] Status: {response.status_code}, Length: {len(response.text)}")
+            print(f"    └─► [TIER 2 FAILED] Status: {response.status_code}, Length: {len(response.text)}")
             return None
     except Exception as e:
-        print(f"    └─► [FALLBACK ERROR] {e}")
+        print(f"    └─► [TIER 2 ERROR] {e}")
+        return None
+
+def scrape_do_fallback(target_url):
+    """Fallback Tier 3: Residential Proxy API via Scrape.do to bypass IP blocks."""
+    print("    └─► [TIER 3 FALLBACK] Routing request through Scrape.do API...")
+    
+    if not SCRAPE_DO_TOKEN:
+        print("    └─► [TIER 3 ERROR] SCRAPE_DO_TOKEN environment variable is missing in GitHub Actions!")
+        return None
+
+    # URL encode the link so it doesn't break the API request structure
+    encoded_url = urllib.parse.quote(target_url)
+    
+    # Passing &render=true so Scrape.do waits for JS bot challenges to pass
+    api_url = f"http://api.scrape.do/?token={SCRAPE_DO_TOKEN}&url={encoded_url}&render=true"
+    
+    try:
+        # We increase timeout to 45s because routing through proxies + rendering heavy JS takes time
+        response = standard_requests.get(api_url, timeout=45)
+        
+        if response.status_code == 200 and is_valid_html(response.text):
+            print(f"    └─► [TIER 3 SUCCESS] Received {len(response.text)} characters via Scrape.do.")
+            return response.text
+        else:
+            print(f"    └─► [TIER 3 FAILED] Status: {response.status_code}")
+            if response.status_code == 401:
+                print("    └─► [TIER 3 FATAL] Invalid API Token or Scrape.do Credits Exhausted.")
+            return None
+            
+    except Exception as e:
+        print(f"    └─► [TIER 3 ERROR] {e}")
         return None
 
 def process_single_movie(json_path, context):
@@ -110,7 +145,7 @@ def process_single_movie(json_path, context):
         print(f"[FETCH] URL: {review_url}")
         html_content = None
 
-        # Primary Attempt: Playwright with Stealth
+        # TIER 1: Primary Attempt (Playwright with Stealth)
         try:
             page = context.new_page()
             
@@ -133,9 +168,13 @@ def process_single_movie(json_path, context):
         except Exception as e:
             print(f"[WARNING] Playwright attempt failed: {e}")
 
-        # Secondary Attempt: Fallback (curl_cffi)
+        # TIER 2: Secondary Attempt (curl_cffi)
         if not html_content:
             html_content = fallback_download(review_url)
+            
+        # TIER 3: The Final Anti-IP-Ban Fallback (Scrape.do API)
+        if not html_content:
+            html_content = scrape_do_fallback(review_url)
 
         # Evaluate Final Output
         if html_content:
@@ -146,7 +185,7 @@ def process_single_movie(json_path, context):
             pub["webpage_extraction_successful"] = "Y"
             success_count += 1
         else:
-            print(f"[ERROR] Could not extract valid HTML for {pub_id}")
+            print(f"[ERROR] Could not extract valid HTML for {pub_id} across all 3 tiers.")
             pub["webpage_extraction_successful"] = "N"
             error_count += 1
 
