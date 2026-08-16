@@ -3,7 +3,7 @@ name: Download Publisher HTML
 on:
   workflow_dispatch:
 
-# REQUIRED: Grants the action permission to push the updated JSON back to the repo
+# REQUIRED: Grants permission to commit updated JSON flags back to the repo
 permissions:
   contents: write
 
@@ -27,16 +27,18 @@ jobs:
           playwright install --with-deps chromium
 
       - name: Run download script
+        env:
+          SCRAPE_DO_TOKEN: ${{ secrets.SCRAPE_DO_TOKEN }}
         run: python download_html.py
 
-      # REQUIRED: Commits the 'Y' and 'N' flags to your JSON file so they persist
+      # Commits the 'Y' and 'N' extraction flags to your reviews JSON files
       - name: Commit updated JSON file
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add data/reviews/*.json
           git status
-          git commit -m "chore: Auto-update extraction status (Y/N) in JSON" || echo "No changes to commit"
+          git commit -m "chore: auto-update extraction status (Y/N) in JSON" || echo "No changes to commit"
           git push origin HEAD:${{ github.ref }}
 
       - name: Upload HTML Artifact
