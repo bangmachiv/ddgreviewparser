@@ -13,20 +13,6 @@ def parse_rating(val):
     except ValueError:
         return None
 
-def classify_unrated(title):
-    t = title.lower()
-    bad_phrases = ["pointless", "painful", "fails to impress", "can't save this film",
-                   "delivers little", "unfunny", "absurd", "nightmare",
-                   "strains patience", "bad", "poor", "disappointing"]
-    good_phrases = ["excellent", "brilliant", "outstanding", "terrific",
-                    "superb", "delightful", "impressive", "entertaining"]
-    
-    for b in bad_phrases:
-        if b in t: return "BAD"
-    for g in good_phrases:
-        if g in t: return "GOOD"
-    return "NEUTRAL"
-
 def format_subgroup_rating(rating):
     if rating == 0:
         return "☆☆☆☆☆"
@@ -55,10 +41,19 @@ def generate_whatsapp_message(data):
     rated_count = 0
     total_rating_sum = 0.0
     
+    # --- Tracking Lists for End-of-Run Logs ---
+    ai_slotted_pubs = []
+    missing_highlight_pubs = []
+    
     for pub in data.get("publishers", []):
         url = pub.get("review_url")
         raw_title = pub.get("clean_title")
         highlighted_title = pub.get("clean_highlighted_title")
+        ai_cat = str(pub.get("ai_assigned_category", "")).strip().upper()
+        
+        # Normalize Publisher Name
+        pub_name = str(pub.get("publisher_name", "")).strip()
+        pub_name = re.sub(r'\s*\.\s*', ' . ', pub_name)
         
         # Exclude invalid reviews
         if not url or str(url).strip().upper() == "NA":
@@ -66,19 +61,17 @@ def generate_whatsapp_message(data):
         if not raw_title or not str(raw_title).strip():
             continue
             
-        # Determine which title to display and format it
-        if highlighted_title and str(highlighted_title).strip():
+        # Logging Missing Highlights
+        if not highlighted_title or not str(highlighted_title).strip():
+            missing_highlight_pubs.append(pub_name)
+            display_title = str(raw_title).strip()
+        else:
             # Convert *word* to _word_ to use WhatsApp italics instead of bold
             display_title = re.sub(r'\*(.*?)\*', r'_\1_', str(highlighted_title).strip())
-        else:
-            display_title = str(raw_title).strip()
             
         rating = parse_rating(pub.get("star_rating"))
         
-        # Normalize Publisher Name (Space + Period + Space)
-        pub_name = str(pub.get("publisher_name", "")).strip()
-        pub_name = re.sub(r'\s*\.\s*', ' . ', pub_name)
-        
+        # Category Assignment Logic
         if rating is not None:
             rated_count += 1
             total_rating_sum += rating
@@ -89,8 +82,13 @@ def generate_whatsapp_message(data):
             else:
                 cat = "BAD"
         else:
-            # Use raw_title for classification to prevent formatting tags from breaking the match
-            cat = classify_unrated(str(raw_title))
+            # Handle Unrated Reviews using AI Category
+            if ai_cat in ["GOOD", "NEUTRAL", "BAD"]:
+                cat = ai_cat
+                ai_slotted_pubs.append(f"{pub_name} -> Slotted as {cat}")
+            else:
+                # If missing, null, or invalid category, strictly skip this review
+                continue
             
         valid_reviews.append({
             'title': display_title,
@@ -225,7 +223,7 @@ def generate_whatsapp_message(data):
             # 2 blank lines after subgroup finishes
             lines.extend(["", ""])
 
-    return "\n".join(lines).strip(), movie_slug
+    return "\n".join(lines).strip(), movie_slug, ai_slotted_pubs, missing_highlight_pubs
 
 def main():
     if len(sys.argv) < 2:
@@ -243,7 +241,7 @@ def main():
         sys.stderr.write(f"[ERROR] Failed to read or parse input JSON: {str(e)}\n")
         sys.exit(1)
         
-    wsap_msg, slug = generate_whatsapp_message(json_data)
+    wsap_msg, slug, ai_slotted_pubs, missing_highlight_pubs = generate_whatsapp_message(json_data)
     
     # --- File Saving Logic ---
     try:
@@ -260,6 +258,29 @@ def main():
         sys.stderr.write(f"[FATAL ERROR] Failed to save output file!\n")
         sys.stderr.write(f"[EXCEPTION DETAILS]: {str(e)}\n")
         traceback.print_exc(file=sys.stderr)
+
+    # --- Print Final Execution Logs (to stderr) ---
+    sys.stderr.write("\n======================================================\n")
+    sys.stderr.write("               FINAL EXECUTION LOGS\n")
+    sys.stderr.write("======================================================\n")
+    
+    sys.stderr.write(f"\n[AI CLASSIFICATION STATUS]\n")
+    sys.stderr.write(f"Successfully slotted {len(ai_slotted_pubs)} unrated reviews using 'ai_assigned_category':\n")
+    if ai_slotted_pubs:
+        for pub in ai_slotted_pubs:
+            sys.stderr.write(f"  ✓ {pub}\n")
+    else:
+        sys.stderr.write("  - None\n")
+        
+    sys.stderr.write(f"\n[MISSING HIGHLIGHTS STATUS]\n")
+    sys.stderr.write(f"Found {len(missing_highlight_pubs)} publishers with a clean title but NO highlighted title:\n")
+    if missing_highlight_pubs:
+        for pub in missing_highlight_pubs:
+            sys.stderr.write(f"  ⚠ {pub}\n")
+    else:
+        sys.stderr.write("  - None (All valid titles have highlights!)\n")
+    
+    sys.stderr.write("======================================================\n\n")
 
     # Output strict final WhatsApp message to standard out
     print(wsap_msg)
