@@ -1,7 +1,32 @@
 #!/usr/bin/env python3
 
+"""
+TASK: Initialize master pipeline ledgers, base files, and directory structures for all active movies.
+
+INPUT FILES READ:
+  - publishers.json (Root)
+  - data/movies/movies-live-today.json
+
+OUTPUT FOLDERS CREATED:
+  - data/reviews/
+  - data/searches/
+  - data/webpages/<slugname>/
+  - logs/logs_<slugname>/pipeline_<slugname>/
+
+OUTPUT FILES GENERATED/UPDATED:
+  - data/searches/searches_<slugname>.json (Initialized as {})
+  - data/reviews/reviews_<slugname>.json
+
+OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
+  publisher_id, publisher_name, search_needed, search_result_count, review_url, 
+  review_title, search_rank, webpage_extraction_successful, article_title, 
+  clean_title, highlighted_title, jsonld_critic_name, jsonld_star_rating, 
+  ai_metadata_parsing_attempts, ai_critic_name, ai_star_rating, ai_sentiment_category
+"""
+
 import json
 import os
+import sys
 
 # -----------------------------------------------------------------------------
 # Configuration & Absolute Pathing for GitHub Actions
@@ -10,72 +35,166 @@ BASE_DIR = os.getcwd()
 PUBLISHERS_FILE = os.path.join(BASE_DIR, "publishers.json")
 MOVIES_FILE = os.path.join(BASE_DIR, "data", "movies", "movies-live-today.json")
 REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
+SEARCHES_DIR = os.path.join(BASE_DIR, "data", "searches")
+WEBPAGES_DIR = os.path.join(BASE_DIR, "data", "webpages")
+LOGS_DIR = os.path.join(BASE_DIR, "logs")
 
+# -----------------------------------------------------------------------------
+# 7-Column Metric Tracker Utility
+# -----------------------------------------------------------------------------
+class PipelineTracker:
+    def __init__(self, metric_name, done_before, to_be_done_before):
+        self.metric_name = metric_name
+        self.done_before = done_before
+        self.to_be_done_before = to_be_done_before
+        self.processed = 0
+        self.succeeded = 0
+        self.failed = 0
+
+    def add_success(self, count=1):
+        self.processed += count
+        self.succeeded += count
+
+    def add_failure(self, count=1):
+        self.processed += count
+        self.failed += count
+
+    def print_summary(self):
+        done_after = self.done_before + self.succeeded
+        to_be_done_after = self.to_be_done_before - self.succeeded
+
+        print("\n" + "="*105)
+        print(f" PIPELINE METRIC: {self.metric_name}")
+        print("="*105)
+        print(f"| {'Done (Bef)':^10} | {'To Be Done (Bef)':^16} | {'Processed':^9} | {'Succeeded':^9} | {'Failed':^6} | {'Done (Aft)':^10} | {'To Be Done (Aft)':^16} |")
+        print("-" * 105)
+        print(f"| {self.done_before:^10} | {self.to_be_done_before:^16} | {self.processed:^9} | {self.succeeded:^9} | {self.failed:^6} | {done_after:^10} | {to_be_done_after:^16} |")
+        print("="*105 + "\n")
+
+# -----------------------------------------------------------------------------
+# Main Execution Logic
+# -----------------------------------------------------------------------------
 def main():
     print("=" * 80)
     print(" PIPELINE STEP 0: INITIALIZE MASTER SKELETONS")
     print("=" * 80)
 
-    # 1. Ensure output directory exists
-    os.makedirs(REVIEWS_DIR, exist_ok=True)
+    # 1. Base Output Directories (Guarantees Write Rights)
+    for folder in [REVIEWS_DIR, SEARCHES_DIR, WEBPAGES_DIR, LOGS_DIR]:
+        os.makedirs(folder, exist_ok=True)
+        print(f"[SUCCESS] Base folder verified: {folder}")
 
-    # 2. Load active publishers
+    # 2. Load Active Publishers
     if not os.path.exists(PUBLISHERS_FILE):
-        print(f"[FATAL] {PUBLISHERS_FILE} not found. Cannot proceed.")
-        return
+        print(f"[FATAL ERROR] {PUBLISHERS_FILE} not found. Cannot proceed.")
+        sys.exit(1)
         
     with open(PUBLISHERS_FILE, "r", encoding="utf-8") as f:
         all_publishers = json.load(f)
     
     active_publishers = [p for p in all_publishers if p.get("active", False)]
+    print(f"[INFO] Loaded {len(active_publishers)} active publishers.")
 
-    # 3. Load active movies
+    # 3. Load Active Movies
     if not os.path.exists(MOVIES_FILE):
-        print(f"[FATAL] {MOVIES_FILE} not found. No movies to process.")
-        return
+        print(f"[FATAL ERROR] {MOVIES_FILE} not found. No movies to process.")
+        sys.exit(1)
 
     with open(MOVIES_FILE, "r", encoding="utf-8") as f:
         movies_data = json.load(f)
+    
+    active_movies = movies_data.get("movies", [])
+    print(f"[INFO] Loaded {len(active_movies)} active movies.")
 
-    # 4. Process each movie
-    for movie in movies_data.get("movies", []):
+    # -------------------------------------------------------------------------
+    # PRE-SCAN: Calculate Metrics (Done Before, To Be Done Before)
+    # -------------------------------------------------------------------------
+    global_done_before = 0
+    global_to_be_done_before = 0
+
+    for movie in active_movies:
+        slug = movie.get("slug")
+        reviews_path = os.path.join(REVIEWS_DIR, f"reviews_{slug}.json")
+        
+        if os.path.exists(reviews_path):
+            try:
+                with open(reviews_path, "r", encoding="utf-8") as rf:
+                    existing_data = json.load(rf)
+                existing_pub_ids = [p.get("publisher_id") for p in existing_data.get("publishers", [])]
+                
+                # Count how many active publishers are already in this movie's file
+                movie_done = sum(1 for pub in active_publishers if pub["id"] in existing_pub_ids)
+                movie_todo = len(active_publishers) - movie_done
+                
+                global_done_before += movie_done
+                global_to_be_done_before += movie_todo
+            except Exception:
+                # If file is corrupted, all active publishers need to be done
+                global_to_be_done_before += len(active_publishers)
+        else:
+            # File doesn't exist, all active publishers need to be done for this movie
+            global_to_be_done_before += len(active_publishers)
+
+    # Initialize the Tracker
+    tracker = PipelineTracker("Blocks made in reviews file", global_done_before, global_to_be_done_before)
+
+    # -------------------------------------------------------------------------
+    # ACTION RUN: Build Files, Folders, and Skeletons
+    # -------------------------------------------------------------------------
+    for movie in active_movies:
         movie_name = movie.get("name")
         movie_slug = movie.get("slug")
         movie_date = movie.get("date", "")
         
-        print(f"\n[CHECKING] {movie_name} ({movie_slug})")
+        print(f"\n[PROCESSING MOVIE] {movie_name} ({movie_slug})")
         
-        reviews_file_path = os.path.join(REVIEWS_DIR, f"reviews_{movie_slug}.json")
+        # A. Create Movie-Specific Folders
+        movie_webpages_dir = os.path.join(WEBPAGES_DIR, movie_slug)
+        movie_pipeline_logs = os.path.join(LOGS_DIR, f"logs_{movie_slug}", f"pipeline_{movie_slug}")
         
-        # Phase A: Load existing file or create base structure
-        if os.path.exists(reviews_file_path):
+        try:
+            os.makedirs(movie_webpages_dir, exist_ok=True)
+            os.makedirs(movie_pipeline_logs, exist_ok=True)
+            print(f"  [SUCCESS] Movie folders created.")
+        except Exception as e:
+            print(f"  [FAILED] Could not create folders: {e}")
+            
+        # B. Initialize Searches file if missing
+        searches_path = os.path.join(SEARCHES_DIR, f"searches_{movie_slug}.json")
+        if not os.path.exists(searches_path):
             try:
-                with open(reviews_file_path, "r", encoding="utf-8") as rf:
-                    reviews_data = json.load(rf)
+                with open(searches_path, "w", encoding="utf-8") as sf:
+                    json.dump({}, sf)
+                print(f"  [SUCCESS] Created empty searches_{movie_slug}.json")
             except Exception as e:
-                print(f"  [ERROR] Failed to read {reviews_file_path}: {e}")
+                print(f"  [FAILED] Could not create searches file: {e}")
+
+        # C. Load or Create Reviews Master Skeleton
+        reviews_path = os.path.join(REVIEWS_DIR, f"reviews_{movie_slug}.json")
+        
+        if os.path.exists(reviews_path):
+            try:
+                with open(reviews_path, "r", encoding="utf-8") as rf:
+                    reviews_data = json.load(rf)
+                print(f"  [INFO] Loaded existing reviews_{movie_slug}.json")
+            except Exception as e:
+                print(f"  [FAILED] Corrupted reviews file: {e}")
                 continue
         else:
-            print(f"  [INIT] Creating new reviews file...")
             reviews_data = {
-                "movie": {
-                    "name": movie_name,
-                    "slug": movie_slug,
-                    "date": movie_date
-                },
-                "Last searched": "",
-                "Search results": 0,
+                "movie": {"name": movie_name, "slug": movie_slug, "date": movie_date},
                 "publishers": []
             }
+            print(f"  [SUCCESS] Created new reviews base object.")
 
-        # Phase B: Map existing publishers to detect who is missing
+        # D. Map existing and inject missing
         existing_pubs = {p.get("publisher_id"): p for p in reviews_data.get("publishers", [])}
+        blocks_to_add = 0
         
-        # Phase C: Inject missing publishers with exact Master Skeleton
-        added_count = 0
         for pub in active_publishers:
             pub_id = pub["id"]
             if pub_id not in existing_pubs:
+                # The 17-field Master Skeleton
                 existing_pubs[pub_id] = {
                     "publisher_id": pub_id,
                     "publisher_name": pub["name"],
@@ -95,21 +214,30 @@ def main():
                     "ai_star_rating": "NOT_NEEDED",
                     "ai_sentiment_category": "PENDING"
                 }
-                added_count += 1
-                
-        # Phase D: Sort alphabetically by publisher_id
+                blocks_to_add += 1
+
+        # E. Sort alphabetically by publisher_id
         updated_publishers = list(existing_pubs.values())
         updated_publishers.sort(key=lambda x: x["publisher_id"])
-        
         reviews_data["publishers"] = updated_publishers
         
-        # Phase E: Save file
-        try:
-            with open(reviews_file_path, "w", encoding="utf-8") as rf:
-                json.dump(reviews_data, rf, ensure_ascii=False, indent=4)
-            print(f"  [SUCCESS] File synced. Total Publishers: {len(updated_publishers)} (Added: {added_count})")
-        except Exception as e:
-            print(f"  [FATAL ERROR] GitHub Actions failed to create file '{reviews_file_path}'. Reason: {e}")
+        # F. Save to disk and update tracker
+        if blocks_to_add > 0:
+            try:
+                with open(reviews_path, "w", encoding="utf-8") as rf:
+                    json.dump(reviews_data, rf, ensure_ascii=False, indent=4)
+                print(f"  [SUCCESS] Injected {blocks_to_add} missing publishers into reviews file.")
+                tracker.add_success(blocks_to_add)
+            except Exception as e:
+                print(f"  [FAILED] Could not save reviews file: {e}")
+                tracker.add_failure(blocks_to_add)
+        else:
+            print(f"  [INFO] No missing publishers to inject for this movie.")
+
+    # -------------------------------------------------------------------------
+    # PRINT PIPELINE DASHBOARD
+    # -------------------------------------------------------------------------
+    tracker.print_summary()
 
 if __name__ == "__main__":
     main()
