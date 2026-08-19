@@ -7,15 +7,14 @@ INPUT FILES READ:
   - publishers.json (Root)
   - data/movies/movies-live-today.json
 
-OUTPUT FOLDERS CREATED:
-  - data/reviews/
-  - data/searches/
-  - data/webpages/<slugname>/
-  - logs/logs_<slugname>/pipeline_<slugname>/
+OUTPUT FOLDERS CREATED (Per Movie):
+  1. data/webpages/<slugname>/
+  2. logs/logs_<slugname>/
+  3. logs/logs_<slugname>/pipeline_<slugname>/
 
-OUTPUT FILES GENERATED/UPDATED:
-  - data/searches/searches_<slugname>.json (Initialized as {})
-  - data/reviews/reviews_<slugname>.json
+OUTPUT FILES GENERATED/UPDATED (Per Movie):
+  1. data/searches/searches_<slugname>.json (Initialized as {})
+  2. data/reviews/reviews_<slugname>.json
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
   publisher_id, publisher_name, search_needed, search_result_count, review_url, 
