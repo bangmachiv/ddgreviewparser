@@ -1,0 +1,48 @@
+name: 00. Initialize Master Skeletons
+
+on:
+  workflow_dispatch: # Allows you to trigger this manually from the GitHub UI
+
+permissions:
+  contents: write # CRITICAL: Gives the bot permission to create/update files
+
+jobs:
+  initialize-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # No requirements.txt needed for this script as it only uses built-in libraries (json, os, sys)
+
+      - name: Run Initialize Script
+        run: |
+          python 00_initialize.py
+
+      - name: Commit and Push new skeleton files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Add the specific directories managed by this script
+          git add data/reviews/
+          git add data/searches/
+          git add data/webpages/
+          git add logs/
+
+          # Check if there are any actual changes to commit
+          if git diff --cached --quiet; then
+            echo "No new movies or publishers to initialize. Repository is up to date."
+            exit 0
+          fi
+
+          git commit -m "Pipeline [00]: Initialize master skeletons and folder structures"
+          git push
