@@ -25,7 +25,7 @@ jobs:
 
       - name: Run Initialize Script
         run: |
-          python 00_initialize.py
+          python initialize.py
 
       - name: Commit and Push new skeleton files
         run: |
