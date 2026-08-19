@@ -82,7 +82,10 @@ def main():
     # 1. Base Output Directories (Guarantees Write Rights)
     for folder in [REVIEWS_DIR, SEARCHES_DIR, WEBPAGES_DIR, LOGS_DIR]:
         os.makedirs(folder, exist_ok=True)
-        print(f"[SUCCESS] Base folder verified: {folder}")
+        # Create a .gitkeep to ensure Git tracks even completely empty base folders
+        with open(os.path.join(folder, ".gitkeep"), "w") as f:
+            pass
+        print(f"[SUCCESS] Base folder verified and locked for Git tracking: {folder}")
 
     # 2. Load Active Publishers
     if not os.path.exists(PUBLISHERS_FILE):
@@ -148,14 +151,21 @@ def main():
         
         print(f"\n[PROCESSING MOVIE] {movie_name} ({movie_slug})")
         
-        # A. Create Movie-Specific Folders
+        # A. Create Movie-Specific Folders and force Git to track them
         movie_webpages_dir = os.path.join(WEBPAGES_DIR, movie_slug)
         movie_pipeline_logs = os.path.join(LOGS_DIR, f"logs_{movie_slug}", f"pipeline_{movie_slug}")
         
         try:
             os.makedirs(movie_webpages_dir, exist_ok=True)
             os.makedirs(movie_pipeline_logs, exist_ok=True)
-            print(f"  [SUCCESS] Movie folders created.")
+            
+            # Create .gitkeep files inside the movie folders
+            with open(os.path.join(movie_webpages_dir, ".gitkeep"), "w") as f:
+                pass
+            with open(os.path.join(movie_pipeline_logs, ".gitkeep"), "w") as f:
+                pass
+                
+            print(f"  [SUCCESS] Movie folders created and locked for Git tracking.")
         except Exception as e:
             print(f"  [FAILED] Could not create folders: {e}")
             
