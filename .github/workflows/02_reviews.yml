@@ -28,7 +28,7 @@ jobs:
 
       - name: Run search
         run: |
-          python search_reviews.py
+          python 01_reviews.py
 
       - name: Commit updated search and review files
         run: |
