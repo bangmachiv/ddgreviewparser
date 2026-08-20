@@ -30,7 +30,6 @@ import json
 import os
 import sys
 from urllib.parse import urlparse
-from datetime import datetime
 from duckduckgo_search import DDGS
 
 # -----------------------------------------------------------------------------
@@ -80,7 +79,7 @@ def main():
     print(" PIPELINE STEP 1: SEARCH DUCKDUCKGO API")
     print("=" * 80)
 
-    # 1. Load active publishers (Needed to get the target URL domains)
+    # 1. Load active publishers
     if not os.path.exists(PUBLISHERS_FILE):
         print(f"[FATAL ERROR] {PUBLISHERS_FILE} not found.")
         sys.exit(1)
@@ -88,7 +87,6 @@ def main():
     with open(PUBLISHERS_FILE, "r", encoding="utf-8") as f:
         all_publishers = json.load(f)
         
-    # Create a quick lookup dictionary for publisher URLs based on ID
     pub_url_map = {p["id"]: p.get("url", "") for p in all_publishers if p.get("active", False)}
 
     # 2. Load active movies
@@ -99,7 +97,6 @@ def main():
     with open(MOVIES_FILE, "r", encoding="utf-8") as f:
         active_movies = json.load(f).get("movies", [])
 
-    # Initialize global tracking
     global_done_before = 0
     global_todo_before = 0
 
@@ -118,11 +115,9 @@ def main():
             count_val = pub.get("search_result_count")
             needed_val = pub.get("search_needed")
             
-            # Done Before: count is an integer >= 0
             if isinstance(count_val, int) and count_val >= 0:
                 global_done_before += 1
                 
-            # To Be Done Before: search_needed == "Y"
             if needed_val == "Y":
                 global_todo_before += 1
 
@@ -154,15 +149,12 @@ def main():
                 searches_data = json.load(sf)
 
             movie_publishers = reviews_data.get("publishers", [])
-            
-            # Identify publishers needing search
             needs_search = [p for p in movie_publishers if p.get("search_needed") == "Y"]
             
             if not needs_search:
                 print("  [INFO] No searches needed for this movie.")
                 continue
 
-            # Process the backlog
             for pub_block in needs_search:
                 pub_id = pub_block.get("publisher_id")
                 pub_name = pub_block.get("publisher_name")
@@ -177,7 +169,6 @@ def main():
                 domain = urlparse(pub_url).netloc.replace("www.", "")
                 print(f"  └─► Searching {pub_name} ({domain})...")
 
-                # Setup payload for searches_.json
                 publisher_search_payload = {
                     "publisher_id": pub_id,
                     "publisher_name": pub_name,
@@ -230,17 +221,19 @@ def main():
                     pub_block["search_result_count"] = "FAILED"
                     tracker.add_failure()
                 else:
-                    # Save results to the searches dict
                     searches_data[pub_id] = publisher_search_payload
-                    # Update master ledger block
                     pub_block["search_result_count"] = total_results_found
+                    # Since we successfully searched, we flip the trigger off so we don't search it again next run
+                    pub_block["search_needed"] = "N"
                     tracker.add_success()
                     print(f"      [SUCCESS] {total_results_found} total results found.")
 
             # SAVE MOVIE DATA
+            os.makedirs(os.path.dirname(reviews_path), exist_ok=True)
             with open(reviews_path, "w", encoding="utf-8") as rf:
                 json.dump(reviews_data, rf, ensure_ascii=False, indent=4)
                 
+            os.makedirs(os.path.dirname(searches_path), exist_ok=True)
             with open(searches_path, "w", encoding="utf-8") as sf:
                 json.dump(searches_data, sf, ensure_ascii=False, indent=4)
 
@@ -248,138 +241,6 @@ def main():
     # PRINT PIPELINE DASHBOARD
     # -------------------------------------------------------------------------
     tracker.print_summary()
-
-if __name__ == "__main__":
-    main()
-            # SAVE #1: Lock in the skeleton before searching.
-            os.makedirs(os.path.dirname(reviews_file_path), exist_ok=True)
-            try:
-                with open(reviews_file_path, "w", encoding="utf-8") as rf:
-                    json.dump(reviews_data, rf, ensure_ascii=False, indent=4)
-                print(f"[SYNC] reviews_{movie_slug}.json securely synced with {len(active_publishers)} publishers.")
-            except Exception as e:
-                print(f"[FATAL ERROR] GitHub Actions failed to create file '{reviews_file_path}'. Reason: {e}")
-                continue # Skip to next movie if file creation hard-fails
-
-            # ---------------------------------------------------------
-            # PHASE B: DETERMINE WHO NEEDS SEARCHING
-            # ---------------------------------------------------------
-            needs_search = set()
-            for p in synced_reviews_list:
-                r_url = str(p.get("review_url", "")).strip()
-                # If the URL is empty or strictly "NA", it goes on the search list
-                if r_url == "" or r_url.upper() == "NA":
-                    needs_search.add(p["publisher_id"])
-            
-            print(f"[STATE] {len(active_publishers) - len(needs_search)} publishers already have URLs.")
-            print(f"[STATE] {len(needs_search)} publishers queued for web search.")
-
-            # ---------------------------------------------------------
-            # PHASE C: LOAD EXISTING SEARCH HISTORY
-            # ---------------------------------------------------------
-            searches_file_path = os.path.join(OUTPUT_DIR, f"searches_{movie_slug}.json")
-            existing_searches_dict = {}
-            if os.path.exists(searches_file_path):
-                with open(searches_file_path, "r", encoding="utf-8") as sf:
-                    try:
-                        old_searches_data = json.load(sf)
-                        for sp in old_searches_data.get("publishers", []):
-                            existing_searches_dict[sp.get("publisher_id")] = sp
-                    except Exception:
-                        pass
-
-            new_searches_data = {
-                "movie": reviews_data["movie"],
-                "publishers": []
-            }
-
-            # ---------------------------------------------------------
-            # PHASE D: EXECUTE REQUIRED SEARCHES
-            # ---------------------------------------------------------
-            searches_executed_count = 0  
-
-            for publisher in active_publishers:
-                pub_id = publisher["id"]
-                
-                # SKIP RULE: If we don't need a search, carry over old data (if any) and skip
-                if pub_id not in needs_search:
-                    if pub_id in existing_searches_dict:
-                        new_searches_data["publishers"].append(existing_searches_dict[pub_id])
-                    continue
-
-                # EXECUTE RULE: Publisher is missing URL, begin search
-                searches_executed_count += 1
-                domain = urlparse(publisher["url"]).netloc.replace("www.", "")
-                
-                print(f"  └─► Searching {publisher['name']} (Broad & Exact)...")
-                
-                publisher_result = {
-                    "publisher_id": pub_id,
-                    "publisher_name": publisher["name"],
-                    "publisher_url": publisher["url"],
-                    "results": []
-                }
-
-                # --- 1. BROAD SEARCH ---
-                query_broad = f'{movie_name} {movie_year} movie review site:{domain}'.strip() if movie_year else f'{movie_name} movie review site:{domain}'
-                publisher_result["query_broad"] = query_broad
-                
-                try:
-                    results_broad = list(ddgs.text(query_broad, region="in-en", backend="html", max_results=5))
-                    for rank, r in enumerate(results_broad, start=1):
-                        publisher_result["results"].append({
-                            "rank": rank,
-                            "title": r.get("title", ""),
-                            "url": r.get("href", ""),
-                            "snippet": r.get("body", ""),
-                            "exact_match": False
-                        })
-                except Exception as e:
-                    publisher_result["error_broad"] = str(e)
-
-                # --- 2. EXACT MATCH SEARCH ---
-                query_exact = f'"{movie_name}" {movie_year} movie review site:{domain}'.strip() if movie_year else f'"{movie_name}" movie review site:{domain}'
-                publisher_result["query_exact"] = query_exact
-                
-                try:
-                    results_exact = list(ddgs.text(query_exact, region="in-en", backend="html", max_results=5))
-                    if not results_exact:
-                        print(f"      [!] 0 exact match results returned.")
-                    
-                    current_rank = len(publisher_result["results"]) + 1
-                    for r in results_exact:
-                        publisher_result["results"].append({
-                            "rank": current_rank,
-                            "title": r.get("title", ""),
-                            "url": r.get("href", ""),
-                            "snippet": r.get("body", ""),
-                            "exact_match": True
-                        })
-                        current_rank += 1
-                except Exception as e:
-                    publisher_result["error_exact"] = str(e)
-
-                new_searches_data["publishers"].append(publisher_result)
-
-            # ---------------------------------------------------------
-            # PHASE E: UPDATE SOURCE OF TRUTH & SAVE
-            # ---------------------------------------------------------
-            # 1. Update the Master Reviews File with the flat execution fields
-            reviews_data["Last searched"] = datetime.now().astimezone().strftime("%d %m %Y %H %M")
-            reviews_data["Search results"] = searches_executed_count
-            
-            os.makedirs(os.path.dirname(reviews_file_path), exist_ok=True)
-            with open(reviews_file_path, "w", encoding="utf-8") as rf:
-                json.dump(reviews_data, rf, ensure_ascii=False, indent=4)
-            
-            # 2. Dump the raw search results
-            os.makedirs(os.path.dirname(searches_file_path), exist_ok=True)
-            with open(searches_file_path, "w", encoding="utf-8") as f:
-                json.dump(new_searches_data, f, ensure_ascii=False, indent=4)
-            
-            print(f"\n[SUMMARY] Executed {searches_executed_count} new searches.")
-            print(f"[SAVED] Metadata updated in {reviews_file_path}")
-            print(f"[SAVED] Search results committed to {searches_file_path}")
 
 if __name__ == "__main__":
     main()
