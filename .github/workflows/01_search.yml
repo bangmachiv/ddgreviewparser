@@ -1,4 +1,4 @@
-name: DuckDuckGo Search
+name: 01. DuckDuckGo Search
 
 on:
   workflow_dispatch:
