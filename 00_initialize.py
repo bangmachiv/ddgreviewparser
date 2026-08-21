@@ -15,6 +15,7 @@ OUTPUT FOLDERS CREATED (Per Movie):
 OUTPUT FILES GENERATED/UPDATED (Per Movie):
   1. data/searches/searches_<slugname>.json (Initialized as {})
   2. data/reviews/reviews_<slugname>.json
+  3. 10 Empty Script Log Files (00_initialize.json to 09_label.json) in logs/logs_<slugname>/
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
   publisher_id, publisher_name, search_needed, search_result_count, review_url, 
@@ -26,6 +27,7 @@ OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
 import json
 import os
 import sys
+from datetime import datetime
 
 # -----------------------------------------------------------------------------
 # Configuration & Absolute Pathing for GitHub Actions
@@ -152,7 +154,8 @@ def main():
         
         # A. Create Movie-Specific Folders and force Git to track them
         movie_webpages_dir = os.path.join(WEBPAGES_DIR, movie_slug)
-        movie_pipeline_logs = os.path.join(LOGS_DIR, f"logs_{movie_slug}", f"pipeline_{movie_slug}")
+        movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{movie_slug}")
+        movie_pipeline_logs = os.path.join(movie_logs_dir, f"pipeline_{movie_slug}")
         
         try:
             os.makedirs(movie_webpages_dir, exist_ok=True)
@@ -164,9 +167,29 @@ def main():
             with open(os.path.join(movie_pipeline_logs, ".gitkeep"), "w") as f:
                 pass
                 
-            print(f"  [SUCCESS] Movie folders created and locked for Git tracking.")
+            # Create 10 empty JSON log files for all scripts (00 to 09)
+            script_logs = [
+                "00_initialize.json",
+                "01_search.json",
+                "02_identify.json",
+                "03_download.json",
+                "04_title.json",
+                "05_clean.json",
+                "06_highlight.json",
+                "07_metadata.json",
+                "08_ai_metadata.json",
+                "09_label.json"
+            ]
+            
+            for script_log in script_logs:
+                log_path = os.path.join(movie_logs_dir, script_log)
+                if not os.path.exists(log_path):
+                    with open(log_path, "w", encoding="utf-8") as lf:
+                        json.dump({}, lf) # Initialize as an empty JSON object
+                        
+            print(f"  [SUCCESS] Movie folders and 10 script log files created.")
         except Exception as e:
-            print(f"  [FAILED] Could not create folders: {e}")
+            print(f"  [FAILED] Could not create folders or log files: {e}")
             
         # B. Initialize Searches file if missing
         searches_path = os.path.join(SEARCHES_DIR, f"searches_{movie_slug}.json")
@@ -230,18 +253,43 @@ def main():
         updated_publishers.sort(key=lambda x: x["publisher_id"])
         reviews_data["publishers"] = updated_publishers
         
-        # F. Save to disk and update tracker
+        # F. Save to disk, update tracker, and record script's own log
+        save_success = False
         if blocks_to_add > 0:
             try:
                 with open(reviews_path, "w", encoding="utf-8") as rf:
                     json.dump(reviews_data, rf, ensure_ascii=False, indent=4)
                 print(f"  [SUCCESS] Injected {blocks_to_add} missing publishers into reviews file.")
                 tracker.add_success(blocks_to_add)
+                save_success = True
             except Exception as e:
                 print(f"  [FAILED] Could not save reviews file: {e}")
                 tracker.add_failure(blocks_to_add)
         else:
             print(f"  [INFO] No missing publishers to inject for this movie.")
+            save_success = True
+            
+        # G. Self-Logging execution status to 00_initialize.json
+        init_log_path = os.path.join(movie_logs_dir, "00_initialize.json")
+        try:
+            if os.path.exists(init_log_path):
+                with open(init_log_path, "r", encoding="utf-8") as lf:
+                    init_log = json.load(lf)
+            else:
+                init_log = {}
+                
+            timestamp = datetime.now().astimezone().isoformat()
+            init_log[timestamp] = {
+                "blocks_added": blocks_to_add,
+                "total_publishers_active": len(updated_publishers),
+                "status": "SUCCESS" if save_success else "FAILED"
+            }
+            
+            with open(init_log_path, "w", encoding="utf-8") as lf:
+                json.dump(init_log, lf, ensure_ascii=False, indent=4)
+            print(f"  [SUCCESS] Recorded execution run to 00_initialize.json")
+        except Exception as e:
+            print(f"  [FAILED] Could not update script 00 log: {e}")
 
     # -------------------------------------------------------------------------
     # PRINT PIPELINE DASHBOARD
