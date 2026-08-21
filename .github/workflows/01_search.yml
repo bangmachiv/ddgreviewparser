@@ -24,7 +24,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install duckduckgo-search
+          # If you also have a requirements.txt file, you can uncomment the line below:
+          # pip install -r requirements.txt
 
       - name: Run search
         run: |
@@ -35,14 +37,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # ADDED data/reviews/ to the Git staging area
+          # Stage the JSON files modified by Script 1
           git add data/searches/*.json
           git add data/reviews/*.json
 
           if git diff --cached --quiet; then
-            echo "No changes to commit."
+            echo "No changes to commit. All searches are up to date."
             exit 0
           fi
 
-          git commit -m "Update search results and sync review skeletons"
+          git commit -m "Pipeline [01]: Update search results and review metrics"
           git push
