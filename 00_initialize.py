@@ -18,7 +18,7 @@ OUTPUT FILES GENERATED/UPDATED (Per Movie):
   3. 10 Empty Script Log Files (00_initialize.json to 09_label.json) in logs/logs_<slugname>/
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
-  publisher_id, publisher_name, search_needed, search_result_count, review_url, 
+  publisher_id, publisher_name, search_status, search_attempts, review_url, 
   review_title, search_rank, webpage_extraction_successful, article_title, 
   clean_title, highlighted_title, jsonld_critic_name, jsonld_star_rating, 
   ai_metadata_parsing_attempts, ai_critic_name, ai_star_rating, ai_sentiment_category
@@ -226,12 +226,12 @@ def main():
         for pub in active_publishers:
             pub_id = pub["id"]
             if pub_id not in existing_pubs:
-                # The 17-field Master Skeleton
+                # The 17-field Master Skeleton with new Search Workflow Fields
                 existing_pubs[pub_id] = {
                     "publisher_id": pub_id,
                     "publisher_name": pub["name"],
-                    "search_needed": "Y",
-                    "search_result_count": "PENDING",
+                    "search_status": "PENDING",
+                    "search_attempts": 0,
                     "review_url": "PENDING",
                     "review_title": "PENDING",
                     "search_rank": "PENDING",
