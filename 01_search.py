@@ -12,6 +12,7 @@ INPUT FILES READ:
 OUTPUT FILES UPDATED:
   - data/searches/searches_<slugname>.json (Raw DDG API payload injected)
   - data/reviews/reviews_<slugname>.json (State metrics updated)
+  - logs/logs_<slugname>/01_search.json (Execution logs appended)
 
 PRE-REQUISITE:
   - Publisher block exists in reviews_<slugname>.json
@@ -30,6 +31,7 @@ import json
 import os
 import sys
 from urllib.parse import urlparse
+from datetime import datetime
 from duckduckgo_search import DDGS
 
 # -----------------------------------------------------------------------------
@@ -40,6 +42,7 @@ PUBLISHERS_FILE = os.path.join(BASE_DIR, "publishers.json")
 MOVIES_FILE = os.path.join(BASE_DIR, "data", "movies", "movies-live-today.json")
 REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
 SEARCHES_DIR = os.path.join(BASE_DIR, "data", "searches")
+LOGS_DIR = os.path.join(BASE_DIR, "logs")
 
 # -----------------------------------------------------------------------------
 # 7-Column Metric Tracker Utility
@@ -135,6 +138,8 @@ def main():
 
             reviews_path = os.path.join(REVIEWS_DIR, f"reviews_{movie_slug}.json")
             searches_path = os.path.join(SEARCHES_DIR, f"searches_{movie_slug}.json")
+            movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{movie_slug}")
+            script_log_path = os.path.join(movie_logs_dir, "01_search.json")
 
             if not os.path.exists(reviews_path) or not os.path.exists(searches_path):
                 print(f"[WARNING] Skipping {movie_slug}: Run Script 0 first.")
@@ -155,6 +160,15 @@ def main():
                 print("  [INFO] No searches needed for this movie.")
                 continue
 
+            # Initialize logging dictionary for this specific movie run
+            movie_log_entry = {
+                "publishers_attempted": len(needs_search),
+                "publishers_succeeded": 0,
+                "publishers_failed": 0,
+                "total_results_found": 0,
+                "publisher_details": {}
+            }
+
             for pub_block in needs_search:
                 pub_id = pub_block.get("publisher_id")
                 pub_name = pub_block.get("publisher_name")
@@ -164,6 +178,13 @@ def main():
                     print(f"  [ERROR] No valid URL found in publishers.json for {pub_id}")
                     pub_block["search_result_count"] = "FAILED"
                     tracker.add_failure()
+                    
+                    movie_log_entry["publisher_details"][pub_id] = {
+                        "status": "FAILED",
+                        "reason": "No valid URL mapping found",
+                        "results": 0
+                    }
+                    movie_log_entry["publishers_failed"] += 1
                     continue
 
                 domain = urlparse(pub_url).netloc.replace("www.", "")
@@ -177,6 +198,7 @@ def main():
 
                 total_results_found = 0
                 search_failed = False
+                error_msgs = []
 
                 # --- 1. BROAD SEARCH ---
                 query_broad = f'{movie_name} {movie_year} movie review site:{domain}'.strip() if movie_year else f'{movie_name} movie review site:{domain}'
@@ -194,6 +216,7 @@ def main():
                     total_results_found += len(results_broad)
                 except Exception as e:
                     print(f"      [!] Broad search failed: {e}")
+                    error_msgs.append(f"Broad: {str(e)}")
                     search_failed = True
 
                 # --- 2. EXACT MATCH SEARCH ---
@@ -214,12 +237,20 @@ def main():
                     total_results_found += len(results_exact)
                 except Exception as e:
                     print(f"      [!] Exact search failed: {e}")
+                    error_msgs.append(f"Exact: {str(e)}")
                     search_failed = True
 
-                # UPDATE MATRICES
+                # UPDATE MATRICES AND LOGS
                 if search_failed and total_results_found == 0:
                     pub_block["search_result_count"] = "FAILED"
                     tracker.add_failure()
+                    
+                    movie_log_entry["publisher_details"][pub_id] = {
+                        "status": "FAILED",
+                        "reason": " | ".join(error_msgs) or "0 results returned",
+                        "results": 0
+                    }
+                    movie_log_entry["publishers_failed"] += 1
                 else:
                     searches_data[pub_id] = publisher_search_payload
                     pub_block["search_result_count"] = total_results_found
@@ -227,6 +258,13 @@ def main():
                     pub_block["search_needed"] = "N"
                     tracker.add_success()
                     print(f"      [SUCCESS] {total_results_found} total results found.")
+                    
+                    movie_log_entry["publisher_details"][pub_id] = {
+                        "status": "SUCCESS",
+                        "results": total_results_found
+                    }
+                    movie_log_entry["publishers_succeeded"] += 1
+                    movie_log_entry["total_results_found"] += total_results_found
 
             # SAVE MOVIE DATA
             os.makedirs(os.path.dirname(reviews_path), exist_ok=True)
@@ -236,6 +274,24 @@ def main():
             os.makedirs(os.path.dirname(searches_path), exist_ok=True)
             with open(searches_path, "w", encoding="utf-8") as sf:
                 json.dump(searches_data, sf, ensure_ascii=False, indent=4)
+                
+            # APPEND TO SCRIPT LOG
+            try:
+                if os.path.exists(script_log_path):
+                    with open(script_log_path, "r", encoding="utf-8") as lf:
+                        script_log_data = json.load(lf)
+                else:
+                    script_log_data = {}
+                    
+                timestamp = datetime.now().astimezone().isoformat()
+                script_log_data[timestamp] = movie_log_entry
+                
+                os.makedirs(os.path.dirname(script_log_path), exist_ok=True)
+                with open(script_log_path, "w", encoding="utf-8") as lf:
+                    json.dump(script_log_data, lf, ensure_ascii=False, indent=4)
+                print(f"  [SUCCESS] Execution log saved to 01_search.json")
+            except Exception as e:
+                print(f"  [FAILED] Could not update script 01 log: {e}")
 
     # -------------------------------------------------------------------------
     # PRINT PIPELINE DASHBOARD
