@@ -59,12 +59,10 @@ PUBLISHERS = [
   { "id": "the-tribune", "name": "The Tribune", "url": "https://www.tribuneindia.com", "category": "text-media-print-english-regional", "active": True }
 ]
 
-
 def extract_domain(url: str) -> str:
     """Extract clean domain name without www."""
     netloc = urlparse(url).netloc
     return netloc.lower().replace("www.", "")
-
 
 def search_with_retries(ddgs_client, query: str, max_results: int = 5):
     """Executes search using the default 'auto' backend with incremental retry logic."""
@@ -87,14 +85,14 @@ def search_with_retries(ddgs_client, query: str, max_results: int = 5):
 
     return [], "No results returned after max retries."
 
-
 def main():
     movie_name = "Bhai Tera Star Hai"
+    movie_year = "2026"
     active_publishers = [p for p in PUBLISHERS if p.get("active", True)]
 
     print("=" * 80)
     print(" DUCKDUCKGO MULTI-PUBLISHER REVIEW DISCOVERY (SPECIFIC -> GENERIC)")
-    print(f" Target Movie      : {movie_name}")
+    print(f" Target Movie      : {movie_name} ({movie_year})")
     print(f" Total Publishers  : {len(active_publishers)}")
     print("=" * 80)
 
@@ -105,8 +103,9 @@ def main():
             pub_name = pub["name"]
             domain = extract_domain(pub["url"])
 
-            query_specific = f'"{movie_name}" movie review site:{domain}'
-            query_generic = f'{movie_name} movie review site:{domain}'
+            # INJECTED YEAR INTO QUERIES
+            query_specific = f'"{movie_name}" {movie_year} movie review site:{domain}'
+            query_generic = f'{movie_name} {movie_year} movie review site:{domain}'
 
             print(f"\n[{idx}/{len(active_publishers)}] Publisher: {pub_name} ({domain})")
 
@@ -140,7 +139,6 @@ def main():
     for name, domain, stype, count, top_url in found_summary:
         print(f" • {name:<25} [{stype}] -> {top_url}")
     print("=" * 80)
-
 
 if __name__ == "__main__":
     main()
