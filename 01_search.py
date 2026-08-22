@@ -106,6 +106,7 @@ def main():
         movie_name = movie.get("name")
         movie_slug = movie.get("slug")
         movie_date = movie.get("date", "")
+        movie_year = movie_date[:4] if movie_date and len(movie_date) >= 4 else ""
 
         print("\n" + "=" * 80)
         print(f" PIPELINE STEP 1: {movie_name}")
@@ -167,20 +168,25 @@ def main():
             print(f"[FATAL ERROR] Failed to sync reviews file: {e}")
             continue 
 
+        # ---------------------------------------------------------
+        # PHASE B: DETERMINE WHO NEEDS SEARCHING
+        # ---------------------------------------------------------
         needs_search = set()
         global_done_before = 0
         global_todo_before = 0
 
         for p in synced_reviews_list:
             status = p.get("search_status", "PENDING")
-            if status == "PENDING":
+            
+            # Aggressively retry anything that is PENDING or FAILED
+            if status in ["PENDING", "FAILED"]:
                 needs_search.add(p["publisher_id"])
                 global_todo_before += 1
             else:
                 global_done_before += 1
 
         tracker = PipelineTracker("API Payloads Fetched", global_done_before, global_todo_before)
-        print(f"[STATE] {global_done_before} publishers already handled.")
+        print(f"[STATE] {global_done_before} publishers already handled (SUCCESS).")
         print(f"[STATE] {len(needs_search)} publishers queued for web search.\n")
 
         searches_file_path = os.path.join(OUTPUT_DIR, f"searches_{movie_slug}.json")
@@ -227,9 +233,9 @@ def main():
                 "results": []
             }
 
-            # Query strings specifically excluding the year for absolute precision
-            query_specific = f'"{movie_name}" movie review site:{domain}'
-            query_generic = f'{movie_name} movie review site:{domain}'
+            # Queries dynamically inject the year if it exists
+            query_specific = f'"{movie_name}" {movie_year} movie review site:{domain}'.strip() if movie_year else f'"{movie_name}" movie review site:{domain}'
+            query_generic = f'{movie_name} {movie_year} movie review site:{domain}'.strip() if movie_year else f'{movie_name} movie review site:{domain}'
 
             results, err = search_with_retries(query_specific, max_results=5)
             match_type = "Exact"
@@ -288,7 +294,7 @@ def main():
         else:
             print(f"\n[SUMMARY] No new searches executed.")
 
-        # Stable Log Write
+        # Fixed Logging Block
         script_log_data = {}
         if os.path.exists(script_log_path) and os.path.getsize(script_log_path) > 0:
             try:
