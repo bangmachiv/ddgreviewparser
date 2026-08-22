@@ -49,6 +49,15 @@ PUBLISHERS = [
   { "id": "the-tribune", "name": "The Tribune", "url": "https://www.tribuneindia.com", "category": "text-media-print-english-regional", "active": True }
 ]
 
+EXCLUDE_PUBLISHER_IDS = {
+    # Batch 1 Exclusions
+    "bollywood-hungama", "cinema-express", "dainik-jagran", "filmfare", "free-press-journal",
+    # Batch 2 Exclusions
+    "koimoi", "mid-day", "movie-talkies", "india-today", "hindustan-times",
+    # Batch 3 Exclusions
+    "the-indian-express", "the-times-of-india", "rediff", "scroll-in"
+}
+
 def extract_domain(url):
     netloc = urlparse(url).netloc
     return netloc.lower().replace("www.", "")
@@ -62,25 +71,41 @@ def main():
     client = TavilyClient(api_key=api_key)
     query = "Bhai Tera Star Hai movie review"
 
-    # Extract clean domain netlocs from your list and chunk into batches of 15
-    domains = [extract_domain(p["url"]) for p in PUBLISHERS if p["active"]]
-    batches = [domains[i:i + 15] for i in range(0, len(domains), 15)]
+    # Step 1: Pair publisher IDs with their clean domains
+    domains_with_ids = [(p["id"], extract_domain(p["url"])) for p in PUBLISHERS if p["active"]]
+    
+    # Step 2: Create the original 15-size batches
+    original_batches = [domains_with_ids[i:i + 15] for i in range(0, len(domains_with_ids), 15)]
+    
+    # Step 3: Strip out the successfully tested domains from each batch
+    filtered_batches = []
+    for original_batch in original_batches:
+        cleaned_batch_domains = [
+            domain for pub_id, domain in original_batch 
+            if pub_id not in EXCLUDE_PUBLISHER_IDS
+        ]
+        filtered_batches.append(cleaned_batch_domains)
 
     print("=" * 80)
-    print(" DIAGNOSTIC TEST: TAVILY API (BATCHED DOMAIN FILTERING)")
+    print(" DIAGNOSTIC TEST: TAVILY API (FORCED EXCLUSION BATCHING)")
     print(f" Target Query : {query}")
-    print(f" Total Active Publishers: {len(domains)} across {len(batches)} batches")
+    print(f" Excluded     : {len(EXCLUDE_PUBLISHER_IDS)} top publishers")
     print("=" * 80)
 
     total_matches = 0
 
-    for idx, batch in enumerate(batches, start=1):
-        print(f"\n--- Batch {idx} ({len(batch)} domains) ---")
+    for idx, batch_domains in enumerate(filtered_batches, start=1):
+        print(f"\n--- Batch {idx} ({len(batch_domains)} domains remaining) ---")
+        
+        if not batch_domains:
+            print("No domains left in this batch to query.")
+            continue
+            
         try:
             response = client.search(
                 query=query,
                 search_depth="advanced",
-                include_domains=batch,
+                include_domains=batch_domains,
                 max_results=10
             )
             
@@ -97,7 +122,7 @@ def main():
             print(f"[ERROR in Batch {idx}] {e}")
 
     print(f"=" * 80)
-    print(f" SUMMARY: Total results aggregated across all batches: {total_matches}")
+    print(f" SUMMARY: Total results aggregated across forced exclusion run: {total_matches}")
     print("=" * 80)
 
 if __name__ == "__main__":
