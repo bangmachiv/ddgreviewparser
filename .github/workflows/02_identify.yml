@@ -30,8 +30,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Safely stage the directories to avoid pathspec errors
-          git add data/searches/ data/reviews/
+          # BUG FIX: Added logs/ to ensure the 02_identify.json file is pushed
+          git add data/searches/ data/reviews/ logs/
 
           if git diff --cached --quiet; then
             echo "No changes to commit. All classifications are up to date."
