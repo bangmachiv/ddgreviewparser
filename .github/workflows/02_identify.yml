@@ -1,0 +1,42 @@
+name: 02. Classify Reviews
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run review classifier
+        run: |
+          python 02_identify.py
+
+      - name: Commit updated JSON files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Safely stage the directories to avoid pathspec errors
+          git add data/searches/ data/reviews/
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit. All classifications are up to date."
+            exit 0
+          fi
+
+          git commit -m "Pipeline [02]: Update classified reviews and statuses"
+          git push
