@@ -18,7 +18,7 @@ OUTPUT FILES GENERATED/UPDATED (Per Movie):
   3. 10 Empty Script Log Files (00_initialize.json to 09_label.json) in logs/logs_<slugname>/
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
-  publisher_id, publisher_name, search_status, search_attempts, review_url, 
+  publisher_id, publisher_name, search_status, search_count, review_url, 
   review_title, search_rank, webpage_extraction_successful, article_title, 
   clean_title, highlighted_title, jsonld_critic_name, jsonld_star_rating, 
   ai_metadata_parsing_attempts, ai_critic_name, ai_star_rating, ai_sentiment_category
@@ -92,10 +92,10 @@ def main():
     if not os.path.exists(PUBLISHERS_FILE):
         print(f"[FATAL ERROR] {PUBLISHERS_FILE} not found. Cannot proceed.")
         sys.exit(1)
-        
+
     with open(PUBLISHERS_FILE, "r", encoding="utf-8") as f:
         all_publishers = json.load(f)
-    
+
     active_publishers = [p for p in all_publishers if p.get("active", False)]
     print(f"[INFO] Loaded {len(active_publishers)} active publishers.")
 
@@ -106,7 +106,7 @@ def main():
 
     with open(MOVIES_FILE, "r", encoding="utf-8") as f:
         movies_data = json.load(f)
-    
+
     active_movies = movies_data.get("movies", [])
     print(f"[INFO] Loaded {len(active_movies)} active movies.")
 
@@ -119,17 +119,17 @@ def main():
     for movie in active_movies:
         slug = movie.get("slug")
         reviews_path = os.path.join(REVIEWS_DIR, f"reviews_{slug}.json")
-        
+
         if os.path.exists(reviews_path):
             try:
                 with open(reviews_path, "r", encoding="utf-8") as rf:
                     existing_data = json.load(rf)
                 existing_pub_ids = [p.get("publisher_id") for p in existing_data.get("publishers", [])]
-                
+
                 # Count how many active publishers are already in this movie's file
                 movie_done = sum(1 for pub in active_publishers if pub["id"] in existing_pub_ids)
                 movie_todo = len(active_publishers) - movie_done
-                
+
                 global_done_before += movie_done
                 global_to_be_done_before += movie_todo
             except Exception:
@@ -149,24 +149,24 @@ def main():
         movie_name = movie.get("name")
         movie_slug = movie.get("slug")
         movie_date = movie.get("date", "")
-        
+
         print(f"\n[PROCESSING MOVIE] {movie_name} ({movie_slug})")
-        
+
         # A. Create Movie-Specific Folders and force Git to track them
         movie_webpages_dir = os.path.join(WEBPAGES_DIR, movie_slug)
         movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{movie_slug}")
         movie_pipeline_logs = os.path.join(movie_logs_dir, f"pipeline_{movie_slug}")
-        
+
         try:
             os.makedirs(movie_webpages_dir, exist_ok=True)
             os.makedirs(movie_pipeline_logs, exist_ok=True)
-            
+
             # Create .gitkeep files inside the movie folders
             with open(os.path.join(movie_webpages_dir, ".gitkeep"), "w") as f:
                 pass
             with open(os.path.join(movie_pipeline_logs, ".gitkeep"), "w") as f:
                 pass
-                
+
             # Create 10 empty JSON log files for all scripts (00 to 09)
             script_logs = [
                 "00_initialize.json",
@@ -180,17 +180,17 @@ def main():
                 "08_ai_metadata.json",
                 "09_label.json"
             ]
-            
+
             for script_log in script_logs:
                 log_path = os.path.join(movie_logs_dir, script_log)
                 if not os.path.exists(log_path):
                     with open(log_path, "w", encoding="utf-8") as lf:
                         json.dump({}, lf) # Initialize as an empty JSON object
-                        
+
             print(f"  [SUCCESS] Movie folders and 10 script log files created.")
         except Exception as e:
             print(f"  [FAILED] Could not create folders or log files: {e}")
-            
+
         # B. Initialize Searches file if missing
         searches_path = os.path.join(SEARCHES_DIR, f"searches_{movie_slug}.json")
         if not os.path.exists(searches_path):
@@ -203,7 +203,7 @@ def main():
 
         # C. Load or Create Reviews Master Skeleton
         reviews_path = os.path.join(REVIEWS_DIR, f"reviews_{movie_slug}.json")
-        
+
         if os.path.exists(reviews_path):
             try:
                 with open(reviews_path, "r", encoding="utf-8") as rf:
@@ -222,7 +222,24 @@ def main():
         # D. Map existing and inject missing
         existing_pubs = {p.get("publisher_id"): p for p in reviews_data.get("publishers", [])}
         blocks_to_add = 0
-        
+
+        # D1. search_attempts must never be published into a publisher block.
+        # Strip it from any legacy block and guarantee search_count is present.
+        blocks_migrated = 0
+        for existing_block in existing_pubs.values():
+            block_changed = False
+            if "search_attempts" in existing_block:
+                existing_block.pop("search_attempts", None)
+                block_changed = True
+            if "search_count" not in existing_block:
+                existing_block["search_count"] = 0
+                block_changed = True
+            if block_changed:
+                blocks_migrated += 1
+
+        if blocks_migrated > 0:
+            print(f"  [MIGRATED] Replaced search_attempts with search_count in {blocks_migrated} existing blocks.")
+
         for pub in active_publishers:
             pub_id = pub["id"]
             if pub_id not in existing_pubs:
@@ -231,7 +248,7 @@ def main():
                     "publisher_id": pub_id,
                     "publisher_name": pub["name"],
                     "search_status": "PENDING",
-                    "search_attempts": 0,
+                    "search_count": 0,
                     "review_url": "PENDING",
                     "review_title": "PENDING",
                     "search_rank": "PENDING",
@@ -252,23 +269,25 @@ def main():
         updated_publishers = list(existing_pubs.values())
         updated_publishers.sort(key=lambda x: x["publisher_id"])
         reviews_data["publishers"] = updated_publishers
-        
+
         # F. Save to disk, update tracker, and record script's own log
         save_success = False
-        if blocks_to_add > 0:
+        if blocks_to_add > 0 or blocks_migrated > 0:
             try:
                 with open(reviews_path, "w", encoding="utf-8") as rf:
                     json.dump(reviews_data, rf, ensure_ascii=False, indent=4)
                 print(f"  [SUCCESS] Injected {blocks_to_add} missing publishers into reviews file.")
-                tracker.add_success(blocks_to_add)
+                if blocks_to_add > 0:
+                    tracker.add_success(blocks_to_add)
                 save_success = True
             except Exception as e:
                 print(f"  [FAILED] Could not save reviews file: {e}")
-                tracker.add_failure(blocks_to_add)
+                if blocks_to_add > 0:
+                    tracker.add_failure(blocks_to_add)
         else:
             print(f"  [INFO] No missing publishers to inject for this movie.")
             save_success = True
-            
+
         # G. Self-Logging execution status to 00_initialize.json
         init_log_path = os.path.join(movie_logs_dir, "00_initialize.json")
         try:
@@ -277,14 +296,15 @@ def main():
                     init_log = json.load(lf)
             else:
                 init_log = {}
-                
+
             timestamp = datetime.now().astimezone().isoformat()
             init_log[timestamp] = {
                 "blocks_added": blocks_to_add,
+                "blocks_migrated": blocks_migrated,
                 "total_publishers_active": len(updated_publishers),
                 "status": "SUCCESS" if save_success else "FAILED"
             }
-            
+
             with open(init_log_path, "w", encoding="utf-8") as lf:
                 json.dump(init_log, lf, ensure_ascii=False, indent=4)
             print(f"  [SUCCESS] Recorded execution run to 00_initialize.json")
