@@ -1,1 +1,219 @@
-{}
+{
+    "movie": {
+        "name": "Bhai Tera Star Hai",
+        "slug": "2026-bhai-tera-star-hai",
+        "date": "2026-08-30"
+    },
+    "publishers": [
+        {
+            "publisher_id": "aaj-tak",
+            "publisher_name": "Aaj Tak",
+            "results": []
+        },
+        {
+            "publisher_id": "abp",
+            "publisher_name": "ABP",
+            "results": []
+        },
+        {
+            "publisher_id": "amar-ujala",
+            "publisher_name": "Amar Ujala",
+            "results": []
+        },
+        {
+            "publisher_id": "bollywood-hungama",
+            "publisher_name": "Bollywood Hungama",
+            "results": []
+        },
+        {
+            "publisher_id": "bollyspice",
+            "publisher_name": "BollySpice",
+            "results": []
+        },
+        {
+            "publisher_id": "business-standard",
+            "publisher_name": "Business Standard",
+            "results": []
+        },
+        {
+            "publisher_id": "cinema-express",
+            "publisher_name": "Cinema Express",
+            "results": []
+        },
+        {
+            "publisher_id": "cinetales",
+            "publisher_name": "Cinetales",
+            "results": []
+        },
+        {
+            "publisher_id": "dainik-bhaskar",
+            "publisher_name": "Dainik Bhaskar",
+            "results": []
+        },
+        {
+            "publisher_id": "dainik-jagran",
+            "publisher_name": "Dainik Jagran",
+            "results": []
+        },
+        {
+            "publisher_id": "deccan-chronicle",
+            "publisher_name": "Deccan Chronicle",
+            "results": []
+        },
+        {
+            "publisher_id": "deccan-herald",
+            "publisher_name": "Deccan Herald",
+            "results": []
+        },
+        {
+            "publisher_id": "filmfare",
+            "publisher_name": "Filmfare",
+            "results": []
+        },
+        {
+            "publisher_id": "firstpost",
+            "publisher_name": "Firstpost",
+            "results": []
+        },
+        {
+            "publisher_id": "free-press-journal",
+            "publisher_name": "Free Press Journal",
+            "results": []
+        },
+        {
+            "publisher_id": "hindustan",
+            "publisher_name": "Hindustan",
+            "results": []
+        },
+        {
+            "publisher_id": "hindustan-times",
+            "publisher_name": "Hindustan Times",
+            "results": []
+        },
+        {
+            "publisher_id": "ians-live",
+            "publisher_name": "IANS Live",
+            "results": []
+        },
+        {
+            "publisher_id": "india-today",
+            "publisher_name": "India Today",
+            "results": []
+        },
+        {
+            "publisher_id": "koimoi",
+            "publisher_name": "Koimoi",
+            "results": []
+        },
+        {
+            "publisher_id": "lensmen-reviews",
+            "publisher_name": "Lensmen Reviews",
+            "results": []
+        },
+        {
+            "publisher_id": "lokmat",
+            "publisher_name": "Lokmat",
+            "results": []
+        },
+        {
+            "publisher_id": "mid-day",
+            "publisher_name": "Mid-Day",
+            "results": []
+        },
+        {
+            "publisher_id": "mint",
+            "publisher_name": "Mint",
+            "results": []
+        },
+        {
+            "publisher_id": "moneycontrol",
+            "publisher_name": "Moneycontrol",
+            "results": []
+        },
+        {
+            "publisher_id": "movie-talkies",
+            "publisher_name": "Movie Talkies",
+            "results": []
+        },
+        {
+            "publisher_id": "navbharat-times",
+            "publisher_name": "Navbharat Times",
+            "results": []
+        },
+        {
+            "publisher_id": "ndtv",
+            "publisher_name": "NDTV",
+            "results": []
+        },
+        {
+            "publisher_id": "news18-showsha",
+            "publisher_name": "News18 Showsha",
+            "results": []
+        },
+        {
+            "publisher_id": "outlook",
+            "publisher_name": "Outlook",
+            "results": []
+        },
+        {
+            "publisher_id": "peepingmoon",
+            "publisher_name": "PeepingMoon",
+            "results": []
+        },
+        {
+            "publisher_id": "rediff",
+            "publisher_name": "Rediff.com",
+            "results": []
+        },
+        {
+            "publisher_id": "scroll-in",
+            "publisher_name": "Scroll.in",
+            "results": []
+        },
+        {
+            "publisher_id": "south-asian-herald",
+            "publisher_name": "South Asian Herald",
+            "results": []
+        },
+        {
+            "publisher_id": "the-economic-times",
+            "publisher_name": "The Economic Times",
+            "results": []
+        },
+        {
+            "publisher_id": "the-federal",
+            "publisher_name": "The Federal",
+            "results": []
+        },
+        {
+            "publisher_id": "the-hindu",
+            "publisher_name": "The Hindu",
+            "results": []
+        },
+        {
+            "publisher_id": "the-indian-express",
+            "publisher_name": "The Indian Express",
+            "results": []
+        },
+        {
+            "publisher_id": "the-quint",
+            "publisher_name": "The Quint",
+            "results": []
+        },
+        {
+            "publisher_id": "the-telegraph",
+            "publisher_name": "The Telegraph",
+            "results": []
+        },
+        {
+            "publisher_id": "the-times-of-india",
+            "publisher_name": "The Times of India",
+            "results": []
+        },
+        {
+            "publisher_id": "the-tribune",
+            "publisher_name": "The Tribune",
+            "results": []
+        }
+    ]
+}
