@@ -24,7 +24,7 @@ LOGS_DIR = os.path.join(BASE_DIR, "logs")
 # -----------------------------------------------------------------------------
 MAX_RETRIES = 3
 RETRY_DELAY = 2
-QUERY_COOLDOWN = 1.5
+QUERY_COOLDOWN = 2.0  # Increased slightly to protect against Rate Limits
 
 logging.basicConfig(level=logging.ERROR, format="%(asctime)s [%(levelname)s] %(message)s")
 
@@ -58,6 +58,7 @@ class PipelineTracker:
         print("="*105 + "\n")
 
 
+# BUG FIX: Removed ddgs_client from parameters to fix the TypeError
 def search_with_retries(query: str, max_results: int = 5):
     """Executes search with a fresh DDGS instance per attempt to prevent connection poisoning."""
     for attempt in range(1, MAX_RETRIES + 1):
@@ -168,9 +169,6 @@ def main():
             print(f"[FATAL ERROR] Failed to sync reviews file: {e}")
             continue 
 
-        # ---------------------------------------------------------
-        # PHASE B: DETERMINE WHO NEEDS SEARCHING
-        # ---------------------------------------------------------
         needs_search = set()
         global_done_before = 0
         global_todo_before = 0
@@ -178,7 +176,6 @@ def main():
         for p in synced_reviews_list:
             status = p.get("search_status", "PENDING")
             
-            # Aggressively retry anything that is PENDING or FAILED
             if status in ["PENDING", "FAILED"]:
                 needs_search.add(p["publisher_id"])
                 global_todo_before += 1
@@ -233,37 +230,45 @@ def main():
                 "results": []
             }
 
-            # Year is included as a loose keyword, outside the quoted title
             query_specific = f'"{movie_name}" movie review {movie_year} site:{domain}'
             query_generic = f'{movie_name} movie review {movie_year} site:{domain}'
 
-            # Both query types run back to back, independently
-            results_specific, err_specific = search_with_retries(query_specific, max_results=5)
-            time.sleep(1)
-            results_generic, err_generic = search_with_retries(query_generic, max_results=5)
+            # Run specific search
+            results_specific, _ = search_with_retries(query_specific, max_results=5)
+            
+            # Anti-rate-limit sleep between queries
+            time.sleep(1.5)
+            
+            # Run generic search to catch typos/special characters
+            results_generic, _ = search_with_retries(query_generic, max_results=5)
 
-            total_results_found = len(results_specific) + len(results_generic)
+            # URL Deduplication System: Prevents JSON bloat
+            seen_urls = set()
+            combined_results = []
 
-            for rank, r in enumerate(results_specific, start=1):
-                publisher_result["results"].append({
-                    "rank": rank,
-                    "match_type": "Specific",
-                    "title": r.get("title", ""),
-                    "url": r.get("href", ""),
-                    "snippet": r.get("body", ""),
-                })
+            def add_results(results_list, match_type):
+                for r in results_list:
+                    url = r.get("href", "")
+                    # Only add if we haven't seen this URL yet
+                    if url and url not in seen_urls:
+                        seen_urls.add(url)
+                        combined_results.append({
+                            "rank": len(combined_results) + 1,
+                            "match_type": match_type,
+                            "title": r.get("title", ""),
+                            "url": url,
+                            "snippet": r.get("body", ""),
+                        })
 
-            for rank, r in enumerate(results_generic, start=1):
-                publisher_result["results"].append({
-                    "rank": rank,
-                    "match_type": "Generic",
-                    "title": r.get("title", ""),
-                    "url": r.get("href", ""),
-                    "snippet": r.get("body", ""),
-                })
+            # Add specific results first (higher priority), then append new generic ones
+            add_results(results_specific, "Specific")
+            add_results(results_generic, "Generic")
+
+            total_results_found = len(combined_results)
+            publisher_result["results"] = combined_results
 
             if total_results_found > 0:
-                print(f"      [SUCCESS] Found {len(results_specific)} URLs via Specific query, {len(results_generic)} via Generic query.")
+                print(f"      [SUCCESS] Found {len(results_specific)} via Specific, and {total_results_found - len(results_specific)} new via Generic.")
             else:
                 print(f"      [FAILED] 0 URLs returned across both queries.")
 
@@ -278,7 +283,7 @@ def main():
                         movie_log_entry["publisher_details"][pub_id] = {
                             "status": "SUCCESS",
                             "specific_results": len(results_specific),
-                            "generic_results": len(results_generic)
+                            "generic_results_added": total_results_found - len(results_specific)
                         }
                     else:
                         p_block["search_status"] = "FAILED"
@@ -287,6 +292,7 @@ def main():
                         movie_log_entry["publisher_details"][pub_id] = {"status": "FAILED", "reason": "No Results"}
                     break
 
+            # Sleep between publishers
             time.sleep(QUERY_COOLDOWN)
 
         if searches_executed_count > 0:
@@ -305,7 +311,6 @@ def main():
         else:
             print(f"\n[SUMMARY] No new searches executed.")
 
-        # Fixed Logging Block: Completely immune to empty JSON file crashes
         script_log_data = {}
         if os.path.exists(script_log_path) and os.path.getsize(script_log_path) > 0:
             try:
