@@ -172,7 +172,15 @@
         {
             "publisher_id": "bollyspice",
             "publisher_name": "BollySpice",
-            "results": []
+            "results": [
+                {
+                    "rank": 1,
+                    "title": "Lalit Pandit On His Mixed Feelings On The Remix Of His Song In Bhai Tera Star Hai | BollySpice.com – The latest movies, interviews in Bollywood",
+                    "url": "https://bollyspice.com/lalit-pandit-on-his-mixed-feelings-on-the-remix-of-his-song-in-bhai-tera-star-hai/",
+                    "snippet": "2 weeks ago - Lalit Pandit spoke to Subhash K Jha about his feelings about remixes of his songs, and especially talks about the new version of ‘Aankhon Se Tune Yeh Kya Keh Diya’ from 1998’s Ghulam in Bhai Tera S…",
+                    "exact_match": true
+                }
+            ]
         },
         {
             "publisher_id": "business-standard",
@@ -956,12 +964,84 @@
         {
             "publisher_id": "moneycontrol",
             "publisher_name": "Moneycontrol",
-            "results": []
+            "results": [
+                {
+                    "rank": 1,
+                    "title": "Bhai Tera Star Hai Movie Review: Raghav Juyal leads a comedy ...",
+                    "url": "https://www.moneycontrol.com/entertainment/bhai-tera-star-hai-movie-review-raghav-juyal-leads-a-comedy-where-the-jokes-need-their-own-rescue-mission-article-13989199.html",
+                    "snippet": "Jul 30, 2026 · ‘Bhai Tera Star Hai’ has a promising one-night comedy setup but gets trapped in its own web of confusion. Raghav Juyal brings energy, but weak writing ensures the laughs never truly arrive.",
+                    "exact_match": true
+                },
+                {
+                    "rank": 2,
+                    "title": "Abhishek Srivastava: Read latest news from ... - Moneycontrol",
+                    "url": "https://www.moneycontrol.com/author/abhishek-srivastava-37707/",
+                    "snippet": "Bhai Tera Star Hai Movie Review: Raghav Juyal leads a comedy where the jokes need their own rescue mission ‘Bhai Tera Star Hai’ has a promising one-night comedy setup but gets trapped in its ...",
+                    "exact_match": true
+                },
+                {
+                    "rank": 3,
+                    "title": "Bhai Tera Star Hai trailer: Raghav Juyal takes centre stage ...",
+                    "url": "https://www.moneycontrol.com/entertainment/bhai-tera-star-hai-trailer-raghav-juyal-takes-centre-stage-in-a-madcap-family-comedy-article-13969871.html",
+                    "snippet": "Jul 9, 2026 · Bhai Tera Star Hai trailer introduces Raghav Juyal as Ajay Singh in a chaotic family comedy packed with ambition, melodrama, quirky characters, slapstick humour, and a strong ensemble cast energy.",
+                    "exact_match": true
+                },
+                {
+                    "rank": 4,
+                    "title": "Bhai Tera Star Hai Trailer Out: 'भाई तेरा स्टार है' का ट्रेलर ...",
+                    "url": "https://hindi.moneycontrol.com/entertainment/raghav-juyal-starrer-bhai-tera-star-hai-trailer-out-now-article-2418302.html",
+                    "snippet": "Jul 9, 2026 · Bhai Tera Star Hai Trailer Out: 'भाई तेरा स्टार है' का ट्रेलर रिलीज हो गया है। फिल्म एक लूजर एक्टर की कहानी है। लीड रोल में राघव जुयाल नजर आने वाले हैं।",
+                    "exact_match": true
+                },
+                {
+                    "rank": 5,
+                    "title": "Salman Khan personally called Raghav Juyal to praise Bhai ...",
+                    "url": "https://www.moneycontrol.com/entertainment/salman-khan-personally-called-raghav-juyal-to-praise-bhai-tera-star-hai-trailer-fresh-and-young-people-are-not-doing-it-article-13980575.html",
+                    "snippet": "Jul 22, 2026 · Raghav Juyal has revealed that Salman Khan personally called him after watching the trailer of Bhai Tera Star Hai and praised its fresh, meta humour. The actor said Salman appreciated a joke in ...",
+                    "exact_match": true
+                }
+            ]
         },
         {
             "publisher_id": "movie-talkies",
             "publisher_name": "Movie Talkies",
-            "results": []
+            "results": [
+                {
+                    "rank": 1,
+                    "title": "Bhai Tera Star Hai Review: A painful blow to filmmaking ...",
+                    "url": "https://www.movietalkies.com/reviews/bhai-tera-star-hai-review-painful-blow-filmmaking-standards-12216142",
+                    "snippet": "Jul 31, 2026 · Bhai Tera Star Hai Movie Review: Technically, the film is just as weak. The cinematography is dull, the locations feel like they’ve been used just to claim rebates, the editing is sloppy, and the music is outright painful. The production design is somewhat decent, but the dialogues are terrible, to say the least.",
+                    "exact_match": true
+                },
+                {
+                    "rank": 2,
+                    "title": "Movie Reviews - MovieTalkies",
+                    "url": "https://www.movietalkies.com/movies-reviews",
+                    "snippet": "Aug 14, 2026 · Bhai Tera Star Hai Review: A painful blow to filmmaking standards – By Sameer Ahire Jul 31, 2026 17:55 IST 4 Min read Reviews",
+                    "exact_match": true
+                },
+                {
+                    "rank": 3,
+                    "title": "Reviews - MovieTalkies",
+                    "url": "https://www.movietalkies.com/reviews",
+                    "snippet": "Aug 14, 2026 · Reviews | MovieTalkies Batwara 1947 Review: Beyond Hindu-Muslim hatred and unity, this film is about humanity Batwara 1947 is a period drama directed by Rajkumar Santoshi. The film star Sunny Deol, Shabana Azmi & Preity Zinta. Read our full review below (Movie Talkies).",
+                    "exact_match": true
+                },
+                {
+                    "rank": 4,
+                    "title": "Bollywood Celebrity Gossip & News, Hollywood, Web Series News",
+                    "url": "https://www.movietalkies.com/",
+                    "snippet": "2 days ago · Movie Talkies: Latest Bollywood news, movie reviews & rating, celebrities, gossips & entertainment news. Stay tuned for box office collections, Hollywood news, celebrity photos and videos.",
+                    "exact_match": true
+                },
+                {
+                    "rank": 5,
+                    "title": "\"She had affairs with so many people, I caught her with...\": Shweta Tiwari's ex-husband Raja Chaudhary makes shocking claims –",
+                    "url": "https://www.movietalkies.com/news/raja-chaudhary-alleges-ex-wife-shweta-tiwari-12217774",
+                    "snippet": "3 weeks ago - ... Television actress Shweta Tiwari ... allegations about their past relationship. Bhai Tera Star Hai Review: A painful blow to filmmaking standards –...",
+                    "exact_match": true
+                }
+            ]
         },
         {
             "publisher_id": "navbharat-times",
@@ -1130,7 +1210,43 @@
         {
             "publisher_id": "peepingmoon",
             "publisher_name": "PeepingMoon",
-            "results": []
+            "results": [
+                {
+                    "rank": 1,
+                    "title": "‘Bhai Tera Star Hai’ Trailer Out Now: Raghav Juyal Brings ...",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82168/Bhai-Tera-Star-Hai-Trailer-Out-Now-Raghav-Juyal-Brings-Comedy-And-Chaos-To-The-Big-Screen.html",
+                    "snippet": "Jul 9, 2026 · After building excitement with the teaser, the makers of Bhai Tera Star Hai have unveiled the much-anticipated trailer of the film, giving audiences a hilarious glimpse into the outrageous world of Ajay Singh. After winning unanimous praise for his performances in Kill and Bads of Bollywood, Raghav Juyal returns in a completely new avatar with an out-and-out comic entertainer.",
+                    "exact_match": true
+                },
+                {
+                    "rank": 2,
+                    "title": "’Bhai Tera Star Hai’ introduces its vibrant ensemble cast featuring Raghav Juyal, Sanjay Kapoor, Barkha Singh and more",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82162/Bhai-Tera-Star-Hai-introduces-its-vibrant-ensemble-cast-featuring-Raghav-Juyal-Sanjay-Kapoor-Barkha-Singh-and-more.html",
+                    "snippet": "July 8, 2026 - Presented by Eastwood Pictures, Bhai Tera Star Hai is an Eastwood Pictures & Indian Stories 2 production. Directed by Vivek B. Agrawal, the film is written by Sudipto Sarkar and Vivek B. Agrawal, and produced by Avantika Hari, Sunil Rupani and Vivek B.",
+                    "exact_match": true
+                },
+                {
+                    "rank": 3,
+                    "title": "The monsoon just found its anthem! ‘Aankhon Se Tune 2.0’ from Bhai Tera Star Hai revives a timeless classic with a fresh romantic twist",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82198/The-monsoon-just-found-its-anthem-Aankhon-Se-Tune--from-Bhai-Tera-Star-Hai-revives-a-timeless-classic-with-a-fresh-romantic-twist.html",
+                    "snippet": "1 month ago - Featuring Raghav Juyal and Niharika NM, the soulful track is recreated by Lijo George and voiced by Dev Negi and Palak Muchhal After setting the mood with the energetic Nach Le Lalariya, the makers of Bhai Tera Star Hai have unveiled the film’s romantic track, Aankhon Se Tune 2.0. Featuring Raghav Juyal and Niharika NM, the song beautifully captures the innocence of love, the charm of classic Bollywood romance and the magic of the monsoon.",
+                    "exact_match": true
+                },
+                {
+                    "rank": 4,
+                    "title": "Raghav Juyal’s Biggest Leap Yet: Bhai Tera Star Hai Marks a ...",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82173/Raghav-Juyals-Biggest-Leap-Yet-Bhai-Tera-Star-Hai-Marks-a-Major-New-Chapter-in-His-Career.html",
+                    "snippet": "Jul 11, 2026 · As Bhai Tera Star Hai gears up for its theatrical release on 30 July 2026, the film represents an exciting new milestone in Raghav Juyal’s journey as an entertainer. With its mix of comedy, emotion and a vibrant ensemble, the film aims to bring audiences a wholesome theatrical experience while showcasing a new side of Raghav as a leading man.",
+                    "exact_match": true
+                },
+                {
+                    "rank": 5,
+                    "title": "Raghav Juyal’s Bhai Tera Star Hai Trailer to Release Tomorrow",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82166/Raghav-Juyals-Bhai-Tera-Star-Hai-Trailer-to-Release-Tomorrow.html",
+                    "snippet": "Jul 8, 2026 · Raghav Juyal is all set to bring the dreamer Ajay Singh to life in Bhai Tera Star Hai, an out and out entertainer that celebrates ambition, hope and the magic of believing in yourself. Directed by Vivek B Agrawal, the film also stars Sanjay Kapoor, Niharika NM, Barkha Singh, Vikalp Mehta and an ensemble cast in pivotal roles. Following the response to its teaser and character introductions ...",
+                    "exact_match": true
+                }
+            ]
         },
         {
             "publisher_id": "rediff",
@@ -1340,7 +1456,43 @@
         {
             "publisher_id": "the-hindu",
             "publisher_name": "The Hindu",
-            "results": []
+            "results": [
+                {
+                    "rank": 1,
+                    "title": "Movie Reviews and Latest Movie Ratings - The Hindu",
+                    "url": "https://www.thehindu.com/entertainment/reviews/",
+                    "snippet": "Find the latest reviews and ratings for movies, music, books, and art from Hollywood, Bollywood, Kollywood, and more at The Hindu.",
+                    "exact_match": false
+                },
+                {
+                    "rank": 2,
+                    "title": "Movies | Latest News, Reviews, and Updates - The Hindu",
+                    "url": "https://www.thehindu.com/entertainment/movies/",
+                    "snippet": "Stay updated with the latest movie news, reviews, and updates from The Hindu. Explore articles, features, and interviews on Bollywood, Hollywood, and regional cinema. Get insights into the latest ...",
+                    "exact_match": false
+                },
+                {
+                    "rank": 3,
+                    "title": "‘Tere Ishk Mein’ movie review: Aanand L Rai’s romantic ...",
+                    "url": "https://www.thehindu.com/entertainment/movies/tere-ishk-mein-review-dhanush-kriti-sanon-aanand-l-rai-ar-rahman/article70335342.ece",
+                    "snippet": "Nov 28, 2025 · ‘Tere Ishk Mein’ movie review: Dhanush rages and Kriti Sanon recoils, in Aanand L Rai’s love story of epic proportions, which eventually begins to test your patience",
+                    "exact_match": false
+                },
+                {
+                    "rank": 4,
+                    "title": "‘29’ movie review: Rathna Kumar’s romance drama has its heart ...",
+                    "url": "https://www.thehindu.com/entertainment/movies/29-the-film-movie-review-rathna-kumar-vidhu-preethi-asrani-sean-roldan/article70955470.ece",
+                    "snippet": "May 8, 2026 · ‘29’ movie review: Even when it stumbles in its exploration of identity, Rathna Kumar’s film captures the aching fantasy of love with striking conviction",
+                    "exact_match": false
+                },
+                {
+                    "rank": 5,
+                    "title": "‘Blast’ movie review: An unlikely family packs a punch in ...",
+                    "url": "https://www.thehindu.com/entertainment/movies/blast-movie-review-arjun-preity-mukundhan-abhirami-ravi-basrur/article71036533.ece",
+                    "snippet": "May 29, 2026 · ‘Blast’ movie review: An unlikely family packs a punch in this largely gripping but patchy film A potent premise and a riveting Preity Mukundhan power this martial arts actioner with explosive ...",
+                    "exact_match": false
+                }
+            ]
         },
         {
             "publisher_id": "the-indian-express",
@@ -1427,7 +1579,15 @@
         {
             "publisher_id": "the-telegraph",
             "publisher_name": "The Telegraph",
-            "results": []
+            "results": [
+                {
+                    "rank": 1,
+                    "title": "Bhai Tera Star Hai trailer | ‘Bhai Tera Star Hai’ trailer ...",
+                    "url": "https://www.telegraphindia.com/entertainment/bhai-tera-star-hai-trailer-raghav-juyal-lands-a-chance-to-play-salman-khans-brother/cid/2169331",
+                    "snippet": "Jul 9, 2026 · Raghav Juyal plays an aspiring actor who goes about life as though he is already a movie star in the trailer of Bhai Tera Star Hai, dropped by the makers on Thursday. The two-minute-32-second-long video introduces Raghav as an aspiring actor. Living like a star despite his struggles, he finds ...",
+                    "exact_match": true
+                }
+            ]
         },
         {
             "publisher_id": "the-times-of-india",

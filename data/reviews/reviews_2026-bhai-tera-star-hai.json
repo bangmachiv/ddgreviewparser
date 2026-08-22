@@ -84,7 +84,7 @@
         {
             "publisher_id": "bollyspice",
             "publisher_name": "BollySpice",
-            "search_status": "FAILED",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -464,7 +464,7 @@
         {
             "publisher_id": "moneycontrol",
             "publisher_name": "Moneycontrol",
-            "search_status": "FAILED",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -483,7 +483,7 @@
         {
             "publisher_id": "movie-talkies",
             "publisher_name": "Movie Talkies",
-            "search_status": "FAILED",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -578,7 +578,7 @@
         {
             "publisher_id": "peepingmoon",
             "publisher_name": "PeepingMoon",
-            "search_status": "FAILED",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -692,7 +692,7 @@
         {
             "publisher_id": "the-hindu",
             "publisher_name": "The Hindu",
-            "search_status": "FAILED",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -749,7 +749,7 @@
         {
             "publisher_id": "the-telegraph",
             "publisher_name": "The Telegraph",
-            "search_status": "FAILED",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -804,6 +804,6 @@
             "ai_sentiment_category": "PENDING"
         }
     ],
-    "Last searched": "22 08 2026 13 52",
-    "Search results": 42
+    "Last searched": "22 08 2026 13 58",
+    "Search results": 6
 }
