@@ -5,7 +5,7 @@ import time
 import traceback
 from ddgs import DDGS
 
-# Enable deep network debugging to trace HTTP headers, status codes, and connection handshakes
+# Enable deep network debugging to trace exactly which fallback engines it uses
 logging.basicConfig(level=logging.DEBUG)
 
 MAX_RETRIES = 3
@@ -13,15 +13,16 @@ RETRY_DELAY = 3
 
 
 def search_with_retries(ddgs_client, query: str, max_results: int = 5):
-    """Executes search strictly on backend='duckduckgo' with incremental retry logic."""
+    """Executes search using the default 'auto' backend with incremental retry logic."""
     for attempt in range(1, MAX_RETRIES + 1):
         print(f"\n---> Executing Attempt {attempt}/{MAX_RETRIES} for query: {query}")
         try:
+            # Note: The backend parameter is intentionally omitted here.
+            # This forces the library into 'auto' mode, bypassing DuckDuckGo firewalls.
             results = list(
                 ddgs_client.text(
                     query,
                     region="in-en",
-                    backend="duckduckgo",
                     max_results=max_results,
                 )
             )
@@ -48,7 +49,7 @@ def main():
     query_exact = f'"{movie_name}" movie review site:{domain}'
 
     print("=" * 80)
-    print(" DIAGNOSTIC TEST: BACKEND='DUCKDUCKGO' MULTI-ATTEMPT TEST")
+    print(" DIAGNOSTIC TEST: BACKEND='AUTO' (FALLBACK) MULTI-ATTEMPT TEST")
     print(f" Target Domain: {domain}")
     print(f" Target Movie : {movie_name}")
     print("=" * 80)
