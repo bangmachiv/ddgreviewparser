@@ -7,7 +7,7 @@ import time
 import logging
 from urllib.parse import urlparse
 from datetime import datetime
-from duckduckgo_search import DDGS
+from ddgs import DDGS
 
 # -----------------------------------------------------------------------------
 # Configuration & Absolute Pathing for GitHub Actions
@@ -106,7 +106,6 @@ def main():
         movie_name = movie.get("name")
         movie_slug = movie.get("slug")
         movie_date = movie.get("date", "")
-        movie_year = movie_date[:4] if movie_date and len(movie_date) >= 4 else ""
 
         print("\n" + "=" * 80)
         print(f" PIPELINE STEP 1: {movie_name}")
@@ -233,9 +232,9 @@ def main():
                 "results": []
             }
 
-            # Queries dynamically inject the year if it exists
-            query_specific = f'"{movie_name}" {movie_year} movie review site:{domain}'.strip() if movie_year else f'"{movie_name}" movie review site:{domain}'
-            query_generic = f'{movie_name} {movie_year} movie review site:{domain}'.strip() if movie_year else f'{movie_name} movie review site:{domain}'
+            # Queries explicitly lack the year for precise title matching
+            query_specific = f'"{movie_name}" movie review site:{domain}'
+            query_generic = f'{movie_name} movie review site:{domain}'
 
             results, err = search_with_retries(query_specific, max_results=5)
             match_type = "Exact"
@@ -294,7 +293,7 @@ def main():
         else:
             print(f"\n[SUMMARY] No new searches executed.")
 
-        # Fixed Logging Block
+        # Fixed Logging Block: Completely immune to empty JSON file crashes
         script_log_data = {}
         if os.path.exists(script_log_path) and os.path.getsize(script_log_path) > 0:
             try:
