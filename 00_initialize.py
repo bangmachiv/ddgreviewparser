@@ -19,7 +19,7 @@ OUTPUT FILES GENERATED/UPDATED (Per Movie):
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
   publisher_id, publisher_name, search_status, search_count, review_url, 
-  review_title, search_rank, webpage_extraction_successful, article_title, 
+  review_title, review_source, webpage_extraction_successful, article_title, 
   clean_title, highlighted_title, jsonld_critic_name, jsonld_star_rating, 
   ai_metadata_parsing_attempts, ai_critic_name, ai_star_rating, ai_sentiment_category
 """
@@ -210,8 +210,11 @@ def main():
                     reviews_data = json.load(rf)
                 print(f"  [INFO] Loaded existing reviews_{movie_slug}.json")
             except Exception as e:
-                print(f"  [FAILED] Corrupted reviews file: {e}")
-                continue
+                print(f"  [FAILED] Corrupted reviews file ({e}). Rebuilding skeleton...")
+                reviews_data = {
+                    "movie": {"name": movie_name, "slug": movie_slug, "date": movie_date},
+                    "publishers": []
+                }
         else:
             reviews_data = {
                 "movie": {"name": movie_name, "slug": movie_slug, "date": movie_date},
@@ -234,11 +237,15 @@ def main():
             if "search_count" not in existing_block:
                 existing_block["search_count"] = 0
                 block_changed = True
+            if "search_rank" in existing_block:
+                existing_block["review_source"] = existing_block.pop("search_rank")
+                block_changed = True
+                
             if block_changed:
                 blocks_migrated += 1
 
         if blocks_migrated > 0:
-            print(f"  [MIGRATED] Replaced search_attempts with search_count in {blocks_migrated} existing blocks.")
+            print(f"  [MIGRATED] Cleaned up legacy fields in {blocks_migrated} existing blocks.")
 
         for pub in active_publishers:
             pub_id = pub["id"]
@@ -251,7 +258,7 @@ def main():
                     "search_count": 0,
                     "review_url": "PENDING",
                     "review_title": "PENDING",
-                    "search_rank": "PENDING",
+                    "review_source": "PENDING",
                     "webpage_extraction_successful": "PENDING",
                     "article_title": "PENDING",
                     "clean_title": "PENDING",
@@ -290,21 +297,25 @@ def main():
 
         # G. Self-Logging execution status to 00_initialize.json
         init_log_path = os.path.join(movie_logs_dir, "00_initialize.json")
-        try:
-            if os.path.exists(init_log_path):
+        init_log = {}
+        
+        # Bug Fix: Protects against Empty File JSONDecodeError crashes
+        if os.path.exists(init_log_path) and os.path.getsize(init_log_path) > 0:
+            try:
                 with open(init_log_path, "r", encoding="utf-8") as lf:
                     init_log = json.load(lf)
-            else:
-                init_log = {}
+            except json.JSONDecodeError:
+                pass
 
-            timestamp = datetime.now().astimezone().isoformat()
-            init_log[timestamp] = {
-                "blocks_added": blocks_to_add,
-                "blocks_migrated": blocks_migrated,
-                "total_publishers_active": len(updated_publishers),
-                "status": "SUCCESS" if save_success else "FAILED"
-            }
+        timestamp = datetime.now().astimezone().isoformat()
+        init_log[timestamp] = {
+            "blocks_added": blocks_to_add,
+            "blocks_migrated": blocks_migrated,
+            "total_publishers_active": len(updated_publishers),
+            "status": "SUCCESS" if save_success else "FAILED"
+        }
 
+        try:
             with open(init_log_path, "w", encoding="utf-8") as lf:
                 json.dump(init_log, lf, ensure_ascii=False, indent=4)
             print(f"  [SUCCESS] Recorded execution run to 00_initialize.json")
