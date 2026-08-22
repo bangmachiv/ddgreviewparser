@@ -2,6 +2,9 @@ name: 01. DuckDuckGo Search
 
 on:
   workflow_dispatch:
+  # Uncomment the lines below to enable continuous polling from Thu to Sun
+  # schedule:
+  #   - cron: '0 4,10,16 * * 0,4-6'
 
 permissions:
   contents: write
@@ -25,26 +28,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install duckduckgo-search
-          # If you also have a requirements.txt file, you can uncomment the line below:
-          # pip install -r requirements.txt
 
-      - name: Run search
+      - name: Run search script
         run: |
           python 01_search.py
 
-      - name: Commit updated search and review files
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          # Stage the JSON files modified by Script 1
-          git add data/searches/*.json
-          git add data/reviews/*.json
-
-          if git diff --cached --quiet; then
-            echo "No changes to commit. All searches are up to date."
-            exit 0
-          fi
-
-          git commit -m "Pipeline [01]: Update search results and review metrics"
-          git push
+      - name: Commit and Push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Automated: Update DDGS search results and review metrics"
+          file_pattern: "data/**/*.json logs/**/*.json"
