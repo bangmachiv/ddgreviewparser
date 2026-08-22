@@ -8,7 +8,7 @@
         {
             "publisher_id": "aaj-tak",
             "publisher_name": "Aaj Tak",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -27,7 +27,7 @@
         {
             "publisher_id": "abp",
             "publisher_name": "ABP",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -46,7 +46,7 @@
         {
             "publisher_id": "amar-ujala",
             "publisher_name": "Amar Ujala",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -65,7 +65,7 @@
         {
             "publisher_id": "bollyspice",
             "publisher_name": "BollySpice",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -84,7 +84,7 @@
         {
             "publisher_id": "bollywood-hungama",
             "publisher_name": "Bollywood Hungama",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -103,7 +103,7 @@
         {
             "publisher_id": "business-standard",
             "publisher_name": "Business Standard",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -122,7 +122,7 @@
         {
             "publisher_id": "cinema-express",
             "publisher_name": "Cinema Express",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -141,7 +141,7 @@
         {
             "publisher_id": "cinetales",
             "publisher_name": "Cinetales",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -160,7 +160,7 @@
         {
             "publisher_id": "dainik-bhaskar",
             "publisher_name": "Dainik Bhaskar",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -179,7 +179,7 @@
         {
             "publisher_id": "dainik-jagran",
             "publisher_name": "Dainik Jagran",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -198,7 +198,7 @@
         {
             "publisher_id": "deccan-chronicle",
             "publisher_name": "Deccan Chronicle",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -217,7 +217,7 @@
         {
             "publisher_id": "deccan-herald",
             "publisher_name": "Deccan Herald",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -236,7 +236,7 @@
         {
             "publisher_id": "filmfare",
             "publisher_name": "Filmfare",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -255,7 +255,7 @@
         {
             "publisher_id": "firstpost",
             "publisher_name": "Firstpost",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -274,7 +274,7 @@
         {
             "publisher_id": "free-press-journal",
             "publisher_name": "Free Press Journal",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -293,7 +293,7 @@
         {
             "publisher_id": "hindustan",
             "publisher_name": "Hindustan",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -312,7 +312,7 @@
         {
             "publisher_id": "hindustan-times",
             "publisher_name": "Hindustan Times",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -331,7 +331,7 @@
         {
             "publisher_id": "ians-live",
             "publisher_name": "IANS Live",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -350,7 +350,7 @@
         {
             "publisher_id": "india-today",
             "publisher_name": "India Today",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -369,7 +369,7 @@
         {
             "publisher_id": "koimoi",
             "publisher_name": "Koimoi",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -388,7 +388,7 @@
         {
             "publisher_id": "lensmen-reviews",
             "publisher_name": "Lensmen Reviews",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -407,7 +407,7 @@
         {
             "publisher_id": "lokmat",
             "publisher_name": "Lokmat",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -426,7 +426,7 @@
         {
             "publisher_id": "mid-day",
             "publisher_name": "Mid-Day",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -445,7 +445,7 @@
         {
             "publisher_id": "mint",
             "publisher_name": "Mint",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -464,7 +464,7 @@
         {
             "publisher_id": "moneycontrol",
             "publisher_name": "Moneycontrol",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -483,7 +483,7 @@
         {
             "publisher_id": "movie-talkies",
             "publisher_name": "Movie Talkies",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -502,7 +502,7 @@
         {
             "publisher_id": "navbharat-times",
             "publisher_name": "Navbharat Times",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -521,7 +521,7 @@
         {
             "publisher_id": "ndtv",
             "publisher_name": "NDTV",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -540,7 +540,7 @@
         {
             "publisher_id": "news18-showsha",
             "publisher_name": "News18 Showsha",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -559,7 +559,7 @@
         {
             "publisher_id": "outlook",
             "publisher_name": "Outlook",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -578,7 +578,7 @@
         {
             "publisher_id": "peepingmoon",
             "publisher_name": "PeepingMoon",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -597,7 +597,7 @@
         {
             "publisher_id": "rediff",
             "publisher_name": "Rediff.com",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -616,7 +616,7 @@
         {
             "publisher_id": "scroll-in",
             "publisher_name": "Scroll.in",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -635,7 +635,7 @@
         {
             "publisher_id": "south-asian-herald",
             "publisher_name": "South Asian Herald",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -654,7 +654,7 @@
         {
             "publisher_id": "the-economic-times",
             "publisher_name": "The Economic Times",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -673,7 +673,7 @@
         {
             "publisher_id": "the-federal",
             "publisher_name": "The Federal",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -692,7 +692,7 @@
         {
             "publisher_id": "the-hindu",
             "publisher_name": "The Hindu",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -711,7 +711,7 @@
         {
             "publisher_id": "the-indian-express",
             "publisher_name": "The Indian Express",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -730,7 +730,7 @@
         {
             "publisher_id": "the-quint",
             "publisher_name": "The Quint",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -749,7 +749,7 @@
         {
             "publisher_id": "the-telegraph",
             "publisher_name": "The Telegraph",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -768,7 +768,7 @@
         {
             "publisher_id": "the-times-of-india",
             "publisher_name": "The Times of India",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
@@ -787,7 +787,7 @@
         {
             "publisher_id": "the-tribune",
             "publisher_name": "The Tribune",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_attempts": 0,
             "review_url": "PENDING",
             "review_title": "PENDING",
