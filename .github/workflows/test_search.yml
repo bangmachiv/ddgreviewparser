@@ -1,6 +1,7 @@
 name: Diagnostic Test - DDG Search
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:
