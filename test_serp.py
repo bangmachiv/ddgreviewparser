@@ -9,7 +9,7 @@ def main():
         print("[FATAL] SERPAPI_API_KEY environment variable is missing.")
         return
 
-    query = "Bhai Tera Star Hai 2026 movie review"
+    query = "Bhai Tera Star Hai movie review"
     
     print("=" * 80)
     print(" DIAGNOSTIC TEST: SERPAPI INTEGRATION")
