@@ -106,6 +106,7 @@ def main():
         movie_name = movie.get("name")
         movie_slug = movie.get("slug")
         movie_date = movie.get("date", "")
+        movie_year = movie_date[:4] if movie_date else ""
 
         print("\n" + "=" * 80)
         print(f" PIPELINE STEP 1: {movie_name}")
@@ -232,30 +233,37 @@ def main():
                 "results": []
             }
 
-            # Queries explicitly lack the year for precise title matching
-            query_specific = f'"{movie_name}" movie review site:{domain}'
-            query_generic = f'{movie_name} movie review site:{domain}'
+            # Year is included as a loose keyword, outside the quoted title
+            query_specific = f'"{movie_name}" movie review {movie_year} site:{domain}'
+            query_generic = f'{movie_name} movie review {movie_year} site:{domain}'
 
-            results, err = search_with_retries(query_specific, max_results=5)
-            match_type = "Exact"
+            # Both query types run back to back, independently
+            results_specific, err_specific = search_with_retries(query_specific, max_results=5)
+            time.sleep(1)
+            results_generic, err_generic = search_with_retries(query_generic, max_results=5)
 
-            if not results:
-                time.sleep(1)
-                results, err = search_with_retries(query_generic, max_results=5)
-                match_type = "Broad"
+            total_results_found = len(results_specific) + len(results_generic)
 
-            total_results_found = len(results)
+            for rank, r in enumerate(results_specific, start=1):
+                publisher_result["results"].append({
+                    "rank": rank,
+                    "match_type": "Specific",
+                    "title": r.get("title", ""),
+                    "url": r.get("href", ""),
+                    "snippet": r.get("body", ""),
+                })
 
-            if results:
-                print(f"      [SUCCESS] Found {total_results_found} URLs via {match_type} query.")
-                for rank, r in enumerate(results, start=1):
-                    publisher_result["results"].append({
-                        "rank": rank,
-                        "title": r.get("title", ""),
-                        "url": r.get("href", ""),
-                        "snippet": r.get("body", ""),
-                        "exact_match": (match_type == "Exact")
-                    })
+            for rank, r in enumerate(results_generic, start=1):
+                publisher_result["results"].append({
+                    "rank": rank,
+                    "match_type": "Generic",
+                    "title": r.get("title", ""),
+                    "url": r.get("href", ""),
+                    "snippet": r.get("body", ""),
+                })
+
+            if total_results_found > 0:
+                print(f"      [SUCCESS] Found {len(results_specific)} URLs via Specific query, {len(results_generic)} via Generic query.")
             else:
                 print(f"      [FAILED] 0 URLs returned across both queries.")
 
@@ -267,7 +275,11 @@ def main():
                         p_block["search_status"] = "SUCCESS"
                         tracker.add_success()
                         movie_log_entry["publishers_succeeded"] += 1
-                        movie_log_entry["publisher_details"][pub_id] = {"status": "SUCCESS", "match_type": match_type}
+                        movie_log_entry["publisher_details"][pub_id] = {
+                            "status": "SUCCESS",
+                            "specific_results": len(results_specific),
+                            "generic_results": len(results_generic)
+                        }
                     else:
                         p_block["search_status"] = "FAILED"
                         tracker.add_failure()
