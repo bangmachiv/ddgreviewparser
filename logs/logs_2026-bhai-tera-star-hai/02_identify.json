@@ -1,1 +1,181 @@
-{}
+{
+    "2026-08-22T22:53:48.121710+00:00": {
+        "earlier_completed": 0,
+        "earlier_pending": 42,
+        "processed": 42,
+        "success": 20,
+        "failure": 22,
+        "new_completed": 20,
+        "new_pending": 22,
+        "publisher_details": {
+            "aaj-tak": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "abp": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "bollywood-hungama": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "bollyspice": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "business-standard": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "cinema-express": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "cinetales": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "dainik-bhaskar": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "dainik-jagran": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "deccan-chronicle": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "deccan-herald": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "filmfare": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "firstpost": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "free-press-journal": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "hindustan": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "hindustan-times": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "ians-live": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "india-today": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "koimoi": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "lensmen-reviews": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "lokmat": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "mid-day": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "mint": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "moneycontrol": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "movie-talkies": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "navbharat-times": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "ndtv": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "outlook": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "peepingmoon": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "rediff": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "scroll-in": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "south-asian-herald": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "the-economic-times": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "the-federal": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "the-hindu": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "the-quint": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "the-telegraph": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "the-times-of-india": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs_1"
+            },
+            "the-tribune": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            }
+        }
+    }
+}
