@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-04_extract_titles.py
+04-A-1_titles.py
 Extracts the <title> tag from downloaded HTML files and updates reviews JSON.
 """
 
@@ -82,7 +82,9 @@ def process_titles_for_movie(json_path: str):
 
     html_dir = os.path.join(WEBPAGES_DIR, movie_slug)
     movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{movie_slug}")
-    script_log_path = os.path.join(movie_logs_dir, "04_extract_titles.json")
+    
+    # [FIXED]: Now points to the correct new nomenclature file
+    script_log_path = os.path.join(movie_logs_dir, "04-A-1_titles.json")
     os.makedirs(movie_logs_dir, exist_ok=True)
 
     publishers = data.get("publishers", [])
@@ -192,7 +194,7 @@ def process_titles_for_movie(json_path: str):
     movie_log_entry["new_completed"] = earlier_completed + movie_log_entry["success"]
     movie_log_entry["new_pending"] = earlier_pending - movie_log_entry["success"]
 
-    # Safely write to 04_extract_titles.json
+    # Safely write to 04-A-1_titles.json
     script_log_data = {}
     if os.path.exists(script_log_path) and os.path.getsize(script_log_path) > 0:
         try:
