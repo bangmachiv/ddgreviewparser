@@ -1,1 +1,133 @@
-{}
+{
+    "2026-08-23T10:39:32.741559+00:00": {
+        "earlier_completed": 0,
+        "earlier_pending": 20,
+        "processed": 20,
+        "success": 20,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_amar-ujala_2026-bhai-tera-star-hai.html",
+                "bytes": 957671
+            },
+            "bollywood-hungama": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_bollywood-hungama_2026-bhai-tera-star-hai.html",
+                "bytes": 323950
+            },
+            "cinema-express": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_cinema-express_2026-bhai-tera-star-hai.html",
+                "bytes": 2033047
+            },
+            "dainik-bhaskar": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_dainik-bhaskar_2026-bhai-tera-star-hai.html",
+                "bytes": 579211
+            },
+            "dainik-jagran": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_dainik-jagran_2026-bhai-tera-star-hai.html",
+                "bytes": 109032
+            },
+            "filmfare": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_filmfare_2026-bhai-tera-star-hai.html",
+                "bytes": 614004
+            },
+            "free-press-journal": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_free-press-journal_2026-bhai-tera-star-hai.html",
+                "bytes": 128296
+            },
+            "hindustan-times": {
+                "status": "SUCCESS",
+                "tier": "Tier 3 (Scrape.do)",
+                "file": "webpage_hindustan-times_2026-bhai-tera-star-hai.html",
+                "bytes": 494614
+            },
+            "india-today": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_india-today_2026-bhai-tera-star-hai.html",
+                "bytes": 950990
+            },
+            "koimoi": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_koimoi_2026-bhai-tera-star-hai.html",
+                "bytes": 1215872
+            },
+            "mid-day": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_mid-day_2026-bhai-tera-star-hai.html",
+                "bytes": 179869
+            },
+            "moneycontrol": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_moneycontrol_2026-bhai-tera-star-hai.html",
+                "bytes": 1133722
+            },
+            "movie-talkies": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_movie-talkies_2026-bhai-tera-star-hai.html",
+                "bytes": 346301
+            },
+            "ndtv": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_ndtv_2026-bhai-tera-star-hai.html",
+                "bytes": 696733
+            },
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_news18-showsha_2026-bhai-tera-star-hai.html",
+                "bytes": 710190
+            },
+            "rediff": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_rediff_2026-bhai-tera-star-hai.html",
+                "bytes": 183639
+            },
+            "scroll-in": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_scroll-in_2026-bhai-tera-star-hai.html",
+                "bytes": 173749
+            },
+            "the-federal": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_the-federal_2026-bhai-tera-star-hai.html",
+                "bytes": 816978
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "tier": "Tier 3 (Scrape.do)",
+                "file": "webpage_the-indian-express_2026-bhai-tera-star-hai.html",
+                "bytes": 637623
+            },
+            "the-times-of-india": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_the-times-of-india_2026-bhai-tera-star-hai.html",
+                "bytes": 489168
+            }
+        }
+    }
+}
