@@ -1,0 +1,42 @@
+name: 04. Extract Article Titles
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract-titles:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run title extraction script
+        run: |
+          python 04_titles.py
+
+      - name: Commit updated JSON and Log files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stage modified review JSONs and new extraction logs
+          git add data/reviews/ logs/
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit. All titles are up to date."
+            exit 0
+          fi
+
+          git commit -m "Pipeline [04]: Extract and update article titles"
+          git push
