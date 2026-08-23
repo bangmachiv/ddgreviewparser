@@ -23,7 +23,7 @@ jobs:
 
       - name: Run title extraction script
         run: |
-          python 04_titles.py
+          python 04-A-1_titles.py
 
       - name: Commit updated JSON and Log files
         run: |
