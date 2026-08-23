@@ -1,0 +1,93 @@
+{
+    "2026-08-23T11:36:00.818003+00:00": {
+        "earlier_completed": 0,
+        "earlier_pending": 20,
+        "processed": 20,
+        "success": 20,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Hindi Review Starring Raghav Juyal Sanjay Kapoor Nikki Walia To Niharika Nm - Entertainment News: Amar Ujala - Bhai Tera Star Hai Review:राघव जुयाल की कॉमेडी ने दिया सिरदर्द, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा"
+            },
+            "bollywood-hungama": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Movie Review: BHAI TERA STAR HAI is a chaotic and unfunny comedy"
+            },
+            "cinema-express": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Movie Review: Too wacky for its own good"
+            },
+            "dainik-bhaskar": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal Solo Lead Fails To Impress"
+            },
+            "dainik-jagran": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Review: कॉमेडी के नाम पर फूहड़ता, बेकार कहानी... राघव जुयाल से नहीं थी ऐसी उम्मीद! - bhai tera star hai film review raghav juyal performance not appealing storyline also bad"
+            },
+            "filmfare": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Review: A Bumbling Comedy of Errors | Filmfare.com"
+            },
+            "free-press-journal": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?"
+            },
+            "hindustan-times": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai review: This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?' | Bollywood"
+            },
+            "india-today": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai review: The only star was Vijay Deverakonda in Vijay Sales ad - India Today"
+            },
+            "koimoi": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal's Film Is Unfunny, Aimless &amp; Pointless!"
+            },
+            "mid-day": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai movie review: Raghav Juyal’s comic timing can’t save this film"
+            },
+            "moneycontrol": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Movie Review: Raghav Juyal leads a comedy where the jokes need their own rescue mission"
+            },
+            "movie-talkies": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Review: A painful blow to filmmaking standards –"
+            },
+            "ndtv": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Review: Raghav Juyal Shines, But The Comedy Falls Flat"
+            },
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Movie Review And Rating: Raghav Juyal Is On Fire But This Slapstick Comedy Runs Out of Steam Too Soon | Bollywood News - News18"
+            },
+            "rediff": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Review: Raghav Juyal's Film Is Absurd - Rediff.com movies"
+            },
+            "scroll-in": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai film review: Pointless comedy strains patience levels"
+            },
+            "the-federal": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai review: Raghav Juyal's comedy promises a lot, delivers little"
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai movie review: Raghav Juyal film is a comedy with scant laughs | Movie-review News - The Indian Express"
+            },
+            "the-times-of-india": {
+                "status": "SUCCESS",
+                "article_title": "Bhai Tera Star Hai Movie Review: A nightmare of a comedy that drags on"
+            }
+        }
+    }
+}
