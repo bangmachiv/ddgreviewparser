@@ -15,7 +15,7 @@ OUTPUT FOLDERS CREATED (Per Movie):
 OUTPUT FILES GENERATED/UPDATED (Per Movie):
   1. data/searches/searches_<slugname>.json (Initialized as {})
   2. data/reviews/reviews_<slugname>.json
-  3. 10 Empty Script Log Files (00_initialize.json to 09_label.json) in logs/logs_<slugname>/
+  3. 11 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
   publisher_id, publisher_name, search_status, search_count, review_url, 
@@ -167,18 +167,19 @@ def main():
             with open(os.path.join(movie_pipeline_logs, ".gitkeep"), "w") as f:
                 pass
 
-            # Create 10 empty JSON log files for all scripts (00 to 09)
+            # Create 11 empty JSON log files based on the new nomenclature
             script_logs = [
                 "00_initialize.json",
                 "01_search.json",
                 "02_identify.json",
                 "03_download.json",
-                "04_title.json",
-                "05_clean.json",
-                "06_highlight.json",
-                "07_metadata.json",
-                "08_ai_metadata.json",
-                "09_label.json"
+                "04-A-1_titles.json",
+                "04-A-2_clean.json",
+                "04-A-3_highlight.json",
+                "04-B-1_metadata-jsonld.json",
+                "04-B-2_metadata-ai.json",
+                "04-B-3_label.json",
+                "05-A_output-wsap.json"
             ]
 
             for script_log in script_logs:
@@ -187,7 +188,7 @@ def main():
                     with open(log_path, "w", encoding="utf-8") as lf:
                         json.dump({}, lf) # Initialize as an empty JSON object
 
-            print(f"  [SUCCESS] Movie folders and 10 script log files created.")
+            print(f"  [SUCCESS] Movie folders and {len(script_logs)} script log files created.")
         except Exception as e:
             print(f"  [FAILED] Could not create folders or log files: {e}")
 
