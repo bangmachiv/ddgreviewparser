@@ -1,0 +1,57 @@
+name: 03. Download HTML
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  download-html:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests playwright playwright-stealth curl_cffi
+          playwright install --with-deps chromium
+
+      - name: Run download script
+        env:
+          SCRAPE_DO_TOKEN: ${{ secrets.SCRAPE_DO_TOKEN }}
+        run: |
+          python 03_download.py
+
+      - name: Commit updated JSON, Logs, and HTML files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # Safely stage directories to prevent wildcard crash errors
+          git add data/reviews/ data/webpages/ logs/
+          
+          if git diff --cached --quiet; then
+            echo "No changes to commit. All webpages are up to date."
+            exit 0
+          fi
+          
+          git commit -m "Pipeline [03]: Update downloaded HTML and review statuses"
+          git push
+
+      - name: Upload HTML Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: downloaded-webpages
+          path: data/webpages/
+          retention-days: 7
