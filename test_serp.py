@@ -49,15 +49,6 @@ PUBLISHERS = [
   { "id": "the-tribune", "name": "The Tribune", "url": "https://www.tribuneindia.com", "category": "text-media-print-english-regional", "active": True }
 ]
 
-EXCLUDE_PUBLISHER_IDS = {
-    # Batch 1 Exclusions
-    "bollywood-hungama", "cinema-express", "dainik-jagran", "filmfare", "free-press-journal",
-    # Batch 2 Exclusions
-    "koimoi", "mid-day", "movie-talkies", "india-today", "hindustan-times",
-    # Batch 3 Exclusions
-    "the-indian-express", "the-times-of-india", "rediff", "scroll-in"
-}
-
 def extract_domain(url):
     netloc = urlparse(url).netloc
     return netloc.lower().replace("www.", "")
@@ -69,61 +60,90 @@ def main():
         return
 
     client = TavilyClient(api_key=api_key)
-    query = "Bhai Tera Star Hai movie review"
+    
+    # 1. Broad search query prioritizing the movie name, year, and intent
+    query = "Bhai Tera Star Hai 2026 movie review"
 
-    # Step 1: Pair publisher IDs with their clean domains
-    domains_with_ids = [(p["id"], extract_domain(p["url"])) for p in PUBLISHERS if p["active"]]
+    # 2. Build a map of our active publisher domains
+    # Maps e.g., "ndtv.com" -> { publisher dict }
+    publisher_map = {extract_domain(p["url"]): p for p in PUBLISHERS if p["active"]}
     
-    # Step 2: Create the original 15-size batches
-    original_batches = [domains_with_ids[i:i + 15] for i in range(0, len(domains_with_ids), 15)]
-    
-    # Step 3: Strip out the successfully tested domains from each batch
-    filtered_batches = []
-    for original_batch in original_batches:
-        cleaned_batch_domains = [
-            domain for pub_id, domain in original_batch 
-            if pub_id not in EXCLUDE_PUBLISHER_IDS
-        ]
-        filtered_batches.append(cleaned_batch_domains)
+    # Dictionaries to hold categorized results
+    matched_results = {p["id"]: [] for p in PUBLISHERS if p["active"]}
+    unmatched_results = []
 
     print("=" * 80)
-    print(" DIAGNOSTIC TEST: TAVILY API (FORCED EXCLUSION BATCHING)")
+    print(" DIAGNOSTIC TEST: TAVILY API (BROAD SEARCH & LOCAL FILTERING)")
     print(f" Target Query : {query}")
-    print(f" Excluded     : {len(EXCLUDE_PUBLISHER_IDS)} top publishers")
+    print(f" Tracking     : {len(publisher_map)} active publishers")
     print("=" * 80)
 
-    total_matches = 0
+    try:
+        # 3. Fire the broad search.
+        # Requesting max_results=100 tells Tavily to return its absolute maximum limit.
+        response = client.search(
+            query=query,
+            search_depth="advanced",
+            max_results=100
+        )
 
-    for idx, batch_domains in enumerate(filtered_batches, start=1):
-        print(f"\n--- Batch {idx} ({len(batch_domains)} domains remaining) ---")
+        results = response.get("results", [])
+        print(f"-> Tavily returned a total of {len(results)} results.\n")
+
+        # 4. Filter & categorize the results locally in Python
+        for item in results:
+            item_url = item.get("url", "")
+            item_domain = extract_domain(item_url)
+            
+            # Check if this item's domain perfectly matches OR ends with any of our publisher domains 
+            # (This catches subdomains like "movies.ndtv.com" pointing back to "ndtv.com")
+            matched_pub_id = None
+            for pub_domain, pub_data in publisher_map.items():
+                if item_domain == pub_domain or item_domain.endswith("." + pub_domain):
+                    matched_pub_id = pub_data["id"]
+                    break
+            
+            if matched_pub_id:
+                matched_results[matched_pub_id].append(item)
+            else:
+                unmatched_results.append(item)
+
+        # 5. Print results publisher by publisher
+        print("=" * 80)
+        print(" MATCHED PUBLISHER RESULTS ")
+        print("=" * 80)
         
-        if not batch_domains:
-            print("No domains left in this batch to query.")
-            continue
-            
-        try:
-            response = client.search(
-                query=query,
-                search_depth="advanced",
-                include_domains=batch_domains,
-                max_results=10
-            )
-            
-            results = response.get("results", [])
-            total_matches += len(results)
-            print(f"Found {len(results)} matches in this batch:\n")
+        matches_found = 0
+        for pub_id, pub_items in matched_results.items():
+            if pub_items:
+                matches_found += len(pub_items)
+                pub_name = next(p["name"] for p in PUBLISHERS if p["id"] == pub_id)
+                print(f"\n--- {pub_name} ({pub_id}) [{len(pub_items)} result(s)] ---")
+                for r_idx, item in enumerate(pub_items, start=1):
+                    print(f"  {r_idx}. Title: {item.get('title')}")
+                    print(f"     URL  : {item.get('url')}")
+                    print(f"     Score: {item.get('score')}")
 
-            for r_idx, item in enumerate(results, start=1):
-                print(f"  {r_idx}. Title: {item.get('title')}")
-                print(f"     URL  : {item.get('url')}")
-                print(f"     Score: {item.get('score')}\n")
+        if matches_found == 0:
+            print("\n  [!] No matches found for any of the tracked publishers.")
 
-        except Exception as e:
-            print(f"[ERROR in Batch {idx}] {e}")
+        # 6. Print the unmatched results
+        print("\n" + "=" * 80)
+        print(f" UNMATCHED RESULTS (Not in tracked publishers) [{len(unmatched_results)} result(s)]")
+        print("=" * 80)
+        
+        for r_idx, item in enumerate(unmatched_results, start=1):
+            print(f"\n  {r_idx}. Domain: {extract_domain(item.get('url'))}")
+            print(f"     Title : {item.get('title')}")
+            print(f"     URL   : {item.get('url')}")
+            print(f"     Score : {item.get('score')}")
 
-    print(f"=" * 80)
-    print(f" SUMMARY: Total results aggregated across forced exclusion run: {total_matches}")
-    print("=" * 80)
+        print(f"\n" + "=" * 80)
+        print(f" SUMMARY: Total {len(results)} | Matched: {matches_found} | Unmatched: {len(unmatched_results)}")
+        print("=" * 80)
+
+    except Exception as e:
+        print(f"\n[ERROR executing Tavily search]: {e}")
 
 if __name__ == "__main__":
     main()
