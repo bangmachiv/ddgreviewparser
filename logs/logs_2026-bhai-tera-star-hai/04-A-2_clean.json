@@ -89,5 +89,15 @@
                 "clean_title": "A nightmare of a comedy that drags on"
             }
         }
+    },
+    "2026-09-05T16:47:09.353898+00:00": {
+        "earlier_completed": 20,
+        "earlier_pending": 0,
+        "processed": 0,
+        "success": 0,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {}
     }
 }
