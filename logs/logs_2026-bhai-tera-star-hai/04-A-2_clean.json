@@ -190,5 +190,96 @@
                 "clean_title": "A nightmare of a comedy that drags on"
             }
         }
+    },
+    "2026-09-05T19:34:26.895091+00:00": {
+        "earlier_completed": 0,
+        "earlier_pending": 20,
+        "processed": 20,
+        "success": 20,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "clean_title": "राघव जुयाल की कॉमेडी ने दिया सिरदर्द, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा"
+            },
+            "bollywood-hungama": {
+                "status": "SUCCESS",
+                "clean_title": "BHAI TERA STAR HAI is a chaotic and unfunny comedy"
+            },
+            "cinema-express": {
+                "status": "SUCCESS",
+                "clean_title": "Too wacky for its own good"
+            },
+            "dainik-bhaskar": {
+                "status": "SUCCESS",
+                "clean_title": "Raghav Juyal Solo Lead Fails To Impress"
+            },
+            "dainik-jagran": {
+                "status": "SUCCESS",
+                "clean_title": "कॉमेडी के नाम पर फूहड़ता, बेकार कहानी... राघव जुयाल से नहीं थी ऐसी उम्मीद!"
+            },
+            "filmfare": {
+                "status": "SUCCESS",
+                "clean_title": "A Bumbling Comedy of Errors"
+            },
+            "free-press-journal": {
+                "status": "SUCCESS",
+                "clean_title": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?"
+            },
+            "hindustan-times": {
+                "status": "SUCCESS",
+                "clean_title": "This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?'"
+            },
+            "india-today": {
+                "status": "SUCCESS",
+                "clean_title": "The only star was Vijay Deverakonda in Vijay Sales ad"
+            },
+            "koimoi": {
+                "status": "SUCCESS",
+                "clean_title": "Raghav Juyal's Film Is Unfunny, Aimless & Pointless!"
+            },
+            "mid-day": {
+                "status": "SUCCESS",
+                "clean_title": "Raghav Juyal’s comic timing can’t save this film"
+            },
+            "moneycontrol": {
+                "status": "SUCCESS",
+                "clean_title": "Raghav Juyal leads a comedy where the jokes need their own rescue mission"
+            },
+            "movie-talkies": {
+                "status": "SUCCESS",
+                "clean_title": "A painful blow to filmmaking standards"
+            },
+            "ndtv": {
+                "status": "SUCCESS",
+                "clean_title": "Raghav Juyal Shines, But The Comedy Falls Flat"
+            },
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "clean_title": "Raghav Juyal Is On Fire But This Slapstick Comedy Runs Out of Steam Too Soon"
+            },
+            "rediff": {
+                "status": "SUCCESS",
+                "clean_title": "Raghav Juyal's Film Is Absurd"
+            },
+            "scroll-in": {
+                "status": "SUCCESS",
+                "clean_title": "Pointless comedy strains patience levels"
+            },
+            "the-federal": {
+                "status": "SUCCESS",
+                "clean_title": "Bhai Tera Star Hai review: Raghav Juyal's comedy promises a lot, delivers little"
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "clean_title": "Raghav Juyal film is a comedy with scant laughs"
+            },
+            "the-times-of-india": {
+                "status": "SUCCESS",
+                "clean_title": "A nightmare of a comedy that drags on"
+            }
+        }
     }
 }
