@@ -18,7 +18,7 @@ from google.genai import errors
 # Configuration & Absolute Pathing
 # ---------------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROMPT_FILE = os.path.join(BASE_DIR, "prompt_clean_titles.txt")
+PROMPT_FILE = os.path.join(BASE_DIR, "prompts", "prompt_clean_titles.txt")
 REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 
@@ -33,10 +33,8 @@ if not API_KEY:
 client = genai.Client(api_key=API_KEY)
 
 MODEL_CONFIG = [
-    {"name": "gemini-3.7-flash", "priority": 1, "enabled": True},
-    {"name": "gemini-3.6-flash", "priority": 2, "enabled": True},
-    {"name": "gemini-3.5-flash", "priority": 3, "enabled": True},
-    {"name": "gemini-3.5-flash-lite", "priority": 4, "enabled": True}
+    {"name": "gemini-3.5-flash-lite", "priority": 1, "enabled": True},
+    {"name": "gemini-3.1-flash-lite", "priority": 2, "enabled": True}
 ]
 
 # -----------------------------------------------------------------------------
@@ -140,7 +138,7 @@ def clean_title_with_gemini(movie_name, raw_title, models_config, prompt_templat
 def get_live_movie_slugs():
     slugs = []
     live_master_file = os.path.join(BASE_DIR, "data", "movies", "movies-live-today.json")
-    
+
     if os.path.exists(live_master_file):
         with open(live_master_file, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -186,7 +184,7 @@ def process_cleaning_for_movie(json_path, prompt_template):
     for pub in publishers:
         article_title = pub.get("article_title", "PENDING")
         clean_title = pub.get("clean_title", "PENDING")
-        
+
         # Candidates are publishers that have a raw article title successfully extracted
         if article_title not in ["PENDING", "FAILED", None, ""]:
             if clean_title not in ["PENDING", "FAILED", None, ""]:
@@ -226,14 +224,14 @@ def process_cleaning_for_movie(json_path, prompt_template):
 
         print(f"\n  [*] Processing [{pub_id}]...")
         print(f"      Raw Title: {raw_title}")
-        
+
         movie_log_entry["processed"] += 1
         cleaned = clean_title_with_gemini(movie_name, raw_title, MODEL_CONFIG, prompt_template)
 
         if cleaned:
             # Decode HTML entities right before assigning to the pub dictionary
             cleaned = html.unescape(cleaned)
-            
+
             pub["clean_title"] = cleaned
             print(f"      [SUCCESS] Saved clean_title: {cleaned}")
             tracker.add_success()
@@ -295,43 +293,47 @@ def main():
     print(f"[*] Raw __file__ path : {__file__}")
     print(f"[*] Base Directory    : {BASE_DIR}")
     print(f"[*] Expected Prompt   : {PROMPT_FILE}")
-    print("\n[*] Python's view of files in Base Directory:")
-    
-    try:
-        files = os.listdir(BASE_DIR)
-        for f in files:
-            # Highlight anything that has 'prompt' in the name to catch typos
-            if "prompt" in f.lower():
-                print(f"    ---> SUSPECT FOUND: '{f}'")
-            else:
-                print(f"    - {f}")
-    except Exception as e:
-        print(f"    [ERROR] Could not read directory: {e}")
-    print("================================================================\n")
+    print("\n[*] Python's view of files in Prompts Directory:")
 
-    print("[STEP 1] Loading prompt template...")
-    if not os.path.exists(PROMPT_FILE):
-        print(f"[FATAL ERROR] The exact file '{PROMPT_FILE}' does not exist according to Python.")
-        return
+    try:  
+        prompt_dir = os.path.join(BASE_DIR, "prompts")
+        if not os.path.exists(prompt_dir):
+            print(f"    [ERROR] Prompts directory not found at {prompt_dir}")
+        else:
+            files = os.listdir(prompt_dir)  
+            for f in files:  
+                # Highlight anything that has 'prompt' in the name to catch typos  
+                if "prompt" in f.lower():  
+                    print(f"    ---> SUSPECT FOUND: '{f}'")  
+                else:  
+                    print(f"    - {f}")  
+    except Exception as e:  
+        print(f"    [ERROR] Could not read directory: {e}")  
+    print("================================================================\n")  
+
+    print("[STEP 1] Loading prompt template...")  
+    if not os.path.exists(PROMPT_FILE):  
+        print(f"[FATAL ERROR] The exact file '{PROMPT_FILE}' does not exist according to Python.")  
+        return  
         
-    with open(PROMPT_FILE, "r", encoding="utf-8") as pf:
-        prompt_template = pf.read()
+    with open(PROMPT_FILE, "r", encoding="utf-8") as pf:  
+        prompt_template = pf.read()  
 
-    print("[STEP 2] Fetching live movies for title cleaning...")
-    live_slugs = get_live_movie_slugs()
+    print("[STEP 2] Fetching live movies for title cleaning...")  
+    live_slugs = get_live_movie_slugs()  
 
-    if not live_slugs:
-        print("[ERROR] No live movies found. Exiting.")
-        return
+    if not live_slugs:  
+        print("[ERROR] No live movies found. Exiting.")  
+        return  
 
-    target_files = []
-    for slug in live_slugs:
-        review_file = os.path.join(BASE_DIR, "data", "reviews", f"reviews_{slug}.json")
-        if os.path.exists(review_file):
-            target_files.append(review_file)
+    target_files = []  
+    for slug in live_slugs:  
+        review_file = os.path.join(BASE_DIR, "data", "reviews", f"reviews_{slug}.json")  
+        if os.path.exists(review_file):  
+            target_files.append(review_file)  
 
-    print("\n[STEP 3] Running Gemini cleaning pipeline...")
-    for json_path in target_files:
+    print("\n[STEP 3] Running Gemini cleaning pipeline...")  
+    for json_path in target_files:  
         process_cleaning_for_movie(json_path, prompt_template)
 
 if __name__ == "__main__":
