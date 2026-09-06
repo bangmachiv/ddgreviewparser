@@ -291,7 +291,16 @@ CHECK 9 — CONTRAST
 
 If the title explicitly presents genuinely contrasting ideas and one term alone would materially misrepresent the title, extract the necessary opposing terms.
 
-CHECK 10 — FINAL OUTPUT
+
+================================================================================
+SECTION 10: FINAL COMPLIANCE & FALLBACK
+================================================================================
+
+1. All extracted strings must not be null or empty.
+2. The total count of strings in the array plus the total cumulative count of spaces inside all extracted strings must satisfy: 1 <= (Count of Strings + Total Spaces) <= 3.
+3. If the validation in rule 2 fails, discard the selection and return exactly 1 single word from the title as a single-element array.
+
+CHECK 11 — FINAL OUTPUT
 
 If any proposed term fails any check, replace it with a valid shorter contiguous term or remove it.
 
