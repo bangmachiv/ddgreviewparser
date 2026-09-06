@@ -1,0 +1,49 @@
+name: 04-A-3. Extract Title Highlights
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract-highlights:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-genai
+
+      - name: Run title highlighting script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python 04-A-3_highlight.py
+
+      - name: Commit updated JSON and Log files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # Stage modified review JSONs and new extraction logs
+          git add data/reviews/ logs/
+          
+          if git diff --cached --quiet; then
+            echo "No changes to commit. All titles are already highlighted."
+            exit 0
+          fi
+          
+          git commit -m "Pipeline [04-A-3]: Extract and save title highlights"
+          git push
