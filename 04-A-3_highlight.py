@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
 04-A-3_highlight.py
-Uses Groq API with Qwen models (prioritizing qwen3.8-27b) to extract highlight 
-keywords from cleaned article titles, complete with <think> tag sanitization,
-raw text debugging, and real-time stdout flushing for GitHub Actions.
+Uses Groq API with Qwen models (prioritizing qwen3.8-27b) with unbounded output 
+token budgets and intelligent retry/timeout buffers for GitHub Actions.
 """
 
 import builtins
@@ -47,7 +46,6 @@ QWEN_MODELS = [
     "qwen/qwen3.6-27b"
 ]
 
-# Global round-robin index
 current_model_index = 0
 
 def get_next_qwen_pair():
@@ -95,10 +93,7 @@ class PipelineTracker:
 # ---------------------------------------------------------------------------
 def strip_reasoning_and_markdown(text: str) -> str:
     """Strips <think>...</think> blocks and Markdown code fences."""
-    # Remove reasoning thought blocks if present
     text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
-    
-    # Strip Markdown JSON fences
     text = text.strip()
     if text.startswith("```json"):
         text = text[7:]
@@ -106,7 +101,6 @@ def strip_reasoning_and_markdown(text: str) -> str:
         text = text[3:]
     if text.endswith("```"):
         text = text[:-3]
-        
     return text.strip()
 
 def extract_keywords_from_payload(parsed_json):
@@ -127,7 +121,6 @@ def process_and_validate_highlight(clean_title, raw_response_text):
     Validates Qwen's response and injects asterisks around the first occurrence
     of valid emotion keywords.
     """
-    # Print exact raw text for CI/CD debugging visibility
     print(f"      [DEBUG RAW TEXT FROM MODEL]: {repr(raw_response_text)}")
 
     if not raw_response_text or not raw_response_text.strip():
@@ -149,6 +142,7 @@ def process_and_validate_highlight(clean_title, raw_response_text):
     if len(keywords) == 0:
         print("      [FAIL] 0 keywords returned.")
         return None
+    
     if len(keywords) > 3:
         print(f"      [FAIL] Too many keywords returned ({len(keywords)}). Max is 3.")
         return None
@@ -162,12 +156,10 @@ def process_and_validate_highlight(clean_title, raw_response_text):
         if not kw_str:
             continue
 
-        # Rule: Max 3 words per phrase
         if len(kw_str.split()) > 3:
             print(f"      [FAIL] Phrase '{kw_str}' has more than 3 words.")
             return None
 
-        # Rule: Substring containment check
         if kw_str.lower() not in clean_title_lower:
             print(f"      [FAIL] Phrase '{kw_str}' is NOT found in original title.")
             return None
@@ -178,13 +170,11 @@ def process_and_validate_highlight(clean_title, raw_response_text):
         print("      [FAIL] No valid keywords passed containment check.")
         return None
 
-    # Sort descending by length so longer phrases are highlighted first
     valid_keywords.sort(key=len, reverse=True)
-
     highlighted_title = clean_title_clean
+    
     for kw in valid_keywords:
         pattern = re.compile(re.escape(kw), re.IGNORECASE)
-        # Substitute only the first occurrence
         highlighted_title = pattern.sub(f"*{kw}*", highlighted_title, count=1)
 
     return highlighted_title
@@ -223,29 +213,40 @@ def fetch_highlights_with_alternating_qwen(movie_name, clean_title, prompt_templ
 
     for model_name in attempts:
         print(f"      [Attempting Groq Model: {model_name}]")
-        try:
-            chat_completion = client.chat.completions.create(
-                messages=[
-                    {"role": "user", "content": prompt}
-                ],
-                model=model_name,
-                temperature=0.0,
-                max_tokens=1000
-            )
-            
-            raw_text = chat_completion.choices[0].message.content
-            if raw_text:
-                raw_text = raw_text.strip()
-                # Check validation before accepting this model's response
-                highlighted = process_and_validate_highlight(clean_title, raw_text)
-                if highlighted:
-                    return highlighted, model_name
+        
+        max_retries = 2
+        for attempt in range(max_retries + 1):
+            try:
+                chat_completion = client.chat.completions.create(
+                    messages=[
+                        {"role": "user", "content": prompt}
+                    ],
+                    model=model_name,
+                    temperature=0.0,
+                    max_tokens=8192 
+                )
+                
+                raw_text = chat_completion.choices[0].message.content
+                if raw_text:
+                    raw_text = raw_text.strip()
+                    highlighted = process_and_validate_highlight(clean_title, raw_text)
+                    if highlighted:
+                        return highlighted, model_name
+                    else:
+                        print("      [Validation Failed for this model output, attempting fallback...]")
+                        break
+            except Exception as e:
+                error_msg = str(e)
+                print(f"      [API Error on {model_name}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
+                
+                if "429" in error_msg or "rate_limit" in error_msg.lower() or "timeout" in error_msg.lower():
+                    wait_time = (attempt + 1) * 10
+                    print(f"      [Rate Limit / Timeout Hit] Buffering and waiting {wait_time}s before retry...")
+                    time.sleep(wait_time)
                 else:
-                    print("      [Validation Failed for this model output, attempting fallback...]")
-        except Exception as e:
-            print(f"      [API Error on {model_name}]: {e}")
+                    break 
 
-        print("      [Waiting 3s before fallback model attempt...]")
+        print("      [Waiting 3s before switching to next model...]")
         time.sleep(3)
 
     return None, None
@@ -266,9 +267,6 @@ def process_movie_file(json_path, prompt_template):
     script_log_path = os.path.join(movie_logs_dir, "04-A-3_highlight.json")
     os.makedirs(movie_logs_dir, exist_ok=True)
 
-    # -------------------------------------------------------------------------
-    # Pre-Scan Metrics Calculation
-    # -------------------------------------------------------------------------
     earlier_completed = 0
     earlier_pending = 0
 
@@ -295,9 +293,6 @@ def process_movie_file(json_path, prompt_template):
         "publisher_details": {}
     }
 
-    # -------------------------------------------------------------------------
-    # Execution Loop
-    # -------------------------------------------------------------------------
     for index, pub in enumerate(publishers, start=1):
         pub_id = pub.get("publisher_id", f"publisher_{index}")
         clean_title = pub.get("clean_title", "PENDING")
@@ -366,7 +361,6 @@ def process_movie_file(json_path, prompt_template):
         print(f"[ERROR] Could not write to log file: {e}")
 
     tracker.print_summary()
-
 
 def main():
     print("================================================================")
