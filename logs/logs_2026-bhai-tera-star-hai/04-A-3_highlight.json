@@ -834,5 +834,20 @@
                 "highlighted_title": "A *nightmare* of a comedy that drags on"
             }
         }
+    },
+    "2026-09-06T16:15:44.740156+00:00": {
+        "earlier_completed": 19,
+        "earlier_pending": 1,
+        "processed": 1,
+        "success": 0,
+        "failure": 1,
+        "new_completed": 19,
+        "new_pending": 1,
+        "publisher_details": {
+            "india-today": {
+                "status": "FAILED",
+                "reason": "Validation failed or API error"
+            }
+        }
     }
 }
