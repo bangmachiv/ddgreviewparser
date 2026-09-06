@@ -703,5 +703,26 @@
                 "reason": "Validation failed or API error"
             }
         }
+    },
+    "2026-09-06T15:53:59.831355+00:00": {
+        "earlier_completed": 18,
+        "earlier_pending": 2,
+        "processed": 2,
+        "success": 2,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {
+            "koimoi": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "Raghav Juyal's Film Is *Unfunny*, Aimless & Pointless!"
+            },
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "Raghav Juyal Is *On Fire* But This Slapstick Comedy Runs Out of Steam Too Soon"
+            }
+        }
     }
 }
