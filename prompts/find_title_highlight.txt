@@ -311,6 +311,28 @@ The final response MUST contain ONLY the JSON array.
 Output nothing except the JSON array.
 
 ---
+OUTPUT FORMAT — ABSOLUTE
+
+Your response MUST begin with `[` and MUST end with `]`.
+
+Do not output:
+- <think>
+- </think>
+- reasoning
+- analysis
+- explanations
+- notes
+- commentary
+- "Final answer:"
+- "Answer:"
+- markdown
+
+After silently reasoning, output ONLY the JSON array.
+
+Example:
+["Unfunny"]
+
+---
 
 EXECUTION
 
