@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-test_models.py
-Validates API connectivity and model accessibility for the 4 target Groq models.
+test_groq_models.py
+Validates API connectivity and model accessibility for the 4 target Groq models,
+providing enough token headroom for reasoning models without breaking the 8k TPM limit.
 """
 
 import os
@@ -32,19 +33,23 @@ def main():
     for model_name in models_to_test:
         print(f"[*] Pinging Model: {model_name}...")
         try:
+            # We set max_tokens to 1000. 
+            # Groq's Free Tier calculates TPM limit as (Prompt Tokens + max_tokens).
+            # 1000 keeps us comfortably under the 8000 TPM limit, while giving 
+            # reasoning models enough headroom to finish their internal chains of thought.
             response = client.chat.completions.create(
                 messages=[
                     {"role": "user", "content": "Respond with exactly one word: 'Alive'"}
                 ],
                 model=model_name,
                 temperature=0.0,
-                max_tokens=10
+                max_tokens=1000
             )
-            
+
             output = response.choices[0].message.content.strip()
-            print(f"    [SUCCESS] Received: {output}\n")
+            print(f"    [SUCCESS] Received:\n{output}\n")
             success_count += 1
-            
+
         except Exception as e:
             print(f"    [FAILED] Error details: {e}\n")
 
