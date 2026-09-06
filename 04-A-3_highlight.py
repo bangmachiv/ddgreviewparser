@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
 04-A-3_highlight.py
-Uses Google's Gemini API to extract highlight keywords from cleaned article titles.
+Uses Groq API with alternating Qwen models to extract highlight keywords 
+from cleaned article titles, complete with <think> tag sanitization.
 """
 
+import builtins
 import json
 import os
 import glob
@@ -11,8 +13,15 @@ import re
 import time
 import html
 from datetime import datetime
-from google import genai
-from google.genai import errors
+from groq import Groq
+
+# ---------------------------------------------------------------------------
+# Global Print Override for Real-Time CI/CD Streaming
+# ---------------------------------------------------------------------------
+def print(*args, **kwargs):
+    """Overrides the default print function to force flush=True every time."""
+    kwargs['flush'] = True
+    builtins.print(*args, **kwargs)
 
 # ---------------------------------------------------------------------------
 # Path Configuration
@@ -23,19 +32,30 @@ REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 
 # ---------------------------------------------------------------------------
-# Gemini API Setup & Fallback Models
+# Groq API Setup & Alternating Model Configuration
 # ---------------------------------------------------------------------------
-API_KEY = os.environ.get("GEMINI_API_KEY")
-if not API_KEY:
-    print("[ERROR] GEMINI_API_KEY environment variable not found!")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    print("[ERROR] GROQ_API_KEY environment variable not found!")
     exit(1)
 
-client = genai.Client(api_key=API_KEY)
+client = Groq(api_key=GROQ_API_KEY)
 
-MODEL_CONFIG = [
-    {"name": "gemini-3.5-flash-lite", "priority": 1, "enabled": True},
-    {"name": "gemini-3.1-flash-lite", "priority": 2, "enabled": True}
+QWEN_MODELS = [
+    "qwen/qwen3.6-27b",
+    "qwen/qwen3.8-27b"
 ]
+
+# Global round-robin index
+current_model_index = 0
+
+def get_next_qwen_pair():
+    """Returns (primary_model, fallback_model) alternating on each invocation."""
+    global current_model_index
+    primary = QWEN_MODELS[current_model_index % len(QWEN_MODELS)]
+    fallback = QWEN_MODELS[(current_model_index + 1) % len(QWEN_MODELS)]
+    current_model_index += 1
+    return primary, fallback
 
 # -----------------------------------------------------------------------------
 # 7-Column Pipeline Metric Tracker
@@ -72,15 +92,20 @@ class PipelineTracker:
 # ---------------------------------------------------------------------------
 # Validation & Formatting Logic
 # ---------------------------------------------------------------------------
-def clean_json_response(text):
-    """Strips Markdown code blocks if present."""
+def strip_reasoning_and_markdown(text: str) -> str:
+    """Strips <think>...</think> blocks and Markdown code fences."""
+    # Remove reasoning thought blocks if present
+    text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
+    
+    # Strip Markdown JSON fences
     text = text.strip()
     if text.startswith("```json"):
         text = text[7:]
-    if text.startswith("```"):
+    elif text.startswith("```"):
         text = text[3:]
     if text.endswith("```"):
         text = text[:-3]
+        
     return text.strip()
 
 def extract_keywords_from_payload(parsed_json):
@@ -96,17 +121,17 @@ def extract_keywords_from_payload(parsed_json):
                 return val
     return None
 
-def process_and_validate_highlight(clean_title, gemini_response_text):
+def process_and_validate_highlight(clean_title, raw_response_text):
     """
-    Validates Gemini's response and injects asterisks around the first occurrence
+    Validates Qwen's response and injects asterisks around the first occurrence
     of valid emotion keywords.
     """
-    if not gemini_response_text or not gemini_response_text.strip():
-        print("      [FAIL] Gemini returned empty response.")
+    if not raw_response_text or not raw_response_text.strip():
+        print("      [FAIL] Model returned empty response.")
         return None
 
     try:
-        raw_json = clean_json_response(gemini_response_text)
+        raw_json = strip_reasoning_and_markdown(raw_response_text)
         parsed = json.loads(raw_json)
         keywords = extract_keywords_from_payload(parsed)
     except Exception as e:
@@ -187,44 +212,42 @@ def get_live_movie_slugs():
                     pass
     return list(set(slugs))
 
-def fetch_highlights_with_fallback(movie_name, clean_title, prompt_template):
+def fetch_highlights_with_alternating_qwen(movie_name, clean_title, prompt_template):
     prompt = prompt_template.replace("{movie_name}", movie_name).replace("{clean_title}", clean_title)
+    primary_model, fallback_model = get_next_qwen_pair()
+    attempts = [primary_model, fallback_model]
 
-    active_models = sorted(
-        [m for m in MODEL_CONFIG if m.get("enabled", True)],
-        key=lambda x: x.get("priority", 999)
-    )
-
-    for model_info in active_models:
-        model_name = model_info["name"]
-        print(f"      [Attempting Model: {model_name}]")
-
+    for model_name in attempts:
+        print(f"      [Attempting Groq Model: {model_name}]")
         try:
-            response = client.models.generate_content(
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {"role": "user", "content": prompt}
+                ],
                 model=model_name,
-                contents=prompt,
-                config={"response_mime_type": "application/json"}
+                temperature=0.0,
+                max_tokens=1000,
+                response_format={"type": "json_object"}
             )
-
-            if response and response.text:
-                raw_text = response.text.strip()
-                print(f"      [DEBUG Raw Gemini Response]: {raw_text}")
-
+            
+            raw_text = chat_completion.choices[0].message.content
+            if raw_text:
+                raw_text = raw_text.strip()
+                print(f"      [DEBUG Raw Qwen Response Received]")
+                
                 # Check validation before accepting this model's response
                 highlighted = process_and_validate_highlight(clean_title, raw_text)
                 if highlighted:
-                    return highlighted
+                    return highlighted, model_name
                 else:
                     print("      [Validation Failed for this model output, attempting fallback...]")
-        except errors.APIError as e:
-            print(f"      [API Error on {model_name}]: {e}")
         except Exception as e:
-            print(f"      [Unexpected Error on {model_name}]: {e}")
+            print(f"      [API Error on {model_name}]: {e}")
 
         print("      [Waiting 3s before fallback model attempt...]")
         time.sleep(3)
 
-    return None
+    return None, None
 
 def process_movie_file(json_path, prompt_template):
     print("\n" + "="*80)
@@ -259,7 +282,7 @@ def process_movie_file(json_path, prompt_template):
             else:
                 earlier_pending += 1
 
-    tracker = PipelineTracker("Titles Highlighted (Gemini)", earlier_completed, earlier_pending)
+    tracker = PipelineTracker("Titles Highlighted (Groq Qwen)", earlier_completed, earlier_pending)
 
     movie_log_entry = {
         "earlier_completed": earlier_completed,
@@ -293,15 +316,16 @@ def process_movie_file(json_path, prompt_template):
         print(f"      Clean Title: {clean_title}")
 
         movie_log_entry["processed"] += 1
-        highlighted_title = fetch_highlights_with_fallback(movie_name, clean_title, prompt_template)
+        highlighted_title, used_model = fetch_highlights_with_alternating_qwen(movie_name, clean_title, prompt_template)
 
         if highlighted_title:
             pub["highlighted_title"] = highlighted_title
-            print(f"      [SUCCESS] Saved highlighted_title: {highlighted_title}")
+            print(f"      [SUCCESS with {used_model}] Saved highlighted_title: {highlighted_title}")
             tracker.add_success()
             movie_log_entry["success"] += 1
             movie_log_entry["publisher_details"][pub_id] = {
                 "status": "SUCCESS",
+                "model": used_model,
                 "highlighted_title": highlighted_title
             }
         else:
@@ -314,9 +338,9 @@ def process_movie_file(json_path, prompt_template):
                 "reason": "Validation failed or API error"
             }
 
-        # Timer to respect API limits
-        print("      [Waiting 10 seconds before next API call...]")
-        time.sleep(10)
+        # Timer to respect Groq API limits (8s calculated earlier)
+        print("      [Waiting 8 seconds before next API call...]")
+        time.sleep(8)
 
         # Save reviews JSON incrementally
         try:
