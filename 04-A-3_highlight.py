@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
 04-A-3_highlight.py
-Uses Groq API with alternating Qwen models to extract highlight keywords 
-from cleaned article titles, complete with <think> tag sanitization and 
-real-time stdout flushing for GitHub Actions.
+Uses Groq API with Qwen models (prioritizing qwen3.8-27b) to extract highlight 
+keywords from cleaned article titles, complete with <think> tag sanitization,
+raw text debugging, and real-time stdout flushing for GitHub Actions.
 """
 
 import builtins
@@ -33,7 +33,7 @@ REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 
 # ---------------------------------------------------------------------------
-# Groq API Setup & Alternating Model Configuration
+# Groq API Setup & Optimized Model Configuration (3.8-27b as Primary)
 # ---------------------------------------------------------------------------
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 if not GROQ_API_KEY:
@@ -43,8 +43,8 @@ if not GROQ_API_KEY:
 client = Groq(api_key=GROQ_API_KEY)
 
 QWEN_MODELS = [
-    "qwen/qwen3.6-27b",
-    "qwen/qwen3.8-27b"
+    "qwen/qwen3.8-27b",
+    "qwen/qwen3.6-27b"
 ]
 
 # Global round-robin index
@@ -127,6 +127,9 @@ def process_and_validate_highlight(clean_title, raw_response_text):
     Validates Qwen's response and injects asterisks around the first occurrence
     of valid emotion keywords.
     """
+    # Print exact raw text for CI/CD debugging visibility
+    print(f"      [DEBUG RAW TEXT FROM MODEL]: {repr(raw_response_text)}")
+
     if not raw_response_text or not raw_response_text.strip():
         print("      [FAIL] Model returned empty response.")
         return None
@@ -221,9 +224,6 @@ def fetch_highlights_with_alternating_qwen(movie_name, clean_title, prompt_templ
     for model_name in attempts:
         print(f"      [Attempting Groq Model: {model_name}]")
         try:
-            # We purposely do NOT use response_format={"type": "json_object"}
-            # because Groq's API strictly rejects JSON Arrays (e.g., ["word"])
-            # when object mode is forced. Our regex/json.loads will handle it.
             chat_completion = client.chat.completions.create(
                 messages=[
                     {"role": "user", "content": prompt}
@@ -236,8 +236,6 @@ def fetch_highlights_with_alternating_qwen(movie_name, clean_title, prompt_templ
             raw_text = chat_completion.choices[0].message.content
             if raw_text:
                 raw_text = raw_text.strip()
-                print(f"      [DEBUG Raw Qwen Response Received]")
-                
                 # Check validation before accepting this model's response
                 highlighted = process_and_validate_highlight(clean_title, raw_text)
                 if highlighted:
@@ -278,7 +276,6 @@ def process_movie_file(json_path, prompt_template):
         clean_title = pub.get("clean_title", "PENDING")
         highlighted_title = pub.get("highlighted_title", "PENDING")
 
-        # Candidates are publishers that have a successfully cleaned title
         if clean_title not in ["PENDING", "FAILED", None, ""]:
             if highlighted_title not in ["PENDING", "FAILED", None, ""]:
                 earlier_completed += 1
@@ -306,11 +303,9 @@ def process_movie_file(json_path, prompt_template):
         clean_title = pub.get("clean_title", "PENDING")
         existing_highlight = pub.get("highlighted_title", "PENDING")
 
-        # 1. Skip if no clean title is available for highlighting
         if clean_title in ["PENDING", "FAILED", None, ""]:
             continue
 
-        # 2. Skip if already successfully highlighted
         if existing_highlight not in ["PENDING", "FAILED", None, ""]:
             print(f"  [{index}/{len(publishers)}] [SKIP] {pub_id} already highlighted.")
             continue
@@ -341,22 +336,18 @@ def process_movie_file(json_path, prompt_template):
                 "reason": "Validation failed or API error"
             }
 
-        # Timer to respect Groq API limits (8s calculated earlier)
         print("      [Waiting 8 seconds before next API call...]")
         time.sleep(8)
 
-        # Save reviews JSON incrementally
         try:
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
         except Exception as e:
             print(f"[ERROR] Could not save updated review file: {e}")
 
-    # Finalize log summary
     movie_log_entry["new_completed"] = earlier_completed + movie_log_entry["success"]
     movie_log_entry["new_pending"] = earlier_pending - movie_log_entry["success"]
 
-    # Safely write to 04-A-3_highlight.json
     script_log_data = {}
     if os.path.exists(script_log_path) and os.path.getsize(script_log_path) > 0:
         try:
