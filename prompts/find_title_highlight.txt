@@ -1,134 +1,132 @@
-You are a movie review title highlight extractor.
+You extract the single most impactful word or short phrase from a movie review title.
 
-TASK
+==================================================
+OUTPUT CONTRACT
+==================================================
+Your ENTIRE response is one raw JSON array of strings.
+The FIRST character you emit is "[". The LAST character you emit is "]".
 
-Given a movie name and a review title, identify the most impactful word or short phrase from the review title.
+Emit no <think> block, no reasoning, no analysis, no explanation, no preamble, no markdown, no code fences, and no text before "[" or after "]".
+Reason silently and internally. Write none of it down.
 
-Choose the word or phrase that best captures what is striking, expressive, memorable, emotional, critical, descriptive, or distinctive about the title.
+==================================================
+SELECTION, NOT EDITING
+==================================================
+You never invent, shorten, or repair a phrase. Every string you emit already exists verbatim in the Review Title, exactly as written.
 
-INPUT
+Punctuation matters only for working out where a candidate's boundaries are allowed to fall. It is never something you strip from a string you have already chosen.
 
-- Movie Name: The name of the film being reviewed.
-- Review Title: The cleaned headline/title of the review article.
+In the title "The Reboot Is Charmless, Loud & Overstuffed!", the string "Charmless" is already present in the title character for character. Choosing it is SELECTION. You are not editing "Charmless," down to "Charmless" — the shorter string was there all along, and it is the one you select.
 
+==================================================
+HOW CANDIDATES ARE FORMED
+==================================================
+Silently:
+1. Read the title as words separated by spaces. Punctuation sitting at the OUTSIDE edge of a word — before its first letter or after its last — is not part of that word when you decide where a candidate starts or ends. So "Charmless," offers the word "Charmless", and "Overstuffed!" offers "Overstuffed".
+   Punctuation INSIDE a word stays part of it: "Juyal's", "half-baked", "sci-fi".
+2. Consider every run of 1, 2, or 3 consecutive words. Each run, taken without any outside-edge punctuation, is a candidate — and each such candidate already appears in the title character for character.
+3. Count the candidate's words by splitting the exact string you intend to emit on spaces.
+4. Discard every candidate that breaks a rule below. Discard means remove from consideration entirely — never fix it, never shorten it, never rewrite it. Select a different candidate that is already valid.
+5. Only AFTER discarding, judge which surviving candidate is strongest.
+
+Because every 1-3 word run is considered directly, the useful short piece of a long phrase is already its own candidate. In "Loses Its Way Entirely", the candidate "Loses Its Way" exists independently — no cutting is required or permitted.
+
+==================================================
+HARD RULES — absolute, never violated
+==================================================
+H1. EXACT SUBSTRING. The candidate must appear in the Review Title character for character.
+H2. MAXIMUM 3 WORDS, counted by spaces on the exact string you emit:
+      1 word = 0 spaces, 2 words = 1 space, 3 words = 2 spaces.
+    EVERY space-separated token counts, including symbols such as "&".
+      "Charmless, Loud & Overstuffed" = 4 words -> violates H2
+      "Loses Its Way Entirely"        = 4 words -> violates H2
+      "Loses Its Way"                 = 3 words -> passes
+      "Loud & Overstuffed"            = 3 words -> passes H2
+
+==================================================
+QUALITY RULES — secondary; they exist to stop you extracting across separate ideas
+==================================================
+These do not follow from the word count. Their purpose is that a highlight should be ONE idea, not a fragment stitched from two.
+
+Q1. NEVER WELD TWO SEPARATE IDEAS INTO ONE CANDIDATE.
+    Marks such as , ; : ! ? . | / — – । and joining symbols such as "&" usually sit where one descriptive element ends and the next begins. Where a mark does that, it is a boundary, and a candidate must lie wholly on one side of it — even when the mark itself never appears in the string you emit. Two words on opposite sides of a boundary are not a phrase, however adjacent they look.
+    In "Charmless, Loud & Overstuffed", the comma and the "&" each separate one quality from another. "Charmless", "Loud" and "Overstuffed" are candidates; "Charmless Loud" and "Loud & Overstuffed" are not.
+    Judge by what the mark is doing, not by which character it is. Where a mark sits inside a single expression rather than between two ideas — "Rock & Roll", "half-baked" — it is not a boundary and the candidate is fine.
+
+Q2. NO LIST CONSTRUCTIONS. When "and" or "or" joins two separate qualities or verdicts, it is a boundary — select the stronger side, not both.
+      "slow, tedious and joyless" -> a list -> select one quality only
+    When "and" or "or" sits inside a fixed expression that reads as a single unit ("cat and mouse thriller", "hit or miss"), it is not a boundary and the candidate is fine.
+
+==================================================
+HOW MANY TERMS — the default is exactly 1
+==================================================
+Return EXACTLY 1 term. This is correct for the large majority of titles.
+
+Return 2 terms ONLY when ALL of these hold:
+  (a) the title states two verdicts that are materially different in direction or subject; AND
+  (b) each side is independently meaningful as a standalone highlight; AND
+  (c) returning only one would misrepresent what the headline actually says.
+
+The mere presence of "but", "yet", "however", or "though" does NOT justify a second term. These words appear constantly in titles carrying one verdict with a concession attached. A concession ("despite a committed cast", "some nice visuals") is not a second verdict — return the verdict alone.
+A title that piles up several similar criticisms is one verdict said three ways. Return 1 term.
+Return 3 terms almost never.
+When unsure, return 1.
+
+Return [] when no candidate carries emotional, critical, or distinctive weight — for instance a purely factual or announcement-style headline. Do not manufacture a highlight from a neutral descriptive word.
+
+==================================================
+CHOOSING AMONG SURVIVING CANDIDATES
+==================================================
+A CANDIDATE MUST CARRY REVIEW SIGNAL. Being descriptive, specific, or unusual is not enough on its own. The candidate must convey praise, criticism, emotion, a strong judgement, vivid characterization, or clearly intentional editorial emphasis. A word that merely describes what the film is — its genre, its cast, its setting, its release — is not a highlight, however distinctive it sounds. If no candidate in the title carries review signal, return [].
+
+NO POSITIONAL BIAS. Do not favour a candidate for appearing first, last, or at the end of the title. Position carries zero weight. Compare on meaning alone.
+
+Choose what most sharply expresses the reviewer's reaction or verdict: a judgement, a strong emotion, a vivid description, or the most quotable stroke in the headline.
+Prefer 2-3 words ONLY when together they mean more than apart ("Surprisingly Brilliant", "Loses Its Way"). Otherwise prefer 1 word.
+SELF-CONTAINED: the candidate must keep its force read alone. Reject bare nouns that lose their point without context.
+NEVER SELECT movie, actor, director, or publication names; or generic words such as Review, Movie, Film, Story — unless fused into a critical phrase ("Terrible Film").
+NO OUTSIDE KNOWLEDGE: judge only the Review Title. Do not infer sentiment from the movie name or guess what the review says.
+PRESERVE IRONY: extract sarcastic wording as written. In "Another 'Masterpiece' Nobody Asked For", keep "Masterpiece". Never substitute an inferred word such as "Bad".
+
+==================================================
 LANGUAGE AND SCRIPT
+==================================================
+Titles may be English, Hindi (Devanagari), Hinglish, or mixed. Apply the identical procedure in every language. Hindi and Hinglish candidates are fully eligible and never second choice.
+Copy exactly: never translate, never transliterate, never correct spelling, never change capitalization, numbers, or diacritics.
 
-Review Titles may be written in English, Hindi (Devanagari), Hinglish, or a mixture of languages and scripts.
+==================================================
+WORKED FAILURES — never repeat these
+==================================================
+Review Title: The Reboot Is Charmless, Loud & Overstuffed!
+NEVER: ["Charmless, Loud & Overstuffed"]   4 words (H2), and welds three separate qualities (Q1)
+CORRECT: ["Charmless"]
 
-Apply the same extraction approach regardless of language or script.
+Review Title: The Newcomer Is Electrifying But The Second Half Loses Its Way Entirely
+NEVER: ["Electrifying", "Loses Its Way Entirely"]   second term is 4 words (H2)
+CORRECT: ["Electrifying", "Loses Its Way"]
+Two terms are justified here only because the general 2-term test is met: the title carries two verdicts that differ in direction and in what they are about, each stands alone as a highlight, and dropping either would misrepresent the headline. Apply that test every time — nothing about this particular pairing makes it a special case.
 
-Hindi and Hinglish words and phrases are fully eligible for extraction.
+Review Title: There are some nice visuals, but the film is a crushing bore
+NEVER: ["nice visuals", "crushing bore"]   "but" is present, yet the first half is a concession, not a second verdict
+CORRECT: ["crushing bore"]
 
-Do not require extracted terms to be in English.
+Review Title: A slow, tedious and joyless slog
+NEVER: ["slow, tedious and joyless"]      list construction (Q1, Q2)
+CORRECT: ["joyless slog"]
 
-If a meaningful term appears in Hindi or another script, extract it exactly as written. Never translate it.
-
-EXTRACTION RULES
-
-1. EXACT EXTRACTION
-- Every extracted keyword or phrase MUST be an exact contiguous substring of the Review Title.
-- Copy it exactly as it appears.
-- Do not paraphrase.
-- Do not translate.
-- Do not correct spelling.
-- Do not change capitalization.
-- Do not change punctuation.
-- Do not change numbers.
-- Do not alter word forms.
-- Do not combine words from different parts of the title.
-- Preserve the original language and script.
-
-2. NUMBER OF TERMS
-- STRICTLY PREFER returning ONLY 1 term. 
-- If 1 word or 1 short phrase captures the core emotion or verdict, DO NOT find another. Return only 1.
-- CRITICAL EXCEPTION: If the title explicitly contrasts two ideas (e.g., uses "but", "yet", "however"), you MUST extract both sides to avoid misrepresenting the overall verdict.
-- Only select 2 or 3 terms if the title contains completely distinct, non-redundant, or contrasting sentiments (e.g., a mix of praise and criticism).
-- Never select more than 3.
-- If the title contains absolutely no meaningful emotional, critical, or distinctive terms (e.g., a purely factual title like "Movie Review"), you MUST return an empty array: []
-
-3. LENGTH
-- Each extracted term may contain a STRICT MAXIMUM of 3 words.
-- A term must consist of consecutive words appearing together in the Review Title.
-- CRITICAL TRUNCATION RULE: If the most impactful phrase is a longer idiom or clause (e.g., "Runs out of steam" or "need their own rescue mission"), you MUST NOT extract the whole phrase. Instead, extract ONLY the most punchy 1, 2, or 3 consecutive words from it (e.g., "Out of steam" or "rescue mission"). Any output over 3 words will cause a system failure.
-
-
-4. WHAT MAKES A TERM IMPACTFUL
-Use your judgment. A strong term may express or strongly suggest:
-- Emotion
-- Praise
-- Criticism
-- A positive or negative reaction
-- A verdict
-- Strong emphasis
-- A distinctive description
-- A memorable idea
-- A striking characterization
-- A particularly important phrase in the headline
-
-Self-Contained Meaning: Ensure the extracted phrase retains its critical meaning when standing alone. Avoid orphaned nouns that lose their critical context without surrounding words.
-
-There is no fixed list of words that qualifies. A term does not need to belong to a predefined sentiment category. If it is one of the most striking or meaningful parts of the title, it may be selected.
-
-5. PHRASES
-Prefer a short phrase when the combination is more impactful or meaningful than its individual words.
-For example, if the title contains "Surprisingly Brilliant", prefer:
-["Surprisingly Brilliant"]
-rather than unnecessarily splitting it into individual words.
-
-6. MIXED, BIVALENT AND AMBIVALENT TITLES
-Do not force a single positive or negative interpretation.
-If a title contains contrasting or conflicting ideas, select the terms that best represent the different sides.
-"Beautiful but Brutally Flawed" -> ["Beautiful","Brutally Flawed"]
-"Almost Great, But Never Quite There" -> ["Almost Great","Never Quite There"]
-
-7. IRONY AND SARCASM
-Do not reinterpret or reverse ironic or sarcastic wording. Extract the impactful wording exactly as written.
-"Another 'Masterpiece' Nobody Asked For" -> ["Masterpiece","Nobody Asked For"]
-Do not replace "Masterpiece" with an inferred word such as "Bad".
-
-8. NEUTRAL OR DESCRIPTIVE TITLES
-Do not force a positive or negative sentiment.
-If a title is neutral or primarily descriptive, select the words or phrases that are most distinctive or impactful within that title.
-The task is to identify the title's strongest highlights, not to classify the movie.
-
-9. AVOID GENERIC OR LOW-VALUE WORDS
-Do not select words that merely identify the movie, actors, directors, or publications.
-Do not extract generic terms like "Review", "Movie", "Film", or "Director" unless they are part of a highly critical phrase (e.g., "Terrible Film").
-
-10. DO NOT USE OUTSIDE KNOWLEDGE
-Judge only the Review Title.
-- Do not use outside knowledge about the movie.
-- Do not infer what the full review says.
-- Do not infer sentiment from the Movie Name.
-- Do not assume the movie is good or bad.
-- Do not create words that are not present in the title.
-The Movie Name is provided only as context to identify the film.
-
-11. SELECTION JUDGMENT
-When several possible terms are available, choose the 1 that is most impactful and useful for understanding the character of the review title.
-Do not mechanically select the first qualifying words.
-Do not force a particular sentiment.
-Use your judgment to select the strongest available term.
-
-OUTPUT FORMAT
-
-Return ONLY one valid JSON array of strings.
-
-The output MUST:
-- Be a flat JSON array.
-- Contain 0 to 3 strings (with a heavy preference for 1).
-- Contain no invented text.
-- Contain only exact contiguous substrings from the Review Title.
-- Contain no string longer than 3 words.
-- Contain no markdown.
-- Contain no explanation.
-- Contain no additional fields.
-- Start immediately with "[" and end with "]".
-
+==================================================
 EXAMPLES
-
+==================================================
 Movie Name: Example Movie
 Review Title: A Brilliant, Deeply Moving Masterpiece
+Output: ["Masterpiece"]
+
+Movie Name: Example Movie
+Review Title: Two hours of relentless noise dressed up as satire
+Output: ["relentless noise"]
+
+Movie Name: Example Movie
+Review Title: Another 'Masterpiece' Nobody Asked For
 Output: ["Masterpiece"]
 
 Movie Name: Cinema Express
@@ -136,8 +134,8 @@ Review Title: Too wacky for its own good
 Output: ["Too wacky"]
 
 Movie Name: Example Movie
-Review Title: Beautiful but Brutally Flawed
-Output: ["Beautiful", "Brutally Flawed"]
+Review Title: Unwatchable, despite a committed cast
+Output: ["Unwatchable"]
 
 Movie Name: Bhai Tera Star Hai
 Review Title: राघव जुयाल की कॉमेडी ने दिया सिरदर्द, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा
@@ -153,31 +151,19 @@ Output: ["unfunny"]
 
 Movie Name: Example Movie
 Review Title: Rajkummar Rao Stars in a New Political Thriller
-Output: ["New"]
-
-Movie Name: Example Movie
-Review Title: Movie Review by The Times
 Output: []
 
-FINAL CHECK
-Before responding, silently verify:
-- Every selected term appears exactly in the Review Title.
-- Every selected term is contiguous.
-- Every selected term is 3 words or fewer.
-- No term has been translated, corrected, paraphrased, or invented.
-- The selected term is the most impactful available part of the title.
-- Have I stopped at 1 term if it captures the core meaning?
-- Does the extracted term retain its meaning when standing alone?
-- Have I extracted both sides if the title explicitly contrasts ideas (e.g., "but", "yet")?
-- The language and script have been preserved.
-- The output contains only 0, 1, 2, or 3 terms.
-- The response is ONLY the JSON array.
+==================================================
+FINAL GATE — verify silently, then emit
+==================================================
+1. Does every string have 2 spaces or fewer, and appear in the title character for character?
+2. Does any string weld two separate ideas together across a boundary? If so, discard it entirely and select a different candidate that is already valid.
+3. Did I select an existing span rather than editing a longer phrase?
+4. Did I return exactly 1 term, unless two genuinely independent verdicts required 2?
+5. Is my response only the JSON array?
 
-Output nothing except the JSON array.
-
----
+==================================================
 EXECUTION
-
+==================================================
 Movie Name: {movie_name}
 Review Title: {clean_title}
-Output:
