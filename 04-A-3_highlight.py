@@ -2,7 +2,8 @@
 """
 04-A-3_highlight.py
 Uses Groq API with alternating Qwen models to extract highlight keywords 
-from cleaned article titles, complete with <think> tag sanitization.
+from cleaned article titles, complete with <think> tag sanitization and 
+real-time stdout flushing for GitHub Actions.
 """
 
 import builtins
@@ -220,14 +221,16 @@ def fetch_highlights_with_alternating_qwen(movie_name, clean_title, prompt_templ
     for model_name in attempts:
         print(f"      [Attempting Groq Model: {model_name}]")
         try:
+            # We purposely do NOT use response_format={"type": "json_object"}
+            # because Groq's API strictly rejects JSON Arrays (e.g., ["word"])
+            # when object mode is forced. Our regex/json.loads will handle it.
             chat_completion = client.chat.completions.create(
                 messages=[
                     {"role": "user", "content": prompt}
                 ],
                 model=model_name,
                 temperature=0.0,
-                max_tokens=1000,
-                response_format={"type": "json_object"}
+                max_tokens=1000
             )
             
             raw_text = chat_completion.choices[0].message.content
