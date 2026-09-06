@@ -47,8 +47,10 @@ EXTRACTION RULES
 - If the title contains absolutely no meaningful emotional, critical, or distinctive terms (e.g., a purely factual title like "Movie Review"), you MUST return an empty array: []
 
 3. LENGTH
-- Each extracted term may contain a maximum of 3 words.
+- Each extracted term may contain a STRICT MAXIMUM of 3 words.
 - A term must consist of consecutive words appearing together in the Review Title.
+- CRITICAL TRUNCATION RULE: If the most impactful phrase is a longer idiom or clause (e.g., "Runs out of steam" or "need their own rescue mission"), you MUST NOT extract the whole phrase. Instead, extract ONLY the most punchy 1, 2, or 3 consecutive words from it (e.g., "Out of steam" or "rescue mission"). Any output over 3 words will cause a system failure.
+
 
 4. WHAT MAKES A TERM IMPACTFUL
 Use your judgment. A strong term may express or strongly suggest:
