@@ -684,5 +684,24 @@
                 "reason": "Validation failed or API error"
             }
         }
+    },
+    "2026-09-06T13:08:50.412444+00:00": {
+        "earlier_completed": 18,
+        "earlier_pending": 2,
+        "processed": 2,
+        "success": 0,
+        "failure": 2,
+        "new_completed": 18,
+        "new_pending": 2,
+        "publisher_details": {
+            "koimoi": {
+                "status": "FAILED",
+                "reason": "Validation failed or API error"
+            },
+            "news18-showsha": {
+                "status": "FAILED",
+                "reason": "Validation failed or API error"
+            }
+        }
     }
 }
