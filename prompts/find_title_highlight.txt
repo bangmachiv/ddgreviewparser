@@ -26,6 +26,7 @@ If a meaningful term appears in Hindi or another script, extract it exactly as w
 EXTRACTION RULES
 
 1. EXACT EXTRACTION
+
 - Every extracted keyword or phrase MUST be an exact contiguous substring of the Review Title.
 - Copy it exactly as it appears.
 - Do not paraphrase.
@@ -39,21 +40,70 @@ EXTRACTION RULES
 - Preserve the original language and script.
 
 2. NUMBER OF TERMS
-- STRICTLY PREFER returning ONLY 1 term. 
-- If 1 word or 1 short phrase captures the core emotion or verdict, DO NOT find another. Return only 1.
-- CRITICAL EXCEPTION: If the title explicitly contrasts two ideas (e.g., uses "but", "yet", "however"), you MUST extract both sides to avoid misrepresenting the overall verdict.
-- Only select 2 or 3 terms if the title contains completely distinct, non-redundant, or contrasting sentiments (e.g., a mix of praise and criticism).
-- Never select more than 3.
-- If the title contains absolutely no meaningful emotional, critical, or distinctive terms (e.g., a purely factual title like "Movie Review"), you MUST return an empty array: []
 
-3. LENGTH
-- Each extracted term may contain a STRICT MAXIMUM of 3 words.
-- A term must consist of consecutive words appearing together in the Review Title.
-- CRITICAL TRUNCATION RULE: If the most impactful phrase is a longer idiom or clause (e.g., "Runs out of steam" or "need their own rescue mission"), you MUST NOT extract the whole phrase. Instead, extract ONLY the most punchy 1, 2, or 3 consecutive words from it (e.g., "Out of steam" or "rescue mission"). Any output over 3 words will cause a system failure.
+- The default output MUST contain EXACTLY 1 string.
+- If 1 word or 1 short phrase captures the core emotion, verdict, or strongest distinctive idea, STOP and return only 1 term.
+- Do NOT return additional terms merely because other words or phrases are also impactful.
+- CRITICAL EXCEPTION: If the title explicitly contrasts two ideas (e.g., uses "but", "yet", "however"), you MUST extract both sides when returning only one side would materially misrepresent the title's meaning.
+- Only select 2 or 3 terms when they represent completely distinct, non-redundant, or contrasting sentiments or ideas.
+- Never select more than 3 terms.
+- Never return multiple candidate answers or alternatives.
+- If the title contains absolutely no meaningful emotional, critical, or distinctive terms (e.g., a purely factual title like "Movie Review"), return an empty array: [].
 
+3. WORD COUNT AND TERM LENGTH
+
+Each extracted term may contain a STRICT MAXIMUM of 3 words.
+
+WORD COUNT DEFINITION:
+
+For this task, a "word" means any sequence of characters separated from another word by a space character.
+
+Examples:
+
+- "Brilliant" = 1 word
+- "Very Brilliant" = 2 words
+- "Very Very Brilliant" = 3 words
+- "Fast & Furious" = 3 words ("Fast", "&", "Furious")
+- "Beauty & the Beast" = 4 words ("Beauty", "&", "the", "Beast")
+- "well-made" = 1 word
+- "very-well-made" = 1 word
+
+Therefore:
+
+- 1 word contains 0 spaces between words.
+- 2 words contain 1 space between words.
+- 3 words contain 2 spaces between words.
+
+Each extracted string must contain no more than 3 words according to this definition.
+
+A term must consist of consecutive words appearing together in the Review Title.
+
+A term containing "&" MUST count "&" as a word when it is separated by spaces.
+
+For example:
+
+- "Fast & Furious" = 3 words and is valid.
+- "Beauty & the Beast" = 4 words and is invalid.
+
+Do not split a word because of punctuation, hyphens, apostrophes, or other characters when there is no space separating them.
+
+CRITICAL TRUNCATION RULE:
+
+If the most impactful phrase is a longer idiom or clause (e.g., "Runs out of steam" or "need their own rescue mission"), you MUST NOT extract the whole phrase.
+
+Instead, extract ONLY the most punchy 1, 2, or 3 consecutive words from it.
+
+Examples:
+
+- "Runs out of steam" → "Out of steam"
+- "need their own rescue mission" → "rescue mission"
+
+Any individual extracted term containing more than 3 words is invalid.
 
 4. WHAT MAKES A TERM IMPACTFUL
+
 Use your judgment. A strong term may express or strongly suggest:
+
 - Emotion
 - Praise
 - Criticism
@@ -70,56 +120,89 @@ Self-Contained Meaning: Ensure the extracted phrase retains its critical meaning
 There is no fixed list of words that qualifies. A term does not need to belong to a predefined sentiment category. If it is one of the most striking or meaningful parts of the title, it may be selected.
 
 5. PHRASES
+
 Prefer a short phrase when the combination is more impactful or meaningful than its individual words.
+
 For example, if the title contains "Surprisingly Brilliant", prefer:
+
 ["Surprisingly Brilliant"]
+
 rather than unnecessarily splitting it into individual words.
 
 6. MIXED, BIVALENT AND AMBIVALENT TITLES
+
 Do not force a single positive or negative interpretation.
+
 If a title contains contrasting or conflicting ideas, select the terms that best represent the different sides.
-"Beautiful but Brutally Flawed" -> ["Beautiful","Brutally Flawed"]
-"Almost Great, But Never Quite There" -> ["Almost Great","Never Quite There"]
+
+"Beautiful but Brutally Flawed" -> ["Beautiful", "Brutally Flawed"]
+
+"Almost Great, But Never Quite There" -> ["Almost Great", "Never Quite There"]
+
+Do not return multiple terms simply because multiple words are descriptive. Multiple terms are justified only when the distinct or contrasting ideas are important enough that one term would materially misrepresent the title.
 
 7. IRONY AND SARCASM
-Do not reinterpret or reverse ironic or sarcastic wording. Extract the impactful wording exactly as written.
-"Another 'Masterpiece' Nobody Asked For" -> ["Masterpiece","Nobody Asked For"]
+
+Do not reinterpret or reverse ironic or sarcastic wording.
+
+Extract the impactful wording exactly as written.
+
+"Another 'Masterpiece' Nobody Asked For" -> ["Masterpiece", "Nobody Asked For"]
+
 Do not replace "Masterpiece" with an inferred word such as "Bad".
 
 8. NEUTRAL OR DESCRIPTIVE TITLES
+
 Do not force a positive or negative sentiment.
+
 If a title is neutral or primarily descriptive, select the words or phrases that are most distinctive or impactful within that title.
+
 The task is to identify the title's strongest highlights, not to classify the movie.
 
 9. AVOID GENERIC OR LOW-VALUE WORDS
+
 Do not select words that merely identify the movie, actors, directors, or publications.
+
 Do not extract generic terms like "Review", "Movie", "Film", or "Director" unless they are part of a highly critical phrase (e.g., "Terrible Film").
 
 10. DO NOT USE OUTSIDE KNOWLEDGE
+
 Judge only the Review Title.
+
 - Do not use outside knowledge about the movie.
 - Do not infer what the full review says.
 - Do not infer sentiment from the Movie Name.
 - Do not assume the movie is good or bad.
 - Do not create words that are not present in the title.
+
 The Movie Name is provided only as context to identify the film.
 
 11. SELECTION JUDGMENT
+
 When several possible terms are available, choose the 1 that is most impactful and useful for understanding the character of the review title.
+
 Do not mechanically select the first qualifying words.
+
 Do not force a particular sentiment.
+
 Use your judgment to select the strongest available term.
+
+If one term adequately captures the strongest meaningful part of the title, return exactly one term.
 
 OUTPUT FORMAT
 
 Return ONLY one valid JSON array of strings.
 
 The output MUST:
+
 - Be a flat JSON array.
-- Contain 0 to 3 strings (with a heavy preference for 1).
+- Contain 0 to 3 strings.
+- Normally contain EXACTLY 1 string.
+- Contain 2 strings ONLY when genuinely distinct, non-redundant, or contrasting ideas require both to accurately represent the title.
+- Contain 3 strings ONLY in the rare case where three genuinely distinct, non-redundant ideas are necessary.
 - Contain no invented text.
 - Contain only exact contiguous substrings from the Review Title.
-- Contain no string longer than 3 words.
+- Contain no individual string longer than 3 words according to the WORD COUNT DEFINITION.
 - Contain no markdown.
 - Contain no explanation.
 - Contain no additional fields.
@@ -160,22 +243,66 @@ Review Title: Movie Review by The Times
 Output: []
 
 FINAL CHECK
-Before responding, silently verify:
-- Every selected term appears exactly in the Review Title.
-- Every selected term is contiguous.
-- Every selected term is 3 words or fewer.
-- No term has been translated, corrected, paraphrased, or invented.
-- The selected term is the most impactful available part of the title.
-- Have I stopped at 1 term if it captures the core meaning?
-- Does the extracted term retain its meaning when standing alone?
-- Have I extracted both sides if the title explicitly contrasts ideas (e.g., "but", "yet")?
-- The language and script have been preserved.
-- The output contains only 0, 1, 2, or 3 terms.
-- The response is ONLY the JSON array.
+
+Before generating the final answer, silently perform ALL of the following checks.
+
+CHECK 1 — ARRAY
+
+The output is a valid flat JSON array containing 0, 1, 2, or 3 strings.
+
+CHECK 2 — NUMBER OF TERMS
+
+- Default: exactly 1 string.
+- If one term adequately captures the strongest meaningful part of the title, return exactly 1.
+- Return 2 or 3 strings only when genuinely distinct, non-redundant, or contrasting ideas require multiple terms.
+- Never return multiple candidates or alternatives.
+
+CHECK 3 — WORD COUNT
+
+For EVERY extracted string:
+
+- Count words according to the WORD COUNT DEFINITION.
+- Each term MUST contain 1, 2, or 3 words.
+- A standalone "&" separated by spaces counts as one word.
+- Do not treat "&" as punctuation that can be ignored.
+- Do not return a term containing more than 3 words.
+
+CHECK 4 — EXACT MATCH
+
+Every selected term MUST appear exactly in the Review Title.
+
+CHECK 5 — CONTIGUITY
+
+Every selected term MUST be one contiguous sequence of words from the Review Title.
+
+CHECK 6 — ORIGINAL TEXT
+
+Do not translate, correct, paraphrase, normalize, or alter the selected text in any way.
+
+CHECK 7 — IMPACTFULNESS
+
+The selected term must be the strongest meaningful and useful highlight available in the title.
+
+CHECK 8 — SELF-CONTAINED MEANING
+
+The selected term should retain its critical or descriptive meaning when standing alone.
+
+CHECK 9 — CONTRAST
+
+If the title explicitly presents genuinely contrasting ideas and one term alone would materially misrepresent the title, extract the necessary opposing terms.
+
+CHECK 10 — FINAL OUTPUT
+
+If any proposed term fails any check, replace it with a valid shorter contiguous term or remove it.
+
+Do not output the answer until all checks pass.
+
+The final response MUST contain ONLY the JSON array.
 
 Output nothing except the JSON array.
 
 ---
+
 EXECUTION
 
 Movie Name: {movie_name}
