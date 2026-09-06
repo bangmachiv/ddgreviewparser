@@ -50,7 +50,7 @@ These do not follow from the word count. Their purpose is that a highlight shoul
 
 Q1. NEVER WELD TWO SEPARATE IDEAS INTO ONE CANDIDATE.
     Marks such as , ; : ! ? . | / — – । and joining symbols such as "&" usually sit where one descriptive element ends and the next begins. Where a mark does that, it is a boundary, and a candidate must lie wholly on one side of it — even when the mark itself never appears in the string you emit. Two words on opposite sides of a boundary are not a phrase, however adjacent they look.
-    In "Charmless, Loud & Overstuffed", the comma and the "&" each separate one quality from another. "Charmless", "Loud" and "Overstuffed" are candidates; "Charmless Loud" and "Loud & Overstuffed" are not.
+    In "Charmless, Loud & Overstuffed", the comma and the "&" each separate one quality from another. "Charmless", "Loud", "Overstuffed", "Charmless Loud", and "Loud & Overstuffed" may initially be generated as 1–3-word spans, but Q1 discards any span that crosses one of these boundaries. Therefore "Charmless", "Loud", and "Overstuffed" survive Q1, while "Charmless Loud" and "Loud & Overstuffed" are discarded.
     Judge by what the mark is doing, not by which character it is. Where a mark sits inside a single expression rather than between two ideas — "Rock & Roll", "half-baked" — it is not a boundary and the candidate is fine.
 
 Q2. NO LIST CONSTRUCTIONS. When "and" or "or" joins two separate qualities or verdicts, it is a boundary — select the stronger side, not both.
