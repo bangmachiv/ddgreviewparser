@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
 04-A-3_highlight.py
-Uses Groq API with Qwen models (prioritizing qwen3.8-27b) with unbounded output 
-token budgets and intelligent retry/timeout buffers for GitHub Actions.
+Uses Groq API with qwen3.8-27b as the strict primary model and qwen3.6-27b as a fallback.
+Implements max_tokens=250 and a 15-second pacing buffer to achieve exactly 4 RPM 
+without violating the 1000 Output Tokens Per Minute (OTPM) limit. Thinking mode remains ON.
 """
 
 import builtins
@@ -32,7 +33,7 @@ REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 
 # ---------------------------------------------------------------------------
-# Groq API Setup & Optimized Model Configuration (3.8-27b as Primary)
+# Groq API Setup
 # ---------------------------------------------------------------------------
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 if not GROQ_API_KEY:
@@ -40,21 +41,6 @@ if not GROQ_API_KEY:
     exit(1)
 
 client = Groq(api_key=GROQ_API_KEY)
-
-QWEN_MODELS = [
-    "qwen/qwen3.8-27b",
-    "qwen/qwen3.6-27b"
-]
-
-current_model_index = 0
-
-def get_next_qwen_pair():
-    """Returns (primary_model, fallback_model) alternating on each invocation."""
-    global current_model_index
-    primary = QWEN_MODELS[current_model_index % len(QWEN_MODELS)]
-    fallback = QWEN_MODELS[(current_model_index + 1) % len(QWEN_MODELS)]
-    current_model_index += 1
-    return primary, fallback
 
 # -----------------------------------------------------------------------------
 # 7-Column Pipeline Metric Tracker
@@ -180,7 +166,7 @@ def process_and_validate_highlight(clean_title, raw_response_text):
     return highlighted_title
 
 # ---------------------------------------------------------------------------
-# Pipeline Execution
+# Pipeline Execution (Strict 3.8 -> 3.6 Architecture)
 # ---------------------------------------------------------------------------
 def get_live_movie_slugs():
     slugs = []
@@ -206,48 +192,76 @@ def get_live_movie_slugs():
                     pass
     return list(set(slugs))
 
-def fetch_highlights_with_alternating_qwen(movie_name, clean_title, prompt_template):
+def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
     prompt = prompt_template.replace("{movie_name}", movie_name).replace("{clean_title}", clean_title)
-    primary_model, fallback_model = get_next_qwen_pair()
-    attempts = [primary_model, fallback_model]
-
-    for model_name in attempts:
-        print(f"      [Attempting Groq Model: {model_name}]")
-        
-        max_retries = 2
-        for attempt in range(max_retries + 1):
-            try:
-                chat_completion = client.chat.completions.create(
-                    messages=[
-                        {"role": "user", "content": prompt}
-                    ],
-                    model=model_name,
-                    temperature=0.0,
-                    max_tokens=8192 
-                )
-                
-                raw_text = chat_completion.choices[0].message.content
-                if raw_text:
-                    raw_text = raw_text.strip()
-                    highlighted = process_and_validate_highlight(clean_title, raw_text)
-                    if highlighted:
-                        return highlighted, model_name
-                    else:
-                        print("      [Validation Failed for this model output, attempting fallback...]")
-                        break
-            except Exception as e:
-                error_msg = str(e)
-                print(f"      [API Error on {model_name}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
-                
-                if "429" in error_msg or "rate_limit" in error_msg.lower() or "timeout" in error_msg.lower():
-                    wait_time = (attempt + 1) * 10
-                    print(f"      [Rate Limit / Timeout Hit] Buffering and waiting {wait_time}s before retry...")
-                    time.sleep(wait_time)
+    
+    primary_model = "qwen/qwen3.8-27b"
+    fallback_model = "qwen/qwen3.6-27b"
+    max_retries = 2 # Total of 3 attempts
+    
+    # --- STEP 1: Exhaust the Primary Model (3.8) ---
+    print(f"      [Attempting Primary Model: {primary_model}]")
+    for attempt in range(max_retries + 1):
+        try:
+            chat_completion = client.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model=primary_model,
+                temperature=0.0,
+                max_tokens=250  # 1000 OTPM limit / 4 calls per min = 250 safe ceiling
+            )
+            
+            raw_text = chat_completion.choices[0].message.content
+            if raw_text:
+                raw_text = raw_text.strip()
+                highlighted = process_and_validate_highlight(clean_title, raw_text)
+                if highlighted:
+                    return highlighted, primary_model
                 else:
-                    break 
+                    print("      [Validation Failed for Primary output. Aborting retries for this model.]")
+                    break
+        except Exception as e:
+            error_msg = str(e)
+            print(f"      [API Error on {primary_model}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
+            
+            if "429" in error_msg or "rate_limit" in error_msg.lower() or "timeout" in error_msg.lower():
+                if attempt < max_retries:
+                    wait_time = (attempt + 1) * 10
+                    print(f"      [Rate Limit Hit] Buffering and waiting {wait_time}s before retry...")
+                    time.sleep(wait_time)
+            else:
+                break # Break on hard API errors that aren't rate limits
 
-        print("      [Waiting 3s before switching to next model...]")
-        time.sleep(3)
+    # --- STEP 2: Ultimate Fallback (3.6) ---
+    print(f"      [Primary Exhausted] Switching to Backup Model: {fallback_model}...")
+    for attempt in range(max_retries + 1):
+        try:
+            chat_completion = client.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model=fallback_model,
+                temperature=0.0,
+                max_tokens=250
+            )
+            
+            raw_text = chat_completion.choices[0].message.content
+            if raw_text:
+                raw_text = raw_text.strip()
+                highlighted = process_and_validate_highlight(clean_title, raw_text)
+                if highlighted:
+                    return highlighted, fallback_model
+                else:
+                    print("      [Validation Failed for Backup output.]")
+                    break
+        except Exception as e:
+            error_msg = str(e)
+            print(f"      [API Error on {fallback_model}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
+            
+            if "429" in error_msg or "rate_limit" in error_msg.lower() or "timeout" in error_msg.lower():
+                if attempt < max_retries:
+                    wait_time = (attempt + 1) * 10
+                    print(f"      [Rate Limit Hit] Buffering and waiting {wait_time}s before retry...")
+                    time.sleep(wait_time)
+            else:
+                break
 
     return None, None
 
@@ -309,7 +323,9 @@ def process_movie_file(json_path, prompt_template):
         print(f"      Clean Title: {clean_title}")
 
         movie_log_entry["processed"] += 1
-        highlighted_title, used_model = fetch_highlights_with_alternating_qwen(movie_name, clean_title, prompt_template)
+        
+        # Execute the strict routing API request
+        highlighted_title, used_model = fetch_highlight_for_review(movie_name, clean_title, prompt_template)
 
         if highlighted_title:
             pub["highlighted_title"] = highlighted_title
@@ -331,14 +347,15 @@ def process_movie_file(json_path, prompt_template):
                 "reason": "Validation failed or API error"
             }
 
-        print("      [Waiting 8 seconds before next API call...]")
-        time.sleep(8)
-
         try:
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
         except Exception as e:
             print(f"[ERROR] Could not save updated review file: {e}")
+
+        # The mathematical pacing buffer to enforce 4 RPM
+        print("      [Pacing Buffer] Waiting 15 seconds to ensure 4 requests/min cadence...")
+        time.sleep(15)
 
     movie_log_entry["new_completed"] = earlier_completed + movie_log_entry["success"]
     movie_log_entry["new_pending"] = earlier_pending - movie_log_entry["success"]
