@@ -1,4 +1,4 @@
-name: 04. Extract Article Titles
+name: 04-A-1. Extract Article Titles
 
 on:
   workflow_dispatch:
@@ -21,6 +21,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install beautifulsoup4
+
       - name: Run title extraction script
         run: |
           python 04-A-1_titles.py
@@ -38,5 +43,5 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Pipeline [04]: Extract and update article titles"
+          git commit -m "Pipeline [04-A-1]: Extract and update article titles"
           git push
