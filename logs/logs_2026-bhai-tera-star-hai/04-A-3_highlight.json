@@ -89,5 +89,24 @@
                 "highlighted_title": "*A nightmare* of a comedy that drags on"
             }
         }
+    },
+    "2026-09-06T07:11:32.049432+00:00": {
+        "earlier_completed": 18,
+        "earlier_pending": 2,
+        "processed": 2,
+        "success": 2,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {
+            "moneycontrol": {
+                "status": "SUCCESS",
+                "highlighted_title": "Raghav Juyal leads a comedy where the jokes need their own *rescue mission*"
+            },
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "highlighted_title": "Raghav Juyal Is *On Fire* But This Slapstick Comedy Runs *Out of Steam* Too Soon"
+            }
+        }
     }
 }
