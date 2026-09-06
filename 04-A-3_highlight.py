@@ -239,7 +239,7 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
                 messages=[{"role": "user", "content": prompt}],
                 model=fallback_model,
                 temperature=0.0,
-                max_tokens=250
+                max_tokens=1000
             )
             
             raw_text = chat_completion.choices[0].message.content
