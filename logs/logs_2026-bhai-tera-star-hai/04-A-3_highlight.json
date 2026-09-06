@@ -724,5 +724,115 @@
                 "highlighted_title": "Raghav Juyal Is *On Fire* But This Slapstick Comedy Runs Out of Steam Too Soon"
             }
         }
+    },
+    "2026-09-06T16:14:31.326244+00:00": {
+        "earlier_completed": 0,
+        "earlier_pending": 20,
+        "processed": 20,
+        "success": 19,
+        "failure": 1,
+        "new_completed": 19,
+        "new_pending": 1,
+        "publisher_details": {
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "राघव जुयाल की कॉमेडी ने दिया *सिरदर्द*, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा"
+            },
+            "bollywood-hungama": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "BHAI TERA STAR HAI is a chaotic and *unfunny* comedy"
+            },
+            "cinema-express": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "*Too wacky* for its own good"
+            },
+            "dainik-bhaskar": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "Raghav Juyal Solo Lead *Fails To Impress*"
+            },
+            "dainik-jagran": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "कॉमेडी के नाम पर *फूहड़ता*, बेकार कहानी... राघव जुयाल से नहीं थी ऐसी उम्मीद!"
+            },
+            "filmfare": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "A *Bumbling* Comedy of Errors"
+            },
+            "free-press-journal": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into *Superstar-Doom*?"
+            },
+            "hindustan-times": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... '*Why?*'"
+            },
+            "india-today": {
+                "status": "FAILED",
+                "reason": "Validation failed or API error"
+            },
+            "koimoi": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "Raghav Juyal's Film Is *Unfunny*, Aimless & Pointless!"
+            },
+            "mid-day": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "Raghav Juyal’s comic timing *can’t save* this film"
+            },
+            "moneycontrol": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "Raghav Juyal leads a comedy where the jokes need their own *rescue mission*"
+            },
+            "movie-talkies": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "A *painful blow* to filmmaking standards"
+            },
+            "ndtv": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "Raghav Juyal Shines, But The Comedy *Falls Flat*"
+            },
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "Raghav Juyal Is *On Fire* But This Slapstick Comedy Runs Out of Steam Too Soon"
+            },
+            "rediff": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "Raghav Juyal's Film Is *Absurd*"
+            },
+            "scroll-in": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "*Pointless comedy* strains patience levels"
+            },
+            "the-federal": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "Bhai Tera Star Hai review: Raghav Juyal's comedy promises a lot, *delivers little*"
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "Raghav Juyal film is a comedy with *scant laughs*"
+            },
+            "the-times-of-india": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.8-27b",
+                "highlighted_title": "A *nightmare* of a comedy that drags on"
+            }
+        }
     }
 }
