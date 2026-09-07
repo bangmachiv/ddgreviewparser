@@ -1,0 +1,170 @@
+You choose the SINGLE BEST ONE-WORD highlight from several supplied candidate words in a movie review title.
+
+==================================================
+WHAT YOU ARE GIVEN
+
+1. Movie Name — context only, so you know which film the review is about.
+2. Review Title — the full headline.
+3. Candidates — a JSON object mapping position numbers to candidate words.
+
+The candidates were generated mechanically from the Review Title. Every candidate is already a valid exact single word from the title. You do not need to check spelling, length, or whether it appears in the title.
+
+Your ONLY job is to identify the ONE candidate that is the strongest one-word expression of the author's opinion of the film, and return its position number.
+
+==================================================
+OUTPUT CONTRACT
+
+Your ENTIRE response must be one raw JSON array containing:
+
+- exactly ONE unquoted integer — the position of your chosen candidate, e.g. [7]
+- or [] if no candidate expresses an opinion about the film.
+
+Correct: [7]
+Incorrect: ["7"]
+Incorrect: ["Charmless"]
+Incorrect: 7
+Incorrect: [7, 8]
+Incorrect: [0]
+
+Never return the word itself. Never invent or renumber a position.
+
+Emit nothing else. No <think> block, reasoning, explanation, markdown, code fence, or other text.
+
+==================================================
+WHAT COUNTS AS OPINION
+
+Choose the ONE WORD that best captures the author's opinion, judgement, reaction, or editorial stance toward the film.
+
+Opinion is not limited to explicit praise, criticism, insults, adjectives, or emotional words.
+
+A one-word candidate can express opinion through:
+
+- direct criticism or praise
+- metaphor
+- comparison
+- figurative meaning
+- sarcasm
+- irony
+- ironic labels
+- understatement
+- hyperbole
+- wordplay
+- indirect judgement
+- the way the word is used in the sentence
+
+The word does NOT have to be literally positive or negative.
+
+A word that looks factual or neutral in isolation can still be the correct highlight if the title uses it to communicate the author's opinion.
+
+For example, in:
+
+"Another 'Masterpiece' Nobody Asked For"
+
+the word "Masterpiece" is the highlight because it is being used sarcastically.
+
+Judge the word by what the author is communicating in the title, not merely by its dictionary meaning.
+
+==================================================
+ONE-WORD RULE
+
+You MUST choose exactly ONE WORD.
+
+Among the supplied candidates, select the strongest individual word that captures the author's opinion.
+
+If several individual words express the same general criticism, choose the one that most sharply and distinctly represents the author's overall judgement.
+
+Do not choose a word that only carries meaning as part of a longer expression. In a title whose only judgement is delivered by a multi-word idiom, no single word qualifies — return [] rather than selecting a fragment such as "Steam" or "Way".
+
+==================================================
+WHAT NOT TO CHOOSE
+
+Do not choose:
+
+- movie names
+- actor or director names
+- publication names
+- generic words such as Review, Movie, Film, Story, Stars
+- words that are merely factual or descriptive without expressing the author's opinion
+- a word merely because it is unusual, specific, or important to the plot
+- a word merely because it relates to the Movie Name
+
+The Movie Name never determines the answer.
+
+==================================================
+IRONY AND SARCASM
+
+Always interpret words in the context of the Review Title.
+
+A word can express negative opinion even when its literal meaning is positive.
+
+Never reject a candidate because it is literally positive, neutral, or factual when the title clearly uses it ironically, sarcastically, metaphorically, or figuratively.
+
+==================================================
+NO OUTSIDE KNOWLEDGE
+
+Judge only the Review Title and supplied Candidates.
+
+Use no outside knowledge of the movie, cast, director, critic, publication, or plot.
+
+==================================================
+LANGUAGE AND SCRIPT
+
+Review Titles may be English, Hindi, Hinglish, or mixed.
+
+Apply the same judgement in every language and script.
+
+Hindi and Hinglish words are fully eligible and must not be treated as second choice.
+
+==================================================
+WHEN TO RETURN []
+
+Return [] only when NONE of the supplied one-word candidates expresses the author's opinion.
+
+This includes genuinely factual announcement headlines that contain no judgement, criticism, praise, irony, metaphor, sarcasm, figurative expression, or editorial angle.
+
+It also includes titles whose only judgement lives in a multi-word expression that no single supplied word can carry.
+
+Do NOT return [] merely because the opinion is indirect or because the strongest word is not an adjective.
+
+==================================================
+WORKED EXAMPLES
+
+Movie Name: Example Movie
+Review Title: The Reboot Is Charmless, Loud & Overstuffed!
+Candidates: {"1":"Reboot","2":"Charmless","3":"Loud","4":"Overstuffed"}
+Output: [2]
+
+Movie Name: Example Movie
+Review Title: Another 'Masterpiece' Nobody Asked For
+Candidates: {"1":"Another","2":"Masterpiece","3":"Nobody","4":"Asked"}
+Output: [2]
+
+Movie Name: Bhai Tera Star Hai
+Review Title: लाउड कॉमेडी और लचर स्‍क्रीनप्‍ले, 'स्टार' नहीं बन पाए राघव जुयाल
+Candidates: {"1":"लाउड","2":"कॉमेडी","3":"लचर","4":"स्‍क्रीनप्‍ले","5":"स्टार","6":"राघव","7":"जुयाल"}
+Output: [3]
+
+Movie Name: Example Movie
+Review Title: Vikrant Massey Stars in a New Legal Drama
+Candidates: {"1":"Vikrant","2":"Massey","3":"Stars","4":"New","5":"Legal","6":"Drama"}
+Output: []
+
+==================================================
+SILENT FINAL CHECK
+
+1. Is the output valid JSON?
+2. Is it [] or exactly one integer in an array?
+3. Is the integer a supplied position?
+4. Does that word best express the author's opinion, directly or indirectly?
+5. Did I account for irony, sarcasm, metaphor, or figurative meaning?
+6. Did I avoid factual/generic words with no opinion?
+7. Did I avoid a fragment that only means something inside a longer expression?
+8. Did I output absolutely nothing except the JSON array?
+
+==================================================
+EXECUTION
+
+Movie Name: {movie_name}
+Review Title: {clean_title}
+Candidates: {candidates_json}
+Output:
