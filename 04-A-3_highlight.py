@@ -3,6 +3,10 @@
 04-A-3_highlight.py
 Uses Groq API with qwen3.8-27b as the strict primary model and qwen3.6-27b as a fallback.
 Thinking mode remains ON for 3.8, but is explicitly turned OFF for 3.6.
+
+Cascading Reduction Logic:
+If 3.8 fails because it extracted a phrase >3 words, that rejected phrase is passed 
+to 3.6 as the new "Review Title", forcing 3.6 to extract a shorter subset from it.
 """
 
 import builtins
@@ -103,14 +107,14 @@ def extract_keywords_from_payload(parsed_json):
 
 def process_and_validate_highlight(clean_title, raw_response_text):
     """
-    Validates Qwen's response and injects asterisks around the first occurrence
-    of valid emotion keywords.
+    Validates Qwen's response. 
+    RETURNS TUPLE: (highlighted_title, rejected_long_phrase)
     """
     print(f"      [DEBUG RAW TEXT FROM MODEL]: {repr(raw_response_text)}")
 
     if not raw_response_text or not raw_response_text.strip():
         print("      [FAIL] Model returned empty response.")
-        return None
+        return None, None
 
     try:
         raw_json = strip_reasoning_and_markdown(raw_response_text)
@@ -118,19 +122,19 @@ def process_and_validate_highlight(clean_title, raw_response_text):
         keywords = extract_keywords_from_payload(parsed)
     except Exception as e:
         print(f"      [FAIL] Failed to parse JSON: {e}")
-        return None
+        return None, None
 
     if keywords is None or not isinstance(keywords, list):
         print(f"      [FAIL] Could not extract a list from response: {parsed}")
-        return None
+        return None, None
 
     if len(keywords) == 0:
         print("      [FAIL] 0 keywords returned.")
-        return None
+        return None, None
 
     if len(keywords) > 3:
         print(f"      [FAIL] Too many keywords returned ({len(keywords)}). Max is 3.")
-        return None
+        return None, None
 
     clean_title_clean = html.unescape(clean_title)
     clean_title_lower = clean_title_clean.lower()
@@ -141,19 +145,20 @@ def process_and_validate_highlight(clean_title, raw_response_text):
         if not kw_str:
             continue
 
-        if len(kw_str.split()) > 3:
-            print(f"      [FAIL] Phrase '{kw_str}' has more than 3 words.")
-            return None
-
         if kw_str.lower() not in clean_title_lower:
             print(f"      [FAIL] Phrase '{kw_str}' is NOT found in original title.")
-            return None
+            return None, None
+
+        if len(kw_str.split()) > 3:
+            print(f"      [FAIL] Phrase '{kw_str}' has more than 3 words.")
+            # return the rejected phrase so 3.6 can use it!
+            return None, kw_str
 
         valid_keywords.append(kw_str)
 
     if not valid_keywords:
         print("      [FAIL] No valid keywords passed containment check.")
-        return None
+        return None, None
 
     valid_keywords.sort(key=len, reverse=True)
     highlighted_title = clean_title_clean
@@ -162,10 +167,10 @@ def process_and_validate_highlight(clean_title, raw_response_text):
         pattern = re.compile(re.escape(kw), re.IGNORECASE)
         highlighted_title = pattern.sub(f"*{kw}*", highlighted_title, count=1)
 
-    return highlighted_title
+    return highlighted_title, None
 
 # ---------------------------------------------------------------------------
-# Pipeline Execution (Strict 3.8 -> 3.6 Architecture)
+# Pipeline Execution (Cascading Reduction Architecture)
 # ---------------------------------------------------------------------------
 def get_live_movie_slugs():
     slugs = []
@@ -192,30 +197,37 @@ def get_live_movie_slugs():
     return list(set(slugs))
 
 def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
-    prompt = prompt_template.replace("{movie_name}", movie_name).replace("{clean_title}", clean_title)
+    primary_prompt = prompt_template.replace("{movie_name}", movie_name).replace("{clean_title}", clean_title)
 
     primary_model = "qwen/qwen3.8-27b"
     fallback_model = "qwen/qwen3.6-27b"
-    max_retries = 2 # Total of 3 attempts
+    max_retries = 2
+    
+    rejected_long_phrase = None
 
     # --- STEP 1: Exhaust the Primary Model (3.8) ---
     print(f"      [Attempting Primary Model: {primary_model}]")
     for attempt in range(max_retries + 1):
         try:
             chat_completion = client.chat.completions.create(
-                messages=[{"role": "user", "content": prompt}],
+                messages=[{"role": "user", "content": primary_prompt}],
                 model=primary_model,
                 temperature=0.0,
-                max_tokens=250  # 1000 OTPM limit / 4 calls per min = 250 safe ceiling
-                # THINKING REMAINS ON (no reasoning_effort parameter here)
+                max_tokens=250 
             )
 
             raw_text = chat_completion.choices[0].message.content
             if raw_text:
                 raw_text = raw_text.strip()
-                highlighted = process_and_validate_highlight(clean_title, raw_text)
+                # Unpack the new tuple from validation
+                highlighted, rejected_phrase = process_and_validate_highlight(clean_title, raw_text)
+                
                 if highlighted:
                     return highlighted, primary_model
+                elif rejected_phrase:
+                    print(f"      [Primary returned >3 words. Storing '{rejected_phrase}' for 3.6 to reduce.]")
+                    rejected_long_phrase = rejected_phrase
+                    break # Break retries and hand off to 3.6 immediately
                 else:
                     print("      [Validation Failed for Primary output. Aborting retries for this model.]")
                     break
@@ -229,24 +241,38 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
                     print(f"      [Rate Limit Hit] Buffering and waiting {wait_time}s before retry...")
                     time.sleep(wait_time)
             else:
-                break # Break on hard API errors that aren't rate limits
+                break 
 
     # --- STEP 2: Ultimate Fallback (3.6) ---
     print(f"      [Primary Exhausted] Switching to Backup Model: {fallback_model} (Thinking=None)...")
+    
+    # If 3.8 gave us a phrase that was too long, set that as the target for 3.6
+    if rejected_long_phrase:
+        print(f"      [Cascading Target] Forcing 3.6 to extract from: '{rejected_long_phrase}'")
+        target_title = rejected_long_phrase
+    else:
+        target_title = clean_title
+        
+    fallback_prompt = prompt_template.replace("{movie_name}", movie_name).replace("{clean_title}", target_title)
+
     for attempt in range(max_retries + 1):
         try:
             chat_completion = client.chat.completions.create(
-                messages=[{"role": "user", "content": prompt}],
+                messages=[{"role": "user", "content": fallback_prompt}],
                 model=fallback_model,
                 temperature=0.0,
-                max_tokens=1000,
-                reasoning_effort="none"  # <-- THINKING TURNED OFF ONLY FOR 3.6
+                max_tokens=250,
+                reasoning_effort="none"  # <-- THINKING OFF FOR 3.6
             )
 
             raw_text = chat_completion.choices[0].message.content
             if raw_text:
                 raw_text = raw_text.strip()
-                highlighted = process_and_validate_highlight(clean_title, raw_text)
+                
+                # CRITICAL: We validate against the ORIGINAL clean_title, not the shortened target_title,
+                # so the asterisk highlight applies to the full string correctly.
+                highlighted, _ = process_and_validate_highlight(clean_title, raw_text)
+                
                 if highlighted:
                     return highlighted, fallback_model
                 else:
@@ -325,7 +351,7 @@ def process_movie_file(json_path, prompt_template):
 
         movie_log_entry["processed"] += 1
 
-        # Execute the strict routing API request
+        # Execute the cascading API requests
         highlighted_title, used_model = fetch_highlight_for_review(movie_name, clean_title, prompt_template)
 
         if highlighted_title:
@@ -387,19 +413,11 @@ def main():
     print(f"[*] Raw __file__ path : {__file__}")
     print(f"[*] Base Directory    : {BASE_DIR}")
     print(f"[*] Expected Prompt   : {PROMPT_FILE}")
-    print("\n[*] Python's view of files in Prompts Directory:")
-
+    
     try:  
         prompt_dir = os.path.join(BASE_DIR, "prompts")
         if not os.path.exists(prompt_dir):
             print(f"    [ERROR] Prompts directory not found at {prompt_dir}")
-        else:
-            files = os.listdir(prompt_dir)  
-            for f in files:  
-                if "prompt" in f.lower() or "highlight" in f.lower():  
-                    print(f"    ---> SUSPECT FOUND: '{f}'")  
-                else:  
-                    print(f"    - {f}")  
     except Exception as e:  
         print(f"    [ERROR] Could not read directory: {e}")  
     print("================================================================\n")  
