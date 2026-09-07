@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
 04-A-3_highlight.py
-Uses Groq API with qwen3.8-27b as the primary model (extracts 0-3 words, reasoning ON).
-If 3.8 fails, falls back to qwen3.6-27b using a strict, multiple-choice index prompt 
-(find_title_highlight_lite.txt) for exactly 1-word extraction with reasoning OFF.
+3-Tier Cascading Pipeline:
+1. Primary: Qwen 3.8 (Full Prompt, Reasoning ON)
+2. Mid-Fallback: Gemini 1.5 Flash & Flash-8B (Full Prompt)
+3. Ultimate Fallback: Qwen 3.6 (Lite Index Prompt, Reasoning OFF). 
+   *Only triggers if Gemini fails VALIDATION, not if Gemini times out.*
 """
 
 import builtins
@@ -15,6 +17,7 @@ import time
 import html
 from datetime import datetime
 from groq import Groq
+import google.generativeai as genai
 
 # ---------------------------------------------------------------------------
 # Global Print Override for Real-Time CI/CD Streaming
@@ -33,7 +36,7 @@ REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 
 # ---------------------------------------------------------------------------
-# Groq API Setup
+# API Setup
 # ---------------------------------------------------------------------------
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 if not GROQ_API_KEY:
@@ -41,6 +44,12 @@ if not GROQ_API_KEY:
     exit(1)
 
 client = Groq(api_key=GROQ_API_KEY)
+
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    print("[WARNING] GEMINI_API_KEY environment variable not found! Gemini fallbacks will fail.")
+else:
+    genai.configure(api_key=GEMINI_API_KEY)
 
 # -----------------------------------------------------------------------------
 # 7-Column Pipeline Metric Tracker
@@ -89,7 +98,7 @@ def strip_reasoning_and_markdown(text: str) -> str:
     return text.strip()
 
 # ---------------------------------------------------------------------------
-# Primary Validation Logic (For 3.8 string responses)
+# Primary Validation Logic (For 3.8 and Gemini string responses)
 # ---------------------------------------------------------------------------
 def extract_keywords_from_payload(parsed_json):
     if isinstance(parsed_json, list):
@@ -104,11 +113,11 @@ def extract_keywords_from_payload(parsed_json):
     return None
 
 def process_and_validate_primary(clean_title, raw_response_text):
-    """Validates the standard string extraction from the primary model (3.8)."""
-    print(f"      [DEBUG RAW TEXT FROM PRIMARY]: {repr(raw_response_text)}")
+    """Validates the standard string extraction from the primary/mid models."""
+    print(f"      [DEBUG RAW TEXT FROM MODEL]: {repr(raw_response_text)}")
 
     if not raw_response_text or not raw_response_text.strip():
-        print("      [FAIL] Primary model returned empty response.")
+        print("      [FAIL] Model returned empty response.")
         return None
 
     try:
@@ -124,11 +133,11 @@ def process_and_validate_primary(clean_title, raw_response_text):
         return None
 
     if len(keywords) == 0:
-        print("      [FAIL] Primary returned empty array []. No highlight.")
+        print("      [FAIL] Model returned empty array []. No highlight.")
         return None
 
     if len(keywords) > 3:
-        print(f"      [FAIL] Primary returned too many keywords ({len(keywords)}). Max is 3.")
+        print(f"      [FAIL] Model returned too many keywords ({len(keywords)}). Max is 3.")
         return None
 
     clean_title_clean = html.unescape(clean_title)
@@ -172,16 +181,11 @@ def process_and_validate_primary(clean_title, raw_response_text):
 # Fallback Validation Logic (For 3.6 multiple-choice responses)
 # ---------------------------------------------------------------------------
 def generate_fallback_candidates(clean_title):
-    """
-    Splits the title into individual words and strips punctuation to create
-    a dictionary of candidate strings matched to integer index keys.
-    """
     words_raw = clean_title.split()
     candidates = {}
     idx = 1
     
     for w in words_raw:
-        # Strip trailing/leading punctuation to mimic "mechanically generated" lists
         clean_word = w.strip(".,!?:;'\"()[]{}")
         if clean_word:
             if clean_word not in candidates.values():
@@ -191,7 +195,6 @@ def generate_fallback_candidates(clean_title):
     return candidates
 
 def process_and_validate_fallback(clean_title, raw_response_text, candidates_dict):
-    """Validates the multiple-choice integer index from the fallback model (3.6)."""
     print(f"      [DEBUG RAW TEXT FROM FALLBACK]: {repr(raw_response_text)}")
 
     if not raw_response_text or not raw_response_text.strip():
@@ -202,7 +205,6 @@ def process_and_validate_fallback(clean_title, raw_response_text, candidates_dic
         raw_json = strip_reasoning_and_markdown(raw_response_text)
         parsed = json.loads(raw_json)
         
-        # Expecting format: [7] or []
         if isinstance(parsed, list):
             if len(parsed) == 0:
                 print("      [INFO] Fallback explicitly returned []. No highlight selected.")
@@ -262,10 +264,9 @@ def get_live_movie_slugs():
     return list(set(slugs))
 
 def fetch_highlight_for_review(movie_name, clean_title, primary_prompt_template, fallback_prompt_template):
-    # 1. Prepare Primary Prompt
+    # Prepare Prompts
     primary_prompt = primary_prompt_template.replace("{movie_name}", movie_name).replace("{clean_title}", clean_title)
     
-    # 2. Prepare Fallback Prompt
     candidates = generate_fallback_candidates(clean_title)
     candidates_json = json.dumps(candidates, ensure_ascii=False)
     fallback_prompt = (fallback_prompt_template
@@ -274,9 +275,12 @@ def fetch_highlight_for_review(movie_name, clean_title, primary_prompt_template,
                        .replace("{candidates_json}", candidates_json))
 
     primary_model = "qwen/qwen3.8-27b"
-    fallback_model = "qwen/qwen3.6-27b"
+    gemini_lite_models = ["gemini-1.5-flash", "gemini-1.5-flash-8b"]
+    ultimate_fallback_model = "qwen/qwen3.6-27b"
     max_retries = 2
     
+    proceed_to_gemini = False
+
     # --- STEP 1: Exhaust the Primary Model (3.8) ---
     print(f"      [Attempting Primary Model: {primary_model}]")
     for attempt in range(max_retries + 1):
@@ -296,7 +300,8 @@ def fetch_highlight_for_review(movie_name, clean_title, primary_prompt_template,
                 if highlighted:
                     return highlighted, primary_model
                 else:
-                    print("      [Validation Failed for Primary output. Aborting retries for this model.]")
+                    print("      [Validation Failed for Primary output. Routing to Mid-Tier Gemini.]")
+                    proceed_to_gemini = True
                     break 
         except Exception as e:
             error_msg = str(e)
@@ -310,40 +315,108 @@ def fetch_highlight_for_review(movie_name, clean_title, primary_prompt_template,
             else:
                 break 
 
-    # --- STEP 2: Ultimate Fallback (3.6) with 1-Word Index Selection ---
-    print(f"      [Primary Exhausted] Switching to Backup Model: {fallback_model} (Thinking=None, Index Selection)...")
-    for attempt in range(max_retries + 1):
-        try:
-            chat_completion = client.chat.completions.create(
-                messages=[{"role": "user", "content": fallback_prompt}],
-                model=fallback_model,
-                temperature=0.0,
-                max_tokens=250,
-                reasoning_effort="none"  # <-- THINKING OFF FOR 3.6
-            )
+    # --- STEP 2: Mid-Tier Gemini Fallback ---
+    proceed_to_ultimate_fallback = False
 
-            raw_text = chat_completion.choices[0].message.content
-            if raw_text:
-                raw_text = raw_text.strip()
-                # Run the integer index validator
-                highlighted = process_and_validate_fallback(clean_title, raw_text, candidates)
-                
-                if highlighted:
-                    return highlighted, fallback_model
+    if proceed_to_gemini:
+        for gemini_model in gemini_lite_models:
+            print(f"      [Mid-Tier Active] Attempting Gemini Model: {gemini_model}...")
+            validation_failed = False
+            api_failed = False
+            
+            for attempt in range(max_retries + 1):
+                try:
+                    if not GEMINI_API_KEY:
+                        raise ValueError("GEMINI_API_KEY missing")
+
+                    model = genai.GenerativeModel(gemini_model)
+                    response = model.generate_content(
+                        primary_prompt,
+                        generation_config=genai.types.GenerationConfig(
+                            temperature=0.0,
+                            max_output_tokens=250,
+                        )
+                    )
+                    
+                    try:
+                        raw_text = response.text
+                    except ValueError:
+                        raw_text = "" # Trigger validation failure if blocked by safety settings
+                        
+                    if raw_text:
+                        raw_text = raw_text.strip()
+                        highlighted = process_and_validate_primary(clean_title, raw_text)
+                        
+                        if highlighted:
+                            return highlighted, gemini_model
+                        else:
+                            print(f"      [Validation Failed for {gemini_model}.]")
+                            validation_failed = True
+                            break # Validation failure ends retries for this specific model
+                    else:
+                        print(f"      [Validation Failed for {gemini_model}] (Empty/Blocked response).")
+                        validation_failed = True
+                        break
+
+                except Exception as e:
+                    error_msg = str(e)
+                    print(f"      [API Error on {gemini_model}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
+                    
+                    if "429" in error_msg or "quota" in error_msg.lower() or "timeout" in error_msg.lower() or "503" in error_msg:
+                        if attempt < max_retries:
+                            wait_time = (attempt + 1) * 10
+                            print(f"      [Rate Limit Hit] Buffering and waiting {wait_time}s before retry...")
+                            time.sleep(wait_time)
+                        else:
+                            api_failed = True
+                    else:
+                        api_failed = True
+                        break
+            
+            if validation_failed:
+                proceed_to_ultimate_fallback = True
+                continue # Loops to the next Gemini model. If it's the last one, it proceeds to Qwen 3.6
+            
+            if api_failed:
+                # USER RULE: If it fails via API timeout, do NOT fall back to Qwen 3.6 Lite Prompt. Hard abort.
+                print(f"      [API Error Exhausted on {gemini_model}]. Aborting sequence without routing to Ultimate Fallback.")
+                proceed_to_ultimate_fallback = False
+                break 
+
+    # --- STEP 3: Ultimate Fallback (3.6) with 1-Word Index Selection ---
+    if proceed_to_ultimate_fallback:
+        print(f"      [All Validations Failed] Switching to Ultimate Backup Model: {ultimate_fallback_model} (Thinking=None, Index Selection)...")
+        for attempt in range(max_retries + 1):
+            try:
+                chat_completion = client.chat.completions.create(
+                    messages=[{"role": "user", "content": fallback_prompt}],
+                    model=ultimate_fallback_model,
+                    temperature=0.0,
+                    max_tokens=250,
+                    reasoning_effort="none"  # <-- THINKING OFF FOR 3.6
+                )
+
+                raw_text = chat_completion.choices[0].message.content
+                if raw_text:
+                    raw_text = raw_text.strip()
+                    highlighted = process_and_validate_fallback(clean_title, raw_text, candidates)
+                    
+                    if highlighted:
+                        return highlighted, ultimate_fallback_model
+                    else:
+                        print("      [Validation Failed for Ultimate Backup output.]")
+                        break
+            except Exception as e:
+                error_msg = str(e)
+                print(f"      [API Error on {ultimate_fallback_model}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
+
+                if "429" in error_msg or "rate_limit" in error_msg.lower() or "timeout" in error_msg.lower():
+                    if attempt < max_retries:
+                        wait_time = (attempt + 1) * 10
+                        print(f"      [Rate Limit Hit] Buffering and waiting {wait_time}s before retry...")
+                        time.sleep(wait_time)
                 else:
-                    print("      [Validation Failed for Backup output.]")
                     break
-        except Exception as e:
-            error_msg = str(e)
-            print(f"      [API Error on {fallback_model}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
-
-            if "429" in error_msg or "rate_limit" in error_msg.lower() or "timeout" in error_msg.lower():
-                if attempt < max_retries:
-                    wait_time = (attempt + 1) * 10
-                    print(f"      [Rate Limit Hit] Buffering and waiting {wait_time}s before retry...")
-                    time.sleep(wait_time)
-            else:
-                break
 
     return None, None
 
@@ -376,7 +449,7 @@ def process_movie_file(json_path, primary_prompt_template, fallback_prompt_templ
             else:
                 earlier_pending += 1
 
-    tracker = PipelineTracker("Titles Highlighted (Groq Qwen)", earlier_completed, earlier_pending)
+    tracker = PipelineTracker("Titles Highlighted (Hybrid Routing)", earlier_completed, earlier_pending)
 
     movie_log_entry = {
         "earlier_completed": earlier_completed,
