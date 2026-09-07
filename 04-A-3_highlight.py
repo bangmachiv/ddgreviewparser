@@ -3,7 +3,7 @@
 04-A-3_highlight.py
 3-Tier Cascading Pipeline:
 1. Primary: Qwen 3.8 (Full Prompt, Reasoning ON)
-2. Mid-Fallback: Gemini 1.5 Flash & Flash-8B (Full Prompt)
+2. Mid-Fallback: Gemini Flash & Flash-8B (Full Prompt, using google-genai SDK)
 3. Ultimate Fallback: Qwen 3.6 (Lite Index Prompt, Reasoning OFF). 
    *Only triggers if Gemini fails VALIDATION, not if Gemini times out.*
 """
@@ -17,7 +17,9 @@ import time
 import html
 from datetime import datetime
 from groq import Groq
-import google.generativeai as genai
+from google import genai
+from google.genai import errors
+from google.genai import types
 
 # ---------------------------------------------------------------------------
 # Global Print Override for Real-Time CI/CD Streaming
@@ -46,10 +48,11 @@ if not GROQ_API_KEY:
 client = Groq(api_key=GROQ_API_KEY)
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+gemini_client = None
 if not GEMINI_API_KEY:
     print("[WARNING] GEMINI_API_KEY environment variable not found! Gemini fallbacks will fail.")
 else:
-    genai.configure(api_key=GEMINI_API_KEY)
+    gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 # -----------------------------------------------------------------------------
 # 7-Column Pipeline Metric Tracker
@@ -113,7 +116,6 @@ def extract_keywords_from_payload(parsed_json):
     return None
 
 def process_and_validate_primary(clean_title, raw_response_text):
-    """Validates the standard string extraction from the primary/mid models."""
     print(f"      [DEBUG RAW TEXT FROM MODEL]: {repr(raw_response_text)}")
 
     if not raw_response_text or not raw_response_text.strip():
@@ -326,13 +328,13 @@ def fetch_highlight_for_review(movie_name, clean_title, primary_prompt_template,
             
             for attempt in range(max_retries + 1):
                 try:
-                    if not GEMINI_API_KEY:
-                        raise ValueError("GEMINI_API_KEY missing")
+                    if not gemini_client:
+                        raise ValueError("GEMINI_API_KEY missing, client not initialized.")
 
-                    model = genai.GenerativeModel(gemini_model)
-                    response = model.generate_content(
-                        primary_prompt,
-                        generation_config=genai.types.GenerationConfig(
+                    response = gemini_client.models.generate_content(
+                        model=gemini_model,
+                        contents=primary_prompt,
+                        config=types.GenerateContentConfig(
                             temperature=0.0,
                             max_output_tokens=250,
                         )
@@ -341,7 +343,7 @@ def fetch_highlight_for_review(movie_name, clean_title, primary_prompt_template,
                     try:
                         raw_text = response.text
                     except ValueError:
-                        raw_text = "" # Trigger validation failure if blocked by safety settings
+                        raw_text = "" 
                         
                     if raw_text:
                         raw_text = raw_text.strip()
@@ -352,13 +354,13 @@ def fetch_highlight_for_review(movie_name, clean_title, primary_prompt_template,
                         else:
                             print(f"      [Validation Failed for {gemini_model}.]")
                             validation_failed = True
-                            break # Validation failure ends retries for this specific model
+                            break 
                     else:
                         print(f"      [Validation Failed for {gemini_model}] (Empty/Blocked response).")
                         validation_failed = True
                         break
 
-                except Exception as e:
+                except errors.APIError as e:
                     error_msg = str(e)
                     print(f"      [API Error on {gemini_model}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
                     
@@ -372,13 +374,17 @@ def fetch_highlight_for_review(movie_name, clean_title, primary_prompt_template,
                     else:
                         api_failed = True
                         break
+                except Exception as e:
+                    error_msg = str(e)
+                    print(f"      [Unexpected Error on {gemini_model}]: {error_msg}")
+                    api_failed = True
+                    break
             
             if validation_failed:
                 proceed_to_ultimate_fallback = True
-                continue # Loops to the next Gemini model. If it's the last one, it proceeds to Qwen 3.6
+                continue 
             
             if api_failed:
-                # USER RULE: If it fails via API timeout, do NOT fall back to Qwen 3.6 Lite Prompt. Hard abort.
                 print(f"      [API Error Exhausted on {gemini_model}]. Aborting sequence without routing to Ultimate Fallback.")
                 proceed_to_ultimate_fallback = False
                 break 
