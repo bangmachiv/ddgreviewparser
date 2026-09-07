@@ -1024,5 +1024,20 @@
                 "highlighted_title": "A *nightmare* of a comedy that drags on"
             }
         }
+    },
+    "2026-09-07T10:15:36.769434+00:00": {
+        "earlier_completed": 19,
+        "earlier_pending": 1,
+        "processed": 1,
+        "success": 0,
+        "failure": 1,
+        "new_completed": 19,
+        "new_pending": 1,
+        "publisher_details": {
+            "news18-showsha": {
+                "status": "FAILED",
+                "reason": "Validation failed or API error"
+            }
+        }
     }
 }
