@@ -358,7 +358,7 @@
             "webpage_extraction_successful": "SUCCESS",
             "article_title": "Bhai Tera Star Hai review: The only star was Vijay Deverakonda in Vijay Sales ad - India Today",
             "clean_title": "The only star was Vijay Deverakonda in Vijay Sales ad",
-            "highlighted_title": "FAILED",
+            "highlighted_title": "The only star was Vijay Deverakonda in *Vijay Sales ad*",
             "jsonld_critic_name": "PENDING",
             "jsonld_star_rating": "PENDING",
             "ai_metadata_parsing_attempts": 0,
