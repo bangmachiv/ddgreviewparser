@@ -2,8 +2,7 @@
 """
 04-A-3_highlight.py
 Uses Groq API with qwen3.8-27b as the strict primary model and qwen3.6-27b as a fallback.
-Implements max_tokens=250 and a 15-second pacing buffer to achieve exactly 4 RPM 
-without violating the 1000 Output Tokens Per Minute (OTPM) limit. Thinking mode remains ON.
+Thinking mode remains ON for 3.8, but is explicitly turned OFF for 3.6.
 """
 
 import builtins
@@ -128,7 +127,7 @@ def process_and_validate_highlight(clean_title, raw_response_text):
     if len(keywords) == 0:
         print("      [FAIL] 0 keywords returned.")
         return None
-    
+
     if len(keywords) > 3:
         print(f"      [FAIL] Too many keywords returned ({len(keywords)}). Max is 3.")
         return None
@@ -158,7 +157,7 @@ def process_and_validate_highlight(clean_title, raw_response_text):
 
     valid_keywords.sort(key=len, reverse=True)
     highlighted_title = clean_title_clean
-    
+
     for kw in valid_keywords:
         pattern = re.compile(re.escape(kw), re.IGNORECASE)
         highlighted_title = pattern.sub(f"*{kw}*", highlighted_title, count=1)
@@ -194,11 +193,11 @@ def get_live_movie_slugs():
 
 def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
     prompt = prompt_template.replace("{movie_name}", movie_name).replace("{clean_title}", clean_title)
-    
+
     primary_model = "qwen/qwen3.8-27b"
     fallback_model = "qwen/qwen3.6-27b"
     max_retries = 2 # Total of 3 attempts
-    
+
     # --- STEP 1: Exhaust the Primary Model (3.8) ---
     print(f"      [Attempting Primary Model: {primary_model}]")
     for attempt in range(max_retries + 1):
@@ -208,8 +207,9 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
                 model=primary_model,
                 temperature=0.0,
                 max_tokens=250  # 1000 OTPM limit / 4 calls per min = 250 safe ceiling
+                # THINKING REMAINS ON (no reasoning_effort parameter here)
             )
-            
+
             raw_text = chat_completion.choices[0].message.content
             if raw_text:
                 raw_text = raw_text.strip()
@@ -222,7 +222,7 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
         except Exception as e:
             error_msg = str(e)
             print(f"      [API Error on {primary_model}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
-            
+
             if "429" in error_msg or "rate_limit" in error_msg.lower() or "timeout" in error_msg.lower():
                 if attempt < max_retries:
                     wait_time = (attempt + 1) * 10
@@ -232,16 +232,17 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
                 break # Break on hard API errors that aren't rate limits
 
     # --- STEP 2: Ultimate Fallback (3.6) ---
-    print(f"      [Primary Exhausted] Switching to Backup Model: {fallback_model}...")
+    print(f"      [Primary Exhausted] Switching to Backup Model: {fallback_model} (Thinking=None)...")
     for attempt in range(max_retries + 1):
         try:
             chat_completion = client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt}],
                 model=fallback_model,
                 temperature=0.0,
-                max_tokens=1000
+                max_tokens=1000,
+                reasoning_effort="none"  # <-- THINKING TURNED OFF ONLY FOR 3.6
             )
-            
+
             raw_text = chat_completion.choices[0].message.content
             if raw_text:
                 raw_text = raw_text.strip()
@@ -254,7 +255,7 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
         except Exception as e:
             error_msg = str(e)
             print(f"      [API Error on {fallback_model}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
-            
+
             if "429" in error_msg or "rate_limit" in error_msg.lower() or "timeout" in error_msg.lower():
                 if attempt < max_retries:
                     wait_time = (attempt + 1) * 10
@@ -323,7 +324,7 @@ def process_movie_file(json_path, prompt_template):
         print(f"      Clean Title: {clean_title}")
 
         movie_log_entry["processed"] += 1
-        
+
         # Execute the strict routing API request
         highlighted_title, used_model = fetch_highlight_for_review(movie_name, clean_title, prompt_template)
 
