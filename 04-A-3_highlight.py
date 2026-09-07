@@ -3,9 +3,9 @@
 04-A-3_highlight.py
 3-Tier Cascading Pipeline:
 1. Primary: Qwen 3.8 (Full Prompt, Reasoning ON)
-2. Mid-Fallback: Gemini Flash & Flash-8B (Full Prompt, using google-genai SDK)
+2. Mid-Fallback: Gemini 3.5 Flash-Lite & 3.1 Flash-Lite (Full Prompt, using google-genai SDK)
 3. Ultimate Fallback: Qwen 3.6 (Lite Index Prompt, Reasoning OFF). 
-   *Only triggers if Gemini fails VALIDATION, not if Gemini times out.*
+   *Only triggers if Gemini fails VALIDATION, not if Gemini times out or 404s.*
 """
 
 import builtins
@@ -277,7 +277,8 @@ def fetch_highlight_for_review(movie_name, clean_title, primary_prompt_template,
                        .replace("{candidates_json}", candidates_json))
 
     primary_model = "qwen/qwen3.8-27b"
-    gemini_lite_models = ["gemini-1.5-flash", "gemini-1.5-flash-8b"]
+    # CORRECTED: Using the live Gemini 3.x Flash-Lite strings from your 04-A-2 script.
+    gemini_lite_models = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]
     ultimate_fallback_model = "qwen/qwen3.6-27b"
     max_retries = 2
     
