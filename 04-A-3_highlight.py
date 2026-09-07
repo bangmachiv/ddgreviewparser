@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 """
 04-A-3_highlight.py
-Uses an indexed multiple-choice selection pipeline where Python generates all 
-contiguous 1-, 2-, and 3-word n-grams, maps them to an index dictionary, and 
-asks Qwen to return the integer key of the most impactful term.
-
-- Primary Model (3.8): Standard configuration.
-- Backup Model (3.6): Explicitly configured with reasoning_effort="none".
+Uses Groq API with qwen3.8-27b as the strict primary model and qwen3.6-27b as a fallback.
+Implements max_tokens=250 and a 15-second pacing buffer to achieve exactly 4 RPM 
+without violating the 1000 Output Tokens Per Minute (OTPM) limit. Thinking mode remains ON.
 """
 
 import builtins
@@ -78,24 +75,8 @@ class PipelineTracker:
         print("=" * 125 + "\n")
 
 # ---------------------------------------------------------------------------
-# N-Gram Index Generator & Validation Logic
+# Validation & Formatting Logic
 # ---------------------------------------------------------------------------
-def generate_indexed_ngram_candidates(clean_title, max_n=3):
-    """Generates all contiguous 1-, 2-, and 3-word n-grams and maps them to a string index."""
-    words = clean_title.split()
-    candidates = {}
-    index = 1
-    
-    for n in range(1, max_n + 1):
-        for i in range(len(words) - n + 1):
-            ngram = " ".join(words[i:i+n])
-            # Prevent duplicate index mappings if terms repeat
-            if ngram not in candidates.values():
-                candidates[str(index)] = ngram
-                index += 1
-                
-    return candidates
-
 def strip_reasoning_and_markdown(text: str) -> str:
     """Strips <think>...</think> blocks and Markdown code fences."""
     text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
@@ -108,10 +89,23 @@ def strip_reasoning_and_markdown(text: str) -> str:
         text = text[:-3]
     return text.strip()
 
-def process_and_validate_index(clean_title, raw_response_text, candidates_dict):
+def extract_keywords_from_payload(parsed_json):
+    """Handles both flat lists and dictionary-wrapped lists."""
+    if isinstance(parsed_json, list):
+        return parsed_json
+    if isinstance(parsed_json, dict):
+        for key in ["keywords", "highlights", "phrases", "result", "output", "words"]:
+            if key in parsed_json and isinstance(parsed_json[key], list):
+                return parsed_json[key]
+        for val in parsed_json.values():
+            if isinstance(val, list):
+                return val
+    return None
+
+def process_and_validate_highlight(clean_title, raw_response_text):
     """
-    Validates that the model response is a valid JSON list containing 
-    an index integer strictly within the candidate dictionary bounds.
+    Validates Qwen's response and injects asterisks around the first occurrence
+    of valid emotion keywords.
     """
     print(f"      [DEBUG RAW TEXT FROM MODEL]: {repr(raw_response_text)}")
 
@@ -122,37 +116,52 @@ def process_and_validate_index(clean_title, raw_response_text, candidates_dict):
     try:
         raw_json = strip_reasoning_and_markdown(raw_response_text)
         parsed = json.loads(raw_json)
-        
-        # Extract the index whether it's wrapped in a list `[3]` or returned raw `3`
-        if isinstance(parsed, list) and len(parsed) > 0:
-            selected_index_str = str(parsed[0]).strip()
-        elif isinstance(parsed, (int, str)):
-            selected_index_str = str(parsed).strip()
-        else:
-            print(f"      [FAIL] Unexpected JSON structure: {parsed}")
-            return None
-            
+        keywords = extract_keywords_from_payload(parsed)
     except Exception as e:
-        print(f"      [FAIL] Failed to parse JSON response: {e}")
+        print(f"      [FAIL] Failed to parse JSON: {e}")
         return None
 
-    # VALIDATION 1: Format check (must be a clean integer)
-    if not selected_index_str.isdigit():
-        print(f"      [FAIL] Response '{selected_index_str}' is not a valid integer index.")
+    if keywords is None or not isinstance(keywords, list):
+        print(f"      [FAIL] Could not extract a list from response: {parsed}")
         return None
 
-    # VALIDATION 2: Length / Boundary check
-    if selected_index_str not in candidates_dict:
-        print(f"      [FAIL] Index '{selected_index_str}' is out of range (1 to {len(candidates_dict)}).")
+    if len(keywords) == 0:
+        print("      [FAIL] 0 keywords returned.")
         return None
-
-    # Lookup the chosen phrase
-    chosen_phrase = candidates_dict[selected_index_str]
-    clean_title_clean = html.unescape(clean_title)
     
-    # Inject asterisks
-    pattern = re.compile(re.escape(chosen_phrase), re.IGNORECASE)
-    highlighted_title = pattern.sub(f"*{chosen_phrase}*", clean_title_clean, count=1)
+    if len(keywords) > 3:
+        print(f"      [FAIL] Too many keywords returned ({len(keywords)}). Max is 3.")
+        return None
+
+    clean_title_clean = html.unescape(clean_title)
+    clean_title_lower = clean_title_clean.lower()
+    valid_keywords = []
+
+    for kw in keywords:
+        kw_str = str(kw).strip()
+        if not kw_str:
+            continue
+
+        if len(kw_str.split()) > 3:
+            print(f"      [FAIL] Phrase '{kw_str}' has more than 3 words.")
+            return None
+
+        if kw_str.lower() not in clean_title_lower:
+            print(f"      [FAIL] Phrase '{kw_str}' is NOT found in original title.")
+            return None
+
+        valid_keywords.append(kw_str)
+
+    if not valid_keywords:
+        print("      [FAIL] No valid keywords passed containment check.")
+        return None
+
+    valid_keywords.sort(key=len, reverse=True)
+    highlighted_title = clean_title_clean
+    
+    for kw in valid_keywords:
+        pattern = re.compile(re.escape(kw), re.IGNORECASE)
+        highlighted_title = pattern.sub(f"*{kw}*", highlighted_title, count=1)
 
     return highlighted_title
 
@@ -184,20 +193,13 @@ def get_live_movie_slugs():
     return list(set(slugs))
 
 def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
-    # Generate the numbered dictionary
-    candidates = generate_indexed_ngram_candidates(clean_title)
-    candidates_formatted = json.dumps(candidates, indent=2, ensure_ascii=False)
-
-    prompt = (prompt_template
-              .replace("{movie_name}", movie_name)
-              .replace("{clean_title}", clean_title)
-              .replace("{indexed_candidates}", candidates_formatted))
-
+    prompt = prompt_template.replace("{movie_name}", movie_name).replace("{clean_title}", clean_title)
+    
     primary_model = "qwen/qwen3.8-27b"
     fallback_model = "qwen/qwen3.6-27b"
     max_retries = 2 # Total of 3 attempts
-
-    # --- STEP 1: Exhaust the Primary Model (3.8 - UNTOUCHED) ---
+    
+    # --- STEP 1: Exhaust the Primary Model (3.8) ---
     print(f"      [Attempting Primary Model: {primary_model}]")
     for attempt in range(max_retries + 1):
         try:
@@ -205,12 +207,13 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
                 messages=[{"role": "user", "content": prompt}],
                 model=primary_model,
                 temperature=0.0,
-                max_tokens=250
+                max_tokens=250  # 1000 OTPM limit / 4 calls per min = 250 safe ceiling
             )
-
+            
             raw_text = chat_completion.choices[0].message.content
             if raw_text:
-                highlighted = process_and_validate_index(clean_title, raw_text, candidates)
+                raw_text = raw_text.strip()
+                highlighted = process_and_validate_highlight(clean_title, raw_text)
                 if highlighted:
                     return highlighted, primary_model
                 else:
@@ -219,30 +222,30 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
         except Exception as e:
             error_msg = str(e)
             print(f"      [API Error on {primary_model}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
-
+            
             if "429" in error_msg or "rate_limit" in error_msg.lower() or "timeout" in error_msg.lower():
                 if attempt < max_retries:
                     wait_time = (attempt + 1) * 10
                     print(f"      [Rate Limit Hit] Buffering and waiting {wait_time}s before retry...")
                     time.sleep(wait_time)
             else:
-                break 
+                break # Break on hard API errors that aren't rate limits
 
-    # --- STEP 2: Ultimate Fallback (3.6 - THINKING = NONE) ---
-    print(f"      [Primary Exhausted] Switching to Backup Model: {fallback_model} (Thinking=None)...")
+    # --- STEP 2: Ultimate Fallback (3.6) ---
+    print(f"      [Primary Exhausted] Switching to Backup Model: {fallback_model}...")
     for attempt in range(max_retries + 1):
         try:
             chat_completion = client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt}],
                 model=fallback_model,
                 temperature=0.0,
-                max_tokens=250,
-                reasoning_effort="none"  # <-- Explicitly disables thinking mode
+                max_tokens=1000
             )
-
+            
             raw_text = chat_completion.choices[0].message.content
             if raw_text:
-                highlighted = process_and_validate_index(clean_title, raw_text, candidates)
+                raw_text = raw_text.strip()
+                highlighted = process_and_validate_highlight(clean_title, raw_text)
                 if highlighted:
                     return highlighted, fallback_model
                 else:
@@ -251,7 +254,7 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
         except Exception as e:
             error_msg = str(e)
             print(f"      [API Error on {fallback_model}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
-
+            
             if "429" in error_msg or "rate_limit" in error_msg.lower() or "timeout" in error_msg.lower():
                 if attempt < max_retries:
                     wait_time = (attempt + 1) * 10
@@ -320,7 +323,8 @@ def process_movie_file(json_path, prompt_template):
         print(f"      Clean Title: {clean_title}")
 
         movie_log_entry["processed"] += 1
-
+        
+        # Execute the strict routing API request
         highlighted_title, used_model = fetch_highlight_for_review(movie_name, clean_title, prompt_template)
 
         if highlighted_title:
@@ -349,7 +353,7 @@ def process_movie_file(json_path, prompt_template):
         except Exception as e:
             print(f"[ERROR] Could not save updated review file: {e}")
 
-        # Pacing buffer
+        # The mathematical pacing buffer to enforce 4 RPM
         print("      [Pacing Buffer] Waiting 15 seconds to ensure 4 requests/min cadence...")
         time.sleep(15)
 
