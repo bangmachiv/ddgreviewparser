@@ -1164,5 +1164,26 @@
                 "reason": "Validation failed or API error"
             }
         }
+    },
+    "2026-09-07T11:02:24.747203+00:00": {
+        "earlier_completed": 18,
+        "earlier_pending": 2,
+        "processed": 2,
+        "success": 2,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.6-27b",
+                "highlighted_title": "Raghav Juyal Is On *Fire* But This Slapstick Comedy Runs Out of Steam Too Soon"
+            },
+            "the-times-of-india": {
+                "status": "SUCCESS",
+                "model": "gemini-3.5-flash-lite",
+                "highlighted_title": "*a nightmare* of a comedy that drags on"
+            }
+        }
     }
 }
