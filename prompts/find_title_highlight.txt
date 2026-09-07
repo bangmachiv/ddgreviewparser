@@ -72,18 +72,26 @@ A title that piles up several similar criticisms is one verdict said three ways.
 Return 3 terms almost never.
 When unsure, return 1.
 
-Return [] when no candidate carries emotional, critical, or distinctive weight — for instance a purely factual or announcement-style headline. Do not manufacture a highlight from a neutral descriptive word.
+Return [] only for an announcement headline — one that reports who is in the film, what kind of film it is, or when it arrives, and does nothing else. See the EMPTY OUTPUT rule below before returning [].
 
 ==================================================
 CHOOSING AMONG SURVIVING CANDIDATES
 ==================================================
-A CANDIDATE MUST CARRY REVIEW SIGNAL. Being descriptive, specific, or unusual is not enough on its own. The candidate must convey praise, criticism, emotion, a strong judgement, vivid characterization, or clearly intentional editorial emphasis. A word that merely describes what the film is — its genre, its cast, its setting, its release — is not a highlight, however distinctive it sounds. If no candidate in the title carries review signal, return [].
+WHAT COUNTS AS A HIGHLIGHT. Your task is to find the wording that best captures the author's opinion of, or angle on, the film.
+
+Opinion is not confined to explicit praise, criticism, insults, adjectives, or emotional words. Authors deliver judgement just as often through metaphor, comparison, figurative expression, ironic label, idiom, understatement, or the way a sentence is constructed. All of these are review signal.
+
+A candidate does not have to read as literally positive or negative. A plainly factual noun phrase can be the highlight when the title is built so that the author's point lands on it. The test is not "is this wording evaluative in isolation" but "does this wording carry what the author is saying about the film".
+
+Distinctive, striking, or memorable wording qualifies only when it contributes to expressing the author's opinion, judgement, or editorial stance. A title does not need an explicitly positive or negative word, but there must be an opinion being communicated. Your job is to identify the wording that best captures that opinion, whether expressed directly or indirectly.
+
+EMPTY OUTPUT. Return [] only when the title is a plain announcement — it states who stars in the film, what genre it is, or when it releases, and carries no angle, no judgement, no figurative wording, and nothing distinctive. This is uncommon. Do not return [] merely because the title's strongest wording is not an adjective or not obviously evaluative, and do not manufacture a highlight from a filler word such as "New", "First" or "Political" in a title that is genuinely just an announcement.
 
 NO POSITIONAL BIAS. Do not favour a candidate for appearing first, last, or at the end of the title. Position carries zero weight. Compare on meaning alone.
 
-Choose what most sharply expresses the reviewer's reaction or verdict: a judgement, a strong emotion, a vivid description, or the most quotable stroke in the headline.
+Choose what most sharply expresses the reviewer's reaction, verdict, or angle: a judgement, a strong emotion, a vivid description, or the most quotable stroke in the headline.
 Prefer 2-3 words ONLY when together they mean more than apart ("Surprisingly Brilliant", "Loses Its Way"). Otherwise prefer 1 word.
-SELF-CONTAINED: the candidate must keep its force read alone. Reject bare nouns that lose their point without context.
+COMPLETE, NOT CUT OFF: reject a candidate only when it has been severed from words it needs to make sense — "visuals" pulled out of "nice visuals", or "Loses" pulled out of "Loses Its Way". A candidate that is complete in itself is fine even if the surrounding title is what gives it its force.
 NEVER SELECT movie, actor, director, or publication names; or generic words such as Review, Movie, Film, Story — unless fused into a critical phrase ("Terrible Film").
 NO OUTSIDE KNOWLEDGE: judge only the Review Title. Do not infer sentiment from the movie name or guess what the review says.
 PRESERVE IRONY: extract sarcastic wording as written. In "Another 'Masterpiece' Nobody Asked For", keep "Masterpiece". Never substitute an inferred word such as "Bad".
@@ -124,6 +132,14 @@ Output: ["Masterpiece"]
 Movie Name: Example Movie
 Review Title: Two hours of relentless noise dressed up as satire
 Output: ["relentless noise"]
+
+Movie Name: Example Movie
+Review Title: Three hours that felt like a tax audit
+Output: ["a tax audit"]
+
+Movie Name: Example Movie
+Review Title: The best thing in it is the interval card
+Output: ["the interval card"]
 
 Movie Name: Example Movie
 Review Title: Another 'Masterpiece' Nobody Asked For
