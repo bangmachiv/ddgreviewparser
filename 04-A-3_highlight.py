@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 """
 04-A-3_highlight.py
-Uses Groq API with qwen3.8-27b as the strict primary model and qwen3.6-27b as a fallback.
-Thinking mode remains ON for 3.8, but is explicitly turned OFF for 3.6.
-
-Cascading Reduction Logic:
-If 3.8 fails because it extracted a phrase >3 words, that rejected phrase is passed 
-to 3.6 as the new "Review Title", forcing 3.6 to extract a shorter subset from it.
+Uses Groq API with qwen3.8-27b as the primary model (extracts 0-3 words, reasoning ON).
+If 3.8 fails, falls back to qwen3.6-27b using a strict, multiple-choice index prompt 
+(find_title_highlight_lite.txt) for exactly 1-word extraction with reasoning OFF.
 """
 
 import builtins
@@ -23,7 +20,6 @@ from groq import Groq
 # Global Print Override for Real-Time CI/CD Streaming
 # ---------------------------------------------------------------------------
 def print(*args, **kwargs):
-    """Overrides the default print function to force flush=True every time."""
     kwargs['flush'] = True
     builtins.print(*args, **kwargs)
 
@@ -32,6 +28,7 @@ def print(*args, **kwargs):
 # ---------------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROMPT_FILE = os.path.join(BASE_DIR, "prompts", "find_title_highlight.txt")
+FALLBACK_PROMPT_FILE = os.path.join(BASE_DIR, "prompts", "find_title_highlight_lite.txt")
 REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 
@@ -78,10 +75,9 @@ class PipelineTracker:
         print("=" * 125 + "\n")
 
 # ---------------------------------------------------------------------------
-# Validation & Formatting Logic
+# Core Helpers
 # ---------------------------------------------------------------------------
 def strip_reasoning_and_markdown(text: str) -> str:
-    """Strips <think>...</think> blocks and Markdown code fences."""
     text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
     text = text.strip()
     if text.startswith("```json"):
@@ -92,8 +88,10 @@ def strip_reasoning_and_markdown(text: str) -> str:
         text = text[:-3]
     return text.strip()
 
+# ---------------------------------------------------------------------------
+# Primary Validation Logic (For 3.8 string responses)
+# ---------------------------------------------------------------------------
 def extract_keywords_from_payload(parsed_json):
-    """Handles both flat lists and dictionary-wrapped lists."""
     if isinstance(parsed_json, list):
         return parsed_json
     if isinstance(parsed_json, dict):
@@ -105,16 +103,13 @@ def extract_keywords_from_payload(parsed_json):
                 return val
     return None
 
-def process_and_validate_highlight(clean_title, raw_response_text):
-    """
-    Validates Qwen's response. 
-    RETURNS TUPLE: (highlighted_title, rejected_long_phrase)
-    """
-    print(f"      [DEBUG RAW TEXT FROM MODEL]: {repr(raw_response_text)}")
+def process_and_validate_primary(clean_title, raw_response_text):
+    """Validates the standard string extraction from the primary model (3.8)."""
+    print(f"      [DEBUG RAW TEXT FROM PRIMARY]: {repr(raw_response_text)}")
 
     if not raw_response_text or not raw_response_text.strip():
-        print("      [FAIL] Model returned empty response.")
-        return None, None
+        print("      [FAIL] Primary model returned empty response.")
+        return None
 
     try:
         raw_json = strip_reasoning_and_markdown(raw_response_text)
@@ -122,23 +117,25 @@ def process_and_validate_highlight(clean_title, raw_response_text):
         keywords = extract_keywords_from_payload(parsed)
     except Exception as e:
         print(f"      [FAIL] Failed to parse JSON: {e}")
-        return None, None
+        return None
 
     if keywords is None or not isinstance(keywords, list):
         print(f"      [FAIL] Could not extract a list from response: {parsed}")
-        return None, None
+        return None
 
     if len(keywords) == 0:
-        print("      [FAIL] 0 keywords returned.")
-        return None, None
+        print("      [FAIL] Primary returned empty array []. No highlight.")
+        return None
 
     if len(keywords) > 3:
-        print(f"      [FAIL] Too many keywords returned ({len(keywords)}). Max is 3.")
-        return None, None
+        print(f"      [FAIL] Primary returned too many keywords ({len(keywords)}). Max is 3.")
+        return None
 
     clean_title_clean = html.unescape(clean_title)
     clean_title_lower = clean_title_clean.lower()
+    
     valid_keywords = []
+    cumulative_word_count = 0
 
     for kw in keywords:
         kw_str = str(kw).strip()
@@ -147,18 +144,19 @@ def process_and_validate_highlight(clean_title, raw_response_text):
 
         if kw_str.lower() not in clean_title_lower:
             print(f"      [FAIL] Phrase '{kw_str}' is NOT found in original title.")
-            return None, None
+            return None
 
-        if len(kw_str.split()) > 3:
-            print(f"      [FAIL] Phrase '{kw_str}' has more than 3 words.")
-            # return the rejected phrase so 3.6 can use it!
-            return None, kw_str
-
+        word_count = len(kw_str.split())
+        cumulative_word_count += word_count
         valid_keywords.append(kw_str)
 
     if not valid_keywords:
         print("      [FAIL] No valid keywords passed containment check.")
-        return None, None
+        return None
+
+    if cumulative_word_count > 3:
+        print(f"      [FAIL] Cumulative word count ({cumulative_word_count}) > 3.")
+        return None
 
     valid_keywords.sort(key=len, reverse=True)
     highlighted_title = clean_title_clean
@@ -167,10 +165,77 @@ def process_and_validate_highlight(clean_title, raw_response_text):
         pattern = re.compile(re.escape(kw), re.IGNORECASE)
         highlighted_title = pattern.sub(f"*{kw}*", highlighted_title, count=1)
 
-    return highlighted_title, None
+    return highlighted_title
+
 
 # ---------------------------------------------------------------------------
-# Pipeline Execution (Cascading Reduction Architecture)
+# Fallback Validation Logic (For 3.6 multiple-choice responses)
+# ---------------------------------------------------------------------------
+def generate_fallback_candidates(clean_title):
+    """
+    Splits the title into individual words and strips punctuation to create
+    a dictionary of candidate strings matched to integer index keys.
+    """
+    words_raw = clean_title.split()
+    candidates = {}
+    idx = 1
+    
+    for w in words_raw:
+        # Strip trailing/leading punctuation to mimic "mechanically generated" lists
+        clean_word = w.strip(".,!?:;'\"()[]{}")
+        if clean_word:
+            if clean_word not in candidates.values():
+                candidates[str(idx)] = clean_word
+                idx += 1
+                
+    return candidates
+
+def process_and_validate_fallback(clean_title, raw_response_text, candidates_dict):
+    """Validates the multiple-choice integer index from the fallback model (3.6)."""
+    print(f"      [DEBUG RAW TEXT FROM FALLBACK]: {repr(raw_response_text)}")
+
+    if not raw_response_text or not raw_response_text.strip():
+        print("      [FAIL] Fallback model returned empty response.")
+        return None
+
+    try:
+        raw_json = strip_reasoning_and_markdown(raw_response_text)
+        parsed = json.loads(raw_json)
+        
+        # Expecting format: [7] or []
+        if isinstance(parsed, list):
+            if len(parsed) == 0:
+                print("      [INFO] Fallback explicitly returned []. No highlight selected.")
+                return None
+            selected_index_str = str(parsed[0]).strip()
+        elif isinstance(parsed, (int, str)):
+            selected_index_str = str(parsed).strip()
+        else:
+            print(f"      [FAIL] Unexpected JSON structure: {parsed}")
+            return None
+            
+    except Exception as e:
+        print(f"      [FAIL] Failed to parse JSON response: {e}")
+        return None
+
+    if not selected_index_str.isdigit():
+        print(f"      [FAIL] Response '{selected_index_str}' is not a valid integer index.")
+        return None
+
+    if selected_index_str not in candidates_dict:
+        print(f"      [FAIL] Index '{selected_index_str}' is out of range.")
+        return None
+
+    chosen_phrase = candidates_dict[selected_index_str]
+    clean_title_clean = html.unescape(clean_title)
+    
+    pattern = re.compile(re.escape(chosen_phrase), re.IGNORECASE)
+    highlighted_title = pattern.sub(f"*{chosen_phrase}*", clean_title_clean, count=1)
+
+    return highlighted_title
+
+# ---------------------------------------------------------------------------
+# Pipeline Execution
 # ---------------------------------------------------------------------------
 def get_live_movie_slugs():
     slugs = []
@@ -196,15 +261,22 @@ def get_live_movie_slugs():
                     pass
     return list(set(slugs))
 
-def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
-    primary_prompt = prompt_template.replace("{movie_name}", movie_name).replace("{clean_title}", clean_title)
+def fetch_highlight_for_review(movie_name, clean_title, primary_prompt_template, fallback_prompt_template):
+    # 1. Prepare Primary Prompt
+    primary_prompt = primary_prompt_template.replace("{movie_name}", movie_name).replace("{clean_title}", clean_title)
+    
+    # 2. Prepare Fallback Prompt
+    candidates = generate_fallback_candidates(clean_title)
+    candidates_json = json.dumps(candidates, ensure_ascii=False)
+    fallback_prompt = (fallback_prompt_template
+                       .replace("{movie_name}", movie_name)
+                       .replace("{clean_title}", clean_title)
+                       .replace("{candidates_json}", candidates_json))
 
     primary_model = "qwen/qwen3.8-27b"
     fallback_model = "qwen/qwen3.6-27b"
     max_retries = 2
     
-    rejected_long_phrase = None
-
     # --- STEP 1: Exhaust the Primary Model (3.8) ---
     print(f"      [Attempting Primary Model: {primary_model}]")
     for attempt in range(max_retries + 1):
@@ -219,18 +291,13 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
             raw_text = chat_completion.choices[0].message.content
             if raw_text:
                 raw_text = raw_text.strip()
-                # Unpack the new tuple from validation
-                highlighted, rejected_phrase = process_and_validate_highlight(clean_title, raw_text)
+                highlighted = process_and_validate_primary(clean_title, raw_text)
                 
                 if highlighted:
                     return highlighted, primary_model
-                elif rejected_phrase:
-                    print(f"      [Primary returned >3 words. Storing '{rejected_phrase}' for 3.6 to reduce.]")
-                    rejected_long_phrase = rejected_phrase
-                    break # Break retries and hand off to 3.6 immediately
                 else:
                     print("      [Validation Failed for Primary output. Aborting retries for this model.]")
-                    break
+                    break 
         except Exception as e:
             error_msg = str(e)
             print(f"      [API Error on {primary_model}] (Attempt {attempt+1}/{max_retries+1}): {error_msg}")
@@ -243,18 +310,8 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
             else:
                 break 
 
-    # --- STEP 2: Ultimate Fallback (3.6) ---
-    print(f"      [Primary Exhausted] Switching to Backup Model: {fallback_model} (Thinking=None)...")
-    
-    # If 3.8 gave us a phrase that was too long, set that as the target for 3.6
-    if rejected_long_phrase:
-        print(f"      [Cascading Target] Forcing 3.6 to extract from: '{rejected_long_phrase}'")
-        target_title = rejected_long_phrase
-    else:
-        target_title = clean_title
-        
-    fallback_prompt = prompt_template.replace("{movie_name}", movie_name).replace("{clean_title}", target_title)
-
+    # --- STEP 2: Ultimate Fallback (3.6) with 1-Word Index Selection ---
+    print(f"      [Primary Exhausted] Switching to Backup Model: {fallback_model} (Thinking=None, Index Selection)...")
     for attempt in range(max_retries + 1):
         try:
             chat_completion = client.chat.completions.create(
@@ -268,10 +325,8 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
             raw_text = chat_completion.choices[0].message.content
             if raw_text:
                 raw_text = raw_text.strip()
-                
-                # CRITICAL: We validate against the ORIGINAL clean_title, not the shortened target_title,
-                # so the asterisk highlight applies to the full string correctly.
-                highlighted, _ = process_and_validate_highlight(clean_title, raw_text)
+                # Run the integer index validator
+                highlighted = process_and_validate_fallback(clean_title, raw_text, candidates)
                 
                 if highlighted:
                     return highlighted, fallback_model
@@ -292,7 +347,7 @@ def fetch_highlight_for_review(movie_name, clean_title, prompt_template):
 
     return None, None
 
-def process_movie_file(json_path, prompt_template):
+def process_movie_file(json_path, primary_prompt_template, fallback_prompt_template):
     print("\n" + "="*80)
     print(f" HIGHLIGHTING TITLES FOR: {os.path.basename(json_path)}")
     print("="*80)
@@ -351,8 +406,8 @@ def process_movie_file(json_path, prompt_template):
 
         movie_log_entry["processed"] += 1
 
-        # Execute the cascading API requests
-        highlighted_title, used_model = fetch_highlight_for_review(movie_name, clean_title, prompt_template)
+        # Execute dual-model API request logic
+        highlighted_title, used_model = fetch_highlight_for_review(movie_name, clean_title, primary_prompt_template, fallback_prompt_template)
 
         if highlighted_title:
             pub["highlighted_title"] = highlighted_title
@@ -380,7 +435,6 @@ def process_movie_file(json_path, prompt_template):
         except Exception as e:
             print(f"[ERROR] Could not save updated review file: {e}")
 
-        # The mathematical pacing buffer to enforce 4 RPM
         print("      [Pacing Buffer] Waiting 15 seconds to ensure 4 requests/min cadence...")
         time.sleep(15)
 
@@ -412,23 +466,20 @@ def main():
     print("================================================================")
     print(f"[*] Raw __file__ path : {__file__}")
     print(f"[*] Base Directory    : {BASE_DIR}")
-    print(f"[*] Expected Prompt   : {PROMPT_FILE}")
+    print(f"[*] Expected Prompts  : {PROMPT_FILE} & {FALLBACK_PROMPT_FILE}")
     
-    try:  
-        prompt_dir = os.path.join(BASE_DIR, "prompts")
-        if not os.path.exists(prompt_dir):
-            print(f"    [ERROR] Prompts directory not found at {prompt_dir}")
-    except Exception as e:  
-        print(f"    [ERROR] Could not read directory: {e}")  
-    print("================================================================\n")  
-
-    print("[STEP 1] Validating Environment...")
+    print("\n[STEP 1] Validating Environment...")
     if not os.path.exists(PROMPT_FILE):
-        print(f"[FATAL] Prompt file missing: {PROMPT_FILE}")
+        print(f"[FATAL] Primary prompt file missing: {PROMPT_FILE}")
         return
-
     with open(PROMPT_FILE, "r", encoding="utf-8") as f:
-        prompt_template = f.read()
+        primary_prompt_template = f.read()
+
+    if not os.path.exists(FALLBACK_PROMPT_FILE):
+        print(f"[FATAL] Fallback prompt file missing: {FALLBACK_PROMPT_FILE}")
+        return
+    with open(FALLBACK_PROMPT_FILE, "r", encoding="utf-8") as f:
+        fallback_prompt_template = f.read()
 
     print("[STEP 2] Loading live movies...")
     slugs = get_live_movie_slugs()
@@ -444,7 +495,7 @@ def main():
 
     print(f"[STEP 3] Found {len(target_files)} review files. Starting loop...")
     for file_path in target_files:
-        process_movie_file(file_path, prompt_template)
+        process_movie_file(file_path, primary_prompt_template, fallback_prompt_template)
 
     print("\n✅ All highlighting completed successfully.")
 
