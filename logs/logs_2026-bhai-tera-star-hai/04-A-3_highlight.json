@@ -864,5 +864,20 @@
                 "reason": "Validation failed or API error"
             }
         }
+    },
+    "2026-09-07T03:45:13.576888+00:00": {
+        "earlier_completed": 19,
+        "earlier_pending": 1,
+        "processed": 1,
+        "success": 0,
+        "failure": 1,
+        "new_completed": 19,
+        "new_pending": 1,
+        "publisher_details": {
+            "india-today": {
+                "status": "FAILED",
+                "reason": "Validation failed or API error"
+            }
+        }
     }
 }
