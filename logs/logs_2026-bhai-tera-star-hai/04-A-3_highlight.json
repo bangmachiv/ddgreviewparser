@@ -1039,5 +1039,21 @@
                 "reason": "Validation failed or API error"
             }
         }
+    },
+    "2026-09-07T10:30:30.821806+00:00": {
+        "earlier_completed": 19,
+        "earlier_pending": 1,
+        "processed": 1,
+        "success": 1,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "model": "qwen/qwen3.6-27b",
+                "highlighted_title": "Raghav Juyal Is On *Fire* But This Slapstick Comedy Runs Out of Steam Too Soon"
+            }
+        }
     }
 }
