@@ -60,7 +60,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Kiran Vinod Kumar Jain",
+            "star_rating": "1",
+            "json_ld_extraction_status": "both data found"
         },
         {
             "publisher_id": "bollywood-hungama",
@@ -79,7 +82,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Bollywood Hungama News Network",
+            "star_rating": "1.5",
+            "json_ld_extraction_status": "both data found"
         },
         {
             "publisher_id": "bollyspice",
@@ -136,7 +142,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "BH Harsh",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "one data found (critic name)"
         },
         {
             "publisher_id": "cinetales",
@@ -174,7 +183,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "आशीष तिवारी",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "one data found (critic name)"
         },
         {
             "publisher_id": "dainik-jagran",
@@ -193,7 +205,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Rinki Tiwari",
+            "star_rating": "3",
+            "json_ld_extraction_status": "both data found"
         },
         {
             "publisher_id": "deccan-chronicle",
@@ -250,7 +265,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Devesh Sharma",
+            "star_rating": "2.5",
+            "json_ld_extraction_status": "both data found"
         },
         {
             "publisher_id": "firstpost",
@@ -288,7 +306,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Satish Sundaresan",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "one data found (critic name)"
         },
         {
             "publisher_id": "hindustan",
@@ -326,7 +347,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Rishabh Suri",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "one data found (critic name)"
         },
         {
             "publisher_id": "ians-live",
@@ -364,7 +388,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Anisha Rao",
+            "star_rating": "1",
+            "json_ld_extraction_status": "both data found"
         },
         {
             "publisher_id": "koimoi",
@@ -383,7 +410,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Rajiv Vijayakar",
+            "star_rating": "1",
+            "json_ld_extraction_status": "both data found"
         },
         {
             "publisher_id": "lensmen-reviews",
@@ -440,7 +470,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Aakruti Bagla",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "one data found (critic name)"
         },
         {
             "publisher_id": "mint",
@@ -478,7 +511,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "could not find from jsonld",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "no data found"
         },
         {
             "publisher_id": "movie-talkies",
@@ -497,7 +533,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Sameer Ahire",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "one data found (critic name)"
         },
         {
             "publisher_id": "navbharat-times",
@@ -535,7 +574,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Saibal Chatterjee",
+            "star_rating": "2",
+            "json_ld_extraction_status": "both data found"
         },
         {
             "publisher_id": "news18-showsha",
@@ -554,7 +596,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Titas Chowdhury",
+            "star_rating": "2.5",
+            "json_ld_extraction_status": "both data found"
         },
         {
             "publisher_id": "outlook",
@@ -611,7 +656,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "MAYUR SANAP",
+            "star_rating": "1.5",
+            "json_ld_extraction_status": "both data found"
         },
         {
             "publisher_id": "scroll-in",
@@ -630,7 +678,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Nandini Ramnath",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "one data found (critic name)"
         },
         {
             "publisher_id": "south-asian-herald",
@@ -687,7 +738,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Swaroop Kodur",
+            "star_rating": "could not find from jsonld",
+            "json_ld_extraction_status": "one data found (critic name)"
         },
         {
             "publisher_id": "the-hindu",
@@ -725,7 +779,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Shubhra Gupta",
+            "star_rating": "1.5",
+            "json_ld_extraction_status": "both data found"
         },
         {
             "publisher_id": "the-quint",
@@ -782,7 +839,10 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "critic_name": "Ronak Kotecha",
+            "star_rating": "2.0",
+            "json_ld_extraction_status": "both data found"
         },
         {
             "publisher_id": "the-tribune",
