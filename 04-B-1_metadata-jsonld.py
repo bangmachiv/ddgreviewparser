@@ -152,6 +152,16 @@ def get_live_movie_slugs():
     return list(set(slugs))
 
 
+def is_downloaded_successfully(pub_dict):
+    """Helper to permissively check if the webpage was downloaded."""
+    val = pub_dict.get("webpage_extraction_successful", pub_dict.get("is_downloaded"))
+    if isinstance(val, bool):
+        return val
+    if isinstance(val, str):
+        return val.strip().upper() in ["Y", "YES", "TRUE", "SUCCESS"]
+    return False
+
+
 def process_single_movie_json(json_path, context):
     print("\n" + "="*80)
     print(f" PROCESSING LIVE MOVIE FILE: {os.path.basename(json_path)}")
@@ -171,7 +181,7 @@ def process_single_movie_json(json_path, context):
         os.path.join(BASE_DIR, f"data/webpages/{movie_slug}"),
         os.path.join(BASE_DIR, "data/webpages")
     ]
-    
+
     html_dir = None
     for directory in possible_html_dirs:
         if os.path.exists(directory):
@@ -186,7 +196,7 @@ def process_single_movie_json(json_path, context):
     print(f"[INFO] Found HTML directory at: {html_dir}")
     publishers = data.get("publishers", [])
 
-    # Structured Logging Setup (Aligned with 1788784144288.jpeg)
+    # Structured Logging Setup
     movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{movie_slug}")
     script_log_path = os.path.join(movie_logs_dir, "04-B-1_metadata-jsonld.json")
     os.makedirs(movie_logs_dir, exist_ok=True)
@@ -204,10 +214,9 @@ def process_single_movie_json(json_path, context):
     for pub in publishers:
         current_status = str(pub.get("json_ld_extraction_status", "")).strip()
         review_url = pub.get("review_url")
-        is_download_successful = pub.get("webpage_extraction_successful", pub.get("is_downloaded"))
         
         # Only count valid eligible publishers for pending/completed tracker
-        if review_url and review_url != "NA" and str(is_download_successful).upper() == "Y":
+        if review_url and review_url != "NA" and is_downloaded_successfully(pub):
             if current_status in valid_statuses:
                 earlier_completed += 1
             else:
@@ -240,7 +249,6 @@ def process_single_movie_json(json_path, context):
     for index, pub in enumerate(publishers, start=1):
         pub_id = pub.get("publisher_id")
         review_url = pub.get("review_url")
-        is_download_successful = pub.get("webpage_extraction_successful", pub.get("is_downloaded"))
         current_status = str(pub.get("json_ld_extraction_status", "")).strip()
 
         print(f"\n  [{index}/{len(publishers)}] Processing [{pub_id}]...")
@@ -258,8 +266,9 @@ def process_single_movie_json(json_path, context):
             continue
 
         # 3. SKIP CHECK: Webpage not downloaded
-        if str(is_download_successful).upper() != "Y":
-            print("      [SKIP] Webpage missing (Not marked 'Y' in JSON)")
+        if not is_downloaded_successfully(pub):
+            status_val = pub.get("webpage_extraction_successful", pub.get("is_downloaded", "Missing Key"))
+            print(f"      [SKIP] Webpage missing (JSON value: '{status_val}')")
             summary_counts["Skipped (Webpage missing)"] += 1
             continue
 
@@ -312,7 +321,7 @@ def process_single_movie_json(json_path, context):
 
             pub["json_ld_extraction_status"] = status_msg
             print(f"      [SUCCESS] Extraction completed -> {status_msg}")
-            
+
             tracker.add_success()
             summary_counts[status_msg] += 1
             movie_log_entry["success"] += 1
