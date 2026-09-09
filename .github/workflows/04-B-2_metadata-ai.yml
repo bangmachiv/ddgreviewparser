@@ -1,0 +1,52 @@
+name: 04-B-2. Extract Metadata (AI Fallback)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ai-metadata-extraction:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-genai
+
+      - name: Run AI Metadata Extraction
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PYTHONUNBUFFERED: "1"  # Forces Python to stream stdout and stderr
+        run: |
+          # The -u flag forces the binary to operate unbuffered
+          python -u 04-B-2_metadata-ai.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          
+          # Stage the JSON data and the strictly named log file
+          git add data/reviews/ logs/
+          git status
+          
+          if git diff --cached --quiet; then
+            echo "No changes to commit. All AI metadata fallback completed."
+            exit 0
+          fi
+          
+          git commit -m "Pipeline [04-B-2]: AI Fallback extraction of missing metadata"
+          git push origin HEAD:${{ github.ref }}
