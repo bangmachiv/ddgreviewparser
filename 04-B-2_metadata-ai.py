@@ -36,7 +36,7 @@ if not API_KEY:
 
 client = genai.Client(api_key=API_KEY)
 
-# Using Flash Lite exclusively to utilize the high RPD limits
+# Using Flash Lite models to utilize high RPD limits
 MODEL_CONFIG = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]
 
 # -----------------------------------------------------------------------------
@@ -75,10 +75,7 @@ class PipelineTracker:
 # Helpers
 # ---------------------------------------------------------------------------
 def clean_html(html_content):
-    """
-    Strips out massive base64 image strings to save tokens, 
-    but preserves the raw HTML/DOM completely intact.
-    """
+    """Strips massive base64 images to save tokens, keeps HTML/DOM intact."""
     return re.sub(r'data:image\/[^;]+;base64,[^"\'\s]+', '', html_content)
 
 def is_downloaded_successfully(pub):
@@ -88,27 +85,6 @@ def is_downloaded_successfully(pub):
     if isinstance(val, str):
         return val.strip().upper() in ["Y", "YES", "TRUE", "SUCCESS"]
     return False
-
-def needs_extraction(pub):
-    """Determines if a publisher needs Gemini fallback extraction and is eligible."""
-    url = pub.get("review_url", "")
-    if not url or url.strip().upper() == "NA" or not is_downloaded_successfully(pub):
-        return False
-
-    # Circuit Breaker: Do not attempt if we've already tried 5 or more times
-    attempts = pub.get("ai_extraction_attempt_count", 0)
-    if attempts >= 5:
-        return False
-
-    bad_values = ["na", "could not find from jsonld", "none", "null", ""]
-    critic = str(pub.get("critic_name", "")).strip().lower()
-    rating = str(pub.get("star_rating", "")).strip().lower()
-
-    # If both fields are already populated and valid, skip
-    if critic not in bad_values and rating not in bad_values:
-        return False
-
-    return True
 
 def extract_metadata_with_gemini(movie_name, html_text, prompt_template):
     prompt = prompt_template.replace("{movie_name}", str(movie_name)).replace("{webpage_text}", str(html_text))
@@ -131,7 +107,6 @@ def extract_metadata_with_gemini(movie_name, html_text, prompt_template):
                     raw_json = raw_json[:-3]
 
                 raw_json = raw_json.strip()
-
                 if not raw_json.startswith("{"):
                     raw_json = "{" + raw_json
 
@@ -186,7 +161,6 @@ def process_movie_file(json_path, prompt_template):
     movie_slug = data.get("movie", {}).get("slug")
     publishers = data.get("publishers", [])
 
-    # HTML Directory Hunting
     possible_html_dirs = [
         os.path.join(BASE_DIR, f"data/webpages/html_{movie_slug}"),
         os.path.join(BASE_DIR, f"data/webpages/{movie_slug}"),
@@ -194,22 +168,25 @@ def process_movie_file(json_path, prompt_template):
     ]
     html_dir = next((d for d in possible_html_dirs if os.path.exists(d)), None)
 
-    # Logging Setup
     movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{movie_slug}")
     script_log_path = os.path.join(movie_logs_dir, "04-B-2_metadata-ai.json")
     os.makedirs(movie_logs_dir, exist_ok=True)
 
     bad_values = ["na", "could not find from jsonld", "none", "null", ""]
     
+    # Calculate pre-run metric numbers
     earlier_completed = 0
     earlier_pending = 0
 
     for pub in publishers:
-        if is_downloaded_successfully(pub) and pub.get("review_url") not in [None, "NA", ""]:
-            if needs_extraction(pub):
-                earlier_pending += 1
-            else:
+        has_webpage = is_downloaded_successfully(pub) and pub.get("review_url") not in [None, "NA", ""]
+        if has_webpage:
+            critic_valid = str(pub.get("critic_name", "")).strip().lower() not in bad_values
+            rating_valid = str(pub.get("star_rating", "")).strip().lower() not in bad_values
+            if critic_valid and rating_valid:
                 earlier_completed += 1
+            else:
+                earlier_pending += 1
 
     tracker = PipelineTracker("AI Metadata Extraction (Gemini)", earlier_completed, earlier_pending)
 
@@ -228,107 +205,178 @@ def process_movie_file(json_path, prompt_template):
         print(f"[WARNING] HTML directory not found. Cannot perform AI extraction.")
         return
 
-    updated_count = 0
+    # Loop through EVERY publisher and clearly document the status
+    for index, pub in enumerate(publishers, start=1):
+        pub_id = pub.get("publisher_id", f"publisher_{index}")
+        url = pub.get("review_url", "")
+        has_webpage = is_downloaded_successfully(pub) and url and url.strip().upper() != "NA"
 
-    for pub in publishers:
-        if needs_extraction(pub):
-            pub_id = pub.get("publisher_id", "unknown")
-            current_attempts = pub.get("ai_extraction_attempt_count", 0)
+        critic_val = str(pub.get("critic_name", "")).strip()
+        rating_val = str(pub.get("star_rating", "")).strip()
+        critic_missing = critic_val.lower() in bad_values
+        rating_missing = rating_val.lower() in bad_values
 
-            print(f"\n  [*] Processing [{pub_id}] - Attempt {current_attempts + 1}/5")
-            pub["ai_extraction_attempt_count"] = current_attempts + 1
-            movie_log_entry["processed"] += 1
+        print(f"\n  [{index}/{len(publishers)}] [{pub_id}]")
 
-            html_path = os.path.join(html_dir, f"webpage_{pub_id}_{movie_slug}.html")
-            if not os.path.exists(html_path):
-                alt_path = os.path.join(html_dir, f"webpage_{pub_id}.html")
-                if os.path.exists(alt_path):
-                    html_path = alt_path
-                else:
-                    print(f"      [SKIP] HTML file not found.")
-                    movie_log_entry["publisher_details"][pub_id] = {"status": "SKIPPED", "reason": "HTML file missing"}
-                    continue
+        # Case 1: Non-webpage
+        if not has_webpage:
+            print("      Not processed- nonwebpage")
+            movie_log_entry["publisher_details"][pub_id] = {
+                "status": "Not processed- nonwebpage"
+            }
+            continue
 
-            with open(html_path, "r", encoding="utf-8") as hf:
-                raw_html = hf.read()
+        # Case 2: Both already found
+        if not critic_missing and not rating_missing:
+            print("      Not processed- both already found")
+            movie_log_entry["publisher_details"][pub_id] = {
+                "status": "Not processed- both already found",
+                "critic_name": critic_val,
+                "star_rating": rating_val
+            }
+            continue
 
-            cleaned_html = clean_html(raw_html)
-            chunk_size = 800000
-            chunks = [cleaned_html[i:i+chunk_size] for i in range(0, len(cleaned_html), chunk_size)]
-            print(f"      [HTML size: {len(cleaned_html)} chars -> Split into {len(chunks)} chunk(s)]")
+        # Case 3: Circuit Breaker
+        attempts = pub.get("ai_extraction_attempt_count", 0)
+        if attempts >= 5:
+            print("      Not processed- max attempts reached (>= 5)")
+            movie_log_entry["publisher_details"][pub_id] = {
+                "status": "Not processed- max attempts reached"
+            }
+            continue
 
-            current_critic = str(pub.get("critic_name", "NA"))
-            current_rating = str(pub.get("star_rating", "NA"))
-            found_new_data = False
-            used_model = "None"
+        # Case 4: Needs Processing
+        if critic_missing and rating_missing:
+            target_desc = "both to find"
+        elif critic_missing:
+            target_desc = "author to find"
+        else:
+            target_desc = "rating to find"
 
-            for idx, chunk in enumerate(chunks):
-                missing_critic = current_critic.strip().lower() in bad_values
-                missing_rating = current_rating.strip().lower() in bad_values
+        print(f"      Processed- {target_desc}")
+        pub["ai_extraction_attempt_count"] = attempts + 1
+        movie_log_entry["processed"] += 1
 
-                print(f"      [Analyzing Chunk {idx + 1}/{len(chunks)}...]")
+        # Locate file on disk
+        html_path = os.path.join(html_dir, f"webpage_{pub_id}_{movie_slug}.html")
+        if not os.path.exists(html_path):
+            alt_path = os.path.join(html_dir, f"webpage_{pub_id}.html")
+            if os.path.exists(alt_path):
+                html_path = alt_path
+            else:
+                print("      Result - failure")
+                print("      found none (HTML file missing on disk)")
+                tracker.add_failure()
+                movie_log_entry["failure"] += 1
+                movie_log_entry["publisher_details"][pub_id] = {
+                    "status": f"Processed- {target_desc}",
+                    "result": "failure",
+                    "reason": "HTML file missing on disk"
+                }
+                continue
 
-                extracted_data, model_success = extract_metadata_with_gemini(movie_name, chunk, prompt_template)
+        with open(html_path, "r", encoding="utf-8") as hf:
+            raw_html = hf.read()
 
-                if extracted_data:
-                    used_model = model_success
-                    new_critic = str(extracted_data.get("critic_name", "NA"))
-                    new_rating = str(extracted_data.get("star_rating", "NA"))
+        cleaned_html = clean_html(raw_html)
+        chunk_size = 800000
+        chunks = [cleaned_html[i:i+chunk_size] for i in range(0, len(cleaned_html), chunk_size)]
+        print(f"      [HTML size: {len(cleaned_html)} chars -> Split into {len(chunks)} chunk(s)]")
 
-                    if missing_critic and new_critic.strip().lower() not in bad_values:
-                        current_critic = new_critic
-                        pub["critic_name"] = current_critic
-                        print(f"      => Extracted Critic: {current_critic}")
-                        found_new_data = True
+        discovered_author = None
+        discovered_rating = None
+        used_model = "None"
 
-                    if missing_rating and new_rating.strip().lower() not in bad_values:
-                        current_rating = new_rating
-                        pub["star_rating"] = current_rating
-                        print(f"      => Extracted Rating: {current_rating}")
-                        found_new_data = True
+        for idx, chunk in enumerate(chunks):
+            print(f"      [Analyzing Chunk {idx + 1}/{len(chunks)}...]")
 
-                print("      [Waiting 65 seconds to respect 1 RPM limit...]")
-                time.sleep(65)
+            extracted_data, model_success = extract_metadata_with_gemini(movie_name, chunk, prompt_template)
 
-                missing_critic = current_critic.strip().lower() in bad_values
-                missing_rating = current_rating.strip().lower() in bad_values
+            if extracted_data:
+                used_model = model_success
+                new_critic = str(extracted_data.get("critic_name", "NA")).strip()
+                new_rating = str(extracted_data.get("star_rating", "NA")).strip()
 
-                if not missing_critic and not missing_rating:
-                    print("      [Found both fields. Halting chunk processing for this publisher.]")
-                    break
+                if critic_missing and not discovered_author and new_critic.lower() not in bad_values:
+                    discovered_author = new_critic
+                    pub["critic_name"] = new_critic
 
-            if not missing_critic and not missing_rating:
-                pub["ai_extraction_status"] = "found both"
+                if rating_missing and not discovered_rating and new_rating.lower() not in bad_values:
+                    discovered_rating = new_rating
+                    pub["star_rating"] = new_rating
+
+            print("      [Waiting 65 seconds to respect 1 RPM limit...]")
+            time.sleep(65)
+
+            # If everything needed has been found, break out of chunks
+            author_resolved = (not critic_missing) or (discovered_author is not None)
+            rating_resolved = (not rating_missing) or (discovered_rating is not None)
+
+            if author_resolved and rating_resolved:
+                print("      [All required target fields found. Halting remaining chunks.]")
+                break
+
+        # Calculate result status
+        if target_desc == "both to find":
+            if discovered_author and discovered_rating:
+                result_str = "full success"
                 tracker.add_success()
                 movie_log_entry["success"] += 1
-            elif not missing_critic or not missing_rating:
-                pub["ai_extraction_status"] = "found one"
-                tracker.add_success()  # Partial success still counts as moving forward
+            elif discovered_author or discovered_rating:
+                result_str = "partial success"
+                tracker.add_success()
                 movie_log_entry["success"] += 1
             else:
-                pub["ai_extraction_status"] = "found none"
+                result_str = "failure"
+                tracker.add_failure()
+                movie_log_entry["failure"] += 1
+        else:
+            if discovered_author or discovered_rating:
+                result_str = "full success"
+                tracker.add_success()
+                movie_log_entry["success"] += 1
+            else:
+                result_str = "failure"
                 tracker.add_failure()
                 movie_log_entry["failure"] += 1
 
-            print(f"      [Final Status]: {pub['ai_extraction_status'].upper()}")
+        print(f"      Result - {result_str}")
 
-            if found_new_data:
-                current_ld_status = pub.get("json_ld_extraction_status", "")
-                if "Augmented by Gemini" not in current_ld_status:
-                    pub["json_ld_extraction_status"] = f"{current_ld_status} | Augmented by Gemini"
-                updated_count += 1
-                
-            movie_log_entry["publisher_details"][pub_id] = {
-                "status": pub["ai_extraction_status"],
-                "model": used_model,
-                "critic_name": pub["critic_name"],
-                "star_rating": pub["star_rating"]
+        # Format exact "only what found" discovery line
+        found_parts = []
+        if discovered_rating:
+            found_parts.append(f"found rating - {discovered_rating}")
+        if discovered_author:
+            found_parts.append(f"author - {discovered_author}")
+
+        if found_parts:
+            print("      " + ", ".join(found_parts))
+        else:
+            print("      found none")
+
+        # Update JSON structures
+        if discovered_author or discovered_rating:
+            current_ld = pub.get("json_ld_extraction_status", "")
+            if "Augmented by Gemini" not in current_ld:
+                pub["json_ld_extraction_status"] = f"{current_ld} | Augmented by Gemini".strip(" |")
+
+        pub["ai_extraction_status"] = result_str
+
+        movie_log_entry["publisher_details"][pub_id] = {
+            "status": f"Processed- {target_desc}",
+            "result": result_str,
+            "model": used_model,
+            "discovered": {
+                "star_rating": discovered_rating,
+                "critic_name": discovered_author
             }
+        }
 
-            # Iterative Save
-            with open(json_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=4, ensure_ascii=False)
+        # Save review file after each processed publisher
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
 
+    # Save final structured log file
     movie_log_entry["new_completed"] = earlier_completed + movie_log_entry["success"]
     movie_log_entry["new_pending"] = earlier_pending - movie_log_entry["success"]
 
@@ -359,7 +407,9 @@ def main():
         prompt_template = pf.read()
 
     live_slugs = get_live_movie_slugs()
-    target_files = [os.path.join(BASE_DIR, "data", "reviews", f"reviews_{slug}.json") for slug in live_slugs if os.path.exists(os.path.join(BASE_DIR, "data", "reviews", f"reviews_{slug}.json"))]
+    target_files = [os.path.join(BASE_DIR, "data", "reviews", f"reviews_{slug}.json") 
+                    for slug in live_slugs 
+                    if os.path.exists(os.path.join(BASE_DIR, "data", "reviews", f"reviews_{slug}.json"))]
 
     if not target_files:
         print("[ERROR] No JSON files found for live movies.")
