@@ -144,8 +144,10 @@
             "ai_star_rating": "NOT_NEEDED",
             "ai_sentiment_category": "PENDING",
             "critic_name": "BH Harsh",
-            "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "one data found (critic name)"
+            "star_rating": "2",
+            "json_ld_extraction_status": "one data found (critic name) | Augmented by Gemini",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "found both"
         },
         {
             "publisher_id": "cinetales",
@@ -186,7 +188,9 @@
             "ai_sentiment_category": "PENDING",
             "critic_name": "आशीष तिवारी",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "one data found (critic name)"
+            "json_ld_extraction_status": "one data found (critic name)",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "found one"
         },
         {
             "publisher_id": "dainik-jagran",
@@ -308,8 +312,10 @@
             "ai_star_rating": "NOT_NEEDED",
             "ai_sentiment_category": "PENDING",
             "critic_name": "Satish Sundaresan",
-            "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "one data found (critic name)"
+            "star_rating": "1.5",
+            "json_ld_extraction_status": "one data found (critic name) | Augmented by Gemini",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "found both"
         },
         {
             "publisher_id": "hindustan",
@@ -349,8 +355,10 @@
             "ai_star_rating": "NOT_NEEDED",
             "ai_sentiment_category": "PENDING",
             "critic_name": "Rishabh Suri",
-            "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "one data found (critic name)"
+            "star_rating": "1.5",
+            "json_ld_extraction_status": "one data found (critic name) | Augmented by Gemini",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "found both"
         },
         {
             "publisher_id": "ians-live",
@@ -473,7 +481,9 @@
             "ai_sentiment_category": "PENDING",
             "critic_name": "Aakruti Bagla",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "one data found (critic name)"
+            "json_ld_extraction_status": "one data found (critic name)",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "found one"
         },
         {
             "publisher_id": "mint",
@@ -512,9 +522,11 @@
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
             "ai_sentiment_category": "PENDING",
-            "critic_name": "could not find from jsonld",
-            "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "no data found"
+            "critic_name": "Abhishek Srivastava",
+            "star_rating": "1.5",
+            "json_ld_extraction_status": "no data found | Augmented by Gemini",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "found both"
         },
         {
             "publisher_id": "movie-talkies",
@@ -535,8 +547,10 @@
             "ai_star_rating": "NOT_NEEDED",
             "ai_sentiment_category": "PENDING",
             "critic_name": "Sameer Ahire",
-            "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "one data found (critic name)"
+            "star_rating": "1",
+            "json_ld_extraction_status": "one data found (critic name) | Augmented by Gemini",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "found both"
         },
         {
             "publisher_id": "navbharat-times",
@@ -681,7 +695,9 @@
             "ai_sentiment_category": "PENDING",
             "critic_name": "Nandini Ramnath",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "one data found (critic name)"
+            "json_ld_extraction_status": "one data found (critic name)",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "found one"
         },
         {
             "publisher_id": "south-asian-herald",
@@ -741,7 +757,9 @@
             "ai_sentiment_category": "PENDING",
             "critic_name": "Swaroop Kodur",
             "star_rating": "could not find from jsonld",
-            "json_ld_extraction_status": "one data found (critic name)"
+            "json_ld_extraction_status": "one data found (critic name)",
+            "ai_extraction_attempt_count": 1,
+            "ai_extraction_status": "found one"
         },
         {
             "publisher_id": "the-hindu",

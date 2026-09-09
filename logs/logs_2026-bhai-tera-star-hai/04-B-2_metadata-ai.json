@@ -1,1 +1,67 @@
-{}
+{
+    "2026-09-09T05:17:05.352560+00:00": {
+        "earlier_completed": 11,
+        "earlier_pending": 9,
+        "processed": 9,
+        "success": 9,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {
+            "cinema-express": {
+                "status": "found both",
+                "model": "gemini-3.5-flash-lite",
+                "critic_name": "BH Harsh",
+                "star_rating": "2"
+            },
+            "dainik-bhaskar": {
+                "status": "found one",
+                "model": "gemini-3.5-flash-lite",
+                "critic_name": "आशीष तिवारी",
+                "star_rating": "could not find from jsonld"
+            },
+            "free-press-journal": {
+                "status": "found both",
+                "model": "gemini-3.5-flash-lite",
+                "critic_name": "Satish Sundaresan",
+                "star_rating": "1.5"
+            },
+            "hindustan-times": {
+                "status": "found both",
+                "model": "gemini-3.5-flash-lite",
+                "critic_name": "Rishabh Suri",
+                "star_rating": "1.5"
+            },
+            "mid-day": {
+                "status": "found one",
+                "model": "gemini-3.5-flash-lite",
+                "critic_name": "Aakruti Bagla",
+                "star_rating": "could not find from jsonld"
+            },
+            "moneycontrol": {
+                "status": "found both",
+                "model": "gemini-3.5-flash-lite",
+                "critic_name": "Abhishek Srivastava",
+                "star_rating": "1.5"
+            },
+            "movie-talkies": {
+                "status": "found both",
+                "model": "gemini-3.5-flash-lite",
+                "critic_name": "Sameer Ahire",
+                "star_rating": "1"
+            },
+            "scroll-in": {
+                "status": "found one",
+                "model": "gemini-3.5-flash-lite",
+                "critic_name": "Nandini Ramnath",
+                "star_rating": "could not find from jsonld"
+            },
+            "the-federal": {
+                "status": "found one",
+                "model": "gemini-3.5-flash-lite",
+                "critic_name": "Swaroop Kodur",
+                "star_rating": "could not find from jsonld"
+            }
+        }
+    }
+}
