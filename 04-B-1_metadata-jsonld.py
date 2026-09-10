@@ -2,7 +2,8 @@
 """
 04-B-1_metadata-jsonld.py
 Locally parses downloaded HTML files using Playwright to extract JSON-LD data.
-Strictly deterministic (No AI).
+Strictly writes to `jsonld_critic_name` and `jsonld_star_rating` fields.
+Uses "FAILED" when data is missing to keep the schema clean.
 """
 
 import builtins
@@ -147,13 +148,13 @@ def get_live_movie_slugs():
                     if slug:
                         slugs.append(slug)
                 except Exception as e:
-                    print(f"[WARNING] Could not read slug from {file_path}: {e}")
+                    pass
 
     return list(set(slugs))
 
 
 def is_downloaded_successfully(pub_dict):
-    """Helper to permissively check if the webpage was downloaded."""
+    """Helper to permissively check if the webpage was recorded as downloaded in the JSON."""
     val = pub_dict.get("webpage_extraction_successful", pub_dict.get("is_downloaded"))
     if isinstance(val, bool):
         return val
@@ -175,7 +176,7 @@ def process_single_movie_json(json_path, context):
         print(f"[ERROR] Could not find 'slug' inside {json_path}. Skipping.")
         return
 
-    # ROBUST DIRECTORY HUNTING: Check multiple common folder structures
+    # ROBUST DIRECTORY HUNTING
     possible_html_dirs = [
         os.path.join(BASE_DIR, f"data/webpages/html_{movie_slug}"),
         os.path.join(BASE_DIR, f"data/webpages/{movie_slug}"),
@@ -190,7 +191,6 @@ def process_single_movie_json(json_path, context):
 
     if not html_dir:
         print(f"[WARNING] HTML directory not found. Checked: {possible_html_dirs}")
-        print("[WARNING] Are your HTML files committed to GitHub, or blocked by a .gitignore?")
         return
 
     print(f"[INFO] Found HTML directory at: {html_dir}")
@@ -201,23 +201,18 @@ def process_single_movie_json(json_path, context):
     script_log_path = os.path.join(movie_logs_dir, "04-B-1_metadata-jsonld.json")
     os.makedirs(movie_logs_dir, exist_ok=True)
 
-    valid_statuses = [
-        "no data found",
-        "both data found",
-        "one data found (star rating)",
-        "one data found (critic name)"
-    ]
-
+    # Pre-calculate tracker metrics strictly based on JSON-LD fields
     earlier_completed = 0
     earlier_pending = 0
 
     for pub in publishers:
-        current_status = str(pub.get("json_ld_extraction_status", "")).strip()
         review_url = pub.get("review_url")
-        
-        # Only count valid eligible publishers for pending/completed tracker
+        # Only count valid eligible publishers (Has URL and JSON says it downloaded)
         if review_url and review_url != "NA" and is_downloaded_successfully(pub):
-            if current_status in valid_statuses:
+            c_val = str(pub.get("jsonld_critic_name", "")).strip().upper()
+            s_val = str(pub.get("jsonld_star_rating", "")).strip().upper()
+            
+            if c_val != "PENDING" and s_val != "PENDING":
                 earlier_completed += 1
             else:
                 earlier_pending += 1
@@ -235,41 +230,29 @@ def process_single_movie_json(json_path, context):
         "publisher_details": {}
     }
 
-    summary_counts = {
-        "Skipped (URL missing)": 0,
-        "Skipped (Webpage missing)": 0,
-        "Skipped (Already successfully parsed)": 0,
-        "no data found": 0,
-        "one data found (critic name)": 0,
-        "one data found (star rating)": 0,
-        "both data found": 0,
-        "Error during parsing": 0
-    }
-
     for index, pub in enumerate(publishers, start=1):
         pub_id = pub.get("publisher_id")
         review_url = pub.get("review_url")
-        current_status = str(pub.get("json_ld_extraction_status", "")).strip()
+        
+        c_val = str(pub.get("jsonld_critic_name", "")).strip().upper()
+        s_val = str(pub.get("jsonld_star_rating", "")).strip().upper()
 
         print(f"\n  [{index}/{len(publishers)}] Processing [{pub_id}]...")
 
-        # 1. SKIP CHECK: Already parsed successfully
-        if current_status in valid_statuses:
-            print(f"      [SKIP] Already parsed: '{current_status}'")
-            summary_counts["Skipped (Already successfully parsed)"] += 1
+        # 1. SKIP CHECK: Already parsed (has data or "FAILED" instead of "PENDING")
+        if c_val != "PENDING" and s_val != "PENDING":
+            print(f"      [SKIP] Already processed (Critic: {pub.get('jsonld_critic_name')}, Rating: {pub.get('jsonld_star_rating')})")
             continue
 
         # 2. SKIP CHECK: No URL
         if not review_url or review_url == "NA":
             print("      [SKIP] URL missing (NA)")
-            summary_counts["Skipped (URL missing)"] += 1
             continue
 
-        # 3. SKIP CHECK: Webpage not downloaded
+        # 3. SKIP CHECK: JSON says Webpage not downloaded
         if not is_downloaded_successfully(pub):
             status_val = pub.get("webpage_extraction_successful", pub.get("is_downloaded", "Missing Key"))
-            print(f"      [SKIP] Webpage missing (JSON value: '{status_val}')")
-            summary_counts["Skipped (Webpage missing)"] += 1
+            print(f"      [SKIP] Webpage missing according to JSON (Value: '{status_val}')")
             continue
 
         # 4. VERIFY HTML EXISTS ON DISK
@@ -282,8 +265,7 @@ def process_single_movie_json(json_path, context):
                 html_file_path = alt_file_path
             else:
                 print(f"      [SKIP] HTML file '{html_file_name}' not found on disk in {html_dir}")
-                summary_counts["Skipped (Webpage missing)"] += 1
-                movie_log_entry["publisher_details"][pub_id] = {"status": "SKIPPED", "reason": "HTML file missing"}
+                movie_log_entry["publisher_details"][pub_id] = {"status": "SKIPPED", "reason": "HTML file missing on disk"}
                 continue
 
         # 5. EXECUTE HTML PARSING VIA PLAYWRIGHT
@@ -298,8 +280,8 @@ def process_single_movie_json(json_path, context):
 
             if "error" in extracted_data:
                 status_msg = "no data found"
-                pub["critic_name"] = "could not find from jsonld"
-                pub["star_rating"] = "could not find from jsonld"
+                pub["jsonld_critic_name"] = "FAILED"
+                pub["jsonld_star_rating"] = "FAILED"
             else:
                 critic_names = list(dict.fromkeys(extracted_data.get("critic_names", [])))
                 star_ratings = list(dict.fromkeys(extracted_data.get("star_ratings", [])))
@@ -307,8 +289,9 @@ def process_single_movie_json(json_path, context):
                 has_critic = len(critic_names) > 0
                 has_rating = len(star_ratings) > 0
 
-                pub["critic_name"] = critic_names[0] if has_critic else "could not find from jsonld"
-                pub["star_rating"] = star_ratings[0] if has_rating else "could not find from jsonld"
+                # Strictly assign to the JSON-LD schema fields, using "FAILED" if missing
+                pub["jsonld_critic_name"] = critic_names[0] if has_critic else "FAILED"
+                pub["jsonld_star_rating"] = star_ratings[0] if has_rating else "FAILED"
 
                 if has_critic and has_rating:
                     status_msg = "both data found"
@@ -323,19 +306,17 @@ def process_single_movie_json(json_path, context):
             print(f"      [SUCCESS] Extraction completed -> {status_msg}")
 
             tracker.add_success()
-            summary_counts[status_msg] += 1
             movie_log_entry["success"] += 1
             movie_log_entry["publisher_details"][pub_id] = {
                 "status": "SUCCESS",
                 "json_ld_extraction_status": status_msg,
-                "critic_name": pub["critic_name"],
-                "star_rating": pub["star_rating"]
+                "jsonld_critic_name": pub["jsonld_critic_name"],
+                "jsonld_star_rating": pub["jsonld_star_rating"]
             }
 
         except Exception as e:
             print(f"      [FAILED] Error during parsing: {e}")
             tracker.add_failure()
-            summary_counts["Error during parsing"] += 1
             movie_log_entry["failure"] += 1
             movie_log_entry["publisher_details"][pub_id] = {
                 "status": "FAILED",
