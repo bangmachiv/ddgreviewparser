@@ -139,5 +139,136 @@
                 "star_rating": "2.0"
             }
         }
+    },
+    "2026-09-10T15:49:40.942743+00:00": {
+        "earlier_completed": 0,
+        "earlier_pending": 20,
+        "processed": 20,
+        "success": 20,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "both data found",
+                "jsonld_critic_name": "Kiran Vinod Kumar Jain",
+                "jsonld_star_rating": "1"
+            },
+            "bollywood-hungama": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "both data found",
+                "jsonld_critic_name": "Bollywood Hungama News Network",
+                "jsonld_star_rating": "1.5"
+            },
+            "cinema-express": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "one data found (critic name)",
+                "jsonld_critic_name": "BH Harsh",
+                "jsonld_star_rating": "FAILED"
+            },
+            "dainik-bhaskar": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "one data found (critic name)",
+                "jsonld_critic_name": "आशीष तिवारी",
+                "jsonld_star_rating": "FAILED"
+            },
+            "dainik-jagran": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "both data found",
+                "jsonld_critic_name": "Rinki Tiwari",
+                "jsonld_star_rating": "3"
+            },
+            "filmfare": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "both data found",
+                "jsonld_critic_name": "Devesh Sharma",
+                "jsonld_star_rating": "2.5"
+            },
+            "free-press-journal": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "one data found (critic name)",
+                "jsonld_critic_name": "Satish Sundaresan",
+                "jsonld_star_rating": "FAILED"
+            },
+            "hindustan-times": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "one data found (critic name)",
+                "jsonld_critic_name": "Rishabh Suri",
+                "jsonld_star_rating": "FAILED"
+            },
+            "india-today": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "both data found",
+                "jsonld_critic_name": "Anisha Rao",
+                "jsonld_star_rating": "1"
+            },
+            "koimoi": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "both data found",
+                "jsonld_critic_name": "Rajiv Vijayakar",
+                "jsonld_star_rating": "1"
+            },
+            "mid-day": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "one data found (critic name)",
+                "jsonld_critic_name": "Aakruti Bagla",
+                "jsonld_star_rating": "FAILED"
+            },
+            "moneycontrol": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "no data found",
+                "jsonld_critic_name": "FAILED",
+                "jsonld_star_rating": "FAILED"
+            },
+            "movie-talkies": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "one data found (critic name)",
+                "jsonld_critic_name": "Sameer Ahire",
+                "jsonld_star_rating": "FAILED"
+            },
+            "ndtv": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "both data found",
+                "jsonld_critic_name": "Saibal Chatterjee",
+                "jsonld_star_rating": "2"
+            },
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "both data found",
+                "jsonld_critic_name": "Titas Chowdhury",
+                "jsonld_star_rating": "2.5"
+            },
+            "rediff": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "both data found",
+                "jsonld_critic_name": "MAYUR SANAP",
+                "jsonld_star_rating": "1.5"
+            },
+            "scroll-in": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "one data found (critic name)",
+                "jsonld_critic_name": "Nandini Ramnath",
+                "jsonld_star_rating": "FAILED"
+            },
+            "the-federal": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "one data found (critic name)",
+                "jsonld_critic_name": "Swaroop Kodur",
+                "jsonld_star_rating": "FAILED"
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "both data found",
+                "jsonld_critic_name": "Shubhra Gupta",
+                "jsonld_star_rating": "1.5"
+            },
+            "the-times-of-india": {
+                "status": "SUCCESS",
+                "json_ld_extraction_status": "both data found",
+                "jsonld_critic_name": "Ronak Kotecha",
+                "jsonld_star_rating": "2.0"
+            }
+        }
     }
 }
