@@ -133,9 +133,9 @@
             "highlighted_title": "*Too wacky* for its own good",
             "jsonld_critic_name": "BH Harsh",
             "jsonld_star_rating": "FAILED",
-            "ai_metadata_parsing_attempts": 0,
+            "ai_metadata_parsing_attempts": 1,
             "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
+            "ai_star_rating": "2",
             "ai_sentiment_category": "PENDING"
         },
         {
@@ -171,7 +171,7 @@
             "highlighted_title": "Raghav Juyal Solo Lead *Fails To Impress*",
             "jsonld_critic_name": "आशीष तिवारी",
             "jsonld_star_rating": "FAILED",
-            "ai_metadata_parsing_attempts": 0,
+            "ai_metadata_parsing_attempts": 1,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
             "ai_sentiment_category": "PENDING"
@@ -285,9 +285,9 @@
             "highlighted_title": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into *Superstar-Doom*?",
             "jsonld_critic_name": "Satish Sundaresan",
             "jsonld_star_rating": "FAILED",
-            "ai_metadata_parsing_attempts": 0,
+            "ai_metadata_parsing_attempts": 1,
             "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
+            "ai_star_rating": "1.5",
             "ai_sentiment_category": "PENDING"
         },
         {
@@ -323,9 +323,9 @@
             "highlighted_title": "This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... '*Why?*'",
             "jsonld_critic_name": "Rishabh Suri",
             "jsonld_star_rating": "FAILED",
-            "ai_metadata_parsing_attempts": 0,
+            "ai_metadata_parsing_attempts": 1,
             "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
+            "ai_star_rating": "1.5",
             "ai_sentiment_category": "PENDING"
         },
         {
@@ -437,7 +437,7 @@
             "highlighted_title": "Raghav Juyal’s comic timing *can’t save* this film",
             "jsonld_critic_name": "Aakruti Bagla",
             "jsonld_star_rating": "FAILED",
-            "ai_metadata_parsing_attempts": 0,
+            "ai_metadata_parsing_attempts": 1,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
             "ai_sentiment_category": "PENDING"
@@ -475,9 +475,9 @@
             "highlighted_title": "Raghav Juyal leads a comedy where the jokes need their own *rescue mission*",
             "jsonld_critic_name": "FAILED",
             "jsonld_star_rating": "FAILED",
-            "ai_metadata_parsing_attempts": 0,
-            "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
+            "ai_metadata_parsing_attempts": 1,
+            "ai_critic_name": "Abhishek Srivastava",
+            "ai_star_rating": "1.5",
             "ai_sentiment_category": "PENDING"
         },
         {
@@ -494,9 +494,9 @@
             "highlighted_title": "A *painful blow* to filmmaking standards",
             "jsonld_critic_name": "Sameer Ahire",
             "jsonld_star_rating": "FAILED",
-            "ai_metadata_parsing_attempts": 0,
+            "ai_metadata_parsing_attempts": 1,
             "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
+            "ai_star_rating": "1",
             "ai_sentiment_category": "PENDING"
         },
         {
@@ -627,7 +627,7 @@
             "highlighted_title": "*Pointless comedy* strains patience levels",
             "jsonld_critic_name": "Nandini Ramnath",
             "jsonld_star_rating": "FAILED",
-            "ai_metadata_parsing_attempts": 0,
+            "ai_metadata_parsing_attempts": 1,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
             "ai_sentiment_category": "PENDING"
@@ -684,7 +684,7 @@
             "highlighted_title": "Bhai Tera Star Hai review: Raghav Juyal's comedy promises a lot, *delivers little*",
             "jsonld_critic_name": "Swaroop Kodur",
             "jsonld_star_rating": "FAILED",
-            "ai_metadata_parsing_attempts": 0,
+            "ai_metadata_parsing_attempts": 1,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
             "ai_sentiment_category": "PENDING"
