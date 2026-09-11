@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
 04-B-2_metadata-ai.py
-AI Fallback: Uses Gemini 3.5/3.1 Flash-Lite to extract missing critic names 
-and star ratings from raw HTML chunks if JSON-LD parsing failed.
+AI Fallback: Reads gaps from `jsonld_` fields. 
+Strictly writes discovered metadata to `ai_critic_name` and `ai_star_rating`.
+Prints explicit, structured step-by-step logs.
 """
 
 import builtins
@@ -35,12 +36,10 @@ if not API_KEY:
     exit(1)
 
 client = genai.Client(api_key=API_KEY)
-
-# Using Flash Lite models to utilize high RPD limits
 MODEL_CONFIG = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]
 
 # -----------------------------------------------------------------------------
-# 7-Column Pipeline Metric Tracker
+# Pipeline Metric Tracker
 # -----------------------------------------------------------------------------
 class PipelineTracker:
     def __init__(self, metric_name, earlier_completed, earlier_pending):
@@ -90,7 +89,6 @@ def extract_metadata_with_gemini(movie_name, html_text, prompt_template):
     prompt = prompt_template.replace("{movie_name}", str(movie_name)).replace("{webpage_text}", str(html_text))
 
     for model_name in MODEL_CONFIG:
-        print(f"      [Attempting Model: {model_name}]")
         try:
             response = client.models.generate_content(
                 model=model_name,
@@ -112,14 +110,8 @@ def extract_metadata_with_gemini(movie_name, html_text, prompt_template):
 
                 return json.loads(raw_json), model_name
 
-        except errors.APIError as e:
-            print(f"      [API Error on {model_name}]: {e}")
-        except json.JSONDecodeError as e:
-            print(f"      [JSON Parse Error on {model_name}]: {e}")
-        except Exception as e:
-            print(f"      [Unexpected Error on {model_name}]: {e}")
-            
-        print("      [Fallback] Trying next model...")
+        except Exception:
+            pass
 
     return None, None
 
@@ -172,8 +164,9 @@ def process_movie_file(json_path, prompt_template):
     script_log_path = os.path.join(movie_logs_dir, "04-B-2_metadata-ai.json")
     os.makedirs(movie_logs_dir, exist_ok=True)
 
-    bad_values = ["na", "could not find from jsonld", "none", "null", ""]
-    
+    # Core skip flags. "failed" handles the string written by 04-B-1.
+    bad_values = ["na", "could not find from jsonld", "none", "null", "", "failed", "pending"]
+
     # Calculate pre-run metric numbers
     earlier_completed = 0
     earlier_pending = 0
@@ -181,9 +174,15 @@ def process_movie_file(json_path, prompt_template):
     for pub in publishers:
         has_webpage = is_downloaded_successfully(pub) and pub.get("review_url") not in [None, "NA", ""]
         if has_webpage:
-            critic_valid = str(pub.get("critic_name", "")).strip().lower() not in bad_values
-            rating_valid = str(pub.get("star_rating", "")).strip().lower() not in bad_values
-            if critic_valid and rating_valid:
+            ld_critic = str(pub.get("jsonld_critic_name", "")).strip().lower()
+            ld_rating = str(pub.get("jsonld_star_rating", "")).strip().lower()
+            ai_critic = str(pub.get("ai_critic_name", "")).strip().lower()
+            ai_rating = str(pub.get("ai_star_rating", "")).strip().lower()
+
+            critic_missing = (ld_critic in bad_values) and (ai_critic in bad_values or ai_critic == "not_needed")
+            rating_missing = (ld_rating in bad_values) and (ai_rating in bad_values or ai_rating == "not_needed")
+
+            if not critic_missing and not rating_missing:
                 earlier_completed += 1
             else:
                 earlier_pending += 1
@@ -205,25 +204,26 @@ def process_movie_file(json_path, prompt_template):
         print(f"[WARNING] HTML directory not found. Cannot perform AI extraction.")
         return
 
-    # Loop through EVERY publisher and clearly document the status
     for index, pub in enumerate(publishers, start=1):
         pub_id = pub.get("publisher_id", f"publisher_{index}")
         url = pub.get("review_url", "")
         has_webpage = is_downloaded_successfully(pub) and url and url.strip().upper() != "NA"
 
-        critic_val = str(pub.get("critic_name", "")).strip()
-        rating_val = str(pub.get("star_rating", "")).strip()
-        critic_missing = critic_val.lower() in bad_values
-        rating_missing = rating_val.lower() in bad_values
+        ld_critic = str(pub.get("jsonld_critic_name", "")).strip()
+        ld_rating = str(pub.get("jsonld_star_rating", "")).strip()
+        ai_critic = str(pub.get("ai_critic_name", "")).strip()
+        ai_rating = str(pub.get("ai_star_rating", "")).strip()
+
+        # Is the data truly missing across both deterministic and AI fields?
+        critic_missing = (ld_critic.lower() in bad_values) and (ai_critic.lower() in bad_values or ai_critic.lower() == "not_needed")
+        rating_missing = (ld_rating.lower() in bad_values) and (ai_rating.lower() in bad_values or ai_rating.lower() == "not_needed")
 
         print(f"\n  [{index}/{len(publishers)}] [{pub_id}]")
 
         # Case 1: Non-webpage
         if not has_webpage:
             print("      Not processed- nonwebpage")
-            movie_log_entry["publisher_details"][pub_id] = {
-                "status": "Not processed- nonwebpage"
-            }
+            movie_log_entry["publisher_details"][pub_id] = {"status": "Not processed- nonwebpage"}
             continue
 
         # Case 2: Both already found
@@ -231,18 +231,16 @@ def process_movie_file(json_path, prompt_template):
             print("      Not processed- both already found")
             movie_log_entry["publisher_details"][pub_id] = {
                 "status": "Not processed- both already found",
-                "critic_name": critic_val,
-                "star_rating": rating_val
+                "critic_name": ai_critic if ld_critic.lower() in bad_values else ld_critic,
+                "star_rating": ai_rating if ld_rating.lower() in bad_values else ld_rating
             }
             continue
 
         # Case 3: Circuit Breaker
-        attempts = pub.get("ai_extraction_attempt_count", 0)
+        attempts = pub.get("ai_metadata_parsing_attempts", 0)
         if attempts >= 5:
             print("      Not processed- max attempts reached (>= 5)")
-            movie_log_entry["publisher_details"][pub_id] = {
-                "status": "Not processed- max attempts reached"
-            }
+            movie_log_entry["publisher_details"][pub_id] = {"status": "Not processed- max attempts reached"}
             continue
 
         # Case 4: Needs Processing
@@ -254,10 +252,9 @@ def process_movie_file(json_path, prompt_template):
             target_desc = "rating to find"
 
         print(f"      Processed- {target_desc}")
-        pub["ai_extraction_attempt_count"] = attempts + 1
+        pub["ai_metadata_parsing_attempts"] = attempts + 1
         movie_log_entry["processed"] += 1
 
-        # Locate file on disk
         html_path = os.path.join(html_dir, f"webpage_{pub_id}_{movie_slug}.html")
         if not os.path.exists(html_path):
             alt_path = os.path.join(html_dir, f"webpage_{pub_id}.html")
@@ -265,7 +262,7 @@ def process_movie_file(json_path, prompt_template):
                 html_path = alt_path
             else:
                 print("      Result - failure")
-                print("      found none (HTML file missing on disk)")
+                print("      found none")
                 tracker.add_failure()
                 movie_log_entry["failure"] += 1
                 movie_log_entry["publisher_details"][pub_id] = {
@@ -281,15 +278,12 @@ def process_movie_file(json_path, prompt_template):
         cleaned_html = clean_html(raw_html)
         chunk_size = 800000
         chunks = [cleaned_html[i:i+chunk_size] for i in range(0, len(cleaned_html), chunk_size)]
-        print(f"      [HTML size: {len(cleaned_html)} chars -> Split into {len(chunks)} chunk(s)]")
-
+        
         discovered_author = None
         discovered_rating = None
         used_model = "None"
 
         for idx, chunk in enumerate(chunks):
-            print(f"      [Analyzing Chunk {idx + 1}/{len(chunks)}...]")
-
             extracted_data, model_success = extract_metadata_with_gemini(movie_name, chunk, prompt_template)
 
             if extracted_data:
@@ -297,23 +291,22 @@ def process_movie_file(json_path, prompt_template):
                 new_critic = str(extracted_data.get("critic_name", "NA")).strip()
                 new_rating = str(extracted_data.get("star_rating", "NA")).strip()
 
+                # Strictly write to ai_ fields
                 if critic_missing and not discovered_author and new_critic.lower() not in bad_values:
                     discovered_author = new_critic
-                    pub["critic_name"] = new_critic
+                    pub["ai_critic_name"] = new_critic
 
                 if rating_missing and not discovered_rating and new_rating.lower() not in bad_values:
                     discovered_rating = new_rating
-                    pub["star_rating"] = new_rating
+                    pub["ai_star_rating"] = new_rating
 
-            print("      [Waiting 65 seconds to respect 1 RPM limit...]")
             time.sleep(65)
 
-            # If everything needed has been found, break out of chunks
+            # Early exit check
             author_resolved = (not critic_missing) or (discovered_author is not None)
             rating_resolved = (not rating_missing) or (discovered_rating is not None)
 
             if author_resolved and rating_resolved:
-                print("      [All required target fields found. Halting remaining chunks.]")
                 break
 
         # Calculate result status
@@ -354,25 +347,18 @@ def process_movie_file(json_path, prompt_template):
         else:
             print("      found none")
 
-        # Update JSON structures
-        if discovered_author or discovered_rating:
-            current_ld = pub.get("json_ld_extraction_status", "")
-            if "Augmented by Gemini" not in current_ld:
-                pub["json_ld_extraction_status"] = f"{current_ld} | Augmented by Gemini".strip(" |")
-
-        pub["ai_extraction_status"] = result_str
-
+        # Save result metrics
         movie_log_entry["publisher_details"][pub_id] = {
             "status": f"Processed- {target_desc}",
             "result": result_str,
             "model": used_model,
             "discovered": {
-                "star_rating": discovered_rating,
-                "critic_name": discovered_author
+                "ai_star_rating": discovered_rating,
+                "ai_critic_name": discovered_author
             }
         }
 
-        # Save review file after each processed publisher
+        # Save review file state iteratively
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
 
