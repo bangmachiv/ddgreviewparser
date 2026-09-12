@@ -174,7 +174,7 @@
             "ai_metadata_parsing_attempts": 2,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "BAD"
         },
         {
             "publisher_id": "dainik-jagran",
@@ -440,7 +440,7 @@
             "ai_metadata_parsing_attempts": 2,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "BAD"
         },
         {
             "publisher_id": "mint",
@@ -630,7 +630,7 @@
             "ai_metadata_parsing_attempts": 2,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "BAD"
         },
         {
             "publisher_id": "south-asian-herald",
@@ -687,7 +687,7 @@
             "ai_metadata_parsing_attempts": 2,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "BAD"
         },
         {
             "publisher_id": "the-hindu",

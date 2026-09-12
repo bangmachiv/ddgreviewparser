@@ -1,1 +1,37 @@
-{}
+{
+    "2026-09-12T09:25:55.430325+00:00": {
+        "earlier_completed": 0,
+        "earlier_pending": 4,
+        "processed": 4,
+        "success": 4,
+        "failure": 0,
+        "new_completed": 4,
+        "new_pending": 0,
+        "publisher_details": {
+            "dainik-bhaskar": {
+                "status": "Processed",
+                "result": "full success",
+                "model": "openai/gpt-oss-120b",
+                "ai_sentiment_category": "BAD"
+            },
+            "mid-day": {
+                "status": "Processed",
+                "result": "full success",
+                "model": "openai/gpt-oss-120b",
+                "ai_sentiment_category": "BAD"
+            },
+            "scroll-in": {
+                "status": "Processed",
+                "result": "full success",
+                "model": "openai/gpt-oss-120b",
+                "ai_sentiment_category": "BAD"
+            },
+            "the-federal": {
+                "status": "Processed",
+                "result": "full success",
+                "model": "openai/gpt-oss-120b",
+                "ai_sentiment_category": "BAD"
+            }
+        }
+    }
+}
