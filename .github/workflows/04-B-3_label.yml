@@ -1,4 +1,4 @@
-name: 04-B-3. Sentiment Label (OSS Test)
+name: 04-B-3. Sentiment
 
 on:
   workflow_dispatch:
