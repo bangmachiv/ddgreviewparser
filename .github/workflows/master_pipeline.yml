@@ -3,7 +3,7 @@ name: Master Review Pipeline
 on:
   workflow_dispatch:
   # schedule:
-  #   - cron: '0 2 * * *' 
+  #   - cron: '0 2 * * *'
 
 concurrency:
   group: "review-automation-pipeline"
@@ -15,108 +15,111 @@ permissions:
 jobs:
   execute-pipeline:
     runs-on: ubuntu-latest
-    timeout-minutes: 180 
-    
-    # REQUIRED: Forces Python to flush standard output directly to the terminal in real-time
+    timeout-minutes: 180
+
     env:
       PYTHONUNBUFFERED: "1"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
-      - name: Set up Python 3.10
+      - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-          cache: 'pip' 
+          python-version: '3.12'
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          
-          # 1. Install base scraping dependencies from the repo file (if it exists)
           if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
-          
-          # 2. Force install all known external libraries for AI and Web Automation
-          pip install requests playwright playwright-stealth curl_cffi duckduckgo-search ddgs google-genai beautifulsoup4 lxml
-          
-          # 3. Install headless browser components
+          pip install requests playwright playwright-stealth curl_cffi duckduckgo-search ddgs google-genai groq beautifulsoup4 lxml
           playwright install --with-deps chromium
 
       # ----------------------------------------------------
-      # 1. PREP SUBFLOW
+      # 1. DISCOVERY & SCRAPING
       # ----------------------------------------------------
-      - name: Prep 1 - Search for Reviews
-        run: python search_reviews.py
+      - name: 01 - Search Reviews
+        run: python -u 01_search.py
 
-      - name: Prep 2 - Classify and Filter Valid Reviews
-        run: python classify_reviews.py
+      - name: 02 - Identify Reviews
+        run: python -u 02_identify.py
 
-      - name: Prep 3 - Download HTML Webpages
+      - name: 03 - Download HTML Webpages
         env:
           SCRAPE_DO_TOKEN: ${{ secrets.SCRAPE_DO_TOKEN }}
-        run: python download_html.py
+        run: python -u 03_download.py
 
       # ----------------------------------------------------
-      # 2. TITLE SUBFLOW
+      # 2. TITLE EXTRACTION & REFINEMENT
       # ----------------------------------------------------
-      - name: Title 1 - Extract Raw Article Titles
-        run: python extract_titles.py
+      - name: 04-A-1 - Extract Titles
+        run: python -u 04-A-1_titles.py
 
-      - name: Title 2 - Clean Titles with Gemini
+      - name: 04-A-2 - Clean Titles (Gemini)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python clean_titles.py || { echo "Gemini title cleaning script crashed!"; exit 1; }
+        run: python -u 04-A-2_clean.py
 
-      - name: Title 3 - Extract Highlighted Titles
+      - name: 04-A-3 - Highlight Titles (Gemini)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python highlight_extractor.py || { echo "Highlight extraction script crashed!"; exit 1; }
+        run: python -u 04-A-3_highlight.py
 
       # ----------------------------------------------------
-      # 3. RATING SUBFLOW
+      # 3. METADATA & SENTIMENT PROCESSING
       # ----------------------------------------------------
-      - name: Rating 1 - Parse JSON-LD Data for Ratings
-        run: python parse_jsonld.py
+      - name: 04-B-1 - Metadata JSON-LD Parsing
+        run: python -u 04-B-1_metadata-jsonld.py
 
-      - name: Rating 2 - Extract Missing Metadata (Ratings/Critics)
+      - name: 04-B-2 - Metadata AI Fallback (Gemini)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python extract_missing_metadata.py || { echo "Metadata extraction script crashed!"; exit 1; }
+        run: python -u 04-B-2_metadata-ai.py
 
-      - name: Rating 3 - Classify Unrated Sentiments
+      - name: 04-B-3 - Unrated Title Sentiment Labeling (Groq)
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python ai_sentiment_classifier.py || { echo "AI Sentiment classification script crashed!"; exit 1; }
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python -u 04-B-3_label.py
 
       # ----------------------------------------------------
-      # 4. OUTPUT SUBFLOW
+      # 4. OUTPUT GENERATION
       # ----------------------------------------------------
-      - name: Output 1 - Generate WhatsApp Messages
+      - name: 05-A - Generate WhatsApp Output
         run: |
+          shopt -s nullglob
           for file in data/reviews/reviews_*.json; do
-            if [ -f "$file" ]; then
-              echo "Generating WhatsApp output for $file"
-              python wsap_output_creator.py "$file"
-            fi
+            echo "Generating WhatsApp output for $file"
+            python -u 05-A_wsap.py "$file"
           done
 
       # ----------------------------------------------------
-      # COMMIT & PUSH (Runs even if a script fails)
+      # 5. PIPELINE SUMMARY REPORT
       # ----------------------------------------------------
-      - name: Sync and Push Output Data
-        if: success() || failure()
+      - name: 05-B - Print & Save Pipeline Summary
+        if: always()
+        run: python -u 05-B_pipeline.py
+
+      # ----------------------------------------------------
+      # COMMIT & PUSH
+      # ----------------------------------------------------
+      - name: Commit and push changes
+        if: always()
         run: |
           git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
           
-          git add data/
+          git add data/ logs/
+          git status
           
           if git diff --cached --quiet; then
-            echo "No changes were made by the scripts. Skipping commit."
-          else
-            git commit -m "chore: Automated Pipeline Update - Prep, Titles, Ratings, Outputs"
-            git pull origin ${{ github.ref_name }} --rebase --autostash
-            git push origin HEAD:${{ github.ref }}
+            echo "No data or log modifications to commit."
+            exit 0
           fi
+          
+          git commit -m "Pipeline Run: Processed reviews, generated outputs, and updated logs"
+          git pull origin ${{ github.ref_name }} --rebase --autostash || true
+          git push origin HEAD:${{ github.ref }}
