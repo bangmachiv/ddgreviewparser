@@ -1,1 +1,13 @@
-{}
+{
+    "2026-09-12T14:18:07.190700+00:00": {
+        "movie_slug": "2026-bhai-tera-star-hai",
+        "total_reviews_formatted": 20,
+        "unrated_ai_slotted_publishers": [
+            "Dainik Bhaskar -> Slotted as BAD",
+            "Mid-Day -> Slotted as BAD",
+            "Scroll . in -> Slotted as BAD",
+            "The Federal -> Slotted as BAD"
+        ],
+        "missing_highlight_publishers": []
+    }
+}
