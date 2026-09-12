@@ -278,12 +278,13 @@ def process_movie_file(json_path, prompt_template):
         cleaned_html = clean_html(raw_html)
         chunk_size = 800000
         chunks = [cleaned_html[i:i+chunk_size] for i in range(0, len(cleaned_html), chunk_size)]
-        
+
         discovered_author = None
         discovered_rating = None
         used_model = "None"
 
         for idx, chunk in enumerate(chunks):
+            print(f"      [Analyzing Chunk {idx + 1}/{len(chunks)}...]")
             extracted_data, model_success = extract_metadata_with_gemini(movie_name, chunk, prompt_template)
 
             if extracted_data:
@@ -291,22 +292,25 @@ def process_movie_file(json_path, prompt_template):
                 new_critic = str(extracted_data.get("critic_name", "NA")).strip()
                 new_rating = str(extracted_data.get("star_rating", "NA")).strip()
 
-                # Strictly write to ai_ fields
+                # Strictly write to ai_ fields and protect state instantly
                 if critic_missing and not discovered_author and new_critic.lower() not in bad_values:
                     discovered_author = new_critic
                     pub["ai_critic_name"] = new_critic
+                    print(f"      [AI Saved Author]: {discovered_author}")
 
                 if rating_missing and not discovered_rating and new_rating.lower() not in bad_values:
                     discovered_rating = new_rating
                     pub["ai_star_rating"] = new_rating
+                    print(f"      [AI Saved Rating]: {discovered_rating}")
 
             time.sleep(65)
 
-            # Early exit check
+            # Early exit check: break out of chunk loop immediately if targets are found
             author_resolved = (not critic_missing) or (discovered_author is not None)
             rating_resolved = (not rating_missing) or (discovered_rating is not None)
 
             if author_resolved and rating_resolved:
+                print("      [All required target fields found. Halting remaining chunks.]")
                 break
 
         # Calculate result status
