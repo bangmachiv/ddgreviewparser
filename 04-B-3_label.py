@@ -1,87 +1,94 @@
-2026-09-12T03:01:56.6591911Z ##[group]Run python cleaner.py
-python cleaner.py
-shell: /usr/bin/bash -e {0}
-env:
-  pythonLocation: /opt/hostedtoolcache/Python/3.11.16/x64
-  PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib/pkgconfig
-  Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
-  Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
-  Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
-  LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib
-  PYTHONUNBUFFERED: 1
-  SCRAPE_DO_TOKEN: 
-[INFO] Initializing. Movie: 'Param Sundari' | URLs: 12
+#!/usr/bin/env python3
+"""
+04-B-3_label.py (DUMMY TEST MODE)
+Tests the Groq API connection, 20s timeouts, and fallback logic for sentiment labeling.
+Executes a 5-sequence test of the (OSS1 -> OSS2) x 3 retry loop.
+"""
 
---- [1/12] indianexpress.com ---
-URL: https://indianexpress.com/article/entertainment/movie-review/param-sundari-movie-review-sidharth-malhotra-janhvi-kapoor-film-struggles-to-find-both-rom-and-com-10218294/
-Downloaded: Y (Tier 6 (Archive.org))
-Title found: Param Sundari movie review: Sidharth Malhotra-Janhvi Kapoor film struggles to find both rom and com | Movie-review News - The Indian Express
-Cleaned: Sidharth Malhotra-Janhvi Kapoor film struggles to find both rom and com
+import builtins
+import os
+import time
+from groq import Groq
 
---- [2/12] news18.com ---
-URL: https://www.news18.com/movies/bollywood/param-sundari-review-sidharth-malhotra-janhvi-kapoor-chemistry-crackles-in-heartfelt-rom-com-ws-kl-9535782.html
-Downloaded: Y (Tier 1 (Playwright Stealth))
-Title found: Param Sundari Review: Sidharth Malhotra, Janhvi Kapoor’s Chemistry Crackles In Heartfelt Rom-Com | Bollywood News - News18
-Cleaned: Sidharth Malhotra, Janhvi Kapoor’s Chemistry Crackles In Heartfelt Rom-Com
+# ---------------------------------------------------------------------------
+# Global Print Override for Real-Time CI/CD Streaming
+# ---------------------------------------------------------------------------
+def print(*args, **kwargs):
+    kwargs['flush'] = True
+    builtins.print(*args, **kwargs)
 
---- [3/12] bollywoodhungama.com ---
-URL: https://www.bollywoodhungama.com/movie/param-sundari/critic-review/param-sundari-movie-review/param-sundari-is-a-pleasant-rom-com/
-Downloaded: Y (Tier 1 (Playwright Stealth))
-Title found: Param Sundari Movie Review: PARAM SUNDARI is a pleasant rom com
-Cleaned: PARAM SUNDARI is a pleasant rom com
+# ---------------------------------------------------------------------------
+# API Setup
+# ---------------------------------------------------------------------------
+API_KEY = os.environ.get("GROQ_API_KEY")
+if not API_KEY:
+    print("[ERROR] GROQ_API_KEY environment variable not found!")
+    exit(1)
 
---- [4/12] koimoi.com ---
-URL: https://www.koimoi.com/bollywood-movies/movie-reviews/param-sundari-movie-review-sidharth-malhotra-janhvi-kapoors-film-is-a-lighthearted-love-fest-ideal-for-pyar-ishq-mohabbat-fans/
-Downloaded: Y (Tier 1 (Playwright Stealth))
-Title found: Param Sundari Movie Review: Sidharth Malhotra & Janhvi Kapoor’s Film Is A Lighthearted Love-Fest Ideal For Pyar-Ishq-Mohabbat Fans!
-Cleaned: Sidharth Malhotra & Janhvi Kapoor’s Film Is A Lighthearted Love-Fest Ideal For Pyar-Ishq-Mohabbat Fans!
+# Initialize Groq Client with a strict 20-second timeout at the network level
+client = Groq(
+    api_key=API_KEY,
+    timeout=20.0,
+    max_retries=0 # Disabling built-in retries to enforce custom fallback logic
+)
 
---- [5/12] timesofindia.indiatimes.com ---
-URL: https://timesofindia.indiatimes.com/entertainment/hindi/movie-reviews/param-sundari/movie-review/123581130.cms
-Downloaded: Y (Tier 1 (Playwright Stealth))
-Title found: Param Sundari Movie Review: Sidharth Malhotra and Janhvi Kapoor’s charming chemistry anchors this rom-com
-Cleaned: Sidharth Malhotra and Janhvi Kapoor’s charming chemistry anchors this rom-com
+PRIMARY_MODEL = "openai/gpt-oss-120b"
+BACKUP_MODEL = "openai/gpt-oss-20b"
 
---- [6/12] ndtv.com ---
-URL: https://www.ndtv.com/entertainment/param-sundari-review-this-sidharth-malhotra-janhvi-kapoor-rom-com-is-an-unabashed-love-letter-to-shah-rukh-khans-films-3-stars-9180617
-Downloaded: Y (Tier 1 (Playwright Stealth))
-Title found: Param Sundari Review: This Sidharth Malhotra-Janhvi Kapoor Rom-Com Is An Unabashed Love Letter To Shah Rukh Khan's Films - 3 Stars
-Cleaned: This Sidharth Malhotra-Janhvi Kapoor Rom-Com Is An Unabashed Love Letter To Shah Rukh Khan's Films - 3 Stars
+def test_oss_extraction(sequence_num):
+    prompt = """
+    You are a data labeling assistant. Read the review star rating and output a JSON object classifying the sentiment. 
+    Map 1 to 2.5 stars as "NEGATIVE", 3 as "MIXED", and 3.5 to 5 as "POSITIVE".
+    Rating: 1.5
+    Output ONLY valid JSON in this format: {"sentiment_category": "LABEL"}
+    """
 
---- [7/12] indiatoday.in ---
-URL: https://www.indiatoday.in/movies/reviews/story/param-sundari-movie-review-sidharth-malhotra-janhvi-kapoor-can-sell-kerala-trips-not-love-2778728-2025-08-29
-Downloaded: Y (Tier 1 (Playwright Stealth))
-Title found: Param Sundari movie review: Sidharth Malhotra, Janhvi Kapoor can sell Kerala trips, not love - India Today
-Cleaned: Sidharth Malhotra, Janhvi Kapoor can sell Kerala trips, not love
+    max_attempts = 3
 
---- [8/12] firstpost.com ---
-URL: https://www.firstpost.com/entertainment/param-sundari-movie-review-janhvi-kapoor-sidharth-malhotras-kind-of-wicked-pairing-was-the-major-highlight-13929013.html
-Downloaded: Y (Tier 1 (Playwright Stealth))
-Title found: 'Param Sundari' Movie Review: Sidharth Malhotra-Janhvi Kapoor’s ‘wicked pairing’ was the major highlight
-Cleaned: Sidharth Malhotra-Janhvi Kapoor’s ‘wicked pairing’ was the major highlight
+    for attempt in range(1, max_attempts + 1):
+        print(f"\n  [Sequence {sequence_num}] Attempt {attempt}/{max_attempts}")
+        
+        # Loop through our OSS hierarchy (OSS1 -> OSS2)
+        for model_name in [PRIMARY_MODEL, BACKUP_MODEL]:
+            print(f"      [Attempting Model: {model_name}]")
+            try:
+                response = client.chat.completions.create(
+                    messages=[
+                        {"role": "user", "content": prompt.strip()}
+                    ],
+                    model=model_name,
+                    max_tokens=200,      # Strict 200 token limit applied
+                    temperature=0.0      # Zero temperature for deterministic JSON output
+                )
+                
+                result = response.choices[0].message.content.strip()
+                print(f"      [SUCCESS on {model_name}] -> {result}")
+                return True
+                
+            except Exception as e:
+                print(f"      [FAILED on {model_name}]: {str(e)}")
 
---- [9/12] deccanherald.com ---
-URL: https://www.deccanherald.com/entertainment/param-sundari-movie-review-old-wine-in-new-bottle-3703179
-Downloaded: Y (Tier 1 (Playwright Stealth))
-Title found: Param Sundari Review: Sidharth Malhotra & Janhvi Kapoor Fail to Impress in Predictable Rom-Com | Param Sundari Movie Review news
-Cleaned: news
+        if attempt < max_attempts:
+            print("      [Both models failed. Waiting 2 seconds before next attempt...]")
+            time.sleep(2)
 
---- [10/12] cinemaexpress.com ---
-URL: https://www.cinemaexpress.com/hindi/review/2025/Aug/29/param-sundari-movie-review-sidharth-malhotra-and-janhvi-kapoors-rom-com-goes-south-from-the-get-go
-Downloaded: Y (Tier 1 (Playwright Stealth))
-Title found: Param Sundari Movie Review: Sidharth Malhotra and Janhvi Kapoor’s rom-com goes south from the get go
-Cleaned: Sidharth Malhotra and Janhvi Kapoor’s rom-com goes south from the get go
+    print("      [FATAL] All retries exhausted. Sequence failed.")
+    return False
 
---- [11/12] hindustantimes.com ---
-URL: https://www.hindustantimes.com/entertainment/bollywood/param-sundari-movie-review-janhvi-kapoor-sidharth-malhotra-rom-com-about-soulmates-has-no-soul-101756451974347.html
-Downloaded: N
-Title found: FAILED
-Cleaned: FAILED
+def main():
+    print("================================================================================")
+    print(" STARTING OSS DUMMY TEST: (OSS1 -> OSS2) x 3 LOGIC")
+    print("================================================================================")
 
---- [12/12] hollywoodreporterindia.com ---
-URL: https://www.hollywoodreporterindia.com/reviews/theatrical/param-sundari-movie-review-sidharth-malhotra-janhvi-kapoors-culture-clash-romcom-has-no-identity-of-its-own
-Downloaded: Y (Tier 1 (Playwright Stealth))
-Title found: ‘Param Sundari’ Movie Review: Culture-Clash Romcom Falls Flat - THR India
-Cleaned: Culture-Clash Romcom Falls Flat - THR India
+    for i in range(1, 6):
+        test_oss_extraction(i)
+        # 2.5-second pacing protects against the 30 RPM (1 request per 2 seconds) limit
+        print("  [Pacing] Waiting 2.5 seconds to respect 30 RPM limit...")
+        time.sleep(2.5) 
 
-[INFO] Run complete. JSON updated with latest block at the top.
+    print("\n================================================================================")
+    print(" DUMMY TEST COMPLETE")
+    print("================================================================================")
+
+if __name__ == "__main__":
+    main()
