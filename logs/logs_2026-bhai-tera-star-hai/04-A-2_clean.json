@@ -301,5 +301,25 @@
         "new_completed": 20,
         "new_pending": 0,
         "publisher_details": {}
+    },
+    "2026-09-12T19:10:26.603750+00:00": {
+        "earlier_completed": 20,
+        "earlier_pending": 0,
+        "processed": 0,
+        "success": 0,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {}
+    },
+    "2026-09-12T19:10:27.090060+00:00": {
+        "earlier_completed": 20,
+        "earlier_pending": 0,
+        "processed": 0,
+        "success": 0,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {}
     }
 }

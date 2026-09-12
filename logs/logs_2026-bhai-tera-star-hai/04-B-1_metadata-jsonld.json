@@ -270,5 +270,15 @@
                 "jsonld_star_rating": "2.0"
             }
         }
+    },
+    "2026-09-12T19:10:28.095276+00:00": {
+        "earlier_completed": 20,
+        "earlier_pending": 0,
+        "processed": 0,
+        "success": 0,
+        "failure": 0,
+        "new_completed": 20,
+        "new_pending": 0,
+        "publisher_details": {}
     }
 }
