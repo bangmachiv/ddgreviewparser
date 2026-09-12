@@ -3,14 +3,13 @@
 04-B-3_label.py
 Classifies sentiment for UNRATED titles using Groq OSS models.
 Reads new schema fields to verify gaps, and writes to `ai_sentiment_category`.
-Uses (OSS1 -> OSS2) x 3 fallback loops with strict pacing.
+Uses (OSS1 -> OSS2) x 3 fallback loops with strict 15s TPM pacing.
 """
 
 import builtins
 import json
 import os
 import time
-import re
 from datetime import datetime
 from groq import Groq
 
@@ -40,11 +39,10 @@ if not API_KEY:
     print("[ERROR] GROQ_API_KEY environment variable not found!")
     exit(1)
 
-# Initialize Groq Client with a strict 20-second timeout
 client = Groq(
     api_key=API_KEY,
     timeout=20.0,
-    max_retries=0 # Disabling built-in retries to enforce custom fallback logic
+    max_retries=0
 )
 
 PRIMARY_MODEL = "openai/gpt-oss-120b"
@@ -91,16 +89,21 @@ def is_missing_star_rating(val):
         return True
     try:
         float(val)
-        return False # It's a valid number, so it's NOT missing
+        return False
     except ValueError:
         return True
 
+def is_valid_title(title):
+    """Ensures title is a genuine extracted headline, not a placeholder, empty string, or failed string."""
+    if not title:
+        return False
+    clean = str(title).strip()
+    return clean != "" and clean.upper() not in ["PENDING", "FAILED"]
+
 def clean_ai_response(text):
-    """Strips markdown, JSON brackets, and whitespace to get the raw category word."""
+    """Strips markdown, JSON brackets, and whitespace to extract the category word."""
     text = text.strip().upper()
     text = text.replace("`", "").replace("*", "").replace('"', '').replace("'", "")
-    
-    # Catch if model outputs {"sentiment_category": "BAD"} instead of just "BAD"
     for cat in VALID_CATEGORIES:
         if cat in text:
             return cat
@@ -128,7 +131,6 @@ def fetch_category_with_fallback(movie_name, clean_title, prompt_template):
                     raw_text = response.choices[0].message.content.strip()
                     category = clean_ai_response(raw_text)
 
-                    # Strict Validation
                     if category in VALID_CATEGORIES:
                         return category, model_name
                     else:
@@ -137,8 +139,8 @@ def fetch_category_with_fallback(movie_name, clean_title, prompt_template):
                 print(f"      [FAILED on {model_name}]: {str(e)}")
 
         if attempt < max_attempts:
-            print("      [Both models failed. Waiting 2s before next attempt...]")
-            time.sleep(2)
+            print("      [Both models failed. Waiting 5s before next retry loop...]")
+            time.sleep(5)
 
     return None, None
 
@@ -177,9 +179,8 @@ def process_movie_file(json_path, prompt_template):
 
     earlier_completed = 0
     earlier_pending = 0
-    eligible_publishers = []
 
-    # Calculate Tracker Metrics based on new schema
+    # Calculate Tracker Metrics based strictly on valid titles needing classification
     for pub in publishers:
         clean_title = pub.get("clean_title")
         ld_rating = pub.get("jsonld_star_rating")
@@ -187,9 +188,7 @@ def process_movie_file(json_path, prompt_template):
         
         rating_missing = is_missing_star_rating(ld_rating) and is_missing_star_rating(ai_rating)
         
-        # Only count publishers that actually need title classification
-        if clean_title and str(clean_title).strip() and rating_missing:
-            eligible_publishers.append(pub)
+        if is_valid_title(clean_title) and rating_missing:
             current_category = str(pub.get("ai_sentiment_category", "PENDING")).strip().upper()
             if current_category in VALID_CATEGORIES:
                 earlier_completed += 1
@@ -223,14 +222,17 @@ def process_movie_file(json_path, prompt_template):
 
         print(f"\n  [*] Processing [{pub_id}]")
 
-        if not clean_title or not str(clean_title).strip():
-            print("      Not processed- nonwebpage / no clean_title")
+        # Skip non-webpages or placeholder titles
+        if not is_valid_title(clean_title):
+            print("      Not processed- nonwebpage / title pending or failed")
             continue
 
+        # Skip publishers that already have star ratings
         if not rating_missing:
             print("      Not processed- publisher has valid star rating")
             continue
 
+        # Skip already completed items
         if ai_category in VALID_CATEGORIES:
             print(f"      Not processed- already classified as {ai_category}")
             continue
@@ -266,16 +268,14 @@ def process_movie_file(json_path, prompt_template):
                 "reason": "API exhausted or failed validation"
             }
 
-        # 2.5-second pacing protects against the 30 RPM (1 request per 2 seconds) limit
-        print("      [Pacing] Waiting 2.5s to respect Groq rate limits...")
-        time.sleep(2.5)
+        # 15-second pacing completely resets Groq's 8,000 TPM limit
+        print("      [Pacing] Waiting 15s to respect Groq TPM limits...")
+        time.sleep(15)
 
-    # Save updates back to JSON iteratively
     if updated_file:
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
 
-    # Save Final Structured Logs
     movie_log_entry["new_completed"] = earlier_completed + movie_log_entry["success"]
     movie_log_entry["new_pending"] = earlier_pending - movie_log_entry["success"]
 
