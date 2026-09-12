@@ -332,5 +332,122 @@
                 "generic_results_added": 0
             }
         }
+    },
+    "2026-09-12T18:47:56.312692+00:00": {
+        "publishers_attempted": 22,
+        "publishers_succeeded": 22,
+        "publishers_failed": 0,
+        "publisher_details": {
+            "aaj-tak": {
+                "status": "SUCCESS",
+                "specific_results": 2,
+                "generic_results_added": 3
+            },
+            "abp": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 1
+            },
+            "bollyspice": {
+                "status": "SUCCESS",
+                "specific_results": 0,
+                "generic_results_added": 5
+            },
+            "business-standard": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 1
+            },
+            "cinetales": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 2
+            },
+            "deccan-chronicle": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 3
+            },
+            "deccan-herald": {
+                "status": "SUCCESS",
+                "specific_results": 0,
+                "generic_results_added": 5
+            },
+            "firstpost": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 2
+            },
+            "hindustan": {
+                "status": "SUCCESS",
+                "specific_results": 0,
+                "generic_results_added": 5
+            },
+            "ians-live": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 0
+            },
+            "lensmen-reviews": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 3
+            },
+            "lokmat": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 2
+            },
+            "mint": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 2
+            },
+            "navbharat-times": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 1
+            },
+            "outlook": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 0
+            },
+            "peepingmoon": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 1
+            },
+            "south-asian-herald": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 3
+            },
+            "the-economic-times": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 4
+            },
+            "the-hindu": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 1
+            },
+            "the-quint": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 3
+            },
+            "the-telegraph": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 2
+            },
+            "the-tribune": {
+                "status": "SUCCESS",
+                "specific_results": 5,
+                "generic_results_added": 0
+            }
+        }
     }
 }

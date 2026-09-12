@@ -1,0 +1,27 @@
+====================================================================
+ PIPELINE EXECUTION SUMMARY: 2026-bhai-tera-star-hai
+====================================================================
+Script No & Name             | HadToDo | Processed | Failure | Success
+--------------------------------------------------------------------
+1 . 01_search                |       0 |         0 |       0 |       0
+2 . 02_identify              |      22 |        22 |      22 |       0
+3 . 03_download              |       0 |         0 |       0 |       0
+4 . 04-A-1_titles            |       0 |         0 |       0 |       0
+5 . 04-A-2_clean             |       0 |         0 |       0 |       0
+6 . 04-A-3_highlight         |       2 |         2 |       0 |       2
+7 . 04-B-1_metadata-jsonld   |      20 |        20 |       0 |      20
+8 . 04-B-2_metadata-ai       |       4 |         4 |       4 |       0
+9 . 04-B-3_label             |       4 |         4 |       0 |       4
+
+====================================================================
+ FINAL NEWS STATUS
+====================================================================
+Urls identified       : 20
+Html Downloaded       : 20
+Extracted titles      : 20
+Cleaned titles        : 20
+Highlight titles      : 20
+Jsonld rated          : 11
+Ai rated              : 5
+Ai labeled            : 4
+====================================================================
