@@ -276,5 +276,218 @@
                 "status": "Not processed- nonwebpage"
             }
         }
+    },
+    "2026-09-12T06:45:24.661956+00:00": {
+        "earlier_completed": 11,
+        "earlier_pending": 9,
+        "processed": 9,
+        "success": 5,
+        "failure": 4,
+        "new_completed": 16,
+        "new_pending": 4,
+        "publisher_details": {
+            "aaj-tak": {
+                "status": "Not processed- nonwebpage"
+            },
+            "abp": {
+                "status": "Not processed- nonwebpage"
+            },
+            "amar-ujala": {
+                "status": "Not processed- both already found",
+                "critic_name": "Kiran Vinod Kumar Jain",
+                "star_rating": "1"
+            },
+            "bollywood-hungama": {
+                "status": "Not processed- both already found",
+                "critic_name": "Bollywood Hungama News Network",
+                "star_rating": "1.5"
+            },
+            "bollyspice": {
+                "status": "Not processed- nonwebpage"
+            },
+            "business-standard": {
+                "status": "Not processed- nonwebpage"
+            },
+            "cinema-express": {
+                "status": "Processed- rating to find",
+                "result": "full success",
+                "model": "gemini-3.5-flash-lite",
+                "discovered": {
+                    "ai_star_rating": "2",
+                    "ai_critic_name": null
+                }
+            },
+            "cinetales": {
+                "status": "Not processed- nonwebpage"
+            },
+            "dainik-bhaskar": {
+                "status": "Processed- rating to find",
+                "result": "failure",
+                "model": "gemini-3.5-flash-lite",
+                "discovered": {
+                    "ai_star_rating": null,
+                    "ai_critic_name": null
+                }
+            },
+            "dainik-jagran": {
+                "status": "Not processed- both already found",
+                "critic_name": "Rinki Tiwari",
+                "star_rating": "3"
+            },
+            "deccan-chronicle": {
+                "status": "Not processed- nonwebpage"
+            },
+            "deccan-herald": {
+                "status": "Not processed- nonwebpage"
+            },
+            "filmfare": {
+                "status": "Not processed- both already found",
+                "critic_name": "Devesh Sharma",
+                "star_rating": "2.5"
+            },
+            "firstpost": {
+                "status": "Not processed- nonwebpage"
+            },
+            "free-press-journal": {
+                "status": "Processed- rating to find",
+                "result": "full success",
+                "model": "gemini-3.5-flash-lite",
+                "discovered": {
+                    "ai_star_rating": "1.5",
+                    "ai_critic_name": null
+                }
+            },
+            "hindustan": {
+                "status": "Not processed- nonwebpage"
+            },
+            "hindustan-times": {
+                "status": "Processed- rating to find",
+                "result": "full success",
+                "model": "gemini-3.5-flash-lite",
+                "discovered": {
+                    "ai_star_rating": "1.5",
+                    "ai_critic_name": null
+                }
+            },
+            "ians-live": {
+                "status": "Not processed- nonwebpage"
+            },
+            "india-today": {
+                "status": "Not processed- both already found",
+                "critic_name": "Anisha Rao",
+                "star_rating": "1"
+            },
+            "koimoi": {
+                "status": "Not processed- both already found",
+                "critic_name": "Rajiv Vijayakar",
+                "star_rating": "1"
+            },
+            "lensmen-reviews": {
+                "status": "Not processed- nonwebpage"
+            },
+            "lokmat": {
+                "status": "Not processed- nonwebpage"
+            },
+            "mid-day": {
+                "status": "Processed- rating to find",
+                "result": "failure",
+                "model": "gemini-3.5-flash-lite",
+                "discovered": {
+                    "ai_star_rating": null,
+                    "ai_critic_name": null
+                }
+            },
+            "mint": {
+                "status": "Not processed- nonwebpage"
+            },
+            "moneycontrol": {
+                "status": "Processed- both to find",
+                "result": "full success",
+                "model": "gemini-3.5-flash-lite",
+                "discovered": {
+                    "ai_star_rating": "1.5",
+                    "ai_critic_name": "Abhishek Srivastava"
+                }
+            },
+            "movie-talkies": {
+                "status": "Processed- rating to find",
+                "result": "full success",
+                "model": "gemini-3.5-flash-lite",
+                "discovered": {
+                    "ai_star_rating": "1",
+                    "ai_critic_name": null
+                }
+            },
+            "navbharat-times": {
+                "status": "Not processed- nonwebpage"
+            },
+            "ndtv": {
+                "status": "Not processed- both already found",
+                "critic_name": "Saibal Chatterjee",
+                "star_rating": "2"
+            },
+            "news18-showsha": {
+                "status": "Not processed- both already found",
+                "critic_name": "Titas Chowdhury",
+                "star_rating": "2.5"
+            },
+            "outlook": {
+                "status": "Not processed- nonwebpage"
+            },
+            "peepingmoon": {
+                "status": "Not processed- nonwebpage"
+            },
+            "rediff": {
+                "status": "Not processed- both already found",
+                "critic_name": "MAYUR SANAP",
+                "star_rating": "1.5"
+            },
+            "scroll-in": {
+                "status": "Processed- rating to find",
+                "result": "failure",
+                "model": "gemini-3.5-flash-lite",
+                "discovered": {
+                    "ai_star_rating": null,
+                    "ai_critic_name": null
+                }
+            },
+            "south-asian-herald": {
+                "status": "Not processed- nonwebpage"
+            },
+            "the-economic-times": {
+                "status": "Not processed- nonwebpage"
+            },
+            "the-federal": {
+                "status": "Processed- rating to find",
+                "result": "failure",
+                "model": "gemini-3.5-flash-lite",
+                "discovered": {
+                    "ai_star_rating": null,
+                    "ai_critic_name": null
+                }
+            },
+            "the-hindu": {
+                "status": "Not processed- nonwebpage"
+            },
+            "the-indian-express": {
+                "status": "Not processed- both already found",
+                "critic_name": "Shubhra Gupta",
+                "star_rating": "1.5"
+            },
+            "the-quint": {
+                "status": "Not processed- nonwebpage"
+            },
+            "the-telegraph": {
+                "status": "Not processed- nonwebpage"
+            },
+            "the-times-of-india": {
+                "status": "Not processed- both already found",
+                "critic_name": "Ronak Kotecha",
+                "star_rating": "2.0"
+            },
+            "the-tribune": {
+                "status": "Not processed- nonwebpage"
+            }
+        }
     }
 }
