@@ -1,4 +1,4 @@
-name: 04-B-3. Sentiment
+name: 04-B-3. Label
 
 on:
   workflow_dispatch:
