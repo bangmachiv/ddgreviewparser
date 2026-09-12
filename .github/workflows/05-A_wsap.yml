@@ -1,0 +1,58 @@
+name: 05-A. Generate WhatsApp Output
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-whatsapp-output:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Note: 05-A_wsap.py uses only built-in standard libraries (json, os, re, math). 
+      # No 'pip install' step is needed!
+
+      - name: Run WhatsApp Output Generator
+        env:
+          PYTHONUNBUFFERED: "1"  # Forces Python to stream stdout and stderr instantly
+        run: |
+          # Enable nullglob so the loop safely skips if no JSON files exist
+          shopt -s nullglob
+          
+          for file in data/reviews/reviews_*.json; do
+            echo "============================================================"
+            echo " Executing output generator for: $file"
+            echo "============================================================"
+            
+            # The -u flag forces the binary to operate unbuffered for real-time logs
+            python -u 05-A_wsap.py "$file"
+          done
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          
+          # Stage the newly created WhatsApp text files and the appended JSON logs
+          git add data/output/wsap/ logs/
+          git status
+          
+          if git diff --cached --quiet; then
+            echo "No changes to commit. Outputs and logs are already up to date."
+            exit 0
+          fi
+          
+          git commit -m "Pipeline [05-A]: WhatsApp output generated and logs appended"
+          git push origin HEAD:${{ github.ref }}
