@@ -1,1 +1,29 @@
+name: 05-B Summary Generator
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-summary:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 05-B - JSON Summary Output
+        run: python 05-B_summary.py
+
+      - name: Commit and Push Data
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/output/json/
+          git commit -m "Auto-Update: JSON Summaries" || echo "No changes to commit"
+          git push
  
