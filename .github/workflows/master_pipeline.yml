@@ -107,7 +107,7 @@ jobs:
       # ----------------------------------------------------
       - name: 05-B - Print & Save Pipeline Summary
         if: always()
-        run: python -u 05-B_pipeline.py
+        run: python -u 06_pipeline-live.py
 
       # ----------------------------------------------------
       # COMMIT & PUSH
