@@ -1,4 +1,4 @@
-name: 00-06. Master Review Pipeline
+name: 06. Active Movies Pipeline
 
 on:
   workflow_dispatch:
