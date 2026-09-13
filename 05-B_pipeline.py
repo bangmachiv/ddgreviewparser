@@ -28,6 +28,7 @@ PIPELINE_STAGES = [
     ("04-B-1_metadata-jsonld", "04-B-1_metadata-jsonld.json"),
     ("04-B-2_metadata-ai", "04-B-2_metadata-ai.json"),
     ("04-B-3_label", "04-B-3_label.json"),
+    ("05-A_wsap", "05-A_output-wsap.json")  # <-- Added WSAP to the tracking array
 ]
 
 VALID_CATEGORIES = ["GOOD", "NEUTRAL", "BAD", "POSITIVE", "MIXED", "NEGATIVE"]
@@ -62,7 +63,7 @@ def get_live_movie_slugs():
             slugs.append(base.replace("reviews_", "").replace(".json", ""))
     return list(set(slugs))
 
-def extract_latest_log_metrics(log_path):
+def extract_latest_log_metrics(log_path, total_pubs=0):
     if not os.path.exists(log_path) or os.path.getsize(log_path) == 0:
         return None
     try:
@@ -72,6 +73,16 @@ def extract_latest_log_metrics(log_path):
             return None
         latest_ts = sorted(data.keys())[-1]
         run = data[latest_ts]
+
+        # 05-A uses custom log keys, so we parse it dynamically based on the publisher count
+        if "total_reviews_formatted" in run:
+            success = run.get("total_reviews_formatted", 0)
+            processed = total_pubs
+            had_to_do = total_pubs
+            failure = processed - success
+            return had_to_do, processed, failure, success
+
+        # Standard parsing for 01 through 04
         had_to_do = run.get("earlier_pending", run.get("processed", 0))
         processed = run.get("processed", 0)
         failure = run.get("failure", 0)
@@ -84,11 +95,19 @@ def process_slug(slug):
     movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{slug}")
     review_path = os.path.join(REVIEWS_DIR, f"reviews_{slug}.json")
 
+    # --- Pre-load reviews JSON to pass the global publisher count to 05-A logs ---
+    total_pubs = 0
+    rdata = {}
+    if os.path.exists(review_path):
+        with open(review_path, "r", encoding="utf-8") as f:
+            rdata = json.load(f)
+        total_pubs = len(rdata.get("publishers", []))
+
     # --- 1. Tabular Execution Data ---
     stage_rows = []
     for idx, (stage_name, log_filename) in enumerate(PIPELINE_STAGES, start=1):
         log_file = os.path.join(movie_logs_dir, log_filename)
-        metrics = extract_latest_log_metrics(log_file)
+        metrics = extract_latest_log_metrics(log_file, total_pubs)
         if metrics:
             had, proc, fail, succ = metrics
             stage_rows.append(f"{idx:<2}. {stage_name:<24} | {had:>7} | {proc:>9} | {fail:>7} | {succ:>7}")
@@ -107,10 +126,7 @@ def process_slug(slug):
         "Ai labeled": 0,
     }
 
-    if os.path.exists(review_path):
-        with open(review_path, "r", encoding="utf-8") as f:
-            rdata = json.load(f)
-
+    if rdata:
         for pub in rdata.get("publishers", []):
             if is_valid(pub.get("review_url")):
                 status_counts["Urls identified"] += 1
