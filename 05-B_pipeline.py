@@ -1,219 +1,99 @@
-#!/usr/bin/env python3
-"""
-05-B_pipeline.py
-Collects metrics from logs and reviews data to produce:
-  1. A tabular per-script execution table split across two lines to prevent wrapping.
-  2. The Final News Status count breakdown.
-Outputs to console and saves to logs/logs_<slug>/pipeline_<slug>/run_<timestamp>.txt.
-"""
+*Bhai Tera Star Hai* (2026)
 
-import json
-import os
-import glob
-from datetime import datetime
+*1.7/5 • BAD*
+16 ratings · 20 reviews
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LOGS_DIR = os.path.join(BASE_DIR, "logs")
-REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
-MOVIES_FILE = os.path.join(BASE_DIR, "data", "movies", "movies-live-today.json")
+*RATING DISTRIBUTION*
 
-# Sequence of pipeline scripts that log metrics
-PIPELINE_STAGES = [
-    ("01_search", "01_search.json"),
-    ("02_identify", "02_identify.json"),
-    ("03_download", "03_download.json"),
-    ("04-A-1_titles", "04-A-1_titles.json"),
-    ("04-A-2_clean", "04-A-2_clean.json"),
-    ("04-A-3_highlight", "04-A-3_highlight.json"),
-    ("04-B-1_metadata-jsonld", "04-B-1_metadata-jsonld.json"),
-    ("04-B-2_metadata-ai", "04-B-2_metadata-ai.json"),
-    ("04-B-3_label", "04-B-3_label.json"),
-    ("05-A_wsap", "05-A_output-wsap.json")
-]
+`★★★★★  0 reviews`
+`★★★★☆  0 reviews`
+`★★★☆☆  1 review`
+`★★☆☆☆  5 reviews`
+`★☆☆☆☆  10 reviews`
 
-VALID_CATEGORIES = ["GOOD", "NEUTRAL", "BAD", "POSITIVE", "MIXED", "NEGATIVE"]
 
-def is_valid(val):
-    if val is None:
-        return False
-    clean = str(val).strip().upper()
-    return clean not in ["", "PENDING", "FAILED", "NA", "NOT_NEEDED", "NULL"]
+👍 *Good* • 0 Reviews
 
-def is_valid_number(val):
-    if not is_valid(val):
-        return False
-    try:
-        float(val)
-        return True
-    except ValueError:
-        return False
+No Reviews
 
-def get_live_movie_slugs():
-    slugs = []
-    if os.path.exists(MOVIES_FILE):
-        with open(MOVIES_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            items = data if isinstance(data, list) else data.get("movies", [])
-            for item in items:
-                if isinstance(item, dict) and "slug" in item:
-                    slugs.append(item["slug"])
-    else:
-        for p in glob.glob(os.path.join(REVIEWS_DIR, "reviews_*.json")):
-            base = os.path.basename(p)
-            slugs.append(base.replace("reviews_", "").replace(".json", ""))
-    return list(set(slugs))
 
-def extract_latest_log_metrics(log_path, total_pubs=0, rdata=None, stage_name=""):
-    run = {}
-    if os.path.exists(log_path) and os.path.getsize(log_path) > 0:
-        try:
-            with open(log_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            if data:
-                latest_ts = sorted(data.keys())[-1]
-                run = data[latest_ts]
-        except Exception:
-            pass
+🤞 *Neutral* • 1 Review
 
-    # 1. 05-A Custom Parsing
-    if "total_reviews_formatted" in run:
-        success = run.get("total_reviews_formatted", 0)
-        processed = total_pubs
-        had_to_do = total_pubs
-        failure = processed - success
-        return had_to_do, processed, failure, success
+*★★★* • 1 Review
 
-    # 2. Greedy Alias Parsing for 01-04
-    def get_first(keys):
-        for k in keys:
-            if k in run: return run[k]
-        return 0
+कॉमेडी के नाम पर _फूहड़ता_, बेकार कहानी... राघव जुयाल से नहीं थी ऐसी उम्मीद!
+`Dainik Jagran | Rinki Tiwari`
 
-    had_to_do = get_first(["earlier_pending", "pending", "targets", "target_publishers"])
-    processed = get_first(["processed", "attempted", "searches", "searches_performed"])
-    success = get_first(["success", "succeeded", "found", "results"])
-    failure = get_first(["failure", "failed", "errors"])
 
-    # 3. 01_search JSON Overwrite (Fixes the 00|00|00|00 logic issue)
-    if "01_search" in stage_name and processed == 0 and success == 0 and rdata:
-        search_results = rdata.get("Search results")
-        if search_results is not None:
-            had_to_do = 1
-            processed = 1
-            success = search_results
-            failure = 0
+👎 *Bad* • 19 Reviews
 
-    if not run and "01_search" not in stage_name:
-        return None
+*★★½* • 2 Reviews
 
-    return had_to_do, processed, failure, success
+A _Bumbling_ Comedy of Errors
+`Filmfare | Devesh Sharma`
 
-def pad_num(val):
-    """Returns a zero-padded string for integers, or passes through raw strings (e.g., '--')."""
-    return f"{val:02d}" if isinstance(val, int) else str(val)
+Raghav Juyal Is On _Fire_ But This Slapstick Comedy Runs Out of Steam Too Soon
+`News18 Showsha | Titas Chowdhury`
 
-def process_slug(slug):
-    movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{slug}")
-    review_path = os.path.join(REVIEWS_DIR, f"reviews_{slug}.json")
 
-    total_pubs = 0
-    rdata = {}
-    if os.path.exists(review_path):
-        with open(review_path, "r", encoding="utf-8") as f:
-            rdata = json.load(f)
-        total_pubs = len(rdata.get("publishers", []))
+*★★* • 3 Reviews
 
-    # --- 1. Tabular Execution Data ---
-    stage_rows = []
-    for idx, (stage_name, log_filename) in enumerate(PIPELINE_STAGES, start=1):
-        log_file = os.path.join(movie_logs_dir, log_filename)
-        metrics = extract_latest_log_metrics(log_file, total_pubs, rdata, stage_name)
-        
-        stage_rows.append(f"{idx:02d}. {stage_name}")
-        
-        if metrics:
-            had, proc, fail, succ = metrics
-            stage_rows.append(f"    {pad_num(had):>7} | {pad_num(proc):>9} | {pad_num(fail):>7} | {pad_num(succ):>7}")
-        else:
-            stage_rows.append(f"         -- |        -- |      -- |      --")
+_Too wacky_ for its own good
+`Cinema Express | BH Harsh`
 
-    # --- 2. Final News Status Counts ---
-    status_counts = {
-        "Urls identified": 0,
-        "Html Downloaded": 0,
-        "Extracted titles": 0,
-        "Cleaned titles": 0,
-        "Highlight titles": 0,
-        "Jsonld rated": 0,
-        "Ai rated": 0,
-        "Ai labeled": 0,
-    }
+Raghav Juyal Shines, But The Comedy _Falls Flat_
+`NDTV | Saibal Chatterjee`
 
-    if rdata:
-        for pub in rdata.get("publishers", []):
-            if is_valid(pub.get("review_url")):
-                status_counts["Urls identified"] += 1
+_a nightmare_ of a comedy that drags on
+`The Times of India | Ronak Kotecha`
 
-            dl_ok = pub.get("webpage_extraction_successful")
-            if dl_ok is True or str(dl_ok).strip().upper() in ["SUCCESS", "Y", "YES", "TRUE"]:
-                status_counts["Html Downloaded"] += 1
 
-            if is_valid(pub.get("article_title")):
-                status_counts["Extracted titles"] += 1
+*★½* • 6 Reviews
 
-            if is_valid(pub.get("clean_title")):
-                status_counts["Cleaned titles"] += 1
+BHAI TERA STAR HAI is a chaotic and _unfunny_ comedy
+`Bollywood Hungama | Bollywood Hungama News Network`
 
-            ht = pub.get("highlighted_title", pub.get("clean_highlighted_title"))
-            if is_valid(ht):
-                status_counts["Highlight titles"] += 1
+Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into _Superstar-Doom_?
+`Free Press Journal | Satish Sundaresan`
 
-            if is_valid_number(pub.get("jsonld_star_rating")):
-                status_counts["Jsonld rated"] += 1
+This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... '_Why?_'
+`Hindustan Times | Rishabh Suri`
 
-            if is_valid_number(pub.get("ai_star_rating")):
-                status_counts["Ai rated"] += 1
+Raghav Juyal leads a comedy where the jokes need their own _rescue mission_
+`Moneycontrol | Abhishek Srivastava`
 
-            ai_cat = str(pub.get("ai_sentiment_category", "")).strip().upper()
-            if ai_cat in VALID_CATEGORIES:
-                status_counts["Ai labeled"] += 1
+Raghav Juyal's Film Is _Absurd_
+`Rediff . com | MAYUR SANAP`
 
-    # --- 3. Build Formatted Output ---
-    output_lines = []
-    output_lines.append("=" * 45)
-    output_lines.append(f" SUMMARY: {slug}")
-    output_lines.append("=" * 45)
-    output_lines.append("Script No & Name")
-    output_lines.append(f"    {'HadToDo':>7} | {'Processed':>9} | {'Failure':>7} | {'Success':>7}")
-    output_lines.append("-" * 45)
-    output_lines.extend(stage_rows)
-    output_lines.append("")
-    output_lines.append("=" * 45)
-    output_lines.append(" FINAL NEWS STATUS")
-    output_lines.append("=" * 45)
-    for label, count in status_counts.items():
-        output_lines.append(f"{label:<22}: {pad_num(count)}")
-    output_lines.append("=" * 45)
+Raghav Juyal film is a comedy with _scant laughs_
+`The Indian Express | Shubhra Gupta`
 
-    report = "\n".join(output_lines)
-    print("\n" + report + "\n")
 
-    # --- 4. Write run log to target directory ---
-    target_dir = os.path.join(movie_logs_dir, f"pipeline_{slug}")
-    os.makedirs(target_dir, exist_ok=True)
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_file = os.path.join(target_dir, f"run_{ts}.txt")
-    with open(out_file, "w", encoding="utf-8") as out_f:
-        out_f.write(report)
-    print(f"[SUMMARY] Saved run log to: {out_file}")
+*★* • 4 Reviews
 
-def main():
-    slugs = get_live_movie_slugs()
-    if not slugs:
-        print("[ERROR] No movie slugs found to summarize.")
-        return
-    for slug in slugs:
-        process_slug(slug)
+राघव जुयाल की कॉमेडी ने दिया _सिरदर्द_, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा
+`Amar Ujala | Kiran Vinod Kumar Jain`
 
-if __name__ == "__main__":
-    main()
+The only star was Vijay Deverakonda in _Vijay Sales ad_
+`India Today | Anisha Rao`
+
+Raghav Juyal's Film Is _Unfunny_, Aimless & Pointless!
+`Koimoi | Rajiv Vijayakar`
+
+A _painful blow_ to filmmaking standards
+`Movie Talkies | Sameer Ahire`
+
+
+*UNRATED* · 4 Reviews
+
+Raghav Juyal Solo Lead _Fails To Impress_
+`Dainik Bhaskar | आशीष तिवारी`
+
+Raghav Juyal’s comic timing _can’t save_ this film
+`Mid-Day | Aakruti Bagla`
+
+*_Pointless comedy_* strains patience levels
+`Scroll . in | Nandini Ramnath`
+
+`Bhai Tera Star Hai review: Raghav Juyal's comedy promises a lot,` _*delivers little*_`
+The Federal | Swaroop Kodur
