@@ -1,0 +1,158 @@
+{
+    "movie_name": "Bhai Tera Star Hai",
+    "release_date": "2026-08-30",
+    "publishers": [
+        {
+            "Name": "Amar Ujala",
+            "Review": "राघव जुयाल की कॉमेडी ने दिया सिरदर्द, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा",
+            "Rating": 1.0,
+            "Critic": "Kiran Vinod Kumar Jain",
+            "URL": "https://www.amarujala.com/entertainment/movie-review/bhai-tera-star-hai-hindi-review-starring-raghav-juyal-sanjay-kapoor-nikki-walia-to-niharika-nm-2026-07-30",
+            "Rating_Source": "JSONLD"
+        },
+        {
+            "Name": "Bollywood Hungama",
+            "Review": "BHAI TERA STAR HAI is a chaotic and unfunny comedy",
+            "Rating": 1.5,
+            "Critic": "Bollywood Hungama News Network",
+            "URL": "https://www.bollywoodhungama.com/movie/bhai-tera-star-hai/critic-review/bhai-tera-star-hai-movie-review/bhai-tera-star-hai-is-a-chaotic-and-unfunny-comedy/",
+            "Rating_Source": "JSONLD"
+        },
+        {
+            "Name": "Cinema Express",
+            "Review": "Too wacky for its own good",
+            "Rating": 2.0,
+            "Critic": "BH Harsh",
+            "URL": "https://www.cinemaexpress.com/hindi/review/2026/Jul/30/bhai-tera-star-hai-movie-review-too-wacky-for-its-own-good",
+            "Rating_Source": "AI_HTML"
+        },
+        {
+            "Name": "Dainik Bhaskar",
+            "Review": "Raghav Juyal Solo Lead Fails To Impress",
+            "Rating": "BAD",
+            "Critic": "आशीष तिवारी",
+            "URL": "https://www.bhaskar.com/g/entertainment/bollywood/news/bhai-tera-star-hai-movie-review-raghav-juyal-london-flop-comedy-138581177.html",
+            "Rating_Source": "AI_LABEL"
+        },
+        {
+            "Name": "Dainik Jagran",
+            "Review": "कॉमेडी के नाम पर फूहड़ता, बेकार कहानी... राघव जुयाल से नहीं थी ऐसी उम्मीद!",
+            "Rating": 3.0,
+            "Critic": "Rinki Tiwari",
+            "URL": "https://www.jagran.com/entertainment/reviews-bhai-tera-star-hai-film-review-raghav-juyal-performance-not-appealing-storyline-also-bad-40323676.html",
+            "Rating_Source": "JSONLD"
+        },
+        {
+            "Name": "Filmfare",
+            "Review": "A Bumbling Comedy of Errors",
+            "Rating": 2.5,
+            "Critic": "Devesh Sharma",
+            "URL": "https://www.filmfare.com/reviews/bollywood-movies/bhai-tera-star-hai-review-a-bumbling-comedy-of-errors-85153.html",
+            "Rating_Source": "JSONLD"
+        },
+        {
+            "Name": "Free Press Journal",
+            "Review": "Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?",
+            "Rating": 1.5,
+            "Critic": "Satish Sundaresan",
+            "URL": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-review-did-raghav-juyals-big-leap-into-solo-superstardom-just-turn-into-superstar-doom",
+            "Rating_Source": "AI_HTML"
+        },
+        {
+            "Name": "Hindustan Times",
+            "Review": "This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?'",
+            "Rating": 1.5,
+            "Critic": "Rishabh Suri",
+            "URL": "https://www.hindustantimes.com/entertainment/bollywood/bhai-tera-star-hai-review-this-raghav-juyal-sanjay-kapoor-comedy-film-leaves-you-asking-why-niharika-nm-101785499542811.html",
+            "Rating_Source": "AI_HTML"
+        },
+        {
+            "Name": "India Today",
+            "Review": "The only star was Vijay Deverakonda in Vijay Sales ad",
+            "Rating": 1.0,
+            "Critic": "Anisha Rao",
+            "URL": "https://www.indiatoday.in/movies/reviews/story/bhai-tera-star-hai-review-the-only-star-was-vijay-deverakonda-in-vijay-sales-ad-2959658-2026-07-30",
+            "Rating_Source": "JSONLD"
+        },
+        {
+            "Name": "Mid-Day",
+            "Review": "Raghav Juyal’s comic timing can’t save this film",
+            "Rating": "BAD",
+            "Critic": "Aakruti Bagla",
+            "URL": "https://www.mid-day.com/entertainment/bollywood-news/article/bhai-tera-star-hai-movie-review-raghav-juyals-comic-timing-cant-save-this-film-23642325",
+            "Rating_Source": "AI_LABEL"
+        },
+        {
+            "Name": "Moneycontrol",
+            "Review": "Raghav Juyal leads a comedy where the jokes need their own rescue mission",
+            "Rating": 1.5,
+            "Critic": "Abhishek Srivastava",
+            "URL": "https://www.moneycontrol.com/entertainment/bhai-tera-star-hai-movie-review-raghav-juyal-leads-a-comedy-where-the-jokes-need-their-own-rescue-mission-article-13989199.html",
+            "Rating_Source": "AI_HTML"
+        },
+        {
+            "Name": "Movie Talkies",
+            "Review": "A painful blow to filmmaking standards",
+            "Rating": 1.0,
+            "Critic": "Sameer Ahire",
+            "URL": "https://www.movietalkies.com/reviews/bhai-tera-star-hai-review-painful-blow-filmmaking-standards-12216142",
+            "Rating_Source": "AI_HTML"
+        },
+        {
+            "Name": "NDTV",
+            "Review": "Raghav Juyal Shines, But The Comedy Falls Flat",
+            "Rating": 2.0,
+            "Critic": "Saibal Chatterjee",
+            "URL": "https://www.ndtv.com/entertainment/bhai-tera-star-hai-review-raghav-juyal-shines-but-the-comedy-falls-flat-11842704",
+            "Rating_Source": "JSONLD"
+        },
+        {
+            "Name": "News18 Showsha",
+            "Review": "Raghav Juyal Is On Fire But This Slapstick Comedy Runs Out of Steam Too Soon",
+            "Rating": 2.5,
+            "Critic": "Titas Chowdhury",
+            "URL": "https://www.news18.com/movies/bollywood/bhai-tera-star-hai-review-raghav-juyal-is-on-fire-but-this-slapstick-comedy-runs-out-of-steam-too-soon-ws-l-10241198.html",
+            "Rating_Source": "JSONLD"
+        },
+        {
+            "Name": "Rediff.com",
+            "Review": "Raghav Juyal's Film Is Absurd",
+            "Rating": 1.5,
+            "Critic": "MAYUR SANAP",
+            "URL": "https://www.rediff.com/movies/review/bhai-tera-star-hai-review-raghav-juyal-film-is-absurd/20260730.htm",
+            "Rating_Source": "JSONLD"
+        },
+        {
+            "Name": "Scroll.in",
+            "Review": "Pointless comedy strains patience levels",
+            "Rating": "BAD",
+            "Critic": "Nandini Ramnath",
+            "URL": "https://scroll.in/reel/1094646/bhai-tera-star-hai-review-pointless-comedy-strains-patience-levels",
+            "Rating_Source": "AI_LABEL"
+        },
+        {
+            "Name": "The Federal",
+            "Review": "Bhai Tera Star Hai review: Raghav Juyal's comedy promises a lot, delivers little",
+            "Rating": "BAD",
+            "Critic": "Swaroop Kodur",
+            "URL": "https://thefederal.com/film-reviews/film-review-bhai-tera-star-hai-raghav-juyal-hindi-film-comedy-251976",
+            "Rating_Source": "AI_LABEL"
+        },
+        {
+            "Name": "The Indian Express",
+            "Review": "Raghav Juyal film is a comedy with scant laughs",
+            "Rating": 1.5,
+            "Critic": "Shubhra Gupta",
+            "URL": "https://indianexpress.com/article/entertainment/movie-review/bhai-tera-star-hai-movie-review-raghav-juyal-film-is-a-comedy-with-scant-laughs-10811541/",
+            "Rating_Source": "JSONLD"
+        },
+        {
+            "Name": "The Times of India",
+            "Review": "A nightmare of a comedy that drags on",
+            "Rating": 2.0,
+            "Critic": "Ronak Kotecha",
+            "URL": "https://timesofindia.indiatimes.com/entertainment/hindi/bhai-tera-star-hai/movie-review/132726638.cms",
+            "Rating_Source": "JSONLD"
+        }
+    ]
+}
