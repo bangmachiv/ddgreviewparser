@@ -177,5 +177,108 @@
                 "reason": "No valid titles found"
             }
         }
+    },
+    "2026-09-13T09:56:10.357977+00:00": {
+        "earlier_completed": 19,
+        "earlier_pending": 23,
+        "processed": 23,
+        "success": 0,
+        "failure": 23,
+        "new_completed": 19,
+        "new_pending": 23,
+        "publisher_details": {
+            "aaj-tak": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "abp": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "bollyspice": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "business-standard": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "cinetales": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "deccan-chronicle": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "deccan-herald": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "firstpost": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "hindustan": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "ians-live": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "koimoi": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "lensmen-reviews": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "lokmat": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "mint": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "navbharat-times": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "outlook": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "peepingmoon": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "south-asian-herald": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "the-economic-times": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "the-hindu": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "the-quint": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "the-telegraph": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            },
+            "the-tribune": {
+                "status": "FAILED",
+                "reason": "No valid titles found"
+            }
+        }
     }
 }
