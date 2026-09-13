@@ -1,72 +1,135 @@
-name: 06. Active Movies Pipeline
+name: 00-06. Master Review Pipeline
 
 on:
   workflow_dispatch:
-  schedule:
-    # Set to run 30 minutes after your Activation Manager cron times
-    - cron: '30 0,6,12,18 * * *' 
+  # schedule:
+  #   - cron: '0 2 * * *'
+
+concurrency:
+  group: "review-automation-pipeline"
+  cancel-in-progress: false
+
+permissions:
+  contents: write
 
 jobs:
   execute-pipeline:
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 180
+
+    env:
+      PYTHONUNBUFFERED: "1"
+
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          persist-credentials: true
 
-      - name: Install Dependencies
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests beautifulsoup4 groq playwright
-          playwright install chromium
+          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
+          pip install requests playwright playwright-stealth curl_cffi duckduckgo-search ddgs google-genai groq beautifulsoup4 lxml
+          playwright install --with-deps chromium
 
-      - name: 00 - Initialize
-        run: python 00_initialize.py
+      # ----------------------------------------------------
+      # 1. DISCOVERY & SCRAPING
+      # ----------------------------------------------------
+      - name: 00 - Initialize Pipeline Architecture
+        run: python -u 00_initialize.py
 
-      - name: 01 - Search
-        run: python 01_search.py
+      - name: 01 - Search Reviews
+        run: python -u 01_search.py
 
-      - name: 02 - Identify
-        run: python 02_identify.py
+      - name: 02 - Identify Reviews
+        run: python -u 02_identify.py
 
-      - name: 03 - Download
-        run: python 03_download.py
+      - name: 03 - Download HTML Webpages
+        env:
+          SCRAPE_DO_TOKEN: ${{ secrets.SCRAPE_DO_TOKEN }}
+        run: python -u 03_download.py
 
-      - name: 04-A - Extract, Clean & Highlight Titles
-        run: |
-          python 04-A-1_titles.py
-          python 04-A-2_clean.py
-          python 04-A-3_highlight.py
+      # ----------------------------------------------------
+      # 2. TITLE EXTRACTION & REFINEMENT
+      # ----------------------------------------------------
+      - name: 04-A-1 - Extract Titles
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -u 04-A-1_titles.py
 
-      - name: 04-B - Metadata & AI Processing
+      - name: 04-A-2 - Clean Titles (Gemini)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -u 04-A-2_clean.py
+
+      - name: 04-A-3 - Highlight Titles
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python -u 04-A-3_highlight.py
+
+      # ----------------------------------------------------
+      # 3. METADATA & SENTIMENT PROCESSING
+      # ----------------------------------------------------
+      - name: 04-B-1 - Metadata JSON-LD Parsing
+        run: python -u 04-B-1_metadata-jsonld.py
+
+      - name: 04-B-2 - Metadata AI Fallback (Gemini)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -u 04-B-2_metadata-ai.py
+
+      - name: 04-B-3 - Unrated Title Sentiment Labeling (Groq)
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: |
-          python 04-B-1_metadata-jsonld.py
-          python 04-B-2_metadata-ai.py
-          python 04-B-3_label.py
+        run: python -u 04-B-3_label.py
 
-      - name: 05-A - WhatsApp Formatting
-        run: python 05-A_wsap.py
+      # ----------------------------------------------------
+      # 4. OUTPUT GENERATION
+      # ----------------------------------------------------
+      - name: 05-A - Generate WhatsApp Output
+        run: |
+          shopt -s nullglob
+          for file in data/reviews/reviews_*.json; do
+            echo "Generating WhatsApp output for $file"
+            python -u 05-A_wsap.py "$file"
+          done
 
       - name: 05-B - JSON Summary Output
-        run: python 05-B_summary.py
+        if: always()
+        run: python -u 05-B_summary.py
 
-      - name: 06 - Pipeline Metrics Dashboard
-        run: |
-          if [ -f "06_pipeline-live.py" ]; then
-            python 06_pipeline-live.py
-          fi
+      # ----------------------------------------------------
+      # 5. PIPELINE SUMMARY REPORT
+      # ----------------------------------------------------
+      - name: 06 - Print & Save Pipeline Summary
+        if: always()
+        run: python -u 06_pipeline-live.py
 
-      - name: Commit and Push Data
+      # ----------------------------------------------------
+      # COMMIT & PUSH
+      # ----------------------------------------------------
+      - name: Commit and push changes
+        if: always()
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          
           git add data/ logs/
-          git commit -m "Pipeline Auto-Update: Skeletons, Logs, Webpages, and Summaries" || echo "No changes to commit"
-          git push
+          git status
+          
+          if git diff --cached --quiet; then
+            echo "No data or log modifications to commit."
+            exit 0
+          fi
+          
+          git commit -m "Pipeline Run: Processed reviews, generated outputs, and updated logs"
+          git pull origin ${{ github.ref_name }} --rebase --autostash || true
+          git push origin HEAD:${{ github.ref }}
