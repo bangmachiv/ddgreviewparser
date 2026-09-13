@@ -42,6 +42,9 @@ jobs:
       # ----------------------------------------------------
       # 1. DISCOVERY & SCRAPING
       # ----------------------------------------------------
+      - name: 00 - Initialize Pipeline Architecture
+        run: python -u 00_initialize.py
+
       - name: 01 - Search Reviews
         run: python -u 01_search.py
 
