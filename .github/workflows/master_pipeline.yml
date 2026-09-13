@@ -1,131 +1,72 @@
-name: Master Review Pipeline
+name: 00-06. Master Review Pipeline
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: '0 2 * * *'
-
-concurrency:
-  group: "review-automation-pipeline"
-  cancel-in-progress: false
-
-permissions:
-  contents: write
+  schedule:
+    # Set to run 30 minutes after your Activation Manager cron times
+    - cron: '30 0,6,12,18 * * *' 
 
 jobs:
   execute-pipeline:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
-
-    env:
-      PYTHONUNBUFFERED: "1"
-
+    
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true
 
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: '3.10'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
-          pip install requests playwright playwright-stealth curl_cffi duckduckgo-search ddgs google-genai groq beautifulsoup4 lxml
-          playwright install --with-deps chromium
+          pip install requests beautifulsoup4 groq playwright
+          playwright install chromium
 
-      # ----------------------------------------------------
-      # 1. DISCOVERY & SCRAPING
-      # ----------------------------------------------------
-      - name: 00 - Initialize Pipeline Architecture
-        run: python -u 00_initialize.py
+      - name: 00 - Initialize
+        run: python 00_initialize.py
 
-      - name: 01 - Search Reviews
-        run: python -u 01_search.py
+      - name: 01 - Search
+        run: python 01_search.py
 
-      - name: 02 - Identify Reviews
-        run: python -u 02_identify.py
+      - name: 02 - Identify
+        run: python 02_identify.py
 
-      - name: 03 - Download HTML Webpages
-        env:
-          SCRAPE_DO_TOKEN: ${{ secrets.SCRAPE_DO_TOKEN }}
-        run: python -u 03_download.py
+      - name: 03 - Download
+        run: python 03_download.py
 
-      # ----------------------------------------------------
-      # 2. TITLE EXTRACTION & REFINEMENT
-      # ----------------------------------------------------
-      - name: 04-A-1 - Extract Titles
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python -u 04-A-1_titles.py
+      - name: 04-A - Extract, Clean & Highlight Titles
+        run: |
+          python 04-A-1_titles.py
+          python 04-A-2_clean.py
+          python 04-A-3_highlight.py
 
-      - name: 04-A-2 - Clean Titles (Gemini)
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python -u 04-A-2_clean.py
-
-      - name: 04-A-3 - Highlight Titles
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: python -u 04-A-3_highlight.py
-
-      # ----------------------------------------------------
-      # 3. METADATA & SENTIMENT PROCESSING
-      # ----------------------------------------------------
-      - name: 04-B-1 - Metadata JSON-LD Parsing
-        run: python -u 04-B-1_metadata-jsonld.py
-
-      - name: 04-B-2 - Metadata AI Fallback (Gemini)
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python -u 04-B-2_metadata-ai.py
-
-      - name: 04-B-3 - Unrated Title Sentiment Labeling (Groq)
+      - name: 04-B - Metadata & AI Processing
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: python -u 04-B-3_label.py
-
-      # ----------------------------------------------------
-      # 4. OUTPUT GENERATION
-      # ----------------------------------------------------
-      - name: 05-A - Generate WhatsApp Output
         run: |
-          shopt -s nullglob
-          for file in data/reviews/reviews_*.json; do
-            echo "Generating WhatsApp output for $file"
-            python -u 05-A_wsap.py "$file"
-          done
+          python 04-B-1_metadata-jsonld.py
+          python 04-B-2_metadata-ai.py
+          python 04-B-3_label.py
 
-      # ----------------------------------------------------
-      # 5. PIPELINE SUMMARY REPORT
-      # ----------------------------------------------------
-      - name: 05-B - Print & Save Pipeline Summary
-        if: always()
-        run: python -u 06_pipeline-live.py
+      - name: 05-A - WhatsApp Formatting
+        run: python 05-A_wsap.py
 
-      # ----------------------------------------------------
-      # COMMIT & PUSH
-      # ----------------------------------------------------
-      - name: Commit and push changes
-        if: always()
+      - name: 05-B - JSON Summary Output
+        run: python 05-B_summary.py
+
+      - name: 06 - Pipeline Metrics Dashboard
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          
-          git add data/ logs/
-          git status
-          
-          if git diff --cached --quiet; then
-            echo "No data or log modifications to commit."
-            exit 0
+          if [ -f "06_pipeline-live.py" ]; then
+            python 06_pipeline-live.py
           fi
-          
-          git commit -m "Pipeline Run: Processed reviews, generated outputs, and updated logs"
-          git pull origin ${{ github.ref_name }} --rebase --autostash || true
-          git push origin HEAD:${{ github.ref }}
+
+      - name: Commit and Push Data
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/ logs/
+          git commit -m "Pipeline Auto-Update: Skeletons, Logs, Webpages, and Summaries" || echo "No changes to commit"
+          git push
