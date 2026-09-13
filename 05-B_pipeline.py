@@ -2,7 +2,7 @@
 """
 05-B_pipeline.py
 Collects metrics from logs and reviews data to produce:
-  1. A tabular per-script execution table (HadToDo, Processed, Failure, Success).
+  1. A tabular per-script execution table split across two lines to prevent wrapping.
   2. The Final News Status count breakdown.
 Outputs to console and saves to logs/logs_<slug>/pipeline_<slug>/run_<timestamp>.txt.
 """
@@ -28,7 +28,7 @@ PIPELINE_STAGES = [
     ("04-B-1_metadata-jsonld", "04-B-1_metadata-jsonld.json"),
     ("04-B-2_metadata-ai", "04-B-2_metadata-ai.json"),
     ("04-B-3_label", "04-B-3_label.json"),
-    ("05-A_wsap", "05-A_output-wsap.json")  # <-- Added WSAP to the tracking array
+    ("05-A_wsap", "05-A_output-wsap.json")
 ]
 
 VALID_CATEGORIES = ["GOOD", "NEUTRAL", "BAD", "POSITIVE", "MIXED", "NEGATIVE"]
@@ -63,39 +63,59 @@ def get_live_movie_slugs():
             slugs.append(base.replace("reviews_", "").replace(".json", ""))
     return list(set(slugs))
 
-def extract_latest_log_metrics(log_path, total_pubs=0):
-    if not os.path.exists(log_path) or os.path.getsize(log_path) == 0:
-        return None
-    try:
-        with open(log_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        if not data:
-            return None
-        latest_ts = sorted(data.keys())[-1]
-        run = data[latest_ts]
+def extract_latest_log_metrics(log_path, total_pubs=0, rdata=None, stage_name=""):
+    run = {}
+    if os.path.exists(log_path) and os.path.getsize(log_path) > 0:
+        try:
+            with open(log_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if data:
+                latest_ts = sorted(data.keys())[-1]
+                run = data[latest_ts]
+        except Exception:
+            pass
 
-        # 05-A uses custom log keys, so we parse it dynamically based on the publisher count
-        if "total_reviews_formatted" in run:
-            success = run.get("total_reviews_formatted", 0)
-            processed = total_pubs
-            had_to_do = total_pubs
-            failure = processed - success
-            return had_to_do, processed, failure, success
-
-        # Standard parsing for 01 through 04
-        had_to_do = run.get("earlier_pending", run.get("processed", 0))
-        processed = run.get("processed", 0)
-        failure = run.get("failure", 0)
-        success = run.get("success", 0)
+    # 1. 05-A Custom Parsing
+    if "total_reviews_formatted" in run:
+        success = run.get("total_reviews_formatted", 0)
+        processed = total_pubs
+        had_to_do = total_pubs
+        failure = processed - success
         return had_to_do, processed, failure, success
-    except Exception:
+
+    # 2. Greedy Alias Parsing for 01-04
+    def get_first(keys):
+        for k in keys:
+            if k in run: return run[k]
+        return 0
+
+    had_to_do = get_first(["earlier_pending", "pending", "targets", "target_publishers"])
+    processed = get_first(["processed", "attempted", "searches", "searches_performed"])
+    success = get_first(["success", "succeeded", "found", "results"])
+    failure = get_first(["failure", "failed", "errors"])
+
+    # 3. 01_search JSON Overwrite (Fixes the 00|00|00|00 logic issue)
+    if "01_search" in stage_name and processed == 0 and success == 0 and rdata:
+        search_results = rdata.get("Search results")
+        if search_results is not None:
+            had_to_do = 1
+            processed = 1
+            success = search_results
+            failure = 0
+
+    if not run and "01_search" not in stage_name:
         return None
+
+    return had_to_do, processed, failure, success
+
+def pad_num(val):
+    """Returns a zero-padded string for integers, or passes through raw strings (e.g., '--')."""
+    return f"{val:02d}" if isinstance(val, int) else str(val)
 
 def process_slug(slug):
     movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{slug}")
     review_path = os.path.join(REVIEWS_DIR, f"reviews_{slug}.json")
 
-    # --- Pre-load reviews JSON to pass the global publisher count to 05-A logs ---
     total_pubs = 0
     rdata = {}
     if os.path.exists(review_path):
@@ -107,12 +127,15 @@ def process_slug(slug):
     stage_rows = []
     for idx, (stage_name, log_filename) in enumerate(PIPELINE_STAGES, start=1):
         log_file = os.path.join(movie_logs_dir, log_filename)
-        metrics = extract_latest_log_metrics(log_file, total_pubs)
+        metrics = extract_latest_log_metrics(log_file, total_pubs, rdata, stage_name)
+        
+        stage_rows.append(f"{idx:02d}. {stage_name}")
+        
         if metrics:
             had, proc, fail, succ = metrics
-            stage_rows.append(f"{idx:<2}. {stage_name:<24} | {had:>7} | {proc:>9} | {fail:>7} | {succ:>7}")
+            stage_rows.append(f"    {pad_num(had):>7} | {pad_num(proc):>9} | {pad_num(fail):>7} | {pad_num(succ):>7}")
         else:
-            stage_rows.append(f"{idx:<2}. {stage_name:<24} |       - |         - |       - |       -")
+            stage_rows.append(f"         -- |        -- |      -- |      --")
 
     # --- 2. Final News Status Counts ---
     status_counts = {
@@ -157,19 +180,20 @@ def process_slug(slug):
 
     # --- 3. Build Formatted Output ---
     output_lines = []
-    output_lines.append("=" * 68)
-    output_lines.append(f" PIPELINE EXECUTION SUMMARY: {slug}")
-    output_lines.append("=" * 68)
-    output_lines.append(f"{'Script No & Name':<28} | {'HadToDo':>7} | {'Processed':>9} | {'Failure':>7} | {'Success':>7}")
-    output_lines.append("-" * 68)
+    output_lines.append("=" * 45)
+    output_lines.append(f" SUMMARY: {slug}")
+    output_lines.append("=" * 45)
+    output_lines.append("Script No & Name")
+    output_lines.append(f"    {'HadToDo':>7} | {'Processed':>9} | {'Failure':>7} | {'Success':>7}")
+    output_lines.append("-" * 45)
     output_lines.extend(stage_rows)
     output_lines.append("")
-    output_lines.append("=" * 68)
+    output_lines.append("=" * 45)
     output_lines.append(" FINAL NEWS STATUS")
-    output_lines.append("=" * 68)
+    output_lines.append("=" * 45)
     for label, count in status_counts.items():
-        output_lines.append(f"{label:<22}: {count}")
-    output_lines.append("=" * 68)
+        output_lines.append(f"{label:<22}: {pad_num(count)}")
+    output_lines.append("=" * 45)
 
     report = "\n".join(output_lines)
     print("\n" + report + "\n")
