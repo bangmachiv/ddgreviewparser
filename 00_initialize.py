@@ -14,8 +14,9 @@ OUTPUT FOLDERS CREATED (Per Movie):
 
 OUTPUT FILES GENERATED/UPDATED (Per Movie):
   1. data/searches/searches_<slugname>.json (Initialized as {})
-  2. data/reviews/reviews_<slugname>.json
-  3. 11 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/
+  2. data/output/json/summary_<slugname>.json (Initialized as {}) <-- ADDED
+  3. data/reviews/reviews_<slugname>.json
+  4. 12 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/ <-- ADDED 05-B
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
   publisher_id, publisher_name, search_status, search_count, review_url, 
@@ -39,6 +40,7 @@ REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
 SEARCHES_DIR = os.path.join(BASE_DIR, "data", "searches")
 WEBPAGES_DIR = os.path.join(BASE_DIR, "data", "webpages")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
+OUTPUT_JSON_DIR = os.path.join(BASE_DIR, "data", "output", "json") # <-- ADDED
 
 # -----------------------------------------------------------------------------
 # 7-Column Metric Tracker Utility
@@ -81,7 +83,8 @@ def main():
     print("=" * 80)
 
     # 1. Base Output Directories (Guarantees Write Rights)
-    for folder in [REVIEWS_DIR, SEARCHES_DIR, WEBPAGES_DIR, LOGS_DIR]:
+    # <-- ADDED OUTPUT_JSON_DIR to the base scaffolding array
+    for folder in [REVIEWS_DIR, SEARCHES_DIR, WEBPAGES_DIR, LOGS_DIR, OUTPUT_JSON_DIR]:
         os.makedirs(folder, exist_ok=True)
         # Create a .gitkeep to ensure Git tracks even completely empty base folders
         with open(os.path.join(folder, ".gitkeep"), "w") as f:
@@ -167,7 +170,7 @@ def main():
             with open(os.path.join(movie_pipeline_logs, ".gitkeep"), "w") as f:
                 pass
 
-            # Create 11 empty JSON log files based on the new nomenclature
+            # Create 12 empty JSON log files based on the new nomenclature
             script_logs = [
                 "00_initialize.json",
                 "01_search.json",
@@ -179,7 +182,8 @@ def main():
                 "04-B-1_metadata-jsonld.json",
                 "04-B-2_metadata-ai.json",
                 "04-B-3_label.json",
-                "05-A_output-wsap.json"
+                "05-A_output-wsap.json",
+                "05-B_summary.json" # <-- ADDED
             ]
 
             for script_log in script_logs:
@@ -201,6 +205,16 @@ def main():
                 print(f"  [SUCCESS] Created empty searches_{movie_slug}.json")
             except Exception as e:
                 print(f"  [FAILED] Could not create searches file: {e}")
+
+        # B2. Initialize JSON Summary Output file if missing <-- ADDED
+        summary_path = os.path.join(OUTPUT_JSON_DIR, f"summary_{movie_slug}.json")
+        if not os.path.exists(summary_path):
+            try:
+                with open(summary_path, "w", encoding="utf-8") as sf:
+                    json.dump({}, sf)
+                print(f"  [SUCCESS] Created empty summary_{movie_slug}.json")
+            except Exception as e:
+                print(f"  [FAILED] Could not create summary file: {e}")
 
         # C. Load or Create Reviews Master Skeleton
         reviews_path = os.path.join(REVIEWS_DIR, f"reviews_{movie_slug}.json")
