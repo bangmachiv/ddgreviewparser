@@ -14,9 +14,10 @@ OUTPUT FOLDERS CREATED (Per Movie):
 
 OUTPUT FILES GENERATED/UPDATED (Per Movie):
   1. data/searches/searches_<slugname>.json (Initialized as {})
-  2. data/output/json/summary_<slugname>.json (Initialized as {}) <-- ADDED
+  2. data/output/json/summary_<slugname>.json (Initialized as {})
   3. data/reviews/reviews_<slugname>.json
-  4. 12 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/ <-- ADDED 05-B
+  4. logs/logs_<slugname>/ai_processing_logs.json (Per-publisher AI tracking blocks)
+  5. 12 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
   publisher_id, publisher_name, search_status, search_count, review_url, 
@@ -40,7 +41,7 @@ REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
 SEARCHES_DIR = os.path.join(BASE_DIR, "data", "searches")
 WEBPAGES_DIR = os.path.join(BASE_DIR, "data", "webpages")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
-OUTPUT_JSON_DIR = os.path.join(BASE_DIR, "data", "output", "json") # <-- ADDED
+OUTPUT_JSON_DIR = os.path.join(BASE_DIR, "data", "output", "json")
 
 # -----------------------------------------------------------------------------
 # 7-Column Metric Tracker Utility
@@ -83,7 +84,6 @@ def main():
     print("=" * 80)
 
     # 1. Base Output Directories (Guarantees Write Rights)
-    # <-- ADDED OUTPUT_JSON_DIR to the base scaffolding array
     for folder in [REVIEWS_DIR, SEARCHES_DIR, WEBPAGES_DIR, LOGS_DIR, OUTPUT_JSON_DIR]:
         os.makedirs(folder, exist_ok=True)
         # Create a .gitkeep to ensure Git tracks even completely empty base folders
@@ -183,7 +183,7 @@ def main():
                 "04-B-2_metadata-ai.json",
                 "04-B-3_label.json",
                 "05-A_output-wsap.json",
-                "05-B_summary.json" # <-- ADDED
+                "05-B_summary.json"
             ]
 
             for script_log in script_logs:
@@ -206,7 +206,7 @@ def main():
             except Exception as e:
                 print(f"  [FAILED] Could not create searches file: {e}")
 
-        # B2. Initialize JSON Summary Output file if missing <-- ADDED
+        # B2. Initialize JSON Summary Output file if missing
         summary_path = os.path.join(OUTPUT_JSON_DIR, f"summary_{movie_slug}.json")
         if not os.path.exists(summary_path):
             try:
@@ -310,7 +310,46 @@ def main():
             print(f"  [INFO] No missing publishers to inject for this movie.")
             save_success = True
 
-        # G. Self-Logging execution status to 00_initialize.json
+        # G. Initialize AI Processing Logs
+        ai_logs_path = os.path.join(movie_logs_dir, "ai_processing_logs.json")
+        ai_logs_data = {}
+        
+        # Load existing AI logs if they exist
+        if os.path.exists(ai_logs_path) and os.path.getsize(ai_logs_path) > 0:
+            try:
+                with open(ai_logs_path, "r", encoding="utf-8") as af:
+                    ai_logs_data = json.load(af)
+            except json.JSONDecodeError:
+                pass
+
+        ai_logs_changed = False
+        for pub in active_publishers:
+            pub_id = pub["id"]
+            if pub_id not in ai_logs_data:
+                ai_logs_data[pub_id] = {
+                    "01-C_search-gemini": "PENDING",
+                    "04-A-2_clean": "PENDING",
+                    "04-A-3_highlight": "PENDING",
+                    "04-B-2_metadata-ai": "PENDING",
+                    "04-B-3_label": "PENDING"
+                }
+                ai_logs_changed = True
+            else:
+                # Safely patch existing blocks if any specific fields are missing
+                for field in ["01-C_search-gemini", "04-A-2_clean", "04-A-3_highlight", "04-B-2_metadata-ai", "04-B-3_label"]:
+                    if field not in ai_logs_data[pub_id]:
+                        ai_logs_data[pub_id][field] = "PENDING"
+                        ai_logs_changed = True
+
+        if ai_logs_changed or not os.path.exists(ai_logs_path):
+            try:
+                with open(ai_logs_path, "w", encoding="utf-8") as af:
+                    json.dump(ai_logs_data, af, indent=4, ensure_ascii=False)
+                print(f"  [SUCCESS] Initialized/Updated ai_processing_logs.json for {len(active_publishers)} publishers.")
+            except Exception as e:
+                print(f"  [FAILED] Could not save ai_processing_logs.json: {e}")
+
+        # H. Self-Logging execution status to 00_initialize.json
         init_log_path = os.path.join(movie_logs_dir, "00_initialize.json")
         init_log = {}
         
