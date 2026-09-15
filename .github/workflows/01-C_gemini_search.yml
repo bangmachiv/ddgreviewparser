@@ -1,0 +1,60 @@
+name: 01-C Gemini Search Recovery
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: "review-automation-pipeline"
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  gemini-search-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    env:
+      # Forces Python to stream stdout/stderr unbuffered for real-time GitHub Action logs
+      PYTHONUNBUFFERED: "1" 
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-genai requests
+
+      - name: 01-C - Execute Gemini Web Search Recovery
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -u 01-C_search-gemini.py
+
+      - name: Commit and push changes
+        if: always()
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          
+          git add data/ reviews/ logs/
+          git status
+          
+          if git diff --cached --quiet; then
+            echo "No data or log modifications to commit."
+            exit 0
+          fi
+          
+          git commit -m "Pipeline Recovery: 01-C Gemini web search executed"
+          git pull origin ${{ github.ref_name }} --rebase --autostash || true
+          git push origin HEAD:${{ github.ref }}
