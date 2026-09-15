@@ -17,7 +17,7 @@ OUTPUT FILES GENERATED/UPDATED (Per Movie):
   2. data/output/json/summary_<slugname>.json (Initialized as {})
   3. data/reviews/reviews_<slugname>.json
   4. logs/logs_<slugname>/ai_processing_logs.json (Per-publisher AI tracking blocks)
-  5. 12 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/
+  5. 13 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
   publisher_id, publisher_name, search_status, search_count, review_url, 
@@ -170,10 +170,11 @@ def main():
             with open(os.path.join(movie_pipeline_logs, ".gitkeep"), "w") as f:
                 pass
 
-            # Create 12 empty JSON log files based on the new nomenclature
+            # Create 13 empty JSON log files based on the new nomenclature
             script_logs = [
                 "00_initialize.json",
                 "01_search.json",
+                "01-C_search-gemini.json",  # <-- ADDED for upcoming script
                 "02_identify.json",
                 "03_download.json",
                 "04-A-1_titles.json",
