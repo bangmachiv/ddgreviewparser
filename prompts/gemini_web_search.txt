@@ -1,0 +1,73 @@
+MOVIE_TITLE = {MOVIE_TITLE}
+PUBLISHER_URL = {PUBLISHER_URL}
+
+Perform actual web searches using your Google Search grounding tool. Do not rely on internal knowledge or only on the initial search results.
+
+TASK:
+Find the published film review of MOVIE_TITLE on the website identified by PUBLISHER_URL.
+
+SEARCH AND DISCOVERY:
+Perform multiple independent web searches. Do not rely on a single query or a single search-results page.
+
+First, perform broad searches combining the movie title with the publisher URL/domain:
+"{MOVIE_TITLE}" "{PUBLISHER_URL}"
+"{MOVIE_TITLE}" "{PUBLISHER_URL}" review
+"{MOVIE_TITLE}" review "{PUBLISHER_URL}"
+"{MOVIE_TITLE}" critic "{PUBLISHER_URL}"
+"{MOVIE_TITLE}" "film review" "{PUBLISHER_URL}"
+
+Then perform domain-restricted searches:
+site:{PUBLISHER_URL} "{MOVIE_TITLE}"
+site:{PUBLISHER_URL} "{MOVIE_TITLE}" review
+site:{PUBLISHER_URL} "{MOVIE_TITLE}" critic
+
+IMPORTANT SEARCH RULE:
+Do NOT rely exclusively on site:{PUBLISHER_URL} searches.
+A publisher's articles may not be perfectly indexed. A broad search containing MOVIE_TITLE and PUBLISHER_URL may discover the article indirectly through links, mentions, or citations on other sites.
+If a broad search result points to, links to, or references an article URL on PUBLISHER_URL, investigate that URL as a candidate.
+
+If initial searches fail, continue searching using reasonable title variations:
+- Alternative capitalizations
+- Shortened versions of the title
+- Distinctive keywords from the title combined with "review", "movie review", or "critic"
+
+Do not conclude NOT_FOUND merely because the article does not appear in the first query results.
+
+DEEP CONTENT VERIFICATION:
+When evaluating candidate URLs from the search results, you must inspect the deeply retrieved content of the article. Do not rely solely on search engine summary snippets. 
+
+The verified review must meet these strict criteria based on its full body text:
+1. Belong strictly to the domain identified by PUBLISHER_URL (treat www and non-www as equivalent).
+2. Specifically review MOVIE_TITLE.
+3. Contain substantive critical analysis in the body text (e.g., plot critique, performance evaluations, technical commentary, a verdict, or a star rating).
+4. Be an actual published editorial review article.
+5. NOT be a trailer announcement, teaser breakdown, or news report.
+6. NOT be an interview, box office report, or promotional feature.
+7. NOT be a review roundup, audience/fan comments, or social-media post.
+8. NOT be a review of a different movie.
+
+DOMAIN & ARTICLE VALIDATION:
+- The final URL must point directly to the review article on PUBLISHER_URL.
+- Never return a URL from another publisher, aggregator, or social network.
+- Extract the exact article URL and the exact original article headline directly from the verified content.
+- Do not guess, shorten, or fabricate URLs or titles.
+
+NOT_FOUND RULE:
+Only return NOT_FOUND after exhaustively trying the broad queries, domain queries, and keyword variations, and subsequently finding no verifiable review article on PUBLISHER_URL that passes the deep content verification.
+
+OUTPUT FORMAT:
+Return ONLY valid JSON. Do not include markdown formatting, code blocks (like ```json), or any conversational commentary. 
+
+If a verified review is found:
+{
+  "status": "FOUND",
+  "url": "[https://example.com/movie-review](https://example.com/movie-review)",
+  "title": "Exact Article Headline"
+}
+
+If no verified review is found:
+{
+  "status": "NOT_FOUND",
+  "url": "NA",
+  "title": "NA"
+}
