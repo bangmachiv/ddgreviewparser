@@ -4,8 +4,10 @@
 Secondary search script utilizing Google Gemini's native web search grounding.
 Runs strictly for movies >= 4 days post-release that already have a pipeline log.
 Targets publishers where standard search failed (PENDING).
+Configured strictly for Lite models: gemini-3.5-flash-lite -> gemini-3.1-flash-lite.
 """
 
+import builtins
 import json
 import os
 import sys
@@ -21,6 +23,13 @@ try:
 except ImportError:
     print("[FATAL ERROR] google-genai package is missing. Run: pip install google-genai")
     sys.exit(1)
+
+# ---------------------------------------------------------------------------
+# Global Print Override for Real-Time CI/CD Streaming
+# ---------------------------------------------------------------------------
+def print(*args, **kwargs):
+    kwargs['flush'] = True
+    builtins.print(*args, **kwargs)
 
 # -----------------------------------------------------------------------------
 # Configuration & Absolute Pathing
@@ -41,11 +50,10 @@ if not GEMINI_API_KEY:
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
-# Define Fallback Models
+# Configured strictly with both Lite models
 MODEL_CONFIG = [
-    {"name": "gemini-2.5-flash", "priority": 1, "enabled": True},
-    {"name": "gemini-2.5-flash-lite", "priority": 2, "enabled": True},
-    {"name": "gemini-1.5-flash", "priority": 3, "enabled": True}
+    {"name": "gemini-3.5-flash-lite", "priority": 1, "enabled": True},
+    {"name": "gemini-3.1-flash-lite", "priority": 2, "enabled": True}
 ]
 
 # -----------------------------------------------------------------------------
@@ -66,7 +74,11 @@ def clean_json_response(raw_text):
         clean_text = clean_text[3:]
     if clean_text.endswith("```"):
         clean_text = clean_text[:-3]
-    return clean_text.strip()
+    
+    clean_text = clean_text.strip()
+    if not clean_text.startswith("{"):
+        clean_text = "{" + clean_text
+    return clean_text
 
 def is_valid_result(data, expected_domain):
     """Validates the output according to strict rules. Allows FOUND and NOT_FOUND."""
@@ -81,7 +93,7 @@ def is_valid_result(data, expected_domain):
     if status in ["NOT_FOUND", "NO"]:
         return True
     
-    # If the AI claims it FOUND it, we must strictly validate the URL and Title
+    # If the AI claims it FOUND it, strictly validate URL and Title
     url = str(data.get("url", "")).strip()
     title = str(data.get("title", "")).strip().lower()
 
@@ -89,7 +101,7 @@ def is_valid_result(data, expected_domain):
     if not url or url.upper() == "NA" or expected_domain not in url:
         return False
     
-    # 2. Title must not contain forbidden words representing wrong article types
+    # 2. Title must not contain forbidden words
     forbidden_words = ["trailer", "fan", "twitter"]
     if any(word in title for word in forbidden_words):
         return False
@@ -97,7 +109,7 @@ def is_valid_result(data, expected_domain):
     return True
 
 def run_gemini_search_with_fallback(client, prompt, models_config, config):
-    """Handles routing the API call through the fallback hierarchy."""
+    """Handles routing the API call through the Lite fallback hierarchy."""
     active_models = sorted(
         [m for m in models_config if m.get("enabled", True)],
         key=lambda x: x.get("priority", 999)
@@ -128,7 +140,7 @@ def run_gemini_search_with_fallback(client, prompt, models_config, config):
 # -----------------------------------------------------------------------------
 def main():
     print("=" * 80)
-    print(" 01-C: GEMINI WEB SEARCH RECOVERY")
+    print(" 01-C: GEMINI WEB SEARCH RECOVERY (LITE MODELS)")
     print("=" * 80)
 
     # 1. Load Prompt Template
@@ -237,7 +249,7 @@ def main():
                 # Construct Prompt dynamically
                 prompt = prompt_template.replace("{MOVIE_TITLE}", movie_name).replace("{PUBLISHER_URL}", target_domain)
 
-                # Execute with Model Fallbacks
+                # Execute with Lite Fallbacks
                 raw_response = run_gemini_search_with_fallback(client, prompt, MODEL_CONFIG, gemini_config)
 
                 if pub_id not in ai_logs:
@@ -250,7 +262,7 @@ def main():
 
                         # Validate Output
                         if is_valid_result(result, target_domain):
-                            # Regardless of FOUND or NOT_FOUND, the AI successfully completed its task
+                            # Definitive answer received -> mark as PROCESSED
                             ai_logs[pub_id]["01-C_search-gemini"] = "PROCESSED"
                             
                             status = str(result.get("status", "")).strip().upper()
@@ -259,11 +271,12 @@ def main():
                                 print(f"     [SUCCESS] Valid URL Found: {result['url']}")
                                 pub["review_url"] = result["url"]
                                 pub["search_status"] = "SUCCESS"
-                                pub["review_source"] = "gemini_search"
+                                pub["review_source"] = "gemini"
                                 pub["review_title"] = result.get("title", "PENDING")
+                                pub["article_title"] = result.get("title", "PENDING")
                                 success_count += 1
                             else:
-                                print(f"     [NOT FOUND] Gemini exhausted searches but confirmed no review exists yet.")
+                                print(f"     [NOT FOUND] Gemini confirmed no review exists on domain.")
                         else:
                             print(f"     [INVALID] Output failed strict validation checks. Marking FAILED to retry next time.")
                             ai_logs[pub_id]["01-C_search-gemini"] = "FAILED"
@@ -272,15 +285,14 @@ def main():
                         print(f"     [JSON/VALIDATION ERROR] Failed to parse output: {str(e)}")
                         ai_logs[pub_id]["01-C_search-gemini"] = "FAILED"
                 else:
-                    print(f"     [API FAILURE] All models failed. Leaving as PENDING.")
-                    # We leave it as PENDING because it was a hard API crash (e.g., rate limit), not a search evaluation failure
+                    print(f"     [API FAILURE] Both Lite models failed. Leaving as PENDING.")
                     time.sleep(15)
                     continue
 
                 data_changed = True
                 ai_logs_changed = True
 
-                # Required 15-second delay to prevent rate-limiting on iterative searches
+                # 15-second delay to prevent rate-limiting on iterative searches
                 time.sleep(15)
 
         # Save data if modifications were made
