@@ -4,7 +4,7 @@
 Secondary search script utilizing Google Gemini's native web search grounding.
 Runs strictly for movies >= 4 days post-release that already have a pipeline log.
 Targets publishers where standard search failed (PENDING).
-Configured for Standard Flash models: 3.8 -> 3.7 -> 3.5.
+Configured for Standard Flash models using Chat Sessions (AFC support).
 """
 
 import builtins
@@ -67,8 +67,12 @@ def get_domain(url):
     return netloc.replace("www.", "")
 
 def clean_json_response(raw_text):
-    """Removes markdown code blocks if the model wrapped the JSON."""
+    """Removes markdown code blocks and citation markers if the model wrapped the JSON."""
     clean_text = raw_text.strip()
+    
+    # Strip any trailing search citations the model might have appended (e.g., [1], [2])
+    clean_text = re.sub(r'\[\d+\]', '', clean_text)
+    
     if clean_text.startswith("```json"):
         clean_text = clean_text[7:]
     elif clean_text.startswith("```"):
@@ -105,7 +109,7 @@ def is_valid_result(data, expected_domain):
     return True
 
 def run_gemini_search_with_fallback(client, prompt, models_config, config):
-    """Handles routing the API call through the fallback hierarchy with safety checks."""
+    """Handles routing the API call using a Chat Session to support Automatic Function Calling."""
     active_models = sorted(
         [m for m in models_config if m.get("enabled", True)],
         key=lambda x: x.get("priority", 999)
@@ -115,22 +119,25 @@ def run_gemini_search_with_fallback(client, prompt, models_config, config):
         model_name = model_info["name"]
         print(f"      [Attempting Model: {model_name}]")
         try:
-            response = client.models.generate_content(
+            # Switch to 'chats.create' to natively support the Web Search tool loop
+            chat = client.chats.create(
                 model=model_name,
-                contents=prompt,
                 config=config
             )
+            response = chat.send_message(prompt)
             
-            if not response.candidates:
+            if not getattr(response, "candidates", None) or not response.candidates:
                 print(f"      [DEBUG ERROR] API call succeeded, but model returned candidates=None.")
-                print(f"      [DEBUG EXPLANATION] The model may have tripped a safety filter or lacks grounding tool support.")
+                print(f"      [DEBUG RAW PAYLOAD]: {response}")
             else:
                 try:
                     text_val = response.text
                     if text_val and text_val.strip():
+                        print(f"      [LLM API RAW OUTPUT]:\n{text_val.strip()}")
                         return text_val
                 except ValueError as ve:
                     print(f"      [DEBUG ERROR] SDK failed to parse response as text. {ve}")
+                    print(f"      [DEBUG RAW PAYLOAD]: {response}")
 
         except errors.APIError as e:
             print(f"      [API Error on {model_name}]: {e}")
@@ -176,12 +183,14 @@ def main():
         movies_data = json.load(f)
     active_movies = movies_data.get("movies", [])
 
+    # Configure Gemini Grounding Tool
     grounding_tool = types.Tool(
         google_search=types.GoogleSearch()
     )
+    
+    # REMOVED response_mime_type="application/json" to prevent crash conflicts with Search Citations
     gemini_config = types.GenerateContentConfig(
-        tools=[grounding_tool], 
-        response_mime_type="application/json",
+        tools=[grounding_tool],
         temperature=0.1
     )
 
@@ -272,12 +281,11 @@ def main():
                                 print(f"     [NOT FOUND] Gemini confirmed no review exists on domain.")
                         else:
                             print(f"     [INVALID] Output failed strict validation checks. Marking FAILED to retry next time.")
-                            print(f"     [DEBUG RAW JSON]: {raw_json}")
+                            print(f"     [DEBUG RAW PARSED JSON]: {raw_json}")
                             ai_logs[pub_id]["01-C_search-gemini"] = "FAILED"
                             
                     except Exception as e:
                         print(f"     [JSON/VALIDATION ERROR] Failed to parse output: {str(e)}")
-                        print(f"     [DEBUG RAW RESPONSE]: {raw_response}")
                         ai_logs[pub_id]["01-C_search-gemini"] = "FAILED"
                 else:
                     print(f"     [API FAILURE] Models failed or returned empty payload. Leaving as PENDING.")
@@ -287,7 +295,6 @@ def main():
                 data_changed = True
                 ai_logs_changed = True
 
-                # Kept at 15 seconds to heavily protect against Tokens Per Minute (TPM) exhaustion limits
                 time.sleep(15)
 
         if data_changed:
