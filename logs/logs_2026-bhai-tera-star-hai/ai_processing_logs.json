@@ -1,13 +1,13 @@
 {
     "aaj-tak": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
         "04-B-3_label": "PENDING"
     },
     "abp": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -28,14 +28,14 @@
         "04-B-3_label": "PENDING"
     },
     "bollyspice": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
         "04-B-3_label": "PENDING"
     },
     "business-standard": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -49,7 +49,7 @@
         "04-B-3_label": "PENDING"
     },
     "cinetales": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -70,14 +70,14 @@
         "04-B-3_label": "PENDING"
     },
     "deccan-chronicle": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
         "04-B-3_label": "PENDING"
     },
     "deccan-herald": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -91,7 +91,7 @@
         "04-B-3_label": "PENDING"
     },
     "firstpost": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -105,7 +105,7 @@
         "04-B-3_label": "PENDING"
     },
     "hindustan": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -119,7 +119,7 @@
         "04-B-3_label": "PENDING"
     },
     "ians-live": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -133,21 +133,21 @@
         "04-B-3_label": "PENDING"
     },
     "koimoi": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
         "04-B-3_label": "PENDING"
     },
     "lensmen-reviews": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
         "04-B-3_label": "PENDING"
     },
     "lokmat": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -161,7 +161,7 @@
         "04-B-3_label": "PENDING"
     },
     "mint": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -182,7 +182,7 @@
         "04-B-3_label": "PENDING"
     },
     "navbharat-times": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -203,14 +203,14 @@
         "04-B-3_label": "PENDING"
     },
     "outlook": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
         "04-B-3_label": "PENDING"
     },
     "peepingmoon": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -231,14 +231,14 @@
         "04-B-3_label": "PENDING"
     },
     "south-asian-herald": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
         "04-B-3_label": "PENDING"
     },
     "the-economic-times": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -252,7 +252,7 @@
         "04-B-3_label": "PENDING"
     },
     "the-hindu": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -266,14 +266,14 @@
         "04-B-3_label": "PENDING"
     },
     "the-quint": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
         "04-B-3_label": "PENDING"
     },
     "the-telegraph": {
-        "01-C_search-gemini": "PENDING",
+        "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
