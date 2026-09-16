@@ -48,6 +48,8 @@ The verified review must meet these strict criteria based on its full body text:
 
 DOMAIN & ARTICLE VALIDATION:
 - The final URL must point directly to the review article on PUBLISHER_URL.
+- You MUST extract and return the true, clean, canonical URL of the publisher's website.
+- NEVER return a Google search redirect URL, tracking link, or intermediary wrapper (e.g., URLs starting with "https://vertexaisearch.cloud.google.com/..." or "https://www.google.com/url/..."). You must resolve or extract the actual destination URL belonging to PUBLISHER_URL.
 - Never return a URL from another publisher, aggregator, or social network.
 - Extract the exact article URL and the exact original article headline directly from the verified content.
 - Do not guess, shorten, or fabricate URLs or titles.
@@ -61,7 +63,7 @@ Return ONLY valid JSON. Do not include markdown formatting, code blocks (like ``
 If a verified review is found:
 {
   "status": "FOUND",
-  "url": "[https://example.com/movie-review](https://example.com/movie-review)",
+  "url": "https://PUBLISHER_URL/clean-canonical-path-to-review",
   "title": "Exact Article Headline"
 }
 
