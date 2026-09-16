@@ -60,7 +60,7 @@ MODEL_CONFIG = [
 # Utility Functions
 # -----------------------------------------------------------------------------
 def get_domain(url):
-    """Extracts the base domain from a URL (e.g., https://www.koimoi.com -> koimoi.com)"""
+    """Extracts the base domain from a URL"""
     if not url: return ""
     netloc = urlparse(url).netloc
     return netloc.replace("www.", "")
@@ -84,24 +84,19 @@ def is_valid_result(data, expected_domain):
     """Validates the output according to strict rules. Allows FOUND and NOT_FOUND."""
     status = str(data.get("status", "")).strip().upper()
     
-    # Check if the AI returned a definitive valid status
     valid_statuses = ["FOUND", "NOT_FOUND", "YES", "NO"]
     if status not in valid_statuses:
         return False
         
-    # If the AI definitively couldn't find it, the JSON structure is still valid
     if status in ["NOT_FOUND", "NO"]:
         return True
     
-    # If the AI claims it FOUND it, strictly validate URL and Title
     url = str(data.get("url", "")).strip()
     title = str(data.get("title", "")).strip().lower()
 
-    # 1. URL must not be empty, NA, and MUST contain the expected domain
     if not url or url.upper() == "NA" or expected_domain not in url:
         return False
     
-    # 2. Title must not contain forbidden words
     forbidden_words = ["trailer", "fan", "twitter"]
     if any(word in title for word in forbidden_words):
         return False
@@ -109,7 +104,7 @@ def is_valid_result(data, expected_domain):
     return True
 
 def run_gemini_search_with_fallback(client, prompt, models_config, config):
-    """Handles routing the API call through the Lite fallback hierarchy."""
+    """Handles routing the API call through the Lite fallback hierarchy with heavy debug logging."""
     active_models = sorted(
         [m for m in models_config if m.get("enabled", True)],
         key=lambda x: x.get("priority", 999)
@@ -124,7 +119,24 @@ def run_gemini_search_with_fallback(client, prompt, models_config, config):
                 contents=prompt,
                 config=config
             )
-            return response.text
+            
+            # --- AGGRESSIVE DEBUG BLOCK ---
+            try:
+                text_val = response.text
+                if text_val and text_val.strip():
+                    return text_val
+                else:
+                    print(f"      [DEBUG ERROR] API call succeeded, but model returned an empty text string.")
+                    print(f"      [DEBUG RAW RESPONSE DUMP]: {response}")
+            except ValueError as ve:
+                print(f"      [DEBUG ERROR] SDK failed to parse response as text (likely a safety block or raw function call).")
+                print(f"      [DEBUG EXCEPTION]: {ve}")
+                print(f"      [DEBUG RAW RESPONSE DUMP]: {response}")
+            except Exception as ex:
+                print(f"      [DEBUG ERROR] Unknown parsing error: {ex}")
+                print(f"      [DEBUG RAW RESPONSE DUMP]: {response}")
+            # ------------------------------
+
         except errors.APIError as e:
             print(f"      [API Error on {model_name}]: {e}")
         except Exception as e:
@@ -143,7 +155,6 @@ def main():
     print(" 01-C: GEMINI WEB SEARCH RECOVERY (LITE MODELS)")
     print("=" * 80)
 
-    # 1. Load Prompt Template
     if not os.path.exists(PROMPT_FILE):
         print(f"[FATAL ERROR] Prompt file missing: {PROMPT_FILE}")
         sys.exit(1)
@@ -151,7 +162,6 @@ def main():
     with open(PROMPT_FILE, "r", encoding="utf-8") as f:
         prompt_template = f.read()
 
-    # 2. Load Publishers Map
     if not os.path.exists(PUBLISHERS_FILE):
         print(f"[FATAL ERROR] {PUBLISHERS_FILE} not found.")
         sys.exit(1)
@@ -163,7 +173,6 @@ def main():
     for p in publishers_data:
         pub_domain_map[p["id"]] = get_domain(p.get("url", ""))
 
-    # 3. Load Movies
     if not os.path.exists(MOVIES_FILE):
         print(f"[FATAL ERROR] {MOVIES_FILE} not found.")
         sys.exit(1)
@@ -172,7 +181,6 @@ def main():
         movies_data = json.load(f)
     active_movies = movies_data.get("movies", [])
 
-    # Configure Gemini with Search Grounding
     grounding_tool = types.Tool(
         google_search=types.GoogleSearch()
     )
@@ -191,7 +199,6 @@ def main():
 
         print(f"\n[EVALUATING] {movie_name} ({slug})")
 
-        # Condition 1: Must be >= 4 days post-release
         try:
             release_date = datetime.strptime(release_date_str, "%Y-%m-%d").date()
             days_since = (today - release_date).days
@@ -202,13 +209,11 @@ def main():
             print(f"  -> Skipping: Invalid date format '{release_date_str}'")
             continue
 
-        # Condition 2: Must have actual run of pipeline (pipeline log exists)
         pipeline_dir = os.path.join(LOGS_DIR, f"logs_{slug}", f"pipeline_{slug}")
         if not os.path.exists(pipeline_dir) or not any(f.endswith(".txt") for f in os.listdir(pipeline_dir)):
             print(f"  -> Skipping: No pipeline execution logs found in {pipeline_dir}.")
             continue
 
-        # Setup paths for this movie
         reviews_path = os.path.join(REVIEWS_DIR, f"reviews_{slug}.json")
         ai_logs_path = os.path.join(LOGS_DIR, f"logs_{slug}", "ai_processing_logs.json")
         script_log_path = os.path.join(LOGS_DIR, f"logs_{slug}", "01-C_search-gemini.json")
@@ -228,13 +233,11 @@ def main():
         searches_attempted = 0
         success_count = 0
 
-        # Iterate Publishers
         for pub in rdata.get("publishers", []):
             pub_id = pub.get("publisher_id")
             pub_name = pub.get("publisher_name")
             review_url = str(pub.get("review_url", "")).strip().upper()
             
-            # Condition 3 & 4: review_url must be PENDING and 01-C tracking must be PENDING
             ai_status = ai_logs.get(pub_id, {}).get("01-C_search-gemini", "NOT_FOUND")
             
             if review_url == "PENDING" and ai_status == "PENDING":
@@ -246,10 +249,8 @@ def main():
                 print(f"  -> [GEMINI SEARCH] Querying for {pub_name}...")
                 searches_attempted += 1
 
-                # Construct Prompt dynamically
                 prompt = prompt_template.replace("{MOVIE_TITLE}", movie_name).replace("{PUBLISHER_URL}", target_domain)
 
-                # Execute with Lite Fallbacks
                 raw_response = run_gemini_search_with_fallback(client, prompt, MODEL_CONFIG, gemini_config)
 
                 if pub_id not in ai_logs:
@@ -260,11 +261,8 @@ def main():
                         raw_json = clean_json_response(raw_response)
                         result = json.loads(raw_json)
 
-                        # Validate Output
                         if is_valid_result(result, target_domain):
-                            # Definitive answer received -> mark as PROCESSED
                             ai_logs[pub_id]["01-C_search-gemini"] = "PROCESSED"
-                            
                             status = str(result.get("status", "")).strip().upper()
                             
                             if status in ["FOUND", "YES"]:
@@ -279,23 +277,23 @@ def main():
                                 print(f"     [NOT FOUND] Gemini confirmed no review exists on domain.")
                         else:
                             print(f"     [INVALID] Output failed strict validation checks. Marking FAILED to retry next time.")
+                            print(f"     [DEBUG RAW JSON]: {raw_json}")
                             ai_logs[pub_id]["01-C_search-gemini"] = "FAILED"
                             
                     except Exception as e:
                         print(f"     [JSON/VALIDATION ERROR] Failed to parse output: {str(e)}")
+                        print(f"     [DEBUG RAW RESPONSE]: {raw_response}")
                         ai_logs[pub_id]["01-C_search-gemini"] = "FAILED"
                 else:
-                    print(f"     [API FAILURE] Both Lite models failed. Leaving as PENDING.")
+                    print(f"     [API FAILURE] Models failed or returned empty payload. Leaving as PENDING.")
                     time.sleep(15)
                     continue
 
                 data_changed = True
                 ai_logs_changed = True
 
-                # 15-second delay to prevent rate-limiting on iterative searches
                 time.sleep(15)
 
-        # Save data if modifications were made
         if data_changed:
             with open(reviews_path, "w", encoding="utf-8") as f:
                 json.dump(rdata, f, indent=4, ensure_ascii=False)
@@ -305,7 +303,6 @@ def main():
             with open(ai_logs_path, "w", encoding="utf-8") as f:
                 json.dump(ai_logs, f, indent=4, ensure_ascii=False)
 
-        # Self-Logging script run
         if searches_attempted > 0:
             script_history = {}
             if os.path.exists(script_log_path) and os.path.getsize(script_log_path) > 0:
