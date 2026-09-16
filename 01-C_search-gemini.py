@@ -4,7 +4,7 @@
 Secondary search script utilizing Google Gemini's native web search grounding.
 Runs strictly for movies >= 4 days post-release that already have a pipeline log.
 Targets publishers where standard search failed (PENDING).
-Configured strictly for Lite models: gemini-3.5-flash-lite -> gemini-3.1-flash-lite.
+Configured for Standard Flash models: 3.8 -> 3.7 -> 3.5.
 """
 
 import builtins
@@ -50,10 +50,11 @@ if not GEMINI_API_KEY:
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
-# Configured strictly with both Lite models
+# LIVE WEB SEARCH REQUIRES STANDARD FLASH MODELS.
 MODEL_CONFIG = [
-    {"name": "gemini-3.5-flash-lite", "priority": 1, "enabled": True},
-    {"name": "gemini-3.1-flash-lite", "priority": 2, "enabled": True}
+    {"name": "gemini-3.8-flash", "priority": 1, "enabled": True},
+    {"name": "gemini-3.7-flash", "priority": 2, "enabled": True},
+    {"name": "gemini-3.5-flash", "priority": 3, "enabled": True}
 ]
 
 # -----------------------------------------------------------------------------
@@ -104,7 +105,7 @@ def is_valid_result(data, expected_domain):
     return True
 
 def run_gemini_search_with_fallback(client, prompt, models_config, config):
-    """Handles routing the API call through the Lite fallback hierarchy with heavy debug logging."""
+    """Handles routing the API call through the fallback hierarchy with safety checks."""
     active_models = sorted(
         [m for m in models_config if m.get("enabled", True)],
         key=lambda x: x.get("priority", 999)
@@ -120,22 +121,16 @@ def run_gemini_search_with_fallback(client, prompt, models_config, config):
                 config=config
             )
             
-            # --- AGGRESSIVE DEBUG BLOCK ---
-            try:
-                text_val = response.text
-                if text_val and text_val.strip():
-                    return text_val
-                else:
-                    print(f"      [DEBUG ERROR] API call succeeded, but model returned an empty text string.")
-                    print(f"      [DEBUG RAW RESPONSE DUMP]: {response}")
-            except ValueError as ve:
-                print(f"      [DEBUG ERROR] SDK failed to parse response as text (likely a safety block or raw function call).")
-                print(f"      [DEBUG EXCEPTION]: {ve}")
-                print(f"      [DEBUG RAW RESPONSE DUMP]: {response}")
-            except Exception as ex:
-                print(f"      [DEBUG ERROR] Unknown parsing error: {ex}")
-                print(f"      [DEBUG RAW RESPONSE DUMP]: {response}")
-            # ------------------------------
+            if not response.candidates:
+                print(f"      [DEBUG ERROR] API call succeeded, but model returned candidates=None.")
+                print(f"      [DEBUG EXPLANATION] The model may have tripped a safety filter or lacks grounding tool support.")
+            else:
+                try:
+                    text_val = response.text
+                    if text_val and text_val.strip():
+                        return text_val
+                except ValueError as ve:
+                    print(f"      [DEBUG ERROR] SDK failed to parse response as text. {ve}")
 
         except errors.APIError as e:
             print(f"      [API Error on {model_name}]: {e}")
@@ -152,7 +147,7 @@ def run_gemini_search_with_fallback(client, prompt, models_config, config):
 # -----------------------------------------------------------------------------
 def main():
     print("=" * 80)
-    print(" 01-C: GEMINI WEB SEARCH RECOVERY (LITE MODELS)")
+    print(" 01-C: GEMINI WEB SEARCH RECOVERY (STANDARD FLASH)")
     print("=" * 80)
 
     if not os.path.exists(PROMPT_FILE):
@@ -292,6 +287,7 @@ def main():
                 data_changed = True
                 ai_logs_changed = True
 
+                # Kept at 15 seconds to heavily protect against Tokens Per Minute (TPM) exhaustion limits
                 time.sleep(15)
 
         if data_changed:
