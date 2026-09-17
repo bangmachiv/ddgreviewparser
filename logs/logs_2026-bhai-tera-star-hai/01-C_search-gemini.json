@@ -3,5 +3,10 @@
         "attempts": 23,
         "urls_found": 2,
         "urls_not_found_or_failed": 21
+    },
+    "2026-09-17T07:06:47.626551+00:00": {
+        "attempts": 1,
+        "urls_found": 0,
+        "urls_not_found_or_failed": 1
     }
 }
