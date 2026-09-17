@@ -13,6 +13,7 @@ import os
 import sys
 import time
 import re
+import requests
 from datetime import datetime
 from urllib.parse import urlparse
 
@@ -66,20 +67,43 @@ def get_domain(url):
     netloc = urlparse(url).netloc
     return netloc.replace("www.", "")
 
+def resolve_redirect(url):
+    """Unmasks Google Grounding redirect URLs to extract the canonical publisher URL."""
+    if not url:
+        return url
+    
+    if "vertexaisearch.cloud.google.com" in url or "google.com/url" in url:
+        print(f"      [RESOLVE] Unmasking Google redirect URL...")
+        try:
+            # First attempt: fast HEAD request
+            r = requests.head(url, allow_redirects=True, timeout=10)
+            if r.status_code < 400 and r.url != url:
+                print(f"      [RESOLVED] Canonical destination: {r.url}")
+                return r.url
+            
+            # Second attempt: fallback GET request if server rejects HEAD
+            r = requests.get(url, allow_redirects=True, timeout=10)
+            print(f"      [RESOLVED] Canonical destination: {r.url}")
+            return r.url
+        except Exception as e:
+            print(f"      [RESOLVE ERROR] Could not follow redirect: {e}")
+            return url
+    return url
+
 def clean_json_response(raw_text):
     """Removes markdown code blocks and citation markers if the model wrapped the JSON."""
     clean_text = raw_text.strip()
-    
-    # Strip any trailing search citations the model might have appended (e.g., [1], [2])
+
+    # Strip trailing search grounding citations (e.g., [1], [2])
     clean_text = re.sub(r'\[\d+\]', '', clean_text)
-    
+
     if clean_text.startswith("```json"):
         clean_text = clean_text[7:]
     elif clean_text.startswith("```"):
         clean_text = clean_text[3:]
     if clean_text.endswith("```"):
         clean_text = clean_text[:-3]
-    
+
     clean_text = clean_text.strip()
     if not clean_text.startswith("{"):
         clean_text = "{" + clean_text
@@ -88,24 +112,24 @@ def clean_json_response(raw_text):
 def is_valid_result(data, expected_domain):
     """Validates the output according to strict rules. Allows FOUND and NOT_FOUND."""
     status = str(data.get("status", "")).strip().upper()
-    
+
     valid_statuses = ["FOUND", "NOT_FOUND", "YES", "NO"]
     if status not in valid_statuses:
         return False
-        
+
     if status in ["NOT_FOUND", "NO"]:
         return True
-    
+
     url = str(data.get("url", "")).strip()
     title = str(data.get("title", "")).strip().lower()
 
     if not url or url.upper() == "NA" or expected_domain not in url:
         return False
-    
+
     forbidden_words = ["trailer", "fan", "twitter"]
     if any(word in title for word in forbidden_words):
         return False
-    
+
     return True
 
 def run_gemini_search_with_fallback(client, prompt, models_config, config):
@@ -119,13 +143,12 @@ def run_gemini_search_with_fallback(client, prompt, models_config, config):
         model_name = model_info["name"]
         print(f"      [Attempting Model: {model_name}]")
         try:
-            # Switch to 'chats.create' to natively support the Web Search tool loop
             chat = client.chats.create(
                 model=model_name,
                 config=config
             )
             response = chat.send_message(prompt)
-            
+
             if not getattr(response, "candidates", None) or not response.candidates:
                 print(f"      [DEBUG ERROR] API call succeeded, but model returned candidates=None.")
                 print(f"      [DEBUG RAW PAYLOAD]: {response}")
@@ -160,7 +183,7 @@ def main():
     if not os.path.exists(PROMPT_FILE):
         print(f"[FATAL ERROR] Prompt file missing: {PROMPT_FILE}")
         sys.exit(1)
-    
+
     with open(PROMPT_FILE, "r", encoding="utf-8") as f:
         prompt_template = f.read()
 
@@ -170,7 +193,7 @@ def main():
 
     with open(PUBLISHERS_FILE, "r", encoding="utf-8") as f:
         publishers_data = json.load(f)
-        
+
     pub_domain_map = {}
     for p in publishers_data:
         pub_domain_map[p["id"]] = get_domain(p.get("url", ""))
@@ -183,12 +206,10 @@ def main():
         movies_data = json.load(f)
     active_movies = movies_data.get("movies", [])
 
-    # Configure Gemini Grounding Tool
     grounding_tool = types.Tool(
         google_search=types.GoogleSearch()
     )
-    
-    # REMOVED response_mime_type="application/json" to prevent crash conflicts with Search Citations
+
     gemini_config = types.GenerateContentConfig(
         tools=[grounding_tool],
         temperature=0.1
@@ -228,7 +249,7 @@ def main():
 
         with open(reviews_path, "r", encoding="utf-8") as f:
             rdata = json.load(f)
-            
+
         with open(ai_logs_path, "r", encoding="utf-8") as f:
             ai_logs = json.load(f)
 
@@ -241,9 +262,9 @@ def main():
             pub_id = pub.get("publisher_id")
             pub_name = pub.get("publisher_name")
             review_url = str(pub.get("review_url", "")).strip().upper()
-            
+
             ai_status = ai_logs.get(pub_id, {}).get("01-C_search-gemini", "NOT_FOUND")
-            
+
             if review_url == "PENDING" and ai_status == "PENDING":
                 target_domain = pub_domain_map.get(pub_id, "")
                 if not target_domain:
@@ -265,10 +286,14 @@ def main():
                         raw_json = clean_json_response(raw_response)
                         result = json.loads(raw_json)
 
+                        # RESOLVE REDIRECT PRIOR TO DOMAIN VALIDATION
+                        if "url" in result and str(result["url"]).strip().upper() != "NA":
+                            result["url"] = resolve_redirect(str(result["url"]).strip())
+
                         if is_valid_result(result, target_domain):
                             ai_logs[pub_id]["01-C_search-gemini"] = "PROCESSED"
                             status = str(result.get("status", "")).strip().upper()
-                            
+
                             if status in ["FOUND", "YES"]:
                                 print(f"     [SUCCESS] Valid URL Found: {result['url']}")
                                 pub["review_url"] = result["url"]
@@ -283,7 +308,7 @@ def main():
                             print(f"     [INVALID] Output failed strict validation checks. Marking FAILED to retry next time.")
                             print(f"     [DEBUG RAW PARSED JSON]: {raw_json}")
                             ai_logs[pub_id]["01-C_search-gemini"] = "FAILED"
-                            
+
                     except Exception as e:
                         print(f"     [JSON/VALIDATION ERROR] Failed to parse output: {str(e)}")
                         ai_logs[pub_id]["01-C_search-gemini"] = "FAILED"
@@ -301,7 +326,7 @@ def main():
             with open(reviews_path, "w", encoding="utf-8") as f:
                 json.dump(rdata, f, indent=4, ensure_ascii=False)
             print(f"  -> Saved updates to reviews_{slug}.json")
-            
+
         if ai_logs_changed:
             with open(ai_logs_path, "w", encoding="utf-8") as f:
                 json.dump(ai_logs, f, indent=4, ensure_ascii=False)
@@ -312,16 +337,16 @@ def main():
                 try:
                     with open(script_log_path, "r", encoding="utf-8") as f:
                         script_history = json.load(f)
-                except:
+                except Exception:
                     pass
-                    
+
             timestamp = datetime.now().astimezone().isoformat()
             script_history[timestamp] = {
                 "attempts": searches_attempted,
                 "urls_found": success_count,
                 "urls_not_found_or_failed": searches_attempted - success_count
             }
-            
+
             with open(script_log_path, "w", encoding="utf-8") as f:
                 json.dump(script_history, f, indent=4, ensure_ascii=False)
 
