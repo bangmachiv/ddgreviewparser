@@ -13,5 +13,10 @@
         "publishers_evaluated": 1,
         "matches_found": 0,
         "no_matches_found": 1
+    },
+    "2026-09-18T09:55:24.026582+00:00": {
+        "publishers_evaluated": 21,
+        "matches_found": 1,
+        "no_matches_found": 20
     }
 }

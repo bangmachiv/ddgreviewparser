@@ -806,13 +806,13 @@
         {
             "publisher_id": "the-tribune",
             "publisher_name": "The Tribune",
-            "search_status": "PENDING",
+            "search_status": "SUCCESS",
             "search_count": 0,
-            "review_url": "PENDING",
-            "review_title": "PENDING",
-            "review_source": "PENDING",
+            "review_url": "https://www.tribuneindia.com/news/movie-review/bhai-tera-star-hai-more-madness-than-amusement",
+            "review_title": "‘Bhai Tera Star Hai’: More madness than amusement",
+            "review_source": "gemini_semantic",
             "webpage_extraction_successful": "PENDING",
-            "article_title": "PENDING",
+            "article_title": "‘Bhai Tera Star Hai’: More madness than amusement",
             "clean_title": "PENDING",
             "highlighted_title": "PENDING",
             "jsonld_critic_name": "PENDING",
@@ -820,7 +820,8 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_sentiment_category": "PENDING",
+            "classified_by": "AI"
         }
     ],
     "Last searched": "13 09 2026 11 48",
