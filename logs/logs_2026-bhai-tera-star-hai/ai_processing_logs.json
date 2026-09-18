@@ -258,7 +258,8 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:31:23.895959+00:00"
     },
     "the-federal": {
         "01-C_search-gemini": "PENDING",
