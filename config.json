@@ -1,0 +1,5 @@
+{
+  "02-C_identify-ai": {
+    "AI_MIN_CONFIDENCE_THRESHOLD": 95
+  }
+}
