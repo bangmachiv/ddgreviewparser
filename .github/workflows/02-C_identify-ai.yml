@@ -1,0 +1,61 @@
+name: 02-C Identify AI
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: "review-automation-pipeline"
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  gemini-semantic-identification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    env:
+      # Forces Python to stream stdout/stderr unbuffered for real-time GitHub Action logs
+      PYTHONUNBUFFERED: "1" 
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-genai
+
+      - name: 02-C - Execute Gemini Semantic Identification
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -u 02-C_identify-ai.py
+
+      - name: Commit and push changes
+        if: always()
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          
+          # Target all folders modified by the script: reviews, negative search caches, and telemetry logs
+          git add data/reviews/ data/searches/ logs/
+          git status
+          
+          if git diff --cached --quiet; then
+            echo "No data or log modifications to commit."
+            exit 0
+          fi
+          
+          git commit -m "Pipeline Update: 02-C Gemini semantic evaluation executed"
+          git pull origin ${{ github.ref_name }} --rebase --autostash || true
+          git push origin HEAD:${{ github.ref }}
