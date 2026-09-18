@@ -5,7 +5,7 @@ Semantic evaluation script utilizing Google Gemini text models.
 Reads DDGS search candidates from Step 1, filters out previously rejected titles, 
 and evaluates fresh titles semantically to identify official editorial reviews.
 Executes purely as a text prompt (Zero Search API costs).
-Features 2-model fallback cascade, 13-second rate-limit delays for 5 RPM free tier, 
+Features 2-model lite fallback cascade, 13-second rate-limit delays for 5 RPM free tier, 
 2-attempt retries, real-time logs, dedicated history JSON, and terminal summary tables.
 """
 
@@ -52,9 +52,9 @@ if not GEMINI_API_KEY:
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
-# Fallback Cascade: Free Tier Flash models
+# Fallback Cascade: Free Tier Flash Lite models
 MODEL_CONFIG = [
-    "gemini-3.5-flash",
+    "gemini-3.5-flash-lite",
     "gemini-3.1-flash-lite"
 ]
 
