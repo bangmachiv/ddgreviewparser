@@ -5,13 +5,14 @@ Semantic evaluation script utilizing Google Gemini text models.
 Reads DDGS search candidates from Step 1, filters out previously rejected titles, 
 and evaluates fresh titles semantically to identify official editorial reviews.
 Executes purely as a text prompt (Zero Search API costs).
-Features zero-delay fallback cascade, real-time logs, dedicated history JSON, and terminal summary tables.
+Features zero-delay fallback cascade, 2-attempt retries, real-time logs, dedicated history JSON, and terminal summary tables.
 """
 
 import builtins
 import json
 import os
 import sys
+import time
 import re
 from datetime import datetime
 
@@ -40,6 +41,7 @@ SEARCHES_DIR = os.path.join(BASE_DIR, "data", "searches")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 PROMPTS_DIR = os.path.join(BASE_DIR, "prompts")
 PROMPT_FILE = os.path.join(PROMPTS_DIR, "identify_article_title.txt")
+CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
@@ -56,16 +58,31 @@ MODEL_CONFIG = [
     "gemini-3.6-flash",
     "gemini-3.5-flash"
 ]
+
+# Load threshold from central config
 MIN_CONFIDENCE_THRESHOLD = 95
+if os.path.exists(CONFIG_FILE):
+    try:
+        with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+            config_data = json.load(f)
+            MIN_CONFIDENCE_THRESHOLD = config_data.get("AI_MIN_CONFIDENCE_THRESHOLD", 95)
+    except Exception as e:
+        print(f"[WARNING] Could not load config.json, defaulting to {MIN_CONFIDENCE_THRESHOLD}: {e}")
 
 # -----------------------------------------------------------------------------
 # Utility Functions
 # -----------------------------------------------------------------------------
+def get_ordinal(n):
+    """Returns ordinal string (1st, 2nd, 3rd) for formatted printing."""
+    if 11 <= (n % 100) <= 13:
+        return str(n) + "th"
+    return str(n) + {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+
 def clean_json_response(raw_text):
     """Removes markdown code blocks if the model wrapped the JSON."""
     clean_text = raw_text.strip()
     clean_text = re.sub(r'\[\d+\]', '', clean_text)
-    
+
     if clean_text.startswith("```json"):
         clean_text = clean_text[7:]
     elif clean_text.startswith("```"):
@@ -89,12 +106,12 @@ def run_gemini_evaluation(client, prompt):
             if not getattr(response, "candidates", None) or not response.candidates:
                 print(f"      [DEBUG ERROR] API call succeeded on {model_name}, but candidates=None.")
                 continue # Instantly trigger fallback
-                
+
             text_val = response.text
             if text_val and text_val.strip():
                 print(f"      [LLM API RAW OUTPUT ({model_name})]:\n{text_val.strip()}")
                 return text_val
-                
+
         except errors.APIError as e:
             print(f"      [API Error on {model_name}]: {e}")
         except Exception as e:
@@ -107,7 +124,7 @@ def print_summary_table(global_stats):
     """Prints a clean markdown-style summary table to the console."""
     if not global_stats:
         return
-        
+
     print("\n" + "=" * 80)
     print(" 02-C: EXECUTION SUMMARY TABLE")
     print("=" * 80)
@@ -122,13 +139,13 @@ def print_summary_table(global_stats):
 # -----------------------------------------------------------------------------
 def main():
     print("=" * 80)
-    print(" 02-C: GEMINI SEMANTIC IDENTIFICATION (TEXT ONLY)")
+    print(f" 02-C: GEMINI SEMANTIC IDENTIFICATION (Threshold: {MIN_CONFIDENCE_THRESHOLD}%)")
     print("=" * 80)
 
     if not os.path.exists(PROMPT_FILE):
         print(f"[FATAL ERROR] Prompt file missing: {PROMPT_FILE}")
         sys.exit(1)
-        
+
     with open(PROMPT_FILE, "r", encoding="utf-8") as f:
         prompt_template = f.read()
 
@@ -151,7 +168,7 @@ def main():
         reviews_path = os.path.join(REVIEWS_DIR, f"reviews_{slug}.json")
         searches_path = os.path.join(SEARCHES_DIR, f"searches_{slug}.json")
         negative_searches_path = os.path.join(SEARCHES_DIR, f"negative_searches_{slug}.json")
-        
+
         movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{slug}")
         ai_logs_path = os.path.join(movie_logs_dir, "ai_processing_logs.json")
         script_log_path = os.path.join(movie_logs_dir, "02-C_identify-ai.json")
@@ -159,7 +176,7 @@ def main():
         if not os.path.exists(reviews_path) or not os.path.exists(searches_path):
             print(f"  -> Skipping: Missing reviews or searches JSON file.")
             continue
-            
+
         if not os.path.exists(ai_logs_path):
             os.makedirs(os.path.dirname(ai_logs_path), exist_ok=True)
             ai_logs = {}
@@ -169,7 +186,7 @@ def main():
                     ai_logs = json.load(f)
                 except json.JSONDecodeError:
                     ai_logs = {}
-                    
+
         if os.path.exists(negative_searches_path):
             with open(negative_searches_path, "r", encoding="utf-8") as f:
                 try:
@@ -184,13 +201,13 @@ def main():
 
         with open(searches_path, "r", encoding="utf-8") as f:
             sdata = json.load(f)
-            
+
         search_results_map = {pub["publisher_id"]: pub.get("results", []) for pub in sdata.get("publishers", [])}
 
         data_changed = False
         ai_logs_changed = False
         negative_data_changed = False
-        
+
         movie_stats = {
             "slug": slug,
             "evaluated": 0,
@@ -203,44 +220,60 @@ def main():
             pub_name = pub.get("publisher_name")
             review_url = str(pub.get("review_url", "")).strip().upper()
 
-            ai_timestamp = ai_logs.get(pub_id, {}).get("02-C_classify-ai")
+            ai_timestamp = ai_logs.get(pub_id, {}).get("02-C_identify-ai")
 
             if review_url == "PENDING" and not ai_timestamp:
                 candidates = search_results_map.get(pub_id, [])
-                
+
                 if not candidates:
-                    print(f"  -> [SKIP] {pub_name}: No search candidates found in searches dump.")
                     continue
-                
+
                 rejected_titles = set(negative_data["publishers"].get(pub_id, []))
 
                 compact_candidates = []
                 numbered_candidate_lines = []
                 idx = 1
                 
+                print(f"\n------")
+                print(f"Starting for {pub_name}\n")
+
                 for c in candidates:
                     title = c.get("title", "").strip()
                     url = c.get("url", "").strip()
-                    
+
                     if title in rejected_titles:
                         continue
-                        
+
                     compact_candidates.append({"title": title, "url": url})
                     numbered_candidate_lines.append(f"{idx}. {title}")
+                    
+                    print(f"[{get_ordinal(idx)} Title] {title}")
                     idx += 1
-                
+
                 if not compact_candidates:
-                    print(f"  -> [SKIP] {pub_name}: All available candidates were previously rejected.")
+                    print(f"  -> [SKIP] All available candidates were previously rejected.")
                     continue
 
-                print(f"  -> [GEMINI EVAL] Analyzing {len(compact_candidates)} fresh search candidates for {pub_name}...")
+                print(f"\n  -> [GEMINI EVAL] Analyzing {len(compact_candidates)} fresh search candidates...")
                 movie_stats["evaluated"] += 1
-                
+
                 numbered_list_str = "\n".join(numbered_candidate_lines)
                 prompt = prompt_template.replace("{MOVIE_TITLE}", movie_name)\
                                         .replace("{NUMBERED_CANDIDATE_TITLES_LIST}", numbered_list_str)
 
-                raw_response = run_gemini_evaluation(client, prompt)
+                raw_response = None
+                MAX_RETRIES = 2
+                
+                for attempt in range(1, MAX_RETRIES + 1):
+                    raw_response = run_gemini_evaluation(client, prompt)
+                    
+                    if raw_response:
+                        break # Success, break out of retry loop
+                    else:
+                        print(f"     [API FAILURE] All cascade models failed on attempt {attempt}.")
+                        if attempt < MAX_RETRIES:
+                            print(f"     [RETRYING] Waiting 2 seconds before attempt {attempt + 1}...")
+                            time.sleep(2)
 
                 if pub_id not in ai_logs:
                     ai_logs[pub_id] = {}
@@ -271,7 +304,7 @@ def main():
                                                 })
                                         except (ValueError, TypeError):
                                             continue
-                                
+
                                 if len(valid_parsed_candidates) > 0:
                                     is_valid_response = True
 
@@ -333,16 +366,16 @@ def main():
                                 movie_stats["not_found"] += 1
 
                             newly_rejected_titles = [c["title"] for c in compact_candidates if c["title"] != matched_title]
-                            
+
                             if newly_rejected_titles:
                                 if pub_id not in negative_data["publishers"]:
                                     negative_data["publishers"][pub_id] = []
-                                
+
                                 existing_negatives = set(negative_data["publishers"][pub_id])
                                 for title in newly_rejected_titles:
                                     if title not in existing_negatives:
                                         negative_data["publishers"][pub_id].append(title)
-                                        
+
                                 negative_data_changed = True
                                 print(f"     [NEGATIVE CACHE] Appended {len(newly_rejected_titles)} rejected title(s) to negative_searches_{slug}.json")
 
@@ -353,7 +386,7 @@ def main():
                         print(f"     [JSON ERROR] Failed to parse output as valid JSON: {str(e)}")
                         print(f"     [DEBUG RAW]: {raw_response}")
                 else:
-                    print(f"     [API FAILURE] All cascade models failed or returned empty payload.")
+                    print(f"     [API FATAL] Publisher exhausted all retries. Moving to next publisher.")
 
         if movie_stats["evaluated"] > 0:
             global_execution_stats.append(movie_stats)
@@ -386,7 +419,7 @@ def main():
             with open(ai_logs_path, "w", encoding="utf-8") as f:
                 json.dump(ai_logs, f, indent=4, ensure_ascii=False)
             print(f"  -> Saved updates to ai_processing_logs.json")
-            
+
         if negative_data_changed:
             with open(negative_searches_path, "w", encoding="utf-8") as f:
                 json.dump(negative_data, f, indent=4, ensure_ascii=False)
