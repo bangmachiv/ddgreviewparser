@@ -5,14 +5,13 @@ Semantic evaluation script utilizing Google Gemini text models.
 Reads DDGS search candidates from Step 1, filters out previously rejected titles, 
 and evaluates fresh titles semantically to identify official editorial reviews.
 Executes purely as a text prompt (Zero Search API costs).
-Features comprehensive telemetry: real-time logs, dedicated history JSON, and terminal summary tables.
+Features zero-delay fallback cascade, real-time logs, dedicated history JSON, and terminal summary tables.
 """
 
 import builtins
 import json
 import os
 import sys
-import time
 import re
 from datetime import datetime
 
@@ -50,7 +49,13 @@ if not GEMINI_API_KEY:
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
-MODEL_NAME = "gemini-2.5-flash"
+# Fallback Cascade: 4 Flash models from latest to oldest
+MODEL_CONFIG = [
+    "gemini-3.8-flash",
+    "gemini-3.7-flash",
+    "gemini-3.6-flash",
+    "gemini-3.5-flash"
+]
 MIN_CONFIDENCE_THRESHOLD = 95
 
 # -----------------------------------------------------------------------------
@@ -71,29 +76,31 @@ def clean_json_response(raw_text):
     return clean_text.strip()
 
 def run_gemini_evaluation(client, prompt):
-    """Executes a standard, lightweight text generation call."""
-    print(f"      [Attempting Model: {MODEL_NAME}]")
-    try:
-        response = client.models.generate_content(
-            model=MODEL_NAME,
-            contents=prompt,
-            config=types.GenerateContentConfig(temperature=0.1)
-        )
+    """Executes text generation call with instant fallback cascade."""
+    for model_name in MODEL_CONFIG:
+        print(f"      [Attempting Model: {model_name}]")
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(temperature=0.1)
+            )
 
-        if not getattr(response, "candidates", None) or not response.candidates:
-            print(f"      [DEBUG ERROR] API call succeeded, but candidates=None.")
-            return None
-            
-        text_val = response.text
-        if text_val and text_val.strip():
-            print(f"      [LLM API RAW OUTPUT]:\n{text_val.strip()}")
-            return text_val
-            
-    except errors.APIError as e:
-        print(f"      [API Error]: {e}")
-    except Exception as e:
-        print(f"      [Unexpected Error]: {e}")
+            if not getattr(response, "candidates", None) or not response.candidates:
+                print(f"      [DEBUG ERROR] API call succeeded on {model_name}, but candidates=None.")
+                continue # Instantly trigger fallback
+                
+            text_val = response.text
+            if text_val and text_val.strip():
+                print(f"      [LLM API RAW OUTPUT ({model_name})]:\n{text_val.strip()}")
+                return text_val
+                
+        except errors.APIError as e:
+            print(f"      [API Error on {model_name}]: {e}")
+        except Exception as e:
+            print(f"      [Unexpected Error on {model_name}]: {e}")
 
+    # If all models in the cascade fail
     return None
 
 def print_summary_table(global_stats):
@@ -196,7 +203,7 @@ def main():
             pub_name = pub.get("publisher_name")
             review_url = str(pub.get("review_url", "")).strip().upper()
 
-            ai_timestamp = ai_logs.get(pub_id, {}).get("02-C_identify-ai")
+            ai_timestamp = ai_logs.get(pub_id, {}).get("02-C_classify-ai")
 
             if review_url == "PENDING" and not ai_timestamp:
                 candidates = search_results_map.get(pub_id, [])
@@ -289,7 +296,7 @@ def main():
 
                         if is_valid_response:
                             current_iso_time = datetime.now().astimezone().isoformat()
-                            ai_logs[pub_id]["02-C_identify-ai"] = current_iso_time
+                            ai_logs[pub_id]["02-C_classify-ai"] = current_iso_time
                             ai_logs_changed = True
                             print(f"     [LOGGED] Recorded timestamp in ai_processing_logs: {current_iso_time}")
 
@@ -346,11 +353,7 @@ def main():
                         print(f"     [JSON ERROR] Failed to parse output as valid JSON: {str(e)}")
                         print(f"     [DEBUG RAW]: {raw_response}")
                 else:
-                    print(f"     [API FAILURE] Model returned empty payload or encountered error.")
-                    time.sleep(2)
-                    continue
-
-                time.sleep(2)
+                    print(f"     [API FAILURE] All cascade models failed or returned empty payload.")
 
         if movie_stats["evaluated"] > 0:
             global_execution_stats.append(movie_stats)
