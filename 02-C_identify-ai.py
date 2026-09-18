@@ -5,7 +5,8 @@ Semantic evaluation script utilizing Google Gemini text models.
 Reads DDGS search candidates from Step 1, filters out previously rejected titles, 
 and evaluates fresh titles semantically to identify official editorial reviews.
 Executes purely as a text prompt (Zero Search API costs).
-Features zero-delay fallback cascade, 2-attempt retries, real-time logs, dedicated history JSON, and terminal summary tables.
+Features 2-model fallback cascade, 13-second rate-limit delays for 5 RPM free tier, 
+2-attempt retries, real-time logs, dedicated history JSON, and terminal summary tables.
 """
 
 import builtins
@@ -51,12 +52,10 @@ if not GEMINI_API_KEY:
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
-# Fallback Cascade: 4 Flash models from latest to oldest
+# Fallback Cascade: Free Tier Flash models
 MODEL_CONFIG = [
-    "gemini-3.8-flash",
-    "gemini-3.7-flash",
-    "gemini-3.6-flash",
-    "gemini-3.5-flash"
+    "gemini-3.5-flash",
+    "gemini-3.1-flash-lite"
 ]
 
 # Load threshold from central config mapped to this specific script
@@ -94,9 +93,12 @@ def clean_json_response(raw_text):
     return clean_text.strip()
 
 def run_gemini_evaluation(client, prompt):
-    """Executes text generation call with instant fallback cascade."""
+    """Executes text generation call with fallback cascade and 5 RPM timegaps."""
     for model_name in MODEL_CONFIG:
+        print(f"      [RATE LIMIT] Sleeping 13 seconds to respect 5 RPM limit...")
+        time.sleep(13)
         print(f"      [Attempting Model: {model_name}]")
+        
         try:
             response = client.models.generate_content(
                 model=model_name,
@@ -106,7 +108,7 @@ def run_gemini_evaluation(client, prompt):
 
             if not getattr(response, "candidates", None) or not response.candidates:
                 print(f"      [DEBUG ERROR] API call succeeded on {model_name}, but candidates=None.")
-                continue # Instantly trigger fallback
+                continue # Trigger fallback
 
             text_val = response.text
             if text_val and text_val.strip():
