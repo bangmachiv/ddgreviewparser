@@ -4,14 +4,16 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:00:52.134200+00:00"
     },
     "abp": {
         "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:00:59.235576+00:00"
     },
     "amar-ujala": {
         "01-C_search-gemini": "PENDING",
@@ -32,14 +34,16 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:01:02.107798+00:00"
     },
     "business-standard": {
         "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:01:37.330767+00:00"
     },
     "cinema-express": {
         "01-C_search-gemini": "PENDING",
@@ -53,7 +57,8 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:01:40.571934+00:00"
     },
     "dainik-bhaskar": {
         "01-C_search-gemini": "PENDING",
@@ -74,14 +79,16 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:01:45.831106+00:00"
     },
     "deccan-herald": {
         "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:01:48.441021+00:00"
     },
     "filmfare": {
         "01-C_search-gemini": "PENDING",
@@ -95,7 +102,8 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:01:56.016907+00:00"
     },
     "free-press-journal": {
         "01-C_search-gemini": "PENDING",
@@ -109,7 +117,8 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:02:01.617527+00:00"
     },
     "hindustan-times": {
         "01-C_search-gemini": "PENDING",
@@ -123,7 +132,8 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:02:10.053753+00:00"
     },
     "india-today": {
         "01-C_search-gemini": "PENDING",
@@ -144,14 +154,16 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:02:14.941059+00:00"
     },
     "lokmat": {
         "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:02:18.040690+00:00"
     },
     "mid-day": {
         "01-C_search-gemini": "PENDING",
@@ -165,7 +177,8 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:02:25.496002+00:00"
     },
     "moneycontrol": {
         "01-C_search-gemini": "PENDING",
@@ -207,14 +220,16 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:02:42.803329+00:00"
     },
     "peepingmoon": {
         "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:02:51.023059+00:00"
     },
     "rediff": {
         "01-C_search-gemini": "PENDING",
@@ -235,7 +250,8 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:02:58.700023+00:00"
     },
     "the-economic-times": {
         "01-C_search-gemini": "PROCESSED",
@@ -256,7 +272,8 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:03:59.837025+00:00"
     },
     "the-indian-express": {
         "01-C_search-gemini": "PENDING",
@@ -270,14 +287,16 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:04:16.554511+00:00"
     },
     "the-telegraph": {
         "01-C_search-gemini": "PROCESSED",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:04:24.494123+00:00"
     },
     "the-times-of-india": {
         "01-C_search-gemini": "PENDING",
@@ -291,6 +310,7 @@
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
-        "04-B-3_label": "PENDING"
+        "04-B-3_label": "PENDING",
+        "02-C_classify-ai": "2026-09-18T05:04:45.598567+00:00"
     }
 }
