@@ -59,13 +59,14 @@ MODEL_CONFIG = [
     "gemini-3.5-flash"
 ]
 
-# Load threshold from central config
+# Load threshold from central config mapped to this specific script
 MIN_CONFIDENCE_THRESHOLD = 95
 if os.path.exists(CONFIG_FILE):
     try:
         with open(CONFIG_FILE, "r", encoding="utf-8") as f:
             config_data = json.load(f)
-            MIN_CONFIDENCE_THRESHOLD = config_data.get("AI_MIN_CONFIDENCE_THRESHOLD", 95)
+            script_config = config_data.get("02-C_identify-ai", {})
+            MIN_CONFIDENCE_THRESHOLD = script_config.get("AI_MIN_CONFIDENCE_THRESHOLD", 95)
     except Exception as e:
         print(f"[WARNING] Could not load config.json, defaulting to {MIN_CONFIDENCE_THRESHOLD}: {e}")
 
