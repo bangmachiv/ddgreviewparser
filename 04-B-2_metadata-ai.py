@@ -3,7 +3,7 @@
 04-B-2_metadata-ai.py
 AI Fallback: Reads gaps from `jsonld_` fields. 
 Strictly writes discovered metadata to `ai_critic_name` and `ai_star_rating`.
-Prints explicit, structured step-by-step logs.
+Prints explicit, structured step-by-step logs and raw API responses.
 """
 
 import builtins
@@ -89,29 +89,52 @@ def extract_metadata_with_gemini(movie_name, html_text, prompt_template):
     prompt = prompt_template.replace("{movie_name}", str(movie_name)).replace("{webpage_text}", str(html_text))
 
     for model_name in MODEL_CONFIG:
+        print(f"        [Calling Gemini API: {model_name}]")
         try:
             response = client.models.generate_content(
                 model=model_name,
                 contents=prompt
             )
 
-            if response and response.text:
-                raw_json = response.text.strip()
-                if raw_json.startswith("```json"):
-                    raw_json = raw_json[7:]
-                elif raw_json.startswith("```"):
-                    raw_json = raw_json[3:]
-                if raw_json.endswith("```"):
-                    raw_json = raw_json[:-3]
+            if not response or not getattr(response, "candidates", None):
+                print(f"        [API Response Warning]: Model returned empty response or no candidates.")
+                continue
 
-                raw_json = raw_json.strip()
-                if not raw_json.startswith("{"):
-                    raw_json = "{" + raw_json
+            try:
+                raw_text = response.text
+            except (ValueError, AttributeError) as ve:
+                print(f"        [API Response Error]: Could not extract text from payload: {ve}")
+                continue
 
-                return json.loads(raw_json), model_name
+            if not raw_text or not raw_text.strip():
+                print(f"        [API Response Warning]: Model returned empty string.")
+                continue
 
-        except Exception:
-            pass
+            print(f"        [Gemini Raw Response ({model_name})]:\n{raw_text.strip()}")
+
+            raw_json = raw_text.strip()
+            if raw_json.startswith("```json"):
+                raw_json = raw_json[7:]
+            elif raw_json.startswith("```"):
+                raw_json = raw_json[3:]
+            if raw_json.endswith("```"):
+                raw_json = raw_json[:-3]
+
+            raw_json = raw_json.strip()
+            if not raw_json.startswith("{"):
+                raw_json = "{" + raw_json
+
+            try:
+                parsed_data = json.loads(raw_json)
+                return parsed_data, model_name
+            except json.JSONDecodeError as je:
+                print(f"        [JSON Parse Error]: {je} | Raw String: {raw_json}")
+                continue
+
+        except errors.APIError as e:
+            print(f"        [API Error on {model_name}]: {e}")
+        except Exception as e:
+            print(f"        [Unexpected Error on {model_name}]: {e}")
 
     return None, None
 
@@ -292,7 +315,6 @@ def process_movie_file(json_path, prompt_template):
                 new_critic = str(extracted_data.get("critic_name", "NA")).strip()
                 new_rating = str(extracted_data.get("star_rating", "NA")).strip()
 
-                # Strictly write to ai_ fields and protect state instantly
                 if critic_missing and not discovered_author and new_critic.lower() not in bad_values:
                     discovered_author = new_critic
                     pub["ai_critic_name"] = new_critic
@@ -305,7 +327,6 @@ def process_movie_file(json_path, prompt_template):
 
             time.sleep(65)
 
-            # Early exit check: break out of chunk loop immediately if targets are found
             author_resolved = (not critic_missing) or (discovered_author is not None)
             rating_resolved = (not rating_missing) or (discovered_rating is not None)
 
@@ -313,7 +334,6 @@ def process_movie_file(json_path, prompt_template):
                 print("      [All required target fields found. Halting remaining chunks.]")
                 break
 
-        # Calculate result status
         if target_desc == "both to find":
             if discovered_author and discovered_rating:
                 result_str = "full success"
@@ -339,7 +359,6 @@ def process_movie_file(json_path, prompt_template):
 
         print(f"      Result - {result_str}")
 
-        # Format exact "only what found" discovery line
         found_parts = []
         if discovered_rating:
             found_parts.append(f"found rating - {discovered_rating}")
@@ -351,7 +370,6 @@ def process_movie_file(json_path, prompt_template):
         else:
             print("      found none")
 
-        # Save result metrics
         movie_log_entry["publisher_details"][pub_id] = {
             "status": f"Processed- {target_desc}",
             "result": result_str,
@@ -362,11 +380,9 @@ def process_movie_file(json_path, prompt_template):
             }
         }
 
-        # Save review file state iteratively
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
 
-    # Save final structured log file
     movie_log_entry["new_completed"] = earlier_completed + movie_log_entry["success"]
     movie_log_entry["new_pending"] = earlier_pending - movie_log_entry["success"]
 
