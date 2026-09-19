@@ -117,7 +117,7 @@ def main():
     movies_file = os.path.join(base, "data", "movies", "movies-live-today.json")
     searches_dir = os.path.join(base, "data", "searches")
     reviews_dir = os.path.join(base, "data", "reviews")
-    
+
     os.makedirs(reviews_dir, exist_ok=True)
 
     if not os.path.exists(movies_file):
@@ -131,7 +131,7 @@ def main():
         slug = movie["slug"]
         search_file = os.path.join(searches_dir, f"searches_{slug}.json")
         reviews_file_path = os.path.join(reviews_dir, f"reviews_{slug}.json")
-        
+
         # Prepare Logging Paths
         movie_logs_dir = os.path.join(base, "logs", f"logs_{slug}")
         script_log_path = os.path.join(movie_logs_dir, "02_identify.json")
@@ -162,14 +162,14 @@ def main():
         # ---------------------------------------------------------------------
         earlier_completed = 0
         earlier_pending = 0
-        
+
         for pub_block in reviews_data.get("publishers", []):
             current_url = pub_block.get("review_url", "PENDING")
             if current_url not in ["PENDING", "NA", ""]:
                 earlier_completed += 1
             else:
                 earlier_pending += 1
-                
+
         tracker = PipelineTracker("Review URLs Identified", earlier_completed, earlier_pending)
 
         # Initialize the script log payload
@@ -203,19 +203,19 @@ def main():
 
             print(f"  [EVALUATING] {pub_name}...")
             search_pub_data = search_results_map[pub_id]
-            
+
             movie_log_entry["processed"] += 1
             first = None
-            
+
             for result in search_pub_data.get("results", []):
                 ok = check_if_review(
                     result.get("title", ""),
                     result.get("url", ""),
                     combos
                 )
-                
+
                 result["is_review"] = "Y" if ok else "N"
-                
+
                 if ok and first is None:
                     first = result
 
@@ -227,7 +227,8 @@ def main():
                 pub_block["review_title"] = first.get("title", "NA")
                 pub_block["review_source"] = f"ddgs_{rank}"
                 pub_block["search_status"] = "NOT_NEEDED"
-                
+                pub_block["classified_by"] = "SCRIPT"
+
                 # Update Trackers
                 tracker.add_success()
                 movie_log_entry["success"] += 1
@@ -241,7 +242,8 @@ def main():
                 pub_block["review_title"] = "PENDING"
                 pub_block["review_source"] = "PENDING"
                 pub_block["search_status"] = "PENDING"
-                
+                pub_block["classified_by"] = "PENDING"
+
                 # Update Trackers
                 tracker.add_failure()
                 movie_log_entry["failure"] += 1
