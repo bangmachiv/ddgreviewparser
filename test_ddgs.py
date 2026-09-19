@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 
 MAX_RETRIES = 3
 RETRY_DELAY = 2
-QUERY_COOLDOWN = 1.5  # Polite delay between publisher searches
+QUERY_COOLDOWN = 5  # Polite delay between publisher searches
 
 PUBLISHERS = [
   { "id": "aaj-tak", "name": "Aaj Tak", "url": "https://www.aajtak.in", "category": "text-media-tv-hindi-news", "active": True },
