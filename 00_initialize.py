@@ -14,14 +14,15 @@ OUTPUT FOLDERS CREATED (Per Movie):
 
 OUTPUT FILES GENERATED/UPDATED (Per Movie):
   1. data/searches/searches_<slugname>.json (Initialized as {})
-  2. data/output/json/summary_<slugname>.json (Initialized as {})
-  3. data/reviews/reviews_<slugname>.json
-  4. logs/logs_<slugname>/ai_processing_logs.json (Per-publisher AI tracking blocks)
-  5. 13 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/
+  2. data/searches/negative_searches_<slugname>.json (Initialized with publisher dict)
+  3. data/output/json/summary_<slugname>.json (Initialized as {})
+  4. data/reviews/reviews_<slugname>.json
+  5. logs/logs_<slugname>/ai_processing_logs.json (Per-publisher AI tracking blocks)
+  6. 14 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
   publisher_id, publisher_name, search_status, search_count, review_url, 
-  review_title, review_source, webpage_extraction_successful, article_title, 
+  review_title, review_source, classified_by, webpage_extraction_successful, article_title, 
   clean_title, highlighted_title, jsonld_critic_name, jsonld_star_rating, 
   ai_metadata_parsing_attempts, ai_critic_name, ai_star_rating, ai_sentiment_category
 """
@@ -170,12 +171,13 @@ def main():
             with open(os.path.join(movie_pipeline_logs, ".gitkeep"), "w") as f:
                 pass
 
-            # Create 13 empty JSON log files based on the new nomenclature
+            # Create empty JSON log files based on the new nomenclature
             script_logs = [
                 "00_initialize.json",
                 "01_search.json",
-                "01-C_search-gemini.json",  # <-- ADDED for upcoming script
+                "01-C_search-gemini.json",
                 "02_identify.json",
+                "02-C_identify-ai.json",   # <-- ADDED for 02-C Semantic AI
                 "03_download.json",
                 "04-A-1_titles.json",
                 "04-A-2_clean.json",
@@ -207,7 +209,17 @@ def main():
             except Exception as e:
                 print(f"  [FAILED] Could not create searches file: {e}")
 
-        # B2. Initialize JSON Summary Output file if missing
+        # B2. Initialize Negative Searches file if missing
+        negative_searches_path = os.path.join(SEARCHES_DIR, f"negative_searches_{movie_slug}.json")
+        if not os.path.exists(negative_searches_path):
+            try:
+                with open(negative_searches_path, "w", encoding="utf-8") as sf:
+                    json.dump({"movie": {"name": movie_name, "slug": movie_slug}, "publishers": {}}, sf, indent=4)
+                print(f"  [SUCCESS] Created empty negative_searches_{movie_slug}.json")
+            except Exception as e:
+                print(f"  [FAILED] Could not create negative searches file: {e}")
+
+        # B3. Initialize JSON Summary Output file if missing
         summary_path = os.path.join(OUTPUT_JSON_DIR, f"summary_{movie_slug}.json")
         if not os.path.exists(summary_path):
             try:
@@ -256,7 +268,11 @@ def main():
             if "search_rank" in existing_block:
                 existing_block["review_source"] = existing_block.pop("search_rank")
                 block_changed = True
-                
+            # INJECTION: Add missing classified_by field to legacy blocks
+            if "classified_by" not in existing_block:
+                existing_block["classified_by"] = "PENDING"
+                block_changed = True
+
             if block_changed:
                 blocks_migrated += 1
 
@@ -266,7 +282,7 @@ def main():
         for pub in active_publishers:
             pub_id = pub["id"]
             if pub_id not in existing_pubs:
-                # The 17-field Master Skeleton with new Search Workflow Fields
+                # The Master Skeleton with Semantic AI + Search Workflow Fields
                 existing_pubs[pub_id] = {
                     "publisher_id": pub_id,
                     "publisher_name": pub["name"],
@@ -275,6 +291,7 @@ def main():
                     "review_url": "PENDING",
                     "review_title": "PENDING",
                     "review_source": "PENDING",
+                    "classified_by": "PENDING",
                     "webpage_extraction_successful": "PENDING",
                     "article_title": "PENDING",
                     "clean_title": "PENDING",
@@ -299,7 +316,7 @@ def main():
             try:
                 with open(reviews_path, "w", encoding="utf-8") as rf:
                     json.dump(reviews_data, rf, ensure_ascii=False, indent=4)
-                print(f"  [SUCCESS] Injected {blocks_to_add} missing publishers into reviews file.")
+                print(f"  [SUCCESS] Injected/Updated {blocks_to_add + blocks_migrated} publishers in reviews file.")
                 if blocks_to_add > 0:
                     tracker.add_success(blocks_to_add)
                 save_success = True
@@ -314,7 +331,7 @@ def main():
         # G. Initialize AI Processing Logs
         ai_logs_path = os.path.join(movie_logs_dir, "ai_processing_logs.json")
         ai_logs_data = {}
-        
+
         # Load existing AI logs if they exist
         if os.path.exists(ai_logs_path) and os.path.getsize(ai_logs_path) > 0:
             try:
@@ -329,6 +346,8 @@ def main():
             if pub_id not in ai_logs_data:
                 ai_logs_data[pub_id] = {
                     "01-C_search-gemini": "PENDING",
+                    "02-C_identify-ai": "PENDING",
+                    "02-C_classify-ai": "PENDING",
                     "04-A-2_clean": "PENDING",
                     "04-A-3_highlight": "PENDING",
                     "04-B-2_metadata-ai": "PENDING",
@@ -337,7 +356,7 @@ def main():
                 ai_logs_changed = True
             else:
                 # Safely patch existing blocks if any specific fields are missing
-                for field in ["01-C_search-gemini", "04-A-2_clean", "04-A-3_highlight", "04-B-2_metadata-ai", "04-B-3_label"]:
+                for field in ["01-C_search-gemini", "02-C_identify-ai", "02-C_classify-ai", "04-A-2_clean", "04-A-3_highlight", "04-B-2_metadata-ai", "04-B-3_label"]:
                     if field not in ai_logs_data[pub_id]:
                         ai_logs_data[pub_id][field] = "PENDING"
                         ai_logs_changed = True
@@ -353,8 +372,7 @@ def main():
         # H. Self-Logging execution status to 00_initialize.json
         init_log_path = os.path.join(movie_logs_dir, "00_initialize.json")
         init_log = {}
-        
-        # Bug Fix: Protects against Empty File JSONDecodeError crashes
+
         if os.path.exists(init_log_path) and os.path.getsize(init_log_path) > 0:
             try:
                 with open(init_log_path, "r", encoding="utf-8") as lf:
