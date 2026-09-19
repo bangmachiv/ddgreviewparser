@@ -65,7 +65,7 @@ def extract_domain(url: str) -> str:
     return netloc.lower().replace("www.", "")
 
 def search_with_retries(ddgs_client, query: str, max_results: int = 5):
-    """Executes search using the default 'auto' backend with incremental retry logic."""
+    """Executes search using the 'lite' backend to bypass strict bot protections."""
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             results = list(
@@ -73,6 +73,7 @@ def search_with_retries(ddgs_client, query: str, max_results: int = 5):
                     query,
                     region="in-en",
                     max_results=max_results,
+                    backend="lite"  # Forces DDG HTML Lite version
                 )
             )
             if results:
