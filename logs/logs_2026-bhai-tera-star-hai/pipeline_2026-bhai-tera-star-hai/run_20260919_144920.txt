@@ -1,0 +1,41 @@
+=============================================
+ SUMMARY: 2026-bhai-tera-star-hai
+=============================================
+Script No & Name
+HTD | PRO | FAI | SUC
+---------------------------------------------
+01. 01_search
+00 | 00 | 00 | 00
+02. 02_identify
+-- | -- | -- | --
+03. 02-C_identify-ai
+-- | -- | -- | --
+04. 03_download
+-- | -- | -- | --
+05. 04-A-1_titles
+-- | -- | -- | --
+06. 04-A-2_clean
+-- | -- | -- | --
+07. 04-A-3_highlight
+-- | -- | -- | --
+08. 04-B-1_metadata-jsonld
+-- | -- | -- | --
+09. 04-B-2_metadata-ai
+-- | -- | -- | --
+10. 04-B-3_label
+-- | -- | -- | --
+11. 05-A_wsap
+-- | -- | -- | --
+
+=============================================
+ FINAL NEWS STATUS
+=============================================
+Urls identified       : 00
+Html Downloaded       : 00
+Extracted titles      : 00
+Cleaned titles        : 00
+Highlight titles      : 00
+Jsonld rated          : 00
+Ai rated              : 00
+Ai labeled            : 00
+=============================================
