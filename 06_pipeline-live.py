@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-05-B_pipeline.py
+06_pipeline-live.py
 Collects metrics from logs and reviews data to produce:
   1. A tabular per-script execution table split across two lines to prevent wrapping.
   2. The Final News Status count breakdown.
@@ -21,6 +21,7 @@ MOVIES_FILE = os.path.join(BASE_DIR, "data", "movies", "movies-live-today.json")
 PIPELINE_STAGES = [
     ("01_search", "01_search.json"),
     ("02_identify", "02_identify.json"),
+    ("02-C_identify-ai", "02-C_identify-ai.json"),
     ("03_download", "03_download.json"),
     ("04-A-1_titles", "04-A-1_titles.json"),
     ("04-A-2_clean", "04-A-2_clean.json"),
@@ -89,10 +90,10 @@ def extract_latest_log_metrics(log_path, total_pubs=0, rdata=None, stage_name=""
             if k in run: return run[k]
         return 0
 
-    had_to_do = get_first(["earlier_pending", "pending", "targets", "target_publishers"])
-    processed = get_first(["processed", "attempted", "searches", "searches_performed"])
-    success = get_first(["success", "succeeded", "found", "results"])
-    failure = get_first(["failure", "failed", "errors"])
+    had_to_do = get_first(["earlier_pending", "pending", "targets", "target_publishers", "publishers_evaluated"])
+    processed = get_first(["processed", "attempted", "searches", "searches_performed", "publishers_evaluated"])
+    success = get_first(["success", "succeeded", "found", "results", "matches_found"])
+    failure = get_first(["failure", "failed", "errors", "no_matches_found"])
 
     # 3. 01_search JSON Overwrite (Fixes the 00|00|00|00 logic issue)
     if "01_search" in stage_name and processed == 0 and success == 0 and rdata:
