@@ -249,19 +249,22 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Kill Movie Latest News, Updates in Hindi | किल | मूवी के समाचार और अपडेट - AajTak",
-                    "url": "https://www.aajtak.in/topic/kill-movie"
+                    "url": "https://www.aajtak.in/topic/kill-movie",
+                    "is_review": "N"
                 },
                 {
                     "rank": 2,
                     "match_type": "Tavily",
                     "title": "'मिस इंडिया वर्ल्ड' बनकर ब्यूटी पेजेंट्स में छाई, पर फिल्मों में रही फ्लॉप, कौन है ये हसीना? - meet miss india world parvathy omanakuttan bhai tera star hai film tmovf - AajTak",
-                    "url": "https://www.aajtak.in/entertainment/bollywood-news/story/meet-miss-india-world-parvathy-omanakuttan-bhai-tera-star-hai-film-tmovf-dskc-2614621-2026-08-04"
+                    "url": "https://www.aajtak.in/entertainment/bollywood-news/story/meet-miss-india-world-parvathy-omanakuttan-bhai-tera-star-hai-film-tmovf-dskc-2614621-2026-08-04",
+                    "is_review": "N"
                 },
                 {
                     "rank": 3,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Trailer: 'लूजर' एक्टर की कहानी में हीरो बने राघव जुयाल, मजेदार है कॉमेडी - bhai tera star hai trailer raghav juyal loser actor solid comedy release date tmovk - AajTak",
-                    "url": "https://www.aajtak.in/entertainment/bollywood-news/story/bhai-tera-star-hai-trailer-raghav-juyal-loser-actor-solid-comedy-release-date-tmovk-dskc-2597510-2026-07-09"
+                    "url": "https://www.aajtak.in/entertainment/bollywood-news/story/bhai-tera-star-hai-trailer-raghav-juyal-loser-actor-solid-comedy-release-date-tmovk-dskc-2597510-2026-07-09",
+                    "is_review": "N"
                 }
             ]
         },
@@ -273,25 +276,29 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "कौन हैं पार्वती ओमनाकुट्टन? फिल्म 'भाई तेरा स्टार है' में बनीं राघव जुयाल की बहन | Who Is Parvathy Omanakuttan Meet Raghav Juyal Sister in Bhai Tera Star Hai",
-                    "url": "https://www.abplive.com/entertainment/bollywood/who-is-parvathy-omanakuttan-meet-raghav-juyal-sister-in-bhai-tera-star-hai-3169300"
+                    "url": "https://www.abplive.com/entertainment/bollywood/who-is-parvathy-omanakuttan-meet-raghav-juyal-sister-in-bhai-tera-star-hai-3169300",
+                    "is_review": "N"
                 },
                 {
                     "rank": 2,
                     "match_type": "Tavily",
                     "title": "Box Office: 'स्पाइडर मैन' के आगे पहले ही दिन पिटी 'भाई तेरा स्टार है', लाखों कमाने भी हुए मुश्किल | Bhai Tera Star Hai Box Office Collection Opening Day 1 Raghav Juyal film first day collection Net in India",
-                    "url": "https://www.abplive.com/entertainment/bollywood/bhai-tera-star-hai-box-office-collection-opening-day-1-raghav-juyal-film-first-day-collection-net-in-india-3168416"
+                    "url": "https://www.abplive.com/entertainment/bollywood/bhai-tera-star-hai-box-office-collection-opening-day-1-raghav-juyal-film-first-day-collection-net-in-india-3168416",
+                    "is_review": "N"
                 },
                 {
                     "rank": 3,
                     "match_type": "Tavily",
                     "title": "राघव जुयाल की फिल्म 'भाई तेरा स्टार है' से इंप्रेस हुए सलमान खान, दो बार किया कॉल, जमकर की तारीफ | Salman Khan impress by Raghav Juyal film Bhai Tera Star Hai call him twice and praise",
-                    "url": "https://www.abplive.com/entertainment/bollywood/salman-khan-impress-by-raghav-juyal-film-bhai-tera-star-hai-call-him-twice-and-praise-3164071"
+                    "url": "https://www.abplive.com/entertainment/bollywood/salman-khan-impress-by-raghav-juyal-film-bhai-tera-star-hai-call-him-twice-and-praise-3164071",
+                    "is_review": "N"
                 },
                 {
                     "rank": 4,
                     "match_type": "Tavily",
                     "title": "Raghav Juyal का नया अंदाज, Bhai Tera Star Hai का ट्रेलर रिलीज़ | Raghav Juyal Shines In The Bhai Tera Star Hai Trailer",
-                    "url": "https://www.abplive.com/short-videos/entertainment/raghav-juyal-shines-in-the-bhai-tera-star-hai-trailer-3157484"
+                    "url": "https://www.abplive.com/short-videos/entertainment/raghav-juyal-shines-in-the-bhai-tera-star-hai-trailer-3157484",
+                    "is_review": "N"
                 }
             ]
         },
@@ -303,37 +310,43 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Hindi Review Starring Raghav Juyal Sanjay Kapoor Nikki Walia To Niharika Nm - Entertainment News: Amar Ujala - Bhai Tera Star Hai Review:राघव जुयाल की कॉमेडी ने दिया सिरदर्द, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा",
-                    "url": "https://www.amarujala.com/entertainment/movie-review/bhai-tera-star-hai-hindi-review-starring-raghav-juyal-sanjay-kapoor-nikki-walia-to-niharika-nm-2026-07-30"
+                    "url": "https://www.amarujala.com/entertainment/movie-review/bhai-tera-star-hai-hindi-review-starring-raghav-juyal-sanjay-kapoor-nikki-walia-to-niharika-nm-2026-07-30",
+                    "is_review": "N"
                 },
                 {
                     "rank": 2,
                     "match_type": "Tavily",
                     "title": "राघव जुयाल की ‘भाई तेरा स्टार है’ की पूरी कास्ट आई सामने, संजय कपूर के साथ नजर आएंगे ये कलाकार - Raghav Juyal Starrer Bhai Tera Star Hai Entire Cast Announced Stars Sanjay Kapoor Barkha Singh Niharika Nm - Amar Ujala Hindi News Live",
-                    "url": "https://www.amarujala.com/entertainment/bollywood/raghav-juyal-starrer-bhai-tera-star-hai-entire-cast-announced-stars-sanjay-kapoor-barkha-singh-niharika-nm-2026-07-07"
+                    "url": "https://www.amarujala.com/entertainment/bollywood/raghav-juyal-starrer-bhai-tera-star-hai-entire-cast-announced-stars-sanjay-kapoor-barkha-singh-niharika-nm-2026-07-07",
+                    "is_review": "N"
                 },
                 {
                     "rank": 3,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai:‘भाई तेरा स्टार है’ का टीजर रिलीज, जानें कब सिनेमाघरों में दस्तक देगी राघव जुयाल की फिल्म - Raghav Juyals Bhai Tera Star Hai Teaser Released Promises A Story Full Of Comedy And Action - Amar Ujala Hindi News Live",
-                    "url": "https://www.amarujala.com/entertainment/bollywood/raghav-juyals-bhai-tera-star-hai-teaser-released-promises-a-story-full-of-comedy-and-action-2026-07-03"
+                    "url": "https://www.amarujala.com/entertainment/bollywood/raghav-juyals-bhai-tera-star-hai-teaser-released-promises-a-story-full-of-comedy-and-action-2026-07-03",
+                    "is_review": "N"
                 },
                 {
                     "rank": 4,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Trailer Release Raghav Juyal Leads A Madcap Family Entertainer - Entertainment News: Amar Ujala - Bhai Tera Star Hai:‘भाई तेरा स्टार है' का मजेदार ट्रेलर रिलीज, स्ट्रगलिंग एक्टर के रोल में नजर आए राघव जुयाल",
-                    "url": "https://www.amarujala.com/photo-gallery/entertainment/bollywood/bhai-tera-star-hai-trailer-release-raghav-juyal-leads-a-madcap-family-entertainer-2026-07-09"
+                    "url": "https://www.amarujala.com/photo-gallery/entertainment/bollywood/bhai-tera-star-hai-trailer-release-raghav-juyal-leads-a-madcap-family-entertainer-2026-07-09",
+                    "is_review": "N"
                 },
                 {
                     "rank": 5,
                     "match_type": "Tavily",
                     "title": "Exclusive:'किल' के बाद बदल गया लोगों का नजरिया, बोले राघव जुयाल, कहा- 'फहाद फासिल के मैसेज पढ़कर चौंक गया था' - Raghav Juyal Exclusive Interview Actor Talks About His Movie Bhai Tera Star Hai And Career Journey - Amar Ujala Hindi News Live",
-                    "url": "https://www.amarujala.com/entertainment/celebs-interviews/raghav-juyal-exclusive-interview-actor-talks-about-his-movie-bhai-tera-star-hai-and-career-journey-2026-07-23"
+                    "url": "https://www.amarujala.com/entertainment/celebs-interviews/raghav-juyal-exclusive-interview-actor-talks-about-his-movie-bhai-tera-star-hai-and-career-journey-2026-07-23",
+                    "is_review": "N"
                 },
                 {
                     "rank": 6,
                     "match_type": "Tavily",
                     "title": "Niharika Raghav:सामने आया राघव-निहारिका के रिश्ते का सच? एक्टर ने साझा किया पोस्टर; लिखा- ‘नया स्टार आ रहा है - Niharika Nm React As Raghav Juyal Shares Poster Of His Upcoming Film Bhai Tera Star Hai - Amar Ujala Hindi News Live",
-                    "url": "https://www.amarujala.com/entertainment/bollywood/niharika-nm-react-as-raghav-juyal-shares-poster-of-his-upcoming-film-bhai-tera-star-hai-2026-06-30"
+                    "url": "https://www.amarujala.com/entertainment/bollywood/niharika-nm-react-as-raghav-juyal-shares-poster-of-his-upcoming-film-bhai-tera-star-hai-2026-06-30",
+                    "is_review": "N"
                 }
             ]
         },
@@ -345,7 +358,8 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Lalit Pandit On His Mixed Feelings On The Remix Of His Song In Bhai Tera Star Hai | BollySpice.com – The latest movies, interviews in Bollywood",
-                    "url": "https://bollyspice.com/lalit-pandit-on-his-mixed-feelings-on-the-remix-of-his-song-in-bhai-tera-star-hai"
+                    "url": "https://bollyspice.com/lalit-pandit-on-his-mixed-feelings-on-the-remix-of-his-song-in-bhai-tera-star-hai",
+                    "is_review": "N"
                 }
             ]
         },
@@ -367,13 +381,15 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Movie Review: Raghav Juyal Solo Lead Fails To Impress",
-                    "url": "https://www.bhaskar.com/g/entertainment/bollywood/news/bhai-tera-star-hai-movie-review-raghav-juyal-london-flop-comedy-138581177.html"
+                    "url": "https://www.bhaskar.com/g/entertainment/bollywood/news/bhai-tera-star-hai-movie-review-raghav-juyal-london-flop-comedy-138581177.html",
+                    "is_review": "Y"
                 },
                 {
                     "rank": 2,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Movie Review: Raghav Juyal Solo Lead Fails To Impress",
-                    "url": "https://divyamarathi.bhaskar.com/entertainment/bollywood/news/bhai-tera-star-hai-movie-review-raghav-juyal-solo-lead-fails-to-impress-138582078.html"
+                    "url": "https://divyamarathi.bhaskar.com/entertainment/bollywood/news/bhai-tera-star-hai-movie-review-raghav-juyal-solo-lead-fails-to-impress-138582078.html",
+                    "is_review": "Y"
                 }
             ]
         },
@@ -385,7 +401,8 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Review: कॉमेडी के नाम पर फूहड़ता, बेकार कहानी... राघव जुयाल से नहीं थी ऐसी उम्मीद! - bhai tera star hai film review raghav juyal performance not appealing storyline also bad",
-                    "url": "https://www.jagran.com/entertainment/reviews-bhai-tera-star-hai-film-review-raghav-juyal-performance-not-appealing-storyline-also-bad-40323676.html"
+                    "url": "https://www.jagran.com/entertainment/reviews-bhai-tera-star-hai-film-review-raghav-juyal-performance-not-appealing-storyline-also-bad-40323676.html",
+                    "is_review": "Y"
                 }
             ]
         },
@@ -412,19 +429,22 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Box Office Collection Day 1: Raghav Juyal's Film Takes Low Opening; Earns Approximately ₹25 Lakh",
-                    "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-box-office-collection-day-1-raghav-juyals-film-takes-low-opening-earns-approximately-25-lakh"
+                    "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-box-office-collection-day-1-raghav-juyals-film-takes-low-opening-earns-approximately-25-lakh",
+                    "is_review": "N"
                 },
                 {
                     "rank": 2,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?",
-                    "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-review-did-raghav-juyals-big-leap-into-solo-superstardom-just-turn-into-superstar-doom"
+                    "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-review-did-raghav-juyals-big-leap-into-solo-superstardom-just-turn-into-superstar-doom",
+                    "is_review": "Y"
                 },
                 {
                     "rank": 3,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Box Office Collection Day 2: Raghav Juyal Starrer Stays Steady, Collects ₹25 Lakh On Friday",
-                    "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-box-office-collection-day-2-raghav-juyal-starrer-stays-steady-collects-25-lakh-on-friday"
+                    "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-box-office-collection-day-2-raghav-juyal-starrer-stays-steady-collects-25-lakh-on-friday",
+                    "is_review": "N"
                 }
             ]
         },
@@ -441,7 +461,8 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai review: This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?' | Bollywood",
-                    "url": "https://www.hindustantimes.com/entertainment/bollywood/bhai-tera-star-hai-review-this-raghav-juyal-sanjay-kapoor-comedy-film-leaves-you-asking-why-niharika-nm-101785499542811.html"
+                    "url": "https://www.hindustantimes.com/entertainment/bollywood/bhai-tera-star-hai-review-this-raghav-juyal-sanjay-kapoor-comedy-film-leaves-you-asking-why-niharika-nm-101785499542811.html",
+                    "is_review": "Y"
                 }
             ]
         },
@@ -458,13 +479,15 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai review: The only star was Vijay Deverakonda in Vijay Sales ad - India Today",
-                    "url": "https://www.indiatoday.in/movies/reviews/story/bhai-tera-star-hai-review-the-only-star-was-vijay-deverakonda-in-vijay-sales-ad-2959658-2026-07-30"
+                    "url": "https://www.indiatoday.in/movies/reviews/story/bhai-tera-star-hai-review-the-only-star-was-vijay-deverakonda-in-vijay-sales-ad-2959658-2026-07-30",
+                    "is_review": "Y"
                 },
                 {
                     "rank": 2,
                     "match_type": "Tavily",
                     "title": "Cities - Crime, Restaurants, Bars, Nightlife from Indian cities",
-                    "url": "https://www.indiatoday.in/cities"
+                    "url": "https://www.indiatoday.in/cities",
+                    "is_review": "N"
                 }
             ]
         },
@@ -476,19 +499,22 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Movie Review: Raghav Juyal's Film Is Unfunny ...",
-                    "url": "https://www.koimoi.com/bollywood-movies/movie-reviews/bhai-tera-star-hai-movie-review-raghav-juyals-film-is-unfunny-aimless-pointless"
+                    "url": "https://www.koimoi.com/bollywood-movies/movie-reviews/bhai-tera-star-hai-movie-review-raghav-juyals-film-is-unfunny-aimless-pointless",
+                    "is_review": "Y"
                 },
                 {
                     "rank": 2,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Box Office Collection Day 5 - Koimoi",
-                    "url": "https://www.koimoi.com/box-office/bhai-tera-star-hai-box-office-collection-day-5-faces-an-outright-rejection-scores-95-less-than-kills-first-monday"
+                    "url": "https://www.koimoi.com/box-office/bhai-tera-star-hai-box-office-collection-day-5-faces-an-outright-rejection-scores-95-less-than-kills-first-monday",
+                    "is_review": "N"
                 },
                 {
                     "rank": 3,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Box Office Collection Day 3: 88% Behind Kill ...",
-                    "url": "https://www.koimoi.com/box-office/bhai-tera-star-hai-box-office-collection-day-3-88-behind-kill-likely-to-end-its-first-weekend-below-1-crore"
+                    "url": "https://www.koimoi.com/box-office/bhai-tera-star-hai-box-office-collection-day-3-88-behind-kill-likely-to-end-its-first-weekend-below-1-crore",
+                    "is_review": "N"
                 }
             ]
         },
@@ -510,13 +536,15 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai movie review: Raghav Juyal-starrer is dull and done",
-                    "url": "https://www.mid-day.com/entertainment/bollywood-news/article/bhai-tera-star-hai-movie-review-raghav-juyal-niharika-nm-dull-done-23642427"
+                    "url": "https://www.mid-day.com/entertainment/bollywood-news/article/bhai-tera-star-hai-movie-review-raghav-juyal-niharika-nm-dull-done-23642427",
+                    "is_review": "Y"
                 },
                 {
                     "rank": 2,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai movie review: Raghav Juyal’s comic timing can’t save this film",
-                    "url": "https://www.mid-day.com/entertainment/bollywood-news/article/bhai-tera-star-hai-movie-review-raghav-juyals-comic-timing-cant-save-this-film-23642325"
+                    "url": "https://www.mid-day.com/entertainment/bollywood-news/article/bhai-tera-star-hai-movie-review-raghav-juyals-comic-timing-cant-save-this-film-23642325",
+                    "is_review": "Y"
                 }
             ]
         },
@@ -528,7 +556,8 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Twitter review: Raghav Juyal delivers sincere performance; but the movie… | Mint",
-                    "url": "https://www.livemint.com/entertainment/bhai-tera-star-hai-twitter-review-raghav-juyal-delivers-sincere-performance-but-the-movie-11785420710380.html"
+                    "url": "https://www.livemint.com/entertainment/bhai-tera-star-hai-twitter-review-raghav-juyal-delivers-sincere-performance-but-the-movie-11785420710380.html",
+                    "is_review": "N"
                 }
             ]
         },
@@ -540,7 +569,8 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Movie Review: Raghav Juyal leads a comedy ...",
-                    "url": "https://www.moneycontrol.com/entertainment/bhai-tera-star-hai-movie-review-raghav-juyal-leads-a-comedy-where-the-jokes-need-their-own-rescue-mission-article-13989199.html"
+                    "url": "https://www.moneycontrol.com/entertainment/bhai-tera-star-hai-movie-review-raghav-juyal-leads-a-comedy-where-the-jokes-need-their-own-rescue-mission-article-13989199.html",
+                    "is_review": "Y"
                 }
             ]
         },
@@ -552,7 +582,8 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Review: A painful blow to filmmaking standards –",
-                    "url": "https://www.movietalkies.com/reviews/bhai-tera-star-hai-review-painful-blow-filmmaking-standards-12216142"
+                    "url": "https://www.movietalkies.com/reviews/bhai-tera-star-hai-review-painful-blow-filmmaking-standards-12216142",
+                    "is_review": "Y"
                 }
             ]
         },
@@ -569,25 +600,29 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Review: Raghav Juyal Shines, But The Comedy Falls Flat",
-                    "url": "https://ndtv.com/entertainment/bhai-tera-star-hai-review-raghav-juyal-shines-but-the-comedy-falls-flat-11842704"
+                    "url": "https://ndtv.com/entertainment/bhai-tera-star-hai-review-raghav-juyal-shines-but-the-comedy-falls-flat-11842704",
+                    "is_review": "Y"
                 },
                 {
                     "rank": 2,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Review: Raghav Juyal Shines, But The Comedy Falls Flat",
-                    "url": "https://www.ndtv.com/entertainment/bhai-tera-star-hai-review-raghav-juyal-shines-but-the-comedy-falls-flat-11842704/amp/1"
+                    "url": "https://www.ndtv.com/entertainment/bhai-tera-star-hai-review-raghav-juyal-shines-but-the-comedy-falls-flat-11842704/amp/1",
+                    "is_review": "Y"
                 },
                 {
                     "rank": 3,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Review: Raghav Juyal Shines, But The ...",
-                    "url": "https://www.ndtv.com/entertainment/bhai-tera-star-hai-review-raghav-juyal-shines-but-the-comedy-falls-flat-11842704"
+                    "url": "https://www.ndtv.com/entertainment/bhai-tera-star-hai-review-raghav-juyal-shines-but-the-comedy-falls-flat-11842704",
+                    "is_review": "Y"
                 },
                 {
                     "rank": 4,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Trailer: Raghav Juyal Promises A Laugh Riot In His Next",
-                    "url": "https://www.ndtv.com/entertainment/bhai-tera-star-hai-trailer-out-raghav-juyal-brings-comedy-and-chaos-to-the-big-screen-11748337"
+                    "url": "https://www.ndtv.com/entertainment/bhai-tera-star-hai-trailer-out-raghav-juyal-brings-comedy-and-chaos-to-the-big-screen-11748337",
+                    "is_review": "N"
                 }
             ]
         },
@@ -599,43 +634,50 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Box Office Day 1: Raghav Juyal's Solo Lead Debut Struggles With Rs 25 Lakh Opening | Bollywood News - News18",
-                    "url": "https://www.news18.com/movies/bollywood/bhai-tera-star-hai-box-office-day-1-raghav-juyals-solo-lead-debut-struggles-with-rs-25-lakh-opening-ws-l-10245058.html"
+                    "url": "https://www.news18.com/movies/bollywood/bhai-tera-star-hai-box-office-day-1-raghav-juyals-solo-lead-debut-struggles-with-rs-25-lakh-opening-ws-l-10245058.html",
+                    "is_review": "N"
                 },
                 {
                     "rank": 2,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Box Office Day 2: Raghav Juyal's Film Stays Flat, Earns Just Rs 50 Lakh | Bollywood News - News18",
-                    "url": "https://www.news18.com/movies/bollywood/bhai-tera-star-hai-box-office-day-2-raghav-juyals-film-stays-flat-earns-just-rs-50-lakh-ws-l-10246556.html"
+                    "url": "https://www.news18.com/movies/bollywood/bhai-tera-star-hai-box-office-day-2-raghav-juyals-film-stays-flat-earns-just-rs-50-lakh-ws-l-10246556.html",
+                    "is_review": "N"
                 },
                 {
                     "rank": 3,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Review: Raghav Juyal Shines In A Comedy That Runs Out Of Laughs Too Soon I WATCH - News18",
-                    "url": "https://www.news18.com/videos/movies/bhai-tera-star-hai-review-raghav-juyal-shines-in-a-comedy-that-runs-out-of-laughs-too-soon-i-watch-10246206.html"
+                    "url": "https://www.news18.com/videos/movies/bhai-tera-star-hai-review-raghav-juyal-shines-in-a-comedy-that-runs-out-of-laughs-too-soon-i-watch-10246206.html",
+                    "is_review": "Y"
                 },
                 {
                     "rank": 4,
                     "match_type": "Tavily",
                     "title": "Raghav Juyal Kicks Off Bhai Tera Star Hai Shooting In London, Film Eyes 2026 Release | Bollywood News - News18",
-                    "url": "https://www.news18.com/amp/movies/bollywood/raghav-juyal-kicks-off-bhai-tera-star-hai-shooting-in-london-film-eyes-2026-release-ws-l-9942379.html"
+                    "url": "https://www.news18.com/amp/movies/bollywood/raghav-juyal-kicks-off-bhai-tera-star-hai-shooting-in-london-film-eyes-2026-release-ws-l-9942379.html",
+                    "is_review": "N"
                 },
                 {
                     "rank": 5,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Movie Review And Rating: Raghav Juyal Is ...",
-                    "url": "https://www.news18.com/movies/bollywood/bhai-tera-star-hai-review-raghav-juyal-is-on-fire-but-this-slapstick-comedy-runs-out-of-steam-too-soon-ws-l-10241198.html"
+                    "url": "https://www.news18.com/movies/bollywood/bhai-tera-star-hai-review-raghav-juyal-is-on-fire-but-this-slapstick-comedy-runs-out-of-steam-too-soon-ws-l-10241198.html",
+                    "is_review": "Y"
                 },
                 {
                     "rank": 6,
                     "match_type": "Tavily",
                     "title": "Raghav Juyal Kicks Off Bhai Tera Star Hai Shooting In London, Film Eyes 2026 Release | Bollywood News - News18",
-                    "url": "https://www.news18.com/movies/bollywood/raghav-juyal-kicks-off-bhai-tera-star-hai-shooting-in-london-film-eyes-2026-release-ws-l-9942379.html"
+                    "url": "https://www.news18.com/movies/bollywood/raghav-juyal-kicks-off-bhai-tera-star-hai-shooting-in-london-film-eyes-2026-release-ws-l-9942379.html",
+                    "is_review": "N"
                 },
                 {
                     "rank": 7,
                     "match_type": "Tavily",
                     "title": "Raghav Juyal's comedy drama 'Bhai Tera Star Hai' goes on floors in London  | Agency-feeds News - News18",
-                    "url": "https://www.news18.com/agency-feeds/raghav-juyals-comedy-drama-bhai-tera-star-hai-goes-on-floors-in-london-9942364.html"
+                    "url": "https://www.news18.com/agency-feeds/raghav-juyals-comedy-drama-bhai-tera-star-hai-goes-on-floors-in-london-9942364.html",
+                    "is_review": "N"
                 }
             ]
         },
@@ -647,7 +689,8 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai Trailer: Raghav Juyal Stars in New Comedy | Outlook India",
-                    "url": "https://www.outlookindia.com/art-entertainment/bhai-tera-star-hai-trailer-raghav-juyal-stars-in-new-comedy"
+                    "url": "https://www.outlookindia.com/art-entertainment/bhai-tera-star-hai-trailer-raghav-juyal-stars-in-new-comedy",
+                    "is_review": "N"
                 }
             ]
         },
@@ -659,31 +702,36 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Raghav Juyal’s Biggest Leap Yet: Bhai Tera Star Hai Marks a Major New Chapter in His Career",
-                    "url": "https://www.peepingmoon.com/entertainment-news/news/82173/Raghav-Juyals-Biggest-Leap-Yet-Bhai-Tera-Star-Hai-Marks-a-Major-New-Chapter-in-His-Career.html"
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82173/Raghav-Juyals-Biggest-Leap-Yet-Bhai-Tera-Star-Hai-Marks-a-Major-New-Chapter-in-His-Career.html",
+                    "is_review": "N"
                 },
                 {
                     "rank": 2,
                     "match_type": "Tavily",
                     "title": "’Bhai Tera Star Hai’ introduces its vibrant ensemble cast featuring Raghav Juyal, Sanjay Kapoor, Barkha Singh and more",
-                    "url": "https://www.peepingmoon.com/entertainment-news/news/82162/Bhai-Tera-Star-Hai-introduces-its-vibrant-ensemble-cast-featuring-Raghav-Juyal-Sanjay-Kapoor-Barkha-Singh-and-more.html"
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82162/Bhai-Tera-Star-Hai-introduces-its-vibrant-ensemble-cast-featuring-Raghav-Juyal-Sanjay-Kapoor-Barkha-Singh-and-more.html",
+                    "is_review": "N"
                 },
                 {
                     "rank": 3,
                     "match_type": "Tavily",
                     "title": "RAGHAV JUYAL LED COMEDY BHAI TERA STAR HAI GOES ON FLOORS IN LONDON",
-                    "url": "https://www.peepingmoon.com/entertainment-news/news/81656/RAGHAV-JUYAL-LED-COMEDY-BHAI-TERA-STAR-HAI-GOES-ON-FLOORS-IN-LONDON.html"
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/81656/RAGHAV-JUYAL-LED-COMEDY-BHAI-TERA-STAR-HAI-GOES-ON-FLOORS-IN-LONDON.html",
+                    "is_review": "N"
                 },
                 {
                     "rank": 4,
                     "match_type": "Tavily",
                     "title": "Vivek B Agrawal Unveil First Poster of Bhai Tera Star Hai.. Talent Loading…",
-                    "url": "https://www.peepingmoon.com/entertainment-news/news/82130/Vivek-B-Agrawal-Unveil-First-Poster-of-Bhai-Tera-Star-Hai-Talent-Loading.html"
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82130/Vivek-B-Agrawal-Unveil-First-Poster-of-Bhai-Tera-Star-Hai-Talent-Loading.html",
+                    "is_review": "N"
                 },
                 {
                     "rank": 5,
                     "match_type": "Tavily",
                     "title": "Raghav Juyal’s Bhai Tera Star Hai Trailer to Release Tomorrow",
-                    "url": "https://www.peepingmoon.com/entertainment-news/news/82166/Raghav-Juyals-Bhai-Tera-Star-Hai-Trailer-to-Release-Tomorrow.html"
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82166/Raghav-Juyals-Bhai-Tera-Star-Hai-Trailer-to-Release-Tomorrow.html",
+                    "is_review": "N"
                 }
             ]
         },
@@ -715,7 +763,8 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai movie review: Raghav Juyal film is a comedy with scant laughs | Movie-review News - The Indian Express",
-                    "url": "https://indianexpress.com/article/entertainment/movie-review/bhai-tera-star-hai-movie-review-raghav-juyal-film-is-a-comedy-with-scant-laughs-10811541"
+                    "url": "https://indianexpress.com/article/entertainment/movie-review/bhai-tera-star-hai-movie-review-raghav-juyal-film-is-a-comedy-with-scant-laughs-10811541",
+                    "is_review": "N"
                 }
             ]
         },
@@ -732,7 +781,8 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "Bhai Tera Star Hai trailer | ‘Bhai Tera Star Hai’ trailer- Raghav Juyal lands a chance to play Salman Khan’s brother - Telegraph India",
-                    "url": "https://www.telegraphindia.com/entertainment/bhai-tera-star-hai-trailer-raghav-juyal-lands-a-chance-to-play-salman-khans-brother/cid/2169331"
+                    "url": "https://www.telegraphindia.com/entertainment/bhai-tera-star-hai-trailer-raghav-juyal-lands-a-chance-to-play-salman-khans-brother/cid/2169331",
+                    "is_review": "N"
                 }
             ]
         },
@@ -744,7 +794,8 @@
                     "rank": 1,
                     "match_type": "Tavily",
                     "title": "'Bhai Tera Star Hai': More madness than amusement - The Tribune",
-                    "url": "https://www.tribuneindia.com/news/movie-review/bhai-tera-star-hai-more-madness-than-amusement"
+                    "url": "https://www.tribuneindia.com/news/movie-review/bhai-tera-star-hai-more-madness-than-amusement",
+                    "is_review": "N"
                 }
             ]
         }
