@@ -103,7 +103,7 @@ def main():
         movie_year = movie_date[:4] if movie_date else ""
 
         print("\n" + "=" * 80)
-        print(f" PIPELINE STEP 1: {movie_name} (TAVILY INTEGRATION)")
+        print(f" PIPELINE STEP 1: {movie_name} (TAVILY SEARCH & DUMP)")
         print("=" * 80)
 
         movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{movie_slug}")
@@ -126,7 +126,6 @@ def main():
 
         existing_reviews_dict = {p.get("publisher_id"): p for p in reviews_data.get("publishers", [])}
 
-        # Initialize all active publishers in the dictionary if they don't exist
         for pub in active_publishers:
             pub_id = pub["id"]
             if pub_id not in existing_reviews_dict:
@@ -171,7 +170,6 @@ def main():
         for p in synced_reviews_list:
             status = p.get("search_status", "PENDING")
             if status in ["PENDING", "FAILED"]:
-                # Grab the full publisher object from active_publishers to get URL/Domain info
                 full_pub = next((ap for ap in active_publishers if ap["id"] == p["publisher_id"]), None)
                 if full_pub:
                     needs_search_pubs.append(full_pub)
@@ -180,10 +178,9 @@ def main():
                 global_done_before += 1
 
         tracker = PipelineTracker("API Payloads Fetched", global_done_before, global_todo_before)
-        print(f"[STATE] {global_done_before} publishers already handled (SUCCESS).")
-        print(f"[STATE] {len(needs_search_pubs)} publishers queued for web search.\n")
+        print(f"[STATE] {global_done_before} publishers already handled.")
+        print(f"[STATE] {len(needs_search_pubs)} publishers queued for Tavily search.\n")
 
-        # Load existing search hits
         searches_file_path = os.path.join(OUTPUT_DIR, f"searches_{movie_slug}.json")
         existing_searches_dict = {}
         if os.path.exists(searches_file_path):
@@ -207,7 +204,6 @@ def main():
             "publisher_details": {}
         }
 
-        # Add previously found searches to the new file payload
         needs_search_ids = {p["id"] for p in needs_search_pubs}
         for publisher in active_publishers:
             pub_id = publisher["id"]
@@ -221,7 +217,6 @@ def main():
             chunks = chunk_publishers(needs_search_pubs, max_chunks=3)
             all_raw_results = []
 
-            # Make the 3 API calls
             for idx, chunk in enumerate(chunks, start=1):
                 chunk_domains = [extract_domain(p["url"]) for p in chunk]
                 print(f"  └─► [Call {idx}/{len(chunks)}] Searching {len(chunk_domains)} domains...")
@@ -242,14 +237,12 @@ def main():
                 if idx < len(chunks):
                     time.sleep(1)
 
-            # Map the results to their publishers locally
             matched_buckets = {p["id"]: [] for p in needs_search_pubs}
 
             for item in all_raw_results:
                 item_url = item.get("url", "")
                 item_domain = extract_domain(item_url)
 
-                # Check domain/subdomain
                 matched_pub_id = None
                 for pub_domain, pub_data in publisher_map.items():
                     if item_domain == pub_domain or item_domain.endswith("." + pub_domain):
@@ -257,10 +250,8 @@ def main():
                         break
 
                 if matched_pub_id and matched_pub_id in matched_buckets:
-                    # Prevent duplicates in the bucket
                     existing_urls = [r["url"] for r in matched_buckets[matched_pub_id]]
                     if item_url not in existing_urls:
-                        # Removed 'snippet' entirely to save payload size
                         matched_buckets[matched_pub_id].append({
                             "rank": len(matched_buckets[matched_pub_id]) + 1,
                             "match_type": "Tavily",
@@ -268,7 +259,6 @@ def main():
                             "url": item_url
                         })
 
-            # Process the buckets and update tracker/files
             for pub in needs_search_pubs:
                 pub_id = pub["id"]
                 hits = matched_buckets[pub_id]
@@ -316,7 +306,6 @@ def main():
         else:
             print(f"\n[SUMMARY] No new searches executed.")
 
-        # Log Writer
         script_log_data = {}
         if os.path.exists(script_log_path) and os.path.getsize(script_log_path) > 0:
             try:
