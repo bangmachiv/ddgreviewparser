@@ -62,7 +62,7 @@ def chunk_publishers(pubs, max_chunks=3):
         return []
     if len(pubs) <= max_chunks:
         return [[p] for p in pubs]
-    
+
     chunk_size = math.ceil(len(pubs) / max_chunks)
     return [pubs[i:i + chunk_size] for i in range(0, len(pubs), chunk_size)]
 
@@ -220,7 +220,7 @@ def main():
 
             chunks = chunk_publishers(needs_search_pubs, max_chunks=3)
             all_raw_results = []
-            
+
             # Make the 3 API calls
             for idx, chunk in enumerate(chunks, start=1):
                 chunk_domains = [extract_domain(p["url"]) for p in chunk]
@@ -244,41 +244,41 @@ def main():
 
             # Map the results to their publishers locally
             matched_buckets = {p["id"]: [] for p in needs_search_pubs}
-            
+
             for item in all_raw_results:
                 item_url = item.get("url", "")
                 item_domain = extract_domain(item_url)
-                
+
                 # Check domain/subdomain
                 matched_pub_id = None
                 for pub_domain, pub_data in publisher_map.items():
                     if item_domain == pub_domain or item_domain.endswith("." + pub_domain):
                         matched_pub_id = pub_data["id"]
                         break
-                        
+
                 if matched_pub_id and matched_pub_id in matched_buckets:
                     # Prevent duplicates in the bucket
                     existing_urls = [r["url"] for r in matched_buckets[matched_pub_id]]
                     if item_url not in existing_urls:
+                        # Removed 'snippet' entirely to save payload size
                         matched_buckets[matched_pub_id].append({
                             "rank": len(matched_buckets[matched_pub_id]) + 1,
-                            "match_type": "Tavily (Filtered)",
+                            "match_type": "Tavily",
                             "title": item.get("title", ""),
-                            "url": item_url,
-                            "snippet": item.get("content", "")
+                            "url": item_url
                         })
 
             # Process the buckets and update tracker/files
             for pub in needs_search_pubs:
                 pub_id = pub["id"]
                 hits = matched_buckets[pub_id]
-                
+
                 publisher_result = {
                     "publisher_id": pub_id,
                     "publisher_name": pub["name"],
                     "results": hits
                 }
-                
+
                 new_searches_data["publishers"].append(publisher_result)
 
                 for p_block in reviews_data["publishers"]:
