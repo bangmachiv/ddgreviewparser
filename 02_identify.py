@@ -9,18 +9,9 @@ from urllib.parse import urlparse, parse_qs
 from datetime import datetime
 
 REVIEW_PHRASES = [
-    "review",
-    "movie review",
-    "film review",
-    "hindi review",
-    "hindi movie review",
-    "रिव्यू",
-    "समीक्षा",
-    "मूवी रिव्यू",
-    "मूवी समीक्षा",
-    "फिल्म रिव्यू",
-    "फिल्म समीक्षा",
-    "हिंदी रिव्यू"
+    "review", "movie review", "film review", "hindi review",
+    "hindi movie review", "रिव्यू", "समीक्षा", "मूवी रिव्यू",
+    "मूवी समीक्षा", "फिल्म रिव्यू", "फिल्म समीक्षा", "हिंदी रिव्यू"
 ]
 
 NEGATIVE_PHRASES = [
@@ -28,12 +19,9 @@ NEGATIVE_PHRASES = [
     "explained", "ending explained", "ending", "analysis", "breakdown",
     "box office", "collection", "trailer", "teaser", "cast", "songs",
     "soundtrack", "ott", "streaming", "preview", "first look", "featurette",
-    "reaction", "reactions", "news", "live updates"
+    "reaction", "reactions", "live updates"
 ]
 
-# -----------------------------------------------------------------------------
-# Custom Metric Tracker
-# -----------------------------------------------------------------------------
 class PipelineTracker:
     def __init__(self, metric_name, earlier_completed, earlier_pending):
         self.metric_name = metric_name
@@ -54,7 +42,6 @@ class PipelineTracker:
     def print_summary(self):
         new_completed = self.earlier_completed + self.succeeded
         new_pending = self.earlier_pending - self.succeeded
-
         print("\n" + "="*125)
         print(f" PIPELINE METRIC: {self.metric_name}")
         print("="*125)
@@ -65,26 +52,18 @@ class PipelineTracker:
 
 
 def is_video_url(url: str) -> bool:
-    if not url:
-        return False
+    if not url: return False
     url_lower = url.lower()
     parsed = urlparse(url_lower)
-    if "/video/" in parsed.path:
+    if "/video/" in parsed.path or parsed.path.rstrip("/").endswith("/video"):
         return True
-    if parsed.path.rstrip("/").endswith("/video"):
-        return True
-    query_params = parse_qs(parsed.query)
-    if "video" in query_params.get("type", []):
+    if "video" in parse_qs(parsed.query).get("type", []):
         return True
     return False
 
 def normalize_title(title: str) -> str:
-    if not title:
-        return ""
-    title = title.lower()
-    out = []
-    for ch in title:
-        out.append(ch if (ch.isalnum() or ch.isspace()) else " ")
+    if not title: return ""
+    out = [ch if (ch.isalnum() or ch.isspace()) else " " for ch in title.lower()]
     return " ".join("".join(out).split())
 
 def get_movie_substrings(normalized_name: str):
@@ -100,8 +79,7 @@ def generate_valid_combinations(movie_substrings):
     return sorted(combos, key=len, reverse=True)
 
 def check_if_review(title: str, url: str, valid_combos: list) -> bool:
-    if is_video_url(url):
-        return False
+    if is_video_url(url): return False
     norm_title = normalize_title(title)
     padded = f" {norm_title} "
     for neg in NEGATIVE_PHRASES:
@@ -118,11 +96,7 @@ def main():
     searches_dir = os.path.join(base, "data", "searches")
     reviews_dir = os.path.join(base, "data", "reviews")
 
-    os.makedirs(reviews_dir, exist_ok=True)
-
-    if not os.path.exists(movies_file):
-        print(f"[FATAL] {movies_file} not found.")
-        return
+    if not os.path.exists(movies_file): return
 
     with open(movies_file, encoding="utf-8") as f:
         movies = json.load(f)["movies"]
@@ -132,14 +106,12 @@ def main():
         search_file = os.path.join(searches_dir, f"searches_{slug}.json")
         reviews_file_path = os.path.join(reviews_dir, f"reviews_{slug}.json")
 
-        # Prepare Logging Paths
+        if not os.path.exists(search_file) or not os.path.exists(reviews_file_path):
+            continue
+
         movie_logs_dir = os.path.join(base, "logs", f"logs_{slug}")
         script_log_path = os.path.join(movie_logs_dir, "02_identify.json")
         os.makedirs(movie_logs_dir, exist_ok=True)
-
-        # Skip if previous pipeline steps haven't generated the required files
-        if not os.path.exists(search_file) or not os.path.exists(reviews_file_path):
-            continue
 
         print(f"\n================================================================================")
         print(f" Parsing Reviews for: {movie['name']}")
@@ -147,32 +119,23 @@ def main():
 
         with open(search_file, encoding="utf-8") as f:
             search_data = json.load(f)
-
         with open(reviews_file_path, "r", encoding="utf-8") as f:
             reviews_data = json.load(f)
 
-        combos = generate_valid_combinations(
-            get_movie_substrings(normalize_title(movie["name"]))
-        )
-
+        combos = generate_valid_combinations(get_movie_substrings(normalize_title(movie["name"])))
         search_results_map = {pub.get("publisher_id"): pub for pub in search_data.get("publishers", [])}
 
-        # ---------------------------------------------------------------------
-        # Pre-Scan to calculate initial metrics
-        # ---------------------------------------------------------------------
         earlier_completed = 0
         earlier_pending = 0
-
         for pub_block in reviews_data.get("publishers", []):
-            current_url = pub_block.get("review_url", "PENDING")
-            if current_url not in ["PENDING", "NA", ""]:
+            ru = pub_block.get("review_url", "PENDING")
+            if ru not in ["PENDING", "NA", ""]:
                 earlier_completed += 1
             else:
                 earlier_pending += 1
 
         tracker = PipelineTracker("Review URLs Identified", earlier_completed, earlier_pending)
 
-        # Initialize the script log payload
         movie_log_entry = {
             "earlier_completed": earlier_completed,
             "earlier_pending": earlier_pending,
@@ -184,88 +147,59 @@ def main():
             "publisher_details": {}
         }
 
-        # ---------------------------------------------------------------------
-        # Evaluation Loop
-        # ---------------------------------------------------------------------
         for pub_block in reviews_data.get("publishers", []):
             pub_id = pub_block.get("publisher_id", "")
             pub_name = pub_block.get("publisher_name", "")
+            ru = pub_block.get("review_url", "PENDING")
+            ss = pub_block.get("search_status", "PENDING")
+            sc = pub_block.get("search_count", 0)
 
-            # 1. Skip if already locked in
-            current_url = pub_block.get("review_url", "PENDING")
-            if current_url not in ["PENDING", "NA", ""]:
+            if ru not in ["PENDING", "NA", ""]:
                 print(f"  [SKIP PARSING] {pub_name} already classified.")
                 continue
 
-            # 2. Skip if no new search results exist for this publisher
-            if pub_id not in search_results_map:
-                continue
+            if ru in ["PENDING", "NA", ""] and ss == "SUCCESS" and sc > 0:
+                print(f"  [EVALUATING] {pub_name}...")
+                movie_log_entry["processed"] += 1
+                search_pub_data = search_results_map.get(pub_id, {})
+                first = None
 
-            print(f"  [EVALUATING] {pub_name}...")
-            search_pub_data = search_results_map[pub_id]
+                for result in search_pub_data.get("results", []):
+                    if check_if_review(result.get("title", ""), result.get("url", ""), combos):
+                        if first is None:
+                            first = result
 
-            movie_log_entry["processed"] += 1
-            first = None
+                if first:
+                    rank = first.get('rank')
+                    print(f"    -> [SUCCESS] Found valid review at Rank {rank}")
+                    pub_block["review_url"] = first.get("url", "NA")
+                    pub_block["review_title"] = first.get("title", "NA")
+                    pub_block["review_source"] = f"tavily_{rank}"
+                    pub_block["classified_by"] = "SCRIPT"
+                    
+                    tracker.add_success()
+                    movie_log_entry["success"] += 1
+                    movie_log_entry["publisher_details"][pub_id] = {
+                        "status": "SUCCESS",
+                        "source_rank": f"tavily_{rank}"
+                    }
+                else:
+                    print(f"    -> [FAILED] No valid review titles found.")
+                    pub_block["search_status"] = "PENDING"
+                    
+                    tracker.add_failure()
+                    movie_log_entry["failure"] += 1
+                    movie_log_entry["publisher_details"][pub_id] = {
+                        "status": "FAILED",
+                        "reason": "No valid titles found"
+                    }
 
-            for result in search_pub_data.get("results", []):
-                ok = check_if_review(
-                    result.get("title", ""),
-                    result.get("url", ""),
-                    combos
-                )
-
-                result["is_review"] = "Y" if ok else "N"
-
-                if ok and first is None:
-                    first = result
-
-            # 3. Log the outcome and update the Master Skeleton block
-            if first:
-                rank = first.get('rank')
-                print(f"    -> [SUCCESS] Found valid review at Rank {rank}")
-                pub_block["review_url"] = first.get("url", "NA")
-                pub_block["review_title"] = first.get("title", "NA")
-                pub_block["review_source"] = f"ddgs_{rank}"
-                pub_block["search_status"] = "NOT_NEEDED"
-                pub_block["classified_by"] = "SCRIPT"
-
-                # Update Trackers
-                tracker.add_success()
-                movie_log_entry["success"] += 1
-                movie_log_entry["publisher_details"][pub_id] = {
-                    "status": "SUCCESS",
-                    "source_rank": f"ddgs_{rank}"
-                }
-            else:
-                print(f"    -> [FAILED] No valid review titles found.")
-                pub_block["review_url"] = "PENDING"
-                pub_block["review_title"] = "PENDING"
-                pub_block["review_source"] = "PENDING"
-                pub_block["search_status"] = "PENDING"
-                pub_block["classified_by"] = "PENDING"
-
-                # Update Trackers
-                tracker.add_failure()
-                movie_log_entry["failure"] += 1
-                movie_log_entry["publisher_details"][pub_id] = {
-                    "status": "FAILED",
-                    "reason": "No valid titles found"
-                }
-
-        # Calculate final states for the JSON log
         movie_log_entry["new_completed"] = earlier_completed + movie_log_entry["success"]
         movie_log_entry["new_pending"] = earlier_pending - movie_log_entry["success"]
-
-        # ---------------------------------------------------------------------
-        # Save Data & Logs
-        # ---------------------------------------------------------------------
-        with open(search_file, "w", encoding="utf-8") as f:
-            json.dump(search_data, f, ensure_ascii=False, indent=4)
 
         with open(reviews_file_path, "w", encoding="utf-8") as f:
             json.dump(reviews_data, f, ensure_ascii=False, indent=4)
 
-        # Safely write to 02_identify.json script log
         script_log_data = {}
         if os.path.exists(script_log_path) and os.path.getsize(script_log_path) > 0:
             try:
@@ -283,9 +217,7 @@ def main():
         except Exception as e:
             print(f"[ERROR] Could not write to log file: {e}")
 
-        # Print the dashboard
         tracker.print_summary()
-        print(f"\n Successfully finished processing {slug}\n")
 
 if __name__ == "__main__":
     main()
