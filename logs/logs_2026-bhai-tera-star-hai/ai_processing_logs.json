@@ -209,7 +209,7 @@
     "mint": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T08:51:51.695174+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -326,7 +326,7 @@
     "the-hindu": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T08:52:05.139736+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -335,7 +335,7 @@
     "the-indian-express": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T08:52:18.748792+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -371,7 +371,7 @@
     "the-tribune": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T08:52:32.346068+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
