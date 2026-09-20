@@ -15,8 +15,8 @@ def main():
         print("[FATAL] SERPER_API_KEY environment variable is missing.")
         sys.exit(1)
 
-    # The exact broad query we want to test
-    query = '"Bhai Tera Star Hai" 2026 movie review'
+    # REMOVED double quotes to bypass Serper free tier restrictions
+    query = 'Bhai Tera Star Hai 2026 movie review'
     
     print("=" * 80)
     print(" SERPER.DEV RAW 100-RESULT DUMP")
