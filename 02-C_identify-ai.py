@@ -98,7 +98,7 @@ def run_gemini_evaluation(client, prompt):
         print(f"      [RATE LIMIT] Sleeping 13 seconds to respect 5 RPM limit...")
         time.sleep(13)
         print(f"      [Attempting Model: {model_name}]")
-        
+
         try:
             response = client.models.generate_content(
                 model=model_name,
@@ -222,10 +222,10 @@ def main():
             pub_id = pub.get("publisher_id")
             pub_name = pub.get("publisher_name")
             review_url = str(pub.get("review_url", "")).strip().upper()
+            sc = pub.get("search_count", 0)
 
-            ai_timestamp = ai_logs.get(pub_id, {}).get("02-C_identify-ai")
-
-            if review_url == "PENDING" and not ai_timestamp:
+            # Execution Gate: Relies purely on the target state matrix criteria
+            if review_url == "PENDING" and sc > 0:
                 candidates = search_results_map.get(pub_id, [])
 
                 if not candidates:
@@ -236,7 +236,7 @@ def main():
                 compact_candidates = []
                 numbered_candidate_lines = []
                 idx = 1
-                
+
                 print(f"\n------")
                 print(f"Starting for {pub_name}\n")
 
@@ -249,7 +249,7 @@ def main():
 
                     compact_candidates.append({"title": title, "url": url})
                     numbered_candidate_lines.append(f"{idx}. {title}")
-                    
+
                     print(f"[{get_ordinal(idx)} Title] {title}")
                     idx += 1
 
@@ -266,12 +266,12 @@ def main():
 
                 raw_response = None
                 MAX_RETRIES = 2
-                
+
                 for attempt in range(1, MAX_RETRIES + 1):
                     raw_response = run_gemini_evaluation(client, prompt)
-                    
+
                     if raw_response:
-                        break # Success, break out of retry loop
+                        break 
                     else:
                         print(f"     [API FAILURE] All cascade models failed on attempt {attempt}.")
                         if attempt < MAX_RETRIES:
@@ -366,6 +366,7 @@ def main():
                                 movie_stats["found"] += 1
                             else:
                                 print(f"     [NOT ADMISSIBLE] No candidate met confidence threshold >= {MIN_CONFIDENCE_THRESHOLD}% (or returned empty). Remaining PENDING.")
+                                pub["search_status"] = "PENDING"
                                 movie_stats["not_found"] += 1
 
                             newly_rejected_titles = [c["title"] for c in compact_candidates if c["title"] != matched_title]
