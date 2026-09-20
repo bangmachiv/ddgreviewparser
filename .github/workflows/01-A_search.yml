@@ -1,0 +1,54 @@
+name: 01. Tavily Search
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    
+    # Force unbuffered stdout for real-time streaming in GitHub Actions UI
+    env:
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tavily-python
+
+      - name: Run search script
+        env:
+          # Passes the GitHub Secret into the script securely
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: |
+          python 01-A_search.py
+
+      - name: Commit updated search and review files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Safely stage the directories instead of using fragile wildcards (*.json)
+          git add data/ logs/
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit. All searches are up to date."
+            exit 0
+          fi
+
+          git commit -m "Pipeline [01]: Update search results and review metrics via Tavily"
+          git push
