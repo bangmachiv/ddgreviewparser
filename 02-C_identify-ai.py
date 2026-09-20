@@ -92,6 +92,12 @@ def clean_json_response(raw_text):
 
     return clean_text.strip()
 
+def create_reference_string(text):
+    """Strips all spaces and non-alphanumeric characters, returning lowercase string."""
+    if not text:
+        return ""
+    return re.sub(r'[^a-zA-Z0-9]', '', str(text)).lower()
+
 def run_gemini_evaluation(client, prompt):
     """Executes text generation call with fallback cascade and 5 RPM timegaps."""
     for model_name in MODEL_CONFIG:
@@ -120,7 +126,6 @@ def run_gemini_evaluation(client, prompt):
         except Exception as e:
             print(f"      [Unexpected Error on {model_name}]: {e}")
 
-    # If all models in the cascade fail
     return None
 
 def print_summary_table(global_stats):
@@ -165,6 +170,9 @@ def main():
     for movie in active_movies:
         movie_name = movie.get("name")
         slug = movie.get("slug")
+        
+        # Pre-calculate the compressed movie string for baseline relevance checking
+        movie_ref_string = create_reference_string(movie_name)
 
         print(f"\n[EVALUATING] {movie_name} ({slug})")
 
@@ -236,6 +244,7 @@ def main():
                 compact_candidates = []
                 numbered_candidate_lines = []
                 idx = 1
+                filtered_out_count = 0
 
                 print(f"\n------")
                 print(f"Starting for {pub_name}\n")
@@ -244,7 +253,22 @@ def main():
                     title = c.get("title", "").strip()
                     url = c.get("url", "").strip()
 
+                    # Filter 1: Check negative cache
                     if title in rejected_titles:
+                        continue
+                        
+                    # Filter 2: Baseline relevance check (Compressed String Matching)
+                    title_ref_string = create_reference_string(title)
+                    if movie_ref_string not in title_ref_string:
+                        filtered_out_count += 1
+                        
+                        # Automatically add to negative cache since it's irrelevant
+                        if pub_id not in negative_data["publishers"]:
+                            negative_data["publishers"][pub_id] = []
+                        if title not in negative_data["publishers"][pub_id]:
+                            negative_data["publishers"][pub_id].append(title)
+                            negative_data_changed = True
+                            
                         continue
 
                     compact_candidates.append({"title": title, "url": url})
@@ -252,9 +276,12 @@ def main():
 
                     print(f"[{get_ordinal(idx)} Title] {title}")
                     idx += 1
+                    
+                if filtered_out_count > 0:
+                    print(f"  -> [FILTERED] Dropped {filtered_out_count} candidate(s) missing movie name reference string.")
 
                 if not compact_candidates:
-                    print(f"  -> [SKIP] All available candidates were previously rejected.")
+                    print(f"  -> [SKIP] All available candidates were previously rejected or filtered out.")
                     continue
 
                 print(f"\n  -> [GEMINI EVAL] Analyzing {len(compact_candidates)} fresh search candidates...")
