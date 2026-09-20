@@ -6,21 +6,6 @@
     },
     "publishers": [
         {
-            "publisher_id": "aaj-tak",
-            "publisher_name": "Aaj Tak",
-            "results": []
-        },
-        {
-            "publisher_id": "abp",
-            "publisher_name": "ABP",
-            "results": []
-        },
-        {
-            "publisher_id": "amar-ujala",
-            "publisher_name": "Amar Ujala",
-            "results": []
-        },
-        {
             "publisher_id": "bollywood-hungama",
             "publisher_name": "Bollywood Hungama",
             "results": [
@@ -153,16 +138,6 @@
             ]
         },
         {
-            "publisher_id": "bollyspice",
-            "publisher_name": "BollySpice",
-            "results": []
-        },
-        {
-            "publisher_id": "business-standard",
-            "publisher_name": "Business Standard",
-            "results": []
-        },
-        {
             "publisher_id": "cinema-express",
             "publisher_name": "Cinema Express",
             "results": [
@@ -176,31 +151,6 @@
             ]
         },
         {
-            "publisher_id": "cinetales",
-            "publisher_name": "Cinetales",
-            "results": []
-        },
-        {
-            "publisher_id": "dainik-bhaskar",
-            "publisher_name": "Dainik Bhaskar",
-            "results": []
-        },
-        {
-            "publisher_id": "dainik-jagran",
-            "publisher_name": "Dainik Jagran",
-            "results": []
-        },
-        {
-            "publisher_id": "deccan-chronicle",
-            "publisher_name": "Deccan Chronicle",
-            "results": []
-        },
-        {
-            "publisher_id": "deccan-herald",
-            "publisher_name": "Deccan Herald",
-            "results": []
-        },
-        {
             "publisher_id": "filmfare",
             "publisher_name": "Filmfare",
             "results": [
@@ -212,11 +162,6 @@
                     "is_review": "Y"
                 }
             ]
-        },
-        {
-            "publisher_id": "firstpost",
-            "publisher_name": "Firstpost",
-            "results": []
         },
         {
             "publisher_id": "free-press-journal",
@@ -246,11 +191,6 @@
             ]
         },
         {
-            "publisher_id": "hindustan",
-            "publisher_name": "Hindustan",
-            "results": []
-        },
-        {
             "publisher_id": "hindustan-times",
             "publisher_name": "Hindustan Times",
             "results": [
@@ -262,11 +202,6 @@
                     "is_review": "Y"
                 }
             ]
-        },
-        {
-            "publisher_id": "ians-live",
-            "publisher_name": "IANS Live",
-            "results": []
         },
         {
             "publisher_id": "india-today",
@@ -316,16 +251,6 @@
             ]
         },
         {
-            "publisher_id": "lensmen-reviews",
-            "publisher_name": "Lensmen Reviews",
-            "results": []
-        },
-        {
-            "publisher_id": "lokmat",
-            "publisher_name": "Lokmat",
-            "results": []
-        },
-        {
             "publisher_id": "mid-day",
             "publisher_name": "Mid-Day",
             "results": [
@@ -356,19 +281,6 @@
                     "title": "Bhai Tera Star Hai movie review: Raghav Juyal's comic timing can't ...",
                     "url": "https://www.mid-day.com/entertainment/bollywood-news/article/bhai-tera-star-hai-movie-review-raghav-juyals-comic-timing-cant-save-this-film-23642325",
                     "is_review": "Y"
-                }
-            ]
-        },
-        {
-            "publisher_id": "mint",
-            "publisher_name": "Mint",
-            "results": [
-                {
-                    "rank": 1,
-                    "match_type": "Tavily",
-                    "title": "Bhai Tera Star Hai Twitter review: Raghav Juyal delivers sincere performance; but the movie… | Mint",
-                    "url": "https://www.livemint.com/entertainment/bhai-tera-star-hai-twitter-review-raghav-juyal-delivers-sincere-performance-but-the-movie-11785420710380.html",
-                    "is_review": "N"
                 }
             ]
         },
@@ -404,11 +316,6 @@
                     "is_review": "Y"
                 }
             ]
-        },
-        {
-            "publisher_id": "navbharat-times",
-            "publisher_name": "Navbharat Times",
-            "results": []
         },
         {
             "publisher_id": "ndtv",
@@ -472,16 +379,6 @@
             ]
         },
         {
-            "publisher_id": "outlook",
-            "publisher_name": "Outlook",
-            "results": []
-        },
-        {
-            "publisher_id": "peepingmoon",
-            "publisher_name": "PeepingMoon",
-            "results": []
-        },
-        {
             "publisher_id": "rediff",
             "publisher_name": "Rediff.com",
             "results": [
@@ -508,34 +405,6 @@
             ]
         },
         {
-            "publisher_id": "south-asian-herald",
-            "publisher_name": "South Asian Herald",
-            "results": []
-        },
-        {
-            "publisher_id": "the-economic-times",
-            "publisher_name": "The Economic Times",
-            "results": []
-        },
-        {
-            "publisher_id": "the-federal",
-            "publisher_name": "The Federal",
-            "results": []
-        },
-        {
-            "publisher_id": "the-hindu",
-            "publisher_name": "The Hindu",
-            "results": [
-                {
-                    "rank": 1,
-                    "match_type": "Tavily",
-                    "title": "Watch: Rahul Gandhi: Only Congress can defeat BJP-RSS",
-                    "url": "https://www.thehindu.com/shorts/watch-rahul-gandhi-only-congress-can-defeat-bjp-rss/article69459757.ece",
-                    "is_review": "N"
-                }
-            ]
-        },
-        {
             "publisher_id": "the-indian-express",
             "publisher_name": "The Indian Express",
             "results": [
@@ -554,16 +423,6 @@
                     "is_review": "N"
                 }
             ]
-        },
-        {
-            "publisher_id": "the-quint",
-            "publisher_name": "The Quint",
-            "results": []
-        },
-        {
-            "publisher_id": "the-telegraph",
-            "publisher_name": "The Telegraph",
-            "results": []
         },
         {
             "publisher_id": "the-times-of-india",
@@ -595,6 +454,484 @@
                     "title": "‘Bhai Tera Star Hai’: More madness than amusement - The Tribune",
                     "url": "https://www.tribuneindia.com/news/movie-review/bhai-tera-star-hai-more-madness-than-amusement",
                     "is_review": "N"
+                }
+            ]
+        },
+        {
+            "publisher_id": "aaj-tak",
+            "publisher_name": "Aaj Tak",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "Kill Movie Latest News, Updates in Hindi | किल | मूवी के समाचार और अपडेट - AajTak",
+                    "url": "https://www.aajtak.in/topic/kill-movie"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "कौन है सब इंस्पेक्टर अविनाश मिश्रा उर्फ गुरुजी, ज‍िनकी र‍ियल लाइफ पर ...",
+                    "url": "https://www.aajtak.in/uttar-pradesh/video/real-life-cop-avinash-mishra-of-uttar-pradesh-web-series-randeep-hudda-rdsv-1700275-2023-05-22"
+                },
+                {
+                    "rank": 3,
+                    "match_type": "Tavily",
+                    "title": "क्या मध्य प्रदेश के रायसेन किले में आज भी मौजूद है पारस पत्थर? - AajTak",
+                    "url": "https://www.aajtak.in/india/news/video/mystery-of-paras-stone-existence-in-raisen-fort-of-madhya-pradesh-special-stories-national-news-1649278-2023-03-05"
+                }
+            ]
+        },
+        {
+            "publisher_id": "abp",
+            "publisher_name": "ABP",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "video of hot and sexy dance of woman is going viral very fast | Viral Video: साड़ी पहन कर भाभी ने किया बेहद हॉट डांस, लूप में देख रहे यूजर्स",
+                    "url": "https://www.abplive.com/trending/video-of-hot-and-sexy-dance-of-woman-is-going-viral-very-fast-2297010"
+                }
+            ]
+        },
+        {
+            "publisher_id": "amar-ujala",
+            "publisher_name": "Amar Ujala",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "Bhai Tera Star Hai Hindi Review Starring Raghav Juyal Sanjay Kapoor Nikki Walia To Niharika Nm - Entertainment News: Amar Ujala - Bhai Tera Star Hai Review:राघव जुयाल की कॉमेडी ने दिया सिरदर्द, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा",
+                    "url": "https://www.amarujala.com/entertainment/movie-review/bhai-tera-star-hai-hindi-review-starring-raghav-juyal-sanjay-kapoor-nikki-walia-to-niharika-nm-2026-07-30"
+                }
+            ]
+        },
+        {
+            "publisher_id": "bollyspice",
+            "publisher_name": "BollySpice",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "19 - BollySpice.com – The latest movies, interviews in Bollywood",
+                    "url": "https://bollyspice.com/page/19?wptouch_switch=desktop&redirect=%2F66644%2Fmadras-cafe-music-review"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "7 - BollySpice.com – The latest movies, interviews in Bollywood",
+                    "url": "https://bollyspice.com/page/7?attachment_id=fhurxsvik"
+                },
+                {
+                    "rank": 3,
+                    "match_type": "Tavily",
+                    "title": "Lalit Pandit On His Mixed Feelings On The Remix Of His Song In Bhai Tera Star Hai | BollySpice.com – The latest movies, interviews in Bollywood",
+                    "url": "https://bollyspice.com/lalit-pandit-on-his-mixed-feelings-on-the-remix-of-his-song-in-bhai-tera-star-hai"
+                },
+                {
+                    "rank": 4,
+                    "match_type": "Tavily",
+                    "title": "The comeback of remakes: Why Bollywood is revisiting songs that ...",
+                    "url": "https://bollyspice.com/the-comeback-of-remakes-why-bollywood-is-revisiting-songs-that-once-defined-an-era"
+                }
+            ]
+        },
+        {
+            "publisher_id": "business-standard",
+            "publisher_name": "Business Standard",
+            "results": []
+        },
+        {
+            "publisher_id": "cinetales",
+            "publisher_name": "Cinetales",
+            "results": []
+        },
+        {
+            "publisher_id": "dainik-bhaskar",
+            "publisher_name": "Dainik Bhaskar",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "Bhai Tera Star Hai Movie Review: Raghav Juyal Solo Lead Fails To Impress",
+                    "url": "https://www.bhaskar.com/g/entertainment/bollywood/news/bhai-tera-star-hai-movie-review-raghav-juyal-london-flop-comedy-138581177.html"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "Bhai Tera Star Hai Movie Review: Raghav Juyal Solo Lead Fails To Impress",
+                    "url": "https://divyamarathi.bhaskar.com/entertainment/bollywood/news/bhai-tera-star-hai-movie-review-raghav-juyal-solo-lead-fails-to-impress-138582078.html"
+                },
+                {
+                    "rank": 3,
+                    "match_type": "Tavily",
+                    "title": "ममता बनर्जी की भतीजी फंदे से लटकी मिलीं:  शिक्षक भर्ती घोटाले में चली गई थी नौकरी, 2 साल से डिप्रेशन में थीं",
+                    "url": "https://www.bhaskar.com/national/video/birbhum-mamata-banerjee-niece-suicide-case-teacher-scam-update-138898024.html?index=65"
+                },
+                {
+                    "rank": 4,
+                    "match_type": "Tavily",
+                    "title": "पश्चिम बंगाल में TMC के 10 बागी विधायकों को नोटिस:  विधानसभा सचिवालय ने अयोग्यता याचिका पर 7 दिन में जवाब मांगा",
+                    "url": "https://www.bhaskar.com/national/video/west-bengal-assembly-tmc-rebel-mla-disqualification-notice-139042158.html?index=32"
+                },
+                {
+                    "rank": 5,
+                    "match_type": "Tavily",
+                    "title": "श्रद्धांजलि तक नहीं दी, ये ऐसे गिद्ध हैं जिस पेड़ पर चढ़ेंगे उसे खा डालेंगे",
+                    "url": "https://www.bhaskar.com/local/uttar-pradesh/lucknow/video/lucknow-ekana-stadium-hindu-gaurav-divas-kalyan-singh-yogi-adityanath-138789729.html?type=video"
+                }
+            ]
+        },
+        {
+            "publisher_id": "dainik-jagran",
+            "publisher_name": "Dainik Jagran",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "Bhai Tera Star Hai Review: कॉमेडी के नाम पर फूहड़ता, बेकार कहानी ...",
+                    "url": "https://www.jagran.com/entertainment/reviews-bhai-tera-star-hai-film-review-raghav-juyal-performance-not-appealing-storyline-also-bad-40323676.html"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "बारिश में बना था आमिर-रानी का वो कल्ट गाना, 28 साल बाद आया उसका रीमेक",
+                    "url": "https://www.jagran.com/entertainment/bollywood-bhai-tera-star-hai-new-song-aankhon-se-tune-20-is-out-now-sung-by-alka-yagnik-and-kumar-sanu-40315326.html"
+                }
+            ]
+        },
+        {
+            "publisher_id": "deccan-chronicle",
+            "publisher_name": "Deccan Chronicle",
+            "results": []
+        },
+        {
+            "publisher_id": "deccan-herald",
+            "publisher_name": "Deccan Herald",
+            "results": []
+        },
+        {
+            "publisher_id": "firstpost",
+            "publisher_name": "Firstpost",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "Sanjay Dutt and Tiger Shroff’s ‘Baaghi 4’ movie review: 3 hours, 2 heroes, 1 disaster – Firstpost",
+                    "url": "https://www.firstpost.com/entertainment/sanjay-dutt-and-tiger-shroffs-baaghi-4-movie-review-3-hours-2-heroes-1-disaster-13931021.html/amp"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "Kisi Ka Bhai Kisi Ki Jaan movie review: Salman Khan and familia offer a perfect Eidi with this massy entertainer – Firstpost",
+                    "url": "https://www.firstpost.com/entertainment/kisi-ka-bhai-kisi-ki-jaan-movie-review-salman-khan-and-familia-offer-a-perfect-eidi-with-this-massy-entertainer-12484072.html"
+                },
+                {
+                    "rank": 3,
+                    "match_type": "Tavily",
+                    "title": "David Dhawan's 'Hai Jawani Toh Ishq Hona Hai' Trailer Out Now: Varun Dhawan trapped between Mrunal Thakur, Pooja Hegde, and tons of chaos – Firstpost",
+                    "url": "https://www.firstpost.com/entertainment/david-dhawans-hai-jawani-toh-ishq-hona-hai-trailer-out-now-varun-dhawan-trapped-between-mrunal-thakur-pooja-hegde-and-tons-of-chaos-14014342.html"
+                },
+                {
+                    "rank": 4,
+                    "match_type": "Tavily",
+                    "title": "Tera Intezaar movie review: Sunny Leone-Arbaaz Khan's messy mystery will leave you floundering – Firstpost",
+                    "url": "http://www.firstpost.com/entertainment/tera-intezaar-movie-review-sunny-leone-arbaaz-khans-messy-mystery-will-leave-you-floundering-4236749.html"
+                },
+                {
+                    "rank": 5,
+                    "match_type": "Tavily",
+                    "title": "Mum Bhai review: Angad Bedi's crime series is an amalgamation of every Indian gangster movie ever – Firstpost",
+                    "url": "https://www.firstpost.com/entertainment/mum-bhai-review-angad-bedis-crime-series-is-an-amalgamation-of-every-indian-gangster-movie-ever-9011491.html"
+                },
+                {
+                    "rank": 6,
+                    "match_type": "Tavily",
+                    "title": "Raat Baaki Hai movie review: Annup Sonii, Paoli Dam's ZEE5 film confuses vagueness for intrigue – Firstpost",
+                    "url": "https://www.firstpost.com/entertainment/raat-baaki-hai-movie-review-annup-sonii-paoli-dams-zee5-film-confuses-vagueness-for-intrigue-9535801.html"
+                },
+                {
+                    "rank": 7,
+                    "match_type": "Tavily",
+                    "title": "Raat Baaki Hai movie review: Annup Sonii, Paoli Dam's ZEE5 film confuses vagueness for intrigue – Firstpost",
+                    "url": "https://www.firstpost.com/entertainment/raat-baaki-hai-movie-review-annup-sonii-paoli-dams-zee5-film-confuses-vagueness-for-intrigue-9535801.html/amp"
+                }
+            ]
+        },
+        {
+            "publisher_id": "hindustan",
+            "publisher_name": "Hindustan",
+            "results": []
+        },
+        {
+            "publisher_id": "ians-live",
+            "publisher_name": "IANS Live",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "Anil Kapoor explains ‘deep philosophy’ behind iconic ‘Majnu Bhai’ painting from ‘Welcome’",
+                    "url": "https://ianslive.in/anil-kapoor-explains-deep-philosophy-behind-iconic-majnu-bhai-painting-from-welcome--20260304074633"
+                }
+            ]
+        },
+        {
+            "publisher_id": "lensmen-reviews",
+            "publisher_name": "Lensmen Reviews",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "Manglish Review |",
+                    "url": "https://lensmenreviews.com/manglish-malayalam-movie-review"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "Main Tera Hero Review |",
+                    "url": "https://lensmenreviews.com/main-tera-hero-bollywood-hindi-movie-review"
+                }
+            ]
+        },
+        {
+            "publisher_id": "lokmat",
+            "publisher_name": "Lokmat",
+            "results": []
+        },
+        {
+            "publisher_id": "mint",
+            "publisher_name": "Mint",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "Bhai Tera Star Hai Twitter review: Raghav Juyal delivers sincere performance; but the movie… | Mint",
+                    "url": "https://www.livemint.com/entertainment/bhai-tera-star-hai-twitter-review-raghav-juyal-delivers-sincere-performance-but-the-movie-11785420710380.html"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "Leaked video reveals Salman Khan's role in mysterious ‘Hollywood debut’; Bhai gets trolled for playing autowala | Mint",
+                    "url": "https://www.livemint.com/entertainment/leaked-video-reveals-salman-khans-role-in-hollywood-debut-bhai-gets-trolled-for-playing-autowala-11740121470369.html"
+                },
+                {
+                    "rank": 3,
+                    "match_type": "Tavily",
+                    "title": "Leaked video reveals Salman Khan's role in mysterious ‘Hollywood debut’; Bhai gets trolled for playing autowala | Mint",
+                    "url": "https://www.livemint.com/entertainment/leaked-video-reveals-salman-khans-role-in-hollywood-debut-bhai-gets-trolled-for-playing-autowala/amp-11740121470369.html"
+                },
+                {
+                    "rank": 4,
+                    "match_type": "Tavily",
+                    "title": "Tu Meri Main Tera Twitter review: Beautiful story or cringe? Kartik Aaryan-Ananya Panday's movie gets mixed reactions | Mint",
+                    "url": "https://www.livemint.com/entertainment/tu-meri-main-tera-twitter-review-beautiful-story-or-cringe-kartik-aaryan-ananya-pandays-movie-gets-mixed-reactions-11766649672993.html"
+                },
+                {
+                    "rank": 5,
+                    "match_type": "Tavily",
+                    "title": "Karan Johar's upcoming movie Tu Meri Main Tera Main Tera Tu Meri piques interest, netizens ask ‘ye kya naam hai?’ | Mint",
+                    "url": "https://www.livemint.com/entertainment/karan-johars-upcoming-movie-tu-meri-main-tera-main-tera-tu-meri-kartik-aaryan-ananya-panday-netizens-react-11748912013563.html"
+                }
+            ]
+        },
+        {
+            "publisher_id": "navbharat-times",
+            "publisher_name": "Navbharat Times",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "'भाई तेरा स्‍टार है' रिव्यू: लाउड कॉमेडी और लचर स्‍क्रीनप्‍ले, 'स्टार' नहीं बन पाए राघव जुयाल - bhai tera star hai movie review in hindi starring raghav juyal sanjay kapoor niki walia niharika nm directed by vivek b agrawal - Navbharat Times",
+                    "url": "https://navbharattimes.indiatimes.com/entertainment/movie-review/bhai-tera-star-hai-movie-review-in-hindi-starring-raghav-juyal-sanjay-kapoor-niki-walia-niharika-nm-directed-by-vivek-b-agrawal/moviereview/132732860.cms"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "नई मूवी रिलीज: 'स्‍पाइडर-मैन 4' या बाबा नीम करौली पर बनी 'हनुमान अंश', सिनेमाघरों में 4 फिल्‍में, OMD पोस्‍टपोन - movie releasing this week in india in theatre watch spider man brand new day bhai tera star hai hanuman ansh - Navbharat Times",
+                    "url": "https://navbharattimes.indiatimes.com/entertainment/news-from-bollywood/movie-releasing-this-week-in-india-in-theatre-watch-spider-man-brand-new-day-bhai-tera-star-hai-hanuman-ansh/articleshow/132661099.cms"
+                }
+            ]
+        },
+        {
+            "publisher_id": "outlook",
+            "publisher_name": "Outlook",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "Bhai Tera Star Hai First Look: Raghav Juyal's New Film Revealed | Outlook India",
+                    "url": "https://www.outlookindia.com/art-entertainment/bhai-tera-star-hai-first-look-raghav-juyals-bollywood-dreamer-ajay-singh-shines-in-london-set-entertainer"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "Bhai Tera Star Hai Trailer: Raghav Juyal Stars in New Comedy | Outlook India",
+                    "url": "https://www.outlookindia.com/art-entertainment/bhai-tera-star-hai-trailer-raghav-juyal-stars-in-new-comedy"
+                },
+                {
+                    "rank": 3,
+                    "match_type": "Tavily",
+                    "title": "‘Kisi Ka Bhai Kisi Ki Jaan’ Movie Review: Salman Khan, Even You Look Bored | Outlook India",
+                    "url": "https://www.outlookindia.com/art-entertainment/-kisi-ka-bhai-kisi-ki-jaan-movie-review-salman-khan-even-you-look-bored-movie_reviews-280361"
+                }
+            ]
+        },
+        {
+            "publisher_id": "peepingmoon",
+            "publisher_name": "PeepingMoon",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "Raghav Juyal’s Biggest Leap Yet: Bhai Tera Star Hai Marks a Major New Chapter in His Career",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82173/Raghav-Juyals-Biggest-Leap-Yet-Bhai-Tera-Star-Hai-Marks-a-Major-New-Chapter-in-His-Career.html"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "’Bhai Tera Star Hai’ introduces its vibrant ensemble cast featuring Raghav Juyal, Sanjay Kapoor, Barkha Singh and more",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82162/Bhai-Tera-Star-Hai-introduces-its-vibrant-ensemble-cast-featuring-Raghav-Juyal-Sanjay-Kapoor-Barkha-Singh-and-more.html"
+                },
+                {
+                    "rank": 3,
+                    "match_type": "Tavily",
+                    "title": "RAGHAV JUYAL LED COMEDY BHAI TERA STAR HAI GOES ON FLOORS IN LONDON",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/81656/RAGHAV-JUYAL-LED-COMEDY-BHAI-TERA-STAR-HAI-GOES-ON-FLOORS-IN-LONDON.html"
+                },
+                {
+                    "rank": 4,
+                    "match_type": "Tavily",
+                    "title": "Vivek B Agrawal Unveil First Poster of Bhai Tera Star Hai.. Talent Loading…",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82130/Vivek-B-Agrawal-Unveil-First-Poster-of-Bhai-Tera-Star-Hai-Talent-Loading.html"
+                },
+                {
+                    "rank": 5,
+                    "match_type": "Tavily",
+                    "title": "‘Bhai Tera Star Hai’ Trailer Out Now: Raghav Juyal Brings Comedy And Chaos To The Big Screen",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82168/Bhai-Tera-Star-Hai-Trailer-Out-Now-Raghav-Juyal-Brings-Comedy-And-Chaos-To-The-Big-Screen.html"
+                },
+                {
+                    "rank": 6,
+                    "match_type": "Tavily",
+                    "title": "Raghav Juyal’s Bhai Tera Star Hai Trailer to Release Tomorrow",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82166/Raghav-Juyals-Bhai-Tera-Star-Hai-Trailer-to-Release-Tomorrow.html"
+                },
+                {
+                    "rank": 7,
+                    "match_type": "Tavily",
+                    "title": "The monsoon just found its anthem! ‘Aankhon Se Tune 2.0’ from Bhai Tera Star Hai revives a timeless classic with a fresh romantic twist",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82198/The-monsoon-just-found-its-anthem-Aankhon-Se-Tune--from-Bhai-Tera-Star-Hai-revives-a-timeless-classic-with-a-fresh-romantic-twist.html"
+                },
+                {
+                    "rank": 8,
+                    "match_type": "Tavily",
+                    "title": "Niki Walia On Reuniting With Sanjay Kapoor In Bhai Tera Star Hai: 'He's One Of The Most Fun Co-stars To Work With'",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/82232/Niki-Walia-On-Reuniting-With-Sanjay-Kapoor-In-Bhai-Tera-Star-Hai-Hes-One-Of-The-Most-Fun-Co-stars-To-Work-With.html"
+                },
+                {
+                    "rank": 9,
+                    "match_type": "Tavily",
+                    "title": "Bhai ne mera ghar basa diya: Rakhi Sawant reveals Salman Khan called Adil Khan Durrani after wedding reports surfaced",
+                    "url": "https://www.peepingmoon.com/entertainment-news/news/68143/Bhai-ne-mera-ghar-basa-diya-Rakhi-Sawant-reveals-Salman-Khan-called-Adil-Khan-Durrani-after-wedding-reports-surfaced.html"
+                }
+            ]
+        },
+        {
+            "publisher_id": "south-asian-herald",
+            "publisher_name": "South Asian Herald",
+            "results": []
+        },
+        {
+            "publisher_id": "the-economic-times",
+            "publisher_name": "The Economic Times",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "holi bhai dooj aaj ya kal hai: Latest News & Videos, Photos about holi bhai dooj aaj ya kal hai | The Economic Times - Page 1",
+                    "url": "https://economictimes.indiatimes.com/topic/holi-bhai-dooj-aaj-ya-kal-hai"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "holi bhai dooj tilak kab lagana hai: Latest News & Videos, Photos about holi bhai dooj tilak kab lagana hai | The Economic Times - Page 1",
+                    "url": "https://economictimes.indiatimes.com/topic/holi-bhai-dooj-tilak-kab-lagana-hai"
+                },
+                {
+                    "rank": 3,
+                    "match_type": "Tavily",
+                    "title": "holi bhai dooj kab hai: Latest News & Videos, Photos about holi bhai dooj kab hai | The Economic Times - Page 1",
+                    "url": "https://economictimes.indiatimes.com/topic/holi-bhai-dooj-kab-hai"
+                }
+            ]
+        },
+        {
+            "publisher_id": "the-federal",
+            "publisher_name": "The Federal",
+            "results": []
+        },
+        {
+            "publisher_id": "the-hindu",
+            "publisher_name": "The Hindu",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "‘Tu Meri Main Tera Main Tera Tu Meri’ movie review: Ananya Panday brings fresh energy to this yawn fest - The Hindu",
+                    "url": "https://www.thehindu.com/entertainment/movies/tu-meri-main-tera-main-tera-tu-meri-movie-review-ananya-panday-brings-fresh-energy-to-this-yawn-fest-kartik-aaryan/article70436626.ece"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "‘Kisi Ka Bhai Kisi Ki Jaan’ movie review: Salman Khan parodies himself in a silly action-drama - The Hindu",
+                    "url": "https://www.thehindu.com/entertainment/movies/kisi-ka-bhai-kisi-ki-jaan-movie-review-salman-khan-parodies-himself-in-a-silly-actioner/article66763514.ece/amp"
+                },
+                {
+                    "rank": 3,
+                    "match_type": "Tavily",
+                    "title": "‘Kisi Ka Bhai Kisi Ki Jaan’ movie review: Salman Khan parodies himself in a silly action-drama - The Hindu",
+                    "url": "https://www.thehindu.com/entertainment/movies/kisi-ka-bhai-kisi-ki-jaan-movie-review-salman-khan-parodies-himself-in-a-silly-actioner/article66763514.ece"
+                }
+            ]
+        },
+        {
+            "publisher_id": "the-quint",
+            "publisher_name": "The Quint",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "Film review: ‘Tiger Zinda Hai’ Will Make Bhai Fans Cheer & Everyone Else Grin",
+                    "url": "https://www.thequint.com/entertainment/tiger-zinda-hai-film-review"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "This Spoof of Salman’s ‘Main Hoon Hero Tera’ is Wickedly Funny",
+                    "url": "https://www.thequint.com/entertainment/this-spoof-of-salmans-main-hoon-hero-tera-is-wickedly-funny"
+                }
+            ]
+        },
+        {
+            "publisher_id": "the-telegraph",
+            "publisher_name": "The Telegraph",
+            "results": [
+                {
+                    "rank": 1,
+                    "match_type": "Tavily",
+                    "title": "Raghav Juyal King | Raghav Juyal dismisses rumours of playing young antagonist in Shah Rukh Khan’s ‘King’ - Telegraph India",
+                    "url": "https://www.telegraphindia.com/entertainment/raghav-juyal-dismisses-rumours-of-playing-young-antagonist-in-shah-rukh-khans-king/cid/2172702"
+                },
+                {
+                    "rank": 2,
+                    "match_type": "Tavily",
+                    "title": "Bhai Tera Star Hai trailer | ‘Bhai Tera Star Hai’ trailer- Raghav Juyal lands a chance to play Salman Khan’s brother - Telegraph India",
+                    "url": "https://www.telegraphindia.com/entertainment/bhai-tera-star-hai-trailer-raghav-juyal-lands-a-chance-to-play-salman-khans-brother/cid/2169331"
+                },
+                {
+                    "rank": 3,
+                    "match_type": "Tavily",
+                    "title": "Jo Tera Hai Woh Mera Hai | Paresh Rawal's Jo Tera Hai Woh Mera Hai to premiere on JioCinema on September 20 - Telegraph India",
+                    "url": "https://www.telegraphindia.com/entertainment/paresh-rawals-jo-tera-hai-woh-mera-hai-to-premiere-on-jiocinema-on-september-20/cid/2047911"
                 }
             ]
         }
