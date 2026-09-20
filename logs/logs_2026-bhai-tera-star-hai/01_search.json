@@ -1,1 +1,177 @@
-{}
+{
+    "2026-09-20T04:54:40.637022+00:00": {
+        "publishers_attempted": 42,
+        "publishers_succeeded": 13,
+        "publishers_failed": 29,
+        "publisher_details": {
+            "aaj-tak": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "abp": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "amar-ujala": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "bollywood-hungama": {
+                "status": "SUCCESS",
+                "results_found": 18
+            },
+            "bollyspice": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "business-standard": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "cinema-express": {
+                "status": "SUCCESS",
+                "results_found": 1
+            },
+            "cinetales": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "dainik-bhaskar": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "dainik-jagran": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "deccan-chronicle": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "deccan-herald": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "filmfare": {
+                "status": "SUCCESS",
+                "results_found": 1
+            },
+            "firstpost": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "free-press-journal": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "hindustan": {
+                "status": "SUCCESS",
+                "results_found": 1
+            },
+            "hindustan-times": {
+                "status": "SUCCESS",
+                "results_found": 1
+            },
+            "ians-live": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "india-today": {
+                "status": "SUCCESS",
+                "results_found": 1
+            },
+            "koimoi": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "lensmen-reviews": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "lokmat": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "mid-day": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "mint": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "moneycontrol": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "movie-talkies": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "navbharat-times": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "ndtv": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "results_found": 3
+            },
+            "outlook": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "peepingmoon": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "rediff": {
+                "status": "SUCCESS",
+                "results_found": 1
+            },
+            "scroll-in": {
+                "status": "SUCCESS",
+                "results_found": 1
+            },
+            "south-asian-herald": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "the-economic-times": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "the-federal": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "the-hindu": {
+                "status": "SUCCESS",
+                "results_found": 3
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "results_found": 2
+            },
+            "the-quint": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "the-telegraph": {
+                "status": "FAILED",
+                "reason": "No Results"
+            },
+            "the-times-of-india": {
+                "status": "SUCCESS",
+                "results_found": 3
+            },
+            "the-tribune": {
+                "status": "SUCCESS",
+                "results_found": 1
+            }
+        }
+    }
+}
