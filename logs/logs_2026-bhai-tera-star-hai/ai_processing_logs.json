@@ -2,7 +2,7 @@
     "aaj-tak": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:05:01.144073+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -11,7 +11,7 @@
     "abp": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:05:14.580053+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -20,7 +20,7 @@
     "amar-ujala": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:05:28.066741+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -38,7 +38,7 @@
     "bollyspice": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:05:41.563043+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -119,7 +119,7 @@
     "firstpost": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:05:55.483735+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -155,7 +155,7 @@
     "ians-live": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:06:09.290288+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -182,7 +182,7 @@
     "lensmen-reviews": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:06:23.052360+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -209,7 +209,7 @@
     "mint": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "2026-09-20T08:51:51.695174+00:00",
+        "02-C_classify-ai": "2026-09-20T09:06:36.574062+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -236,7 +236,7 @@
     "navbharat-times": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:06:50.183021+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -263,7 +263,7 @@
     "outlook": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:07:03.671314+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -272,7 +272,7 @@
     "peepingmoon": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:07:17.153205+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -308,7 +308,7 @@
     "the-economic-times": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:07:30.602945+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -326,7 +326,7 @@
     "the-hindu": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "2026-09-20T08:52:05.139736+00:00",
+        "02-C_classify-ai": "2026-09-20T09:07:44.161223+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -344,7 +344,7 @@
     "the-quint": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:07:57.855859+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
@@ -353,7 +353,7 @@
     "the-telegraph": {
         "01-C_search-gemini": "PENDING",
         "02-C_identify-ai": "PENDING",
-        "02-C_classify-ai": "PENDING",
+        "02-C_classify-ai": "2026-09-20T09:08:11.249356+00:00",
         "04-A-2_clean": "PENDING",
         "04-A-3_highlight": "PENDING",
         "04-B-2_metadata-ai": "PENDING",
