@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 
 import os
+import sys
+import time
 from urllib.parse import urlparse
 from tavily import TavilyClient
+
+# Force unbuffered stdout for real-time streaming in GitHub Actions
+sys.stdout.reconfigure(line_buffering=True)
 
 PUBLISHERS = [
   { "id": "aaj-tak", "name": "Aaj Tak", "url": "https://www.aajtak.in", "category": "text-media-tv-hindi-news", "active": True },
@@ -60,59 +65,70 @@ def main():
         return
 
     client = TavilyClient(api_key=api_key)
-    
-    # 1. Broad search query prioritizing the movie name, year, and intent
+
     query = "Bhai Tera Star Hai 2026 movie review"
 
-    # 2. Build a map of our active publisher domains
-    # Maps e.g., "ndtv.com" -> { publisher dict }
     publisher_map = {extract_domain(p["url"]): p for p in PUBLISHERS if p["active"]}
-    
-    # Dictionaries to hold categorized results
+    active_domains = list(publisher_map.keys())
+
     matched_results = {p["id"]: [] for p in PUBLISHERS if p["active"]}
     unmatched_results = []
+    all_raw_results = []
 
     print("=" * 80)
-    print(" DIAGNOSTIC TEST: TAVILY API (BROAD SEARCH & LOCAL FILTERING)")
+    print(" DIAGNOSTIC TEST: TAVILY API (3-SHOT CHUNKING & LOCAL FILTERING)")
     print(f" Target Query : {query}")
-    print(f" Tracking     : {len(publisher_map)} active publishers")
+    print(f" Tracking     : {len(active_domains)} active publishers")
     print("=" * 80)
+
+    # Slice domains into chunks of 20
+    # For 42 domains, this yields chunks of lengths: 20, 20, and 2.
+    chunk_size = 20
+    domain_chunks = [active_domains[i:i + chunk_size] for i in range(0, len(active_domains), chunk_size)]
 
     try:
-        # 3. Fire the broad search.
-        # Requesting max_results=100 tells Tavily to return its absolute maximum limit.
-        response = client.search(
-            query=query,
-            search_depth="advanced",
-            max_results=100
-        )
+        # Fire sequential API calls for each chunk
+        for idx, chunk in enumerate(domain_chunks, start=1):
+            print(f"\n[API CALL {idx}/{len(domain_chunks)}] Checking {len(chunk)} domains...")
+            
+            response = client.search(
+                query=query,
+                search_depth="basic",  # Uses 1 credit per call instead of 2
+                max_results=20,
+                include_domains=chunk  # Forces Tavily to only search within this chunk
+            )
+            
+            chunk_results = response.get("results", [])
+            all_raw_results.extend(chunk_results)
+            print(f"  -> Retrieved {len(chunk_results)} results for chunk {idx}.")
+            
+            # Polite delay between calls
+            if idx < len(domain_chunks):
+                time.sleep(1)
 
-        results = response.get("results", [])
-        print(f"-> Tavily returned a total of {len(results)} results.\n")
+        print(f"\n-> Tavily returned a grand total of {len(all_raw_results)} results across {len(domain_chunks)} calls.\n")
 
-        # 4. Filter & categorize the results locally in Python
-        for item in results:
+        # Filter & categorize the combined results locally
+        for item in all_raw_results:
             item_url = item.get("url", "")
             item_domain = extract_domain(item_url)
-            
-            # Check if this item's domain perfectly matches OR ends with any of our publisher domains 
-            # (This catches subdomains like "movies.ndtv.com" pointing back to "ndtv.com")
+
             matched_pub_id = None
             for pub_domain, pub_data in publisher_map.items():
                 if item_domain == pub_domain or item_domain.endswith("." + pub_domain):
                     matched_pub_id = pub_data["id"]
                     break
-            
+
             if matched_pub_id:
                 matched_results[matched_pub_id].append(item)
             else:
                 unmatched_results.append(item)
 
-        # 5. Print results publisher by publisher
+        # Print results publisher by publisher
         print("=" * 80)
         print(" MATCHED PUBLISHER RESULTS ")
         print("=" * 80)
-        
+
         matches_found = 0
         for pub_id, pub_items in matched_results.items():
             if pub_items:
@@ -127,19 +143,22 @@ def main():
         if matches_found == 0:
             print("\n  [!] No matches found for any of the tracked publishers.")
 
-        # 6. Print the unmatched results
+        # Print the unmatched results (This should ideally be empty since we used include_domains)
         print("\n" + "=" * 80)
         print(f" UNMATCHED RESULTS (Not in tracked publishers) [{len(unmatched_results)} result(s)]")
         print("=" * 80)
-        
-        for r_idx, item in enumerate(unmatched_results, start=1):
-            print(f"\n  {r_idx}. Domain: {extract_domain(item.get('url'))}")
-            print(f"     Title : {item.get('title')}")
-            print(f"     URL   : {item.get('url')}")
-            print(f"     Score : {item.get('score')}")
+
+        if unmatched_results:
+            for r_idx, item in enumerate(unmatched_results, start=1):
+                print(f"\n  {r_idx}. Domain: {extract_domain(item.get('url'))}")
+                print(f"     Title : {item.get('title')}")
+                print(f"     URL   : {item.get('url')}")
+                print(f"     Score : {item.get('score')}")
+        else:
+            print("\n  [✓] Zero unmatched results. Tavily perfectly respected the include_domains filter.")
 
         print(f"\n" + "=" * 80)
-        print(f" SUMMARY: Total {len(results)} | Matched: {matches_found} | Unmatched: {len(unmatched_results)}")
+        print(f" SUMMARY: Total {len(all_raw_results)} | Matched: {matches_found} | Unmatched: {len(unmatched_results)}")
         print("=" * 80)
 
     except Exception as e:
