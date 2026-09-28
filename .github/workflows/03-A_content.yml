@@ -1,0 +1,54 @@
+name: Review Parser Pipeline
+
+on:
+  workflow_dispatch:  # Allows you to trigger the run manually from the GitHub Actions tab
+  schedule:
+    - cron: '0 */6 * * *'  # Automatically runs every 6 hours (optional, adjust as needed)
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-genai curl_cffi playwright playwright-stealth beautifulsoup4 requests
+
+      - name: Install Playwright Browsers
+        run: |
+          playwright install chromium
+
+      - name: Run 02 - Deterministic Identification
+        run: python -u 02_identify.py
+
+      - name: Run 02-C - AI Semantic Identification
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -u 02-C_identify-ai.py
+
+      - name: Run 03 - HTML Downloader
+        env:
+          SCRAPE_DO_TOKEN: ${{ secrets.SCRAPE_DO_TOKEN }}
+        run: python -u 03_download.py
+
+      - name: Run 03a - Article Text Extraction
+        run: python -u 03a_content.py
+
+      - name: Commit and Push Updated Data
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ logs/
+          git commit -m "Auto-update pipeline data and web content [skip ci]" || echo "No changes to commit"
+          git push origin main
