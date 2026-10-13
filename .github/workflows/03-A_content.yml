@@ -43,7 +43,7 @@ jobs:
         run: python -u 03_download.py
 
       - name: Run 03a - Article Text Extraction
-        run: python -u 03a_content.py
+        run: python -u 03-a_content.py
 
       - name: Commit and Push Updated Data
         run: |
