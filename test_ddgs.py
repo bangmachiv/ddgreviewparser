@@ -2,23 +2,30 @@
 #!/usr/bin/env python3
 
 """
-DDGS SEARCH BACKEND DIAGNOSTIC
+DDGS MOVIE REVIEW SEARCH DIAGNOSTIC
+
 Designed for GitHub Actions.
 
-Tests multiple query styles across multiple search
-backends and prints up to 10 results per search.
+Focus:
+1. Yahoo, Startpage, DuckDuckGo
+2. Movie-review URL discovery
+3. Publisher-specific site searches
+4. Backend reliability
+5. Result quality and malformed titles
 
-No API key required.
+Prints up to 10 results per search.
+Saves detailed JSON report.
 """
 
 import os
 import sys
+import json
 import time
 import logging
 import traceback
-import platform
 from datetime import datetime, timezone
-from importlib.metadata import version, PackageNotFoundError
+from urllib.parse import urlparse
+from importlib.metadata import version
 
 from ddgs import DDGS
 
@@ -27,68 +34,129 @@ from ddgs import DDGS
 # CONFIGURATION
 # ============================================================
 
+BACKENDS = [
+    "yahoo",
+    "startpage",
+    "duckduckgo",
+]
+
 MAX_RESULTS = 10
-MAX_RETRIES = 2
-RETRY_DELAY = 3
-QUERY_COOLDOWN = 5
 REQUEST_TIMEOUT = 25
+
+# Avoid aggressive repeated requests.
+MAX_RETRIES = 1
+QUERY_COOLDOWN = 8
 
 REGION = "in-en"
 
-# Override through GitHub Actions environment variables.
-MAX_RESULTS = int(os.getenv("MAX_RESULTS", MAX_RESULTS))
-QUERY_COOLDOWN = float(
-    os.getenv("QUERY_COOLDOWN", QUERY_COOLDOWN)
-)
+REPORT_FILE = "ddgs_diagnostic_results.json"
 
-BACKENDS = [
-    "duckduckgo",
-    "brave",
-    "bing",
-    "google",
-    "yahoo",
-    "auto",
-]
+# ============================================================
+# SEARCH TEST CASES
+# ============================================================
 
-MOVIE_NAME = "Bhai Tera Star Hai"
-MOVIE_YEAR = "2026"
+SEARCH_TESTS = [
 
-SEARCH_QUERIES = [
+    # ---- General movie discovery ----
+
     {
         "id": "Q1",
-        "type": "General Connectivity",
-        "query": "Python programming language",
+        "category": "Broad Movie Search",
+        "query": "Dangal 2016 movie review",
+        "expected_domain": None,
     },
+
     {
         "id": "Q2",
-        "type": "General Movie Review",
-        "query": "Dangal movie review",
+        "category": "Exact Movie Search",
+        "query": '"Dangal" 2016 movie review',
+        "expected_domain": None,
     },
+
+    # ---- Publisher-specific searches ----
+
     {
         "id": "Q3",
-        "type": "Exact Movie Title",
-        "query": '"Dangal" movie review',
+        "category": "Times of India",
+        "query": (
+            '"Dangal" movie review '
+            "site:timesofindia.indiatimes.com"
+        ),
+        "expected_domain": "timesofindia.indiatimes.com",
     },
+
     {
         "id": "Q4",
-        "type": "Exact Title With Year",
-        "query": '"Dangal" 2016 movie review',
-    },
-    {
-        "id": "Q5",
-        "type": "Publisher-Specific Review",
+        "category": "Hindustan Times",
         "query": (
             '"Dangal" movie review '
             "site:hindustantimes.com"
         ),
+        "expected_domain": "hindustantimes.com",
     },
+
+    {
+        "id": "Q5",
+        "category": "Filmfare",
+        "query": (
+            '"Dangal" movie review '
+            "site:filmfare.com"
+        ),
+        "expected_domain": "filmfare.com",
+    },
+
     {
         "id": "Q6",
-        "type": "Target Movie Exact Search",
+        "category": "Bollywood Hungama",
         "query": (
-            f'"{MOVIE_NAME}" '
-            f"{MOVIE_YEAR} movie review"
+            '"Dangal" movie review '
+            "site:bollywoodhungama.com"
         ),
+        "expected_domain": "bollywoodhungama.com",
+    },
+
+    # ---- Target movie discovery ----
+
+    {
+        "id": "Q7",
+        "category": "Target Movie Broad",
+        "query": (
+            '"Bhai Tera Star Hai" '
+            "2026 movie review"
+        ),
+        "expected_domain": None,
+    },
+
+    {
+        "id": "Q8",
+        "category": "Target Movie Times of India",
+        "query": (
+            '"Bhai Tera Star Hai" review '
+            "site:timesofindia.indiatimes.com"
+        ),
+        "expected_domain": "timesofindia.indiatimes.com",
+    },
+
+    {
+        "id": "Q9",
+        "category": "Target Movie Bollywood Hungama",
+        "query": (
+            '"Bhai Tera Star Hai" review '
+            "site:bollywoodhungama.com"
+        ),
+        "expected_domain": "bollywoodhungama.com",
+    },
+
+    # ---- Another Hindi film ----
+
+    {
+        "id": "Q10",
+        "category": "Another Movie Publisher Search",
+        "query": (
+            '"3 Idiots" movie review '
+            "site:hindustantimes.com"
+        ),
+        "expected_domain": "hindustantimes.com",
     },
 ]
 
@@ -104,66 +172,112 @@ logging.basicConfig(
     force=True,
 )
 
-logger = logging.getLogger("ddgs-diagnostic")
+logger = logging.getLogger("ddgs-test")
 
 
-def separator(char="=", length=90):
-    print(char * length, flush=True)
-
-
-def package_version():
-    try:
-        return version("ddgs")
-    except PackageNotFoundError:
-        return "Unknown"
+def separator(char="=", width=90):
+    print(char * width, flush=True)
 
 
 # ============================================================
-# SEARCH FUNCTION
+# URL VALIDATION
+# ============================================================
+
+def normalize_domain(url):
+    try:
+        hostname = urlparse(url).hostname or ""
+        return hostname.lower().removeprefix("www.")
+    except Exception:
+        return ""
+
+
+def domain_matches(url, expected_domain):
+
+    if not expected_domain:
+        return None
+
+    actual = normalize_domain(url)
+    expected = expected_domain.lower().removeprefix("www.")
+
+    return (
+        actual == expected
+        or actual.endswith("." + expected)
+    )
+
+
+# ============================================================
+# RESULT QUALITY
+# ============================================================
+
+def check_result_quality(result, expected_domain):
+
+    title = str(result.get("title") or "")
+    url = str(result.get("href") or "")
+    snippet = str(result.get("body") or "")
+
+    domain_match = domain_matches(
+        url,
+        expected_domain
+    )
+
+    valid_url = (
+        urlparse(url).scheme in ("http", "https")
+        and bool(urlparse(url).hostname)
+    )
+
+    # Heuristic only. A long title may be legitimate.
+    # This flags suspicious results for manual review.
+    suspicious_title = (
+        len(title) > 160
+        or title.count("...") >= 3
+    )
+
+    return {
+        "title": title,
+        "url": url,
+        "snippet": snippet,
+        "domain_match": domain_match,
+        "valid_url": valid_url,
+        "suspicious_title": suspicious_title,
+    }
+
+
+# ============================================================
+# SEARCH EXECUTION
 # ============================================================
 
 def execute_search(query, backend):
-    """
-    Run one search with retries.
 
-    Returns:
-        {
-            status: SUCCESS / EMPTY / ERROR,
-            results: list,
-            elapsed: float,
-            attempts: int,
-            error: str or None
-        }
-    """
-
+    started = time.perf_counter()
     last_error = None
-    total_start = time.perf_counter()
 
     for attempt in range(1, MAX_RETRIES + 1):
 
         logger.info(
-            "Search attempt %s/%s | backend=%s",
+            "Backend=%s | Attempt=%d/%d",
+            backend,
             attempt,
             MAX_RETRIES,
-            backend,
         )
 
         try:
-            # Fresh client for each attempt.
+
             with DDGS(timeout=REQUEST_TIMEOUT) as client:
+
                 results = list(
                     client.text(
                         query,
                         region=REGION,
-                        safesearch="moderate",
                         max_results=MAX_RESULTS,
                         backend=backend,
+                        safesearch="moderate",
                     )
                 )
 
-            elapsed = time.perf_counter() - total_start
+            elapsed = time.perf_counter() - started
 
             if results:
+
                 return {
                     "status": "SUCCESS",
                     "results": results,
@@ -172,12 +286,7 @@ def execute_search(query, backend):
                     "error": None,
                 }
 
-            logger.warning(
-                "Backend %s returned zero results",
-                backend,
-            )
-
-            last_error = "Empty results"
+            last_error = "No results returned"
 
         except Exception as exc:
 
@@ -186,72 +295,120 @@ def execute_search(query, backend):
             )
 
             logger.error(
-                "SEARCH ERROR | backend=%s | attempt=%s",
-                backend,
-                attempt,
+                "Search failed: %s",
+                last_error
             )
 
-            logger.error(last_error)
             traceback.print_exc(file=sys.stdout)
 
         if attempt < MAX_RETRIES:
-            delay = RETRY_DELAY * attempt
+
+            delay = 15 * attempt
 
             logger.info(
-                "Retrying after %s seconds",
-                delay,
+                "Retry cooldown: %d seconds",
+                delay
             )
 
             time.sleep(delay)
 
-    elapsed = time.perf_counter() - total_start
-
-    status = (
-        "EMPTY"
-        if last_error == "Empty results"
-        else "ERROR"
-    )
-
     return {
-        "status": status,
+        "status": (
+            "ERROR" if last_error != "No results returned"
+            else "EMPTY"
+        ),
         "results": [],
-        "elapsed": elapsed,
+        "elapsed": time.perf_counter() - started,
         "attempts": MAX_RETRIES,
         "error": last_error,
     }
 
 
 # ============================================================
-# PRINT RESULTS
+# PRINT INDIVIDUAL SEARCH
 # ============================================================
 
-def print_search_results(outcome):
+def print_results(test, outcome):
 
-    separator("-")
+    expected_domain = test["expected_domain"]
 
-    print(f"STATUS       : {outcome['status']}")
-    print(f"RESULT COUNT : {len(outcome['results'])}")
-    print(f"ELAPSED TIME : {outcome['elapsed']:.2f}s")
-    print(f"ATTEMPTS     : {outcome['attempts']}")
+    print("\nRESULT STATUS:", outcome["status"])
+    print("RESULT COUNT :", len(outcome["results"]))
+    print("TIME         :", f"{outcome['elapsed']:.2f}s")
 
     if outcome["error"]:
-        print(f"ERROR        : {outcome['error']}")
+        print("ERROR        :", outcome["error"])
 
-    if outcome["results"]:
+    validated_results = []
 
-        print("\nSEARCH RESULTS:")
+    for index, result in enumerate(
+        outcome["results"][:MAX_RESULTS],
+        start=1,
+    ):
 
-        for index, result in enumerate(
-            outcome["results"][:MAX_RESULTS],
-            start=1,
-        ):
+        item = check_result_quality(
+            result,
+            expected_domain
+        )
 
-            print(f"\n  RESULT {index}")
-            print(f"  Title   : {result.get('title', '')}")
-            print(f"  URL     : {result.get('href', '')}")
-            print(f"  Snippet : {result.get('body', '')}")
+        validated_results.append(item)
 
+        print()
+        separator("-")
+
+        print(f"RESULT {index}")
+
+        print("TITLE   :", item["title"])
+        print("URL     :", item["url"])
+        print("SNIPPET :", item["snippet"])
+
+        if expected_domain:
+
+            print(
+                "DOMAIN MATCH:",
+                "YES" if item["domain_match"] else "NO"
+            )
+
+        print(
+            "VALID URL:",
+            "YES" if item["valid_url"] else "NO"
+        )
+
+        print(
+            "SUSPICIOUS TITLE:",
+            "YES" if item["suspicious_title"] else "NO"
+        )
+
+    matching = sum(
+        item["domain_match"] is True
+        for item in validated_results
+    )
+
+    valid_urls = sum(
+        item["valid_url"]
+        for item in validated_results
+    )
+
+    suspicious = sum(
+        item["suspicious_title"]
+        for item in validated_results
+    )
+
+    print()
     separator("-")
+
+    print("SEARCH QUALITY SUMMARY")
+    print("Total Results       :", len(validated_results))
+    print("Valid URLs          :", valid_urls)
+    print("Matching Publisher  :", matching)
+    print("Suspicious Titles   :", suspicious)
+
+    return {
+        "matching_domains": matching,
+        "valid_urls": valid_urls,
+        "suspicious_titles": suspicious,
+        "results": validated_results,
+    }
 
 
 # ============================================================
@@ -262,53 +419,44 @@ def main():
 
     separator()
 
-    print("DDGS MULTI-BACKEND SEARCH DIAGNOSTIC")
+    print("DDGS MOVIE REVIEW SEARCH DIAGNOSTIC")
 
     separator()
 
     print(
-        "UTC TIME       :",
-        datetime.now(timezone.utc).isoformat(),
+        "UTC:",
+        datetime.now(timezone.utc).isoformat()
     )
-    print("PYTHON VERSION :", platform.python_version())
-    print("DDGS VERSION   :", package_version())
-    print("REGION         :", REGION)
-    print("RESULTS/SEARCH :", MAX_RESULTS)
-    print("RETRIES        :", MAX_RETRIES)
-    print("COOLDOWN       :", QUERY_COOLDOWN)
 
-    print("\nBACKENDS:")
-    for backend in BACKENDS:
-        print(f"  - {backend}")
+    print("DDGS VERSION:", version("ddgs"))
+    print("REGION:", REGION)
+    print("MAX RESULTS:", MAX_RESULTS)
+    print("COOLDOWN:", QUERY_COOLDOWN)
 
-    print("\nSEARCH QUERIES:")
-    for item in SEARCH_QUERIES:
-        print(f"  {item['id']}: {item['query']}")
+    print("\nBACKENDS:", ", ".join(BACKENDS))
+    print("QUERIES PER BACKEND:", len(SEARCH_TESTS))
 
-    total_tests = len(BACKENDS) * len(SEARCH_QUERIES)
+    total_tests = len(BACKENDS) * len(SEARCH_TESTS)
 
-    print(f"\nTOTAL TESTS: {total_tests}")
-
-    separator()
+    print("TOTAL TESTS:", total_tests)
 
     summary = []
+    detailed_report = []
 
     test_number = 0
 
-    # Group by backend for easier comparison.
     for backend in BACKENDS:
 
+        print()
         separator("#")
 
-        print(f"TESTING BACKEND: {backend.upper()}")
+        print("TESTING BACKEND:", backend.upper())
 
         separator("#")
 
-        for query_item in SEARCH_QUERIES:
+        for test in SEARCH_TESTS:
 
             test_number += 1
-
-            query = query_item["query"]
 
             print()
             separator("=")
@@ -317,148 +465,188 @@ def main():
                 f"TEST {test_number}/{total_tests}"
             )
 
-            print(f"BACKEND     : {backend}")
-            print(f"QUERY ID    : {query_item['id']}")
-            print(f"QUERY TYPE  : {query_item['type']}")
-            print(f"QUERY       : {query}")
+            print("BACKEND :", backend)
+            print("TYPE    :", test["category"])
+            print("QUERY   :", test["query"])
+
+            if test["expected_domain"]:
+                print(
+                    "EXPECTED:",
+                    test["expected_domain"]
+                )
 
             separator("=")
 
             outcome = execute_search(
-                query=query,
-                backend=backend,
+                test["query"],
+                backend
             )
 
-            print_search_results(outcome)
+            quality = print_results(
+                test,
+                outcome
+            )
 
-            summary.append({
+            record = {
                 "backend": backend,
-                "query_id": query_item["id"],
+                "query_id": test["id"],
+                "category": test["category"],
+                "query": test["query"],
+                "expected_domain": test["expected_domain"],
                 "status": outcome["status"],
-                "count": len(outcome["results"]),
-                "seconds": outcome["elapsed"],
+                "result_count": len(outcome["results"]),
+                "elapsed": outcome["elapsed"],
+                "attempts": outcome["attempts"],
                 "error": outcome["error"],
-            })
+                **quality,
+            }
 
-            # Polite cooldown to reduce throttling.
+            summary.append(record)
+            detailed_report.append(record)
+
             if test_number < total_tests:
+
                 logger.info(
-                    "Cooldown: %.1f seconds",
-                    QUERY_COOLDOWN,
+                    "Cooldown: %d seconds",
+                    QUERY_COOLDOWN
                 )
 
                 time.sleep(QUERY_COOLDOWN)
 
     # ========================================================
-    # FINAL TEST SUMMARY
+    # FINAL BACKEND COMPARISON
     # ========================================================
 
     print()
     separator("=")
 
-    print("FINAL TEST SUMMARY")
+    print("FINAL BACKEND COMPARISON")
 
     separator("=")
 
-    header = (
+    print(
         f"{'BACKEND':<15}"
-        f"{'QUERY':<8}"
-        f"{'STATUS':<12}"
+        f"{'SUCCESS':<10}"
+        f"{'ERRORS':<10}"
         f"{'RESULTS':<10}"
-        f"{'SECONDS':<10}"
+        f"{'DOMAIN HIT':<12}"
+        f"{'AVG TIME':<10}"
     )
 
-    print(header)
     separator("-")
-
-    for item in summary:
-
-        print(
-            f"{item['backend']:<15}"
-            f"{item['query_id']:<8}"
-            f"{item['status']:<12}"
-            f"{item['count']:<10}"
-            f"{item['seconds']:<10.2f}"
-        )
-
-    separator("=")
-
-    print("\nBACKEND-WISE SUMMARY:")
 
     for backend in BACKENDS:
 
-        backend_tests = [
-            item for item in summary
-            if item["backend"] == backend
+        records = [
+            r for r in summary
+            if r["backend"] == backend
         ]
 
         success = sum(
-            item["status"] == "SUCCESS"
-            for item in backend_tests
-        )
-
-        empty = sum(
-            item["status"] == "EMPTY"
-            for item in backend_tests
+            r["status"] == "SUCCESS"
+            for r in records
         )
 
         errors = sum(
-            item["status"] == "ERROR"
-            for item in backend_tests
+            r["status"] == "ERROR"
+            for r in records
         )
 
-        total_results = sum(
-            item["count"]
-            for item in backend_tests
+        results = sum(
+            r["result_count"]
+            for r in records
         )
 
-        avg_seconds = (
-            sum(item["seconds"] for item in backend_tests)
-            / len(backend_tests)
+        domain_hits = sum(
+            r["matching_domains"]
+            for r in records
         )
 
-        print(f"\n{backend.upper()}")
-        print(f"  Successful Searches : {success}")
-        print(f"  Empty Searches      : {empty}")
-        print(f"  Failed Searches     : {errors}")
-        print(f"  Total Results       : {total_results}")
-        print(f"  Average Time        : {avg_seconds:.2f}s")
+        avg_time = sum(
+            r["elapsed"]
+            for r in records
+        ) / len(records)
+
+        print(
+            f"{backend:<15}"
+            f"{success:<10}"
+            f"{errors:<10}"
+            f"{results:<10}"
+            f"{domain_hits:<12}"
+            f"{avg_time:<10.2f}"
+        )
 
     separator("=")
 
-    total_success = sum(
-        item["status"] == "SUCCESS"
-        for item in summary
+    print("\nPUBLISHER-SPECIFIC QUERY PERFORMANCE")
+
+    for backend in BACKENDS:
+
+        records = [
+            r for r in summary
+            if r["backend"] == backend
+            and r["expected_domain"]
+        ]
+
+        total_queries = len(records)
+
+        with_matches = sum(
+            r["matching_domains"] > 0
+            for r in records
+        )
+
+        print(
+            f"{backend:<15}"
+            f"{with_matches}/{total_queries} queries "
+            "returned matching publisher URLs"
+        )
+
+    # ========================================================
+    # WRITE JSON REPORT
+    # ========================================================
+
+    with open(
+        REPORT_FILE,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
+        json.dump(
+            {
+                "timestamp": datetime.now(
+                    timezone.utc
+                ).isoformat(),
+                "ddgs_version": version("ddgs"),
+                "total_tests": total_tests,
+                "results": detailed_report,
+            },
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+    print()
+    print("JSON REPORT SAVED:", REPORT_FILE)
+
+    # Diagnostic job succeeds if at least one
+    # publisher-specific query returned a matching URL.
+
+    any_publisher_match = any(
+        r["matching_domains"] > 0
+        for r in summary
+        if r["expected_domain"]
     )
 
-    total_errors = sum(
-        item["status"] == "ERROR"
-        for item in summary
-    )
+    if not any_publisher_match:
 
-    total_empty = sum(
-        item["status"] == "EMPTY"
-        for item in summary
-    )
-
-    print("\nOVERALL RESULT")
-    print(f"Total Tests : {total_tests}")
-    print(f"Successful  : {total_success}")
-    print(f"Empty       : {total_empty}")
-    print(f"Errors      : {total_errors}")
-
-    separator("=")
-
-    # Fail the GitHub Actions job only if every search failed
-    # to produce results.
-    if total_success == 0:
         logger.error(
-            "No backend produced successful search results."
+            "No publisher-specific searches succeeded."
         )
+
         return 1
 
     logger.info(
-        "Diagnostic completed. At least one search succeeded."
+        "Diagnostic completed. Publisher URLs discovered."
     )
 
     return 0
