@@ -1,145 +1,468 @@
+
 #!/usr/bin/env python3
 
+"""
+DDGS SEARCH BACKEND DIAGNOSTIC
+Designed for GitHub Actions.
+
+Tests multiple query styles across multiple search
+backends and prints up to 10 results per search.
+
+No API key required.
+"""
+
 import os
+import sys
 import time
 import logging
 import traceback
-from urllib.parse import urlparse
+import platform
+from datetime import datetime, timezone
+from importlib.metadata import version, PackageNotFoundError
+
 from ddgs import DDGS
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-MAX_RETRIES = 3
-RETRY_DELAY = 2
-QUERY_COOLDOWN = 5  # Polite delay between publisher searches
+# ============================================================
+# CONFIGURATION
+# ============================================================
 
-PUBLISHERS = [
-  { "id": "aaj-tak", "name": "Aaj Tak", "url": "https://www.aajtak.in", "category": "text-media-tv-hindi-news", "active": True },
-  { "id": "abp", "name": "ABP", "url": "https://www.abplive.com", "category": "text-media-tv-hindi-news", "active": True },
-  { "id": "amar-ujala", "name": "Amar Ujala", "url": "https://www.amarujala.com", "category": "text-media-print-hindi-national", "active": True },
-  { "id": "bollywood-hungama", "name": "Bollywood Hungama", "url": "https://www.bollywoodhungama.com", "category": "text-media-digital-english-entertainment", "active": True },
-  { "id": "bollyspice", "name": "BollySpice", "url": "https://bollyspice.com/", "category": "text-media-digital-english-entertainment", "active": True },
-  { "id": "business-standard", "name": "Business Standard", "url": "https://www.business-standard.com", "category": "text-media-print-english-business", "active": True },
-  { "id": "cinema-express", "name": "Cinema Express", "url": "https://www.cinemaexpress.com", "category": "text-media-digital-english-entertainment", "active": True },
-  { "id": "cinetales", "name": "Cinetales", "url": "https://www.cine-tales.com", "category": "text-media-digital-english-entertainment", "active": True },
-  { "id": "dainik-bhaskar", "name": "Dainik Bhaskar", "url": "https://www.bhaskar.com", "category": "text-media-print-hindi-national", "active": True },
-  { "id": "dainik-jagran", "name": "Dainik Jagran", "url": "https://www.jagran.com", "category": "text-media-print-hindi-national", "active": True },
-  { "id": "deccan-chronicle", "name": "Deccan Chronicle", "url": "https://www.deccanchronicle.com", "category": "text-media-print-english-regional", "active": True },
-  { "id": "deccan-herald", "name": "Deccan Herald", "url": "https://www.deccanherald.com", "category": "text-media-print-english-regional", "active": True },
-  { "id": "filmfare", "name": "Filmfare", "url": "https://www.filmfare.com", "category": "text-media-print-english-magazine", "active": True },
-  { "id": "firstpost", "name": "Firstpost", "url": "https://www.firstpost.com", "category": "text-media-digital-english-news", "active": True },
-  { "id": "free-press-journal", "name": "Free Press Journal", "url": "https://www.freepressjournal.in", "category": "text-media-print-english-regional", "active": True },
-  { "id": "hindustan", "name": "Hindustan", "url": "https://www.livehindustan.com", "category": "text-media-print-hindi-national", "active": True },
-  { "id": "hindustan-times", "name": "Hindustan Times", "url": "https://www.hindustantimes.com", "category": "text-media-print-english-national", "active": True },
-  { "id": "ians-live", "name": "IANS Live", "url": "https://ianslive.in", "category": "text-media-digital-english-news", "active": True },
-  { "id": "india-today", "name": "India Today", "url": "https://www.indiatoday.in", "category": "text-media-print-english-magazine", "active": True },
-  { "id": "koimoi", "name": "Koimoi", "url": "https://www.koimoi.com", "category": "text-media-digital-english-entertainment", "active": True },
-  { "id": "lensmen-reviews", "name": "Lensmen Reviews", "url": "https://lensmenreviews.com", "category": "text-media-digital-english-entertainment", "active": True },
-  { "id": "lokmat", "name": "Lokmat", "url": "https://www.lokmat.com", "category": "text-media-print-marathi-regional", "active": True },
-  { "id": "mid-day", "name": "Mid-Day", "url": "https://www.mid-day.com", "category": "text-media-print-english-regional", "active": True },
-  { "id": "mint", "name": "Mint", "url": "https://www.livemint.com", "category": "text-media-print-english-business", "active": True },
-  { "id": "moneycontrol", "name": "Moneycontrol", "url": "https://www.moneycontrol.com", "category": "text-media-digital-english-news", "active": True },
-  { "id": "movie-talkies", "name": "Movie Talkies", "url": "https://www.movietalkies.com", "category": "text-media-digital-english-entertainment", "active": True },
-  { "id": "navbharat-times", "name": "Navbharat Times", "url": "https://navbharattimes.indiatimes.com", "category": "text-media-print-hindi-national", "active": True },
-  { "id": "ndtv", "name": "NDTV", "url": "https://www.ndtv.com", "category": "text-media-tv-english-news", "active": True },
-  { "id": "news18-showsha", "name": "News18 Showsha", "url": "https://www.news18.com/movies/", "category": "text-media-tv-english-news", "active": True },
-  { "id": "outlook", "name": "Outlook", "url": "https://www.outlookindia.com", "category": "text-media-print-english-magazine", "active": True },
-  { "id": "peepingmoon", "name": "PeepingMoon", "url": "https://www.peepingmoon.com", "category": "text-media-digital-english-entertainment", "active": True },
-  { "id": "rediff", "name": "Rediff.com", "url": "https://www.rediff.com", "category": "text-media-digital-english-news", "active": True },
-  { "id": "scroll-in", "name": "Scroll.in", "url": "https://scroll.in", "category": "text-media-digital-english-news", "active": True },
-  { "id": "south-asian-herald", "name": "South Asian Herald", "url": "https://southasianherald.com", "category": "text-media-digital-english-news", "active": True },
-  { "id": "the-economic-times", "name": "The Economic Times", "url": "https://economictimes.indiatimes.com", "category": "text-media-print-english-business", "active": True },
-  { "id": "the-federal", "name": "The Federal", "url": "https://thefederal.com", "category": "text-media-digital-english-news", "active": True },
-  { "id": "the-hindu", "name": "The Hindu", "url": "https://www.thehindu.com", "category": "text-media-print-english-national", "active": True },
-  { "id": "the-indian-express", "name": "The Indian Express", "url": "https://indianexpress.com", "category": "text-media-print-english-national", "active": True },
-  { "id": "the-quint", "name": "The Quint", "url": "https://www.thequint.com", "category": "text-media-digital-english-news", "active": True },
-  { "id": "the-telegraph", "name": "The Telegraph", "url": "https://www.telegraphindia.com", "category": "text-media-print-english-national", "active": True },
-  { "id": "the-times-of-india", "name": "The Times of India", "url": "https://timesofindia.indiatimes.com", "category": "text-media-print-english-national", "active": True },
-  { "id": "the-tribune", "name": "The Tribune", "url": "https://www.tribuneindia.com", "category": "text-media-print-english-regional", "active": True }
+MAX_RESULTS = 10
+MAX_RETRIES = 2
+RETRY_DELAY = 3
+QUERY_COOLDOWN = 5
+REQUEST_TIMEOUT = 25
+
+REGION = "in-en"
+
+# Override through GitHub Actions environment variables.
+MAX_RESULTS = int(os.getenv("MAX_RESULTS", MAX_RESULTS))
+QUERY_COOLDOWN = float(
+    os.getenv("QUERY_COOLDOWN", QUERY_COOLDOWN)
+)
+
+BACKENDS = [
+    "duckduckgo",
+    "brave",
+    "bing",
+    "google",
+    "yahoo",
+    "auto",
 ]
 
-def extract_domain(url: str) -> str:
-    """Extract clean domain name without www."""
-    netloc = urlparse(url).netloc
-    return netloc.lower().replace("www.", "")
+MOVIE_NAME = "Bhai Tera Star Hai"
+MOVIE_YEAR = "2026"
 
-def search_with_retries(ddgs_client, query: str, max_results: int = 5):
-    """Executes search using the 'brave' backend to bypass DDG strict bot protections."""
+SEARCH_QUERIES = [
+    {
+        "id": "Q1",
+        "type": "General Connectivity",
+        "query": "Python programming language",
+    },
+    {
+        "id": "Q2",
+        "type": "General Movie Review",
+        "query": "Dangal movie review",
+    },
+    {
+        "id": "Q3",
+        "type": "Exact Movie Title",
+        "query": '"Dangal" movie review',
+    },
+    {
+        "id": "Q4",
+        "type": "Exact Title With Year",
+        "query": '"Dangal" 2016 movie review',
+    },
+    {
+        "id": "Q5",
+        "type": "Publisher-Specific Review",
+        "query": (
+            '"Dangal" movie review '
+            "site:hindustantimes.com"
+        ),
+    },
+    {
+        "id": "Q6",
+        "type": "Target Movie Exact Search",
+        "query": (
+            f'"{MOVIE_NAME}" '
+            f"{MOVIE_YEAR} movie review"
+        ),
+    },
+]
+
+
+# ============================================================
+# LOGGING
+# ============================================================
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    stream=sys.stdout,
+    force=True,
+)
+
+logger = logging.getLogger("ddgs-diagnostic")
+
+
+def separator(char="=", length=90):
+    print(char * length, flush=True)
+
+
+def package_version():
+    try:
+        return version("ddgs")
+    except PackageNotFoundError:
+        return "Unknown"
+
+
+# ============================================================
+# SEARCH FUNCTION
+# ============================================================
+
+def execute_search(query, backend):
+    """
+    Run one search with retries.
+
+    Returns:
+        {
+            status: SUCCESS / EMPTY / ERROR,
+            results: list,
+            elapsed: float,
+            attempts: int,
+            error: str or None
+        }
+    """
+
+    last_error = None
+    total_start = time.perf_counter()
+
     for attempt in range(1, MAX_RETRIES + 1):
+
+        logger.info(
+            "Search attempt %s/%s | backend=%s",
+            attempt,
+            MAX_RETRIES,
+            backend,
+        )
+
         try:
-            results = list(
-                ddgs_client.text(
-                    query,
-                    region="in-en",
-                    max_results=max_results,
-                    backend="brave"  # <-- FORCES BRAVE SEARCH
+            # Fresh client for each attempt.
+            with DDGS(timeout=REQUEST_TIMEOUT) as client:
+                results = list(
+                    client.text(
+                        query,
+                        region=REGION,
+                        safesearch="moderate",
+                        max_results=MAX_RESULTS,
+                        backend=backend,
+                    )
                 )
-            )
+
+            elapsed = time.perf_counter() - total_start
+
             if results:
-                return results, None
+                return {
+                    "status": "SUCCESS",
+                    "results": results,
+                    "elapsed": elapsed,
+                    "attempts": attempt,
+                    "error": None,
+                }
+
+            logger.warning(
+                "Backend %s returned zero results",
+                backend,
+            )
+
+            last_error = "Empty results"
+
         except Exception as exc:
-            logging.debug(f"Attempt {attempt} failed for '{query}': {exc}")
+
+            last_error = (
+                f"{type(exc).__name__}: {exc}"
+            )
+
+            logger.error(
+                "SEARCH ERROR | backend=%s | attempt=%s",
+                backend,
+                attempt,
+            )
+
+            logger.error(last_error)
+            traceback.print_exc(file=sys.stdout)
 
         if attempt < MAX_RETRIES:
-            time.sleep(attempt * RETRY_DELAY)
+            delay = RETRY_DELAY * attempt
 
-    return [], "No results returned after max retries."
+            logger.info(
+                "Retrying after %s seconds",
+                delay,
+            )
+
+            time.sleep(delay)
+
+    elapsed = time.perf_counter() - total_start
+
+    status = (
+        "EMPTY"
+        if last_error == "Empty results"
+        else "ERROR"
+    )
+
+    return {
+        "status": status,
+        "results": [],
+        "elapsed": elapsed,
+        "attempts": MAX_RETRIES,
+        "error": last_error,
+    }
+
+
+# ============================================================
+# PRINT RESULTS
+# ============================================================
+
+def print_search_results(outcome):
+
+    separator("-")
+
+    print(f"STATUS       : {outcome['status']}")
+    print(f"RESULT COUNT : {len(outcome['results'])}")
+    print(f"ELAPSED TIME : {outcome['elapsed']:.2f}s")
+    print(f"ATTEMPTS     : {outcome['attempts']}")
+
+    if outcome["error"]:
+        print(f"ERROR        : {outcome['error']}")
+
+    if outcome["results"]:
+
+        print("\nSEARCH RESULTS:")
+
+        for index, result in enumerate(
+            outcome["results"][:MAX_RESULTS],
+            start=1,
+        ):
+
+            print(f"\n  RESULT {index}")
+            print(f"  Title   : {result.get('title', '')}")
+            print(f"  URL     : {result.get('href', '')}")
+            print(f"  Snippet : {result.get('body', '')}")
+
+    separator("-")
+
+
+# ============================================================
+# MAIN
+# ============================================================
 
 def main():
-    movie_name = "Bhai Tera Star Hai"
-    movie_year = "2026"
-    active_publishers = [p for p in PUBLISHERS if p.get("active", True)]
 
-    print("=" * 80)
-    print(" DUCKDUCKGO MULTI-PUBLISHER REVIEW DISCOVERY (SPECIFIC -> GENERIC)")
-    print(f" Target Movie      : {movie_name} ({movie_year})")
-    print(f" Total Publishers  : {len(active_publishers)}")
-    print("=" * 80)
+    separator()
 
-    found_summary = []
+    print("DDGS MULTI-BACKEND SEARCH DIAGNOSTIC")
 
-    with DDGS(timeout=30) as ddgs:
-        for idx, pub in enumerate(active_publishers, start=1):
-            pub_name = pub["name"]
-            domain = extract_domain(pub["url"])
+    separator()
 
-            # INJECTED YEAR INTO QUERIES
-            query_specific = f'"{movie_name}" {movie_year} movie review site:{domain}'
-            query_generic = f'{movie_name} {movie_year} movie review site:{domain}'
+    print(
+        "UTC TIME       :",
+        datetime.now(timezone.utc).isoformat(),
+    )
+    print("PYTHON VERSION :", platform.python_version())
+    print("DDGS VERSION   :", package_version())
+    print("REGION         :", REGION)
+    print("RESULTS/SEARCH :", MAX_RESULTS)
+    print("RETRIES        :", MAX_RETRIES)
+    print("COOLDOWN       :", QUERY_COOLDOWN)
 
-            print(f"\n[{idx}/{len(active_publishers)}] Publisher: {pub_name} ({domain})")
+    print("\nBACKENDS:")
+    for backend in BACKENDS:
+        print(f"  - {backend}")
 
-            # 1. First Attempt: Specific (Exact match) Search
-            results, err = search_with_retries(ddgs, query_specific, max_results=3)
-            search_type = "Specific (Exact)"
+    print("\nSEARCH QUERIES:")
+    for item in SEARCH_QUERIES:
+        print(f"  {item['id']}: {item['query']}")
 
-            # 2. Second Attempt: Fallback to Generic Search if specific found nothing
-            if not results:
-                time.sleep(1)
-                results, err = search_with_retries(ddgs, query_generic, max_results=3)
-                search_type = "Generic (Broad)"
+    total_tests = len(BACKENDS) * len(SEARCH_QUERIES)
 
-            if results:
-                found_summary.append((pub_name, domain, search_type, len(results), results[0].get("href")))
-                print(f"  --> MATCH FOUND via [{search_type}]: {len(results)} results")
-                for r_idx, item in enumerate(results, start=1):
-                    print(f"      {r_idx}. Title: {item.get('title')}")
-                    print(f"         URL  : {item.get('href')}")
-            else:
-                print(f"  --> [x] No results found across specific or generic queries.")
+    print(f"\nTOTAL TESTS: {total_tests}")
 
-            time.sleep(QUERY_COOLDOWN)
+    separator()
 
-    print("\n" + "=" * 80)
-    print(" FINAL EXECUTION SUMMARY")
-    print("=" * 80)
-    print(f"Total Publishers Queried : {len(active_publishers)}")
-    print(f"Publishers With Results  : {len(found_summary)}")
-    print("-" * 80)
-    for name, domain, stype, count, top_url in found_summary:
-        print(f" • {name:<25} [{stype}] -> {top_url}")
-    print("=" * 80)
+    summary = []
+
+    test_number = 0
+
+    # Group by backend for easier comparison.
+    for backend in BACKENDS:
+
+        separator("#")
+
+        print(f"TESTING BACKEND: {backend.upper()}")
+
+        separator("#")
+
+        for query_item in SEARCH_QUERIES:
+
+            test_number += 1
+
+            query = query_item["query"]
+
+            print()
+            separator("=")
+
+            print(
+                f"TEST {test_number}/{total_tests}"
+            )
+
+            print(f"BACKEND     : {backend}")
+            print(f"QUERY ID    : {query_item['id']}")
+            print(f"QUERY TYPE  : {query_item['type']}")
+            print(f"QUERY       : {query}")
+
+            separator("=")
+
+            outcome = execute_search(
+                query=query,
+                backend=backend,
+            )
+
+            print_search_results(outcome)
+
+            summary.append({
+                "backend": backend,
+                "query_id": query_item["id"],
+                "status": outcome["status"],
+                "count": len(outcome["results"]),
+                "seconds": outcome["elapsed"],
+                "error": outcome["error"],
+            })
+
+            # Polite cooldown to reduce throttling.
+            if test_number < total_tests:
+                logger.info(
+                    "Cooldown: %.1f seconds",
+                    QUERY_COOLDOWN,
+                )
+
+                time.sleep(QUERY_COOLDOWN)
+
+    # ========================================================
+    # FINAL TEST SUMMARY
+    # ========================================================
+
+    print()
+    separator("=")
+
+    print("FINAL TEST SUMMARY")
+
+    separator("=")
+
+    header = (
+        f"{'BACKEND':<15}"
+        f"{'QUERY':<8}"
+        f"{'STATUS':<12}"
+        f"{'RESULTS':<10}"
+        f"{'SECONDS':<10}"
+    )
+
+    print(header)
+    separator("-")
+
+    for item in summary:
+
+        print(
+            f"{item['backend']:<15}"
+            f"{item['query_id']:<8}"
+            f"{item['status']:<12}"
+            f"{item['count']:<10}"
+            f"{item['seconds']:<10.2f}"
+        )
+
+    separator("=")
+
+    print("\nBACKEND-WISE SUMMARY:")
+
+    for backend in BACKENDS:
+
+        backend_tests = [
+            item for item in summary
+            if item["backend"] == backend
+        ]
+
+        success = sum(
+            item["status"] == "SUCCESS"
+            for item in backend_tests
+        )
+
+        empty = sum(
+            item["status"] == "EMPTY"
+            for item in backend_tests
+        )
+
+        errors = sum(
+            item["status"] == "ERROR"
+            for item in backend_tests
+        )
+
+        total_results = sum(
+            item["count"]
+            for item in backend_tests
+        )
+
+        avg_seconds = (
+            sum(item["seconds"] for item in backend_tests)
+            / len(backend_tests)
+        )
+
+        print(f"\n{backend.upper()}")
+        print(f"  Successful Searches : {success}")
+        print(f"  Empty Searches      : {empty}")
+        print(f"  Failed Searches     : {errors}")
+        print(f"  Total Results       : {total_results}")
+        print(f"  Average Time        : {avg_seconds:.2f}s")
+
+    separator("=")
+
+    total_success = sum(
+        item["status"] == "SUCCESS"
+        for item in summary
+    )
+
+    total_errors = sum(
+        item["status"] == "ERROR"
+        for item in summary
+    )
+
+    total_empty = sum(
+        item["status"] == "EMPTY"
+        for item in summary
+    )
+
+    print("\nOVERALL RESULT")
+    print(f"Total Tests : {total_tests}")
+    print(f"Successful  : {total_success}")
+    print(f"Empty       : {total_empty}")
+    print(f"Errors      : {total_errors}")
+
+    separator("=")
+
+    # Fail the GitHub Actions job only if every search failed
+    # to produce results.
+    if total_success == 0:
+        logger.error(
+            "No backend produced successful search results."
+        )
+        return 1
+
+    logger.info(
+        "Diagnostic completed. At least one search succeeded."
+    )
+
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
