@@ -1,0 +1,38 @@
+{
+    "2026-10-24T17:35:48.900830+00:00": {
+        "earlier_completed": 0,
+        "earlier_pending": 5,
+        "processed": 5,
+        "success": 5,
+        "failure": 0,
+        "new_completed": 5,
+        "new_pending": 0,
+        "publisher_details": {
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "adjudication": "YES",
+                "model": "gemini-3.5-flash-lite"
+            },
+            "navbharat-times": {
+                "status": "SUCCESS",
+                "adjudication": "YES",
+                "model": "gemini-3.5-flash-lite"
+            },
+            "outlook": {
+                "status": "SUCCESS",
+                "adjudication": "NO",
+                "model": "gemini-3.5-flash-lite"
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "adjudication": "YES",
+                "model": "gemini-3.5-flash-lite"
+            },
+            "the-tribune": {
+                "status": "SUCCESS",
+                "adjudication": "YES",
+                "model": "gemini-3.5-flash-lite"
+            }
+        }
+    }
+}
