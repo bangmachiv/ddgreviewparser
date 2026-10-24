@@ -1,8 +1,10 @@
-
 name: Diagnostic Test - DDGS Movie Search
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/test-ddgs.yml'
 
 jobs:
   test-search:
@@ -35,4 +37,3 @@ jobs:
           name: ddgs-movie-search-report
           path: ddgs_diagnostic_results.json
           if-no-files-found: warn
-```
