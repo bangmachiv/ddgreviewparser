@@ -1,5 +1,5 @@
 
-name: Diagnostic Test - DDG Search
+name: Diagnostic Test - DDGS Movie Search
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
 jobs:
   test-search:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
@@ -21,10 +21,18 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade ddgs
+          pip install ddgs==9.16.1
 
-      - name: Run DDGS diagnostic tests
+      - name: Run movie search diagnostics
         env:
           PYTHONUNBUFFERED: "1"
-        run: |
-          python -u test_ddgs.py
+        run: python -u test_ddgs.py
+
+      - name: Upload diagnostic report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ddgs-movie-search-report
+          path: ddgs_diagnostic_results.json
+          if-no-files-found: warn
+```
