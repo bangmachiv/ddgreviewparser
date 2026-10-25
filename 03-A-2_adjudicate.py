@@ -40,12 +40,6 @@ if not GEMINI_API_KEY:
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
-# Fallback Cascade: Gemma 4 Open Models via Gemini API
-MODEL_CONFIG = [
-    "gemma-4-31b-it",
-    "gemma-4-26b-a4b-it"
-]
-
 # -----------------------------------------------------------------------------
 # Pipeline Metric Tracker
 # -----------------------------------------------------------------------------
@@ -92,44 +86,38 @@ def clean_json_response(raw_text):
         clean_text = clean_text[:-3]
     return clean_text.strip()
 
-def run_gemini_evaluation(prompt):
-    """Executes text generation call on Gemma with a strict rate-limit lock and fallback cascade."""
-    for model_name in MODEL_CONFIG:
-        # Strict 60-second lock to clear the 16k TPM buffer window before EVERY call
-        print(f"      [RATE LIMIT] Sleeping 60 seconds to protect 16k TPM limit before calling {model_name}...")
-        time.sleep(60)
-        print(f"      [Attempting Model: {model_name}]")
-        
-        try:
-            response = client.models.generate_content(
-                model=model_name,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.1,
-                    response_mime_type="application/json"
-                )
+def call_gemini_api(model_name, prompt):
+    """Executes a single text generation call to the specified Gemma model."""
+    try:
+        response = client.models.generate_content(
+            model=model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                temperature=0.1,
+                response_mime_type="application/json"
             )
-            
-            if not getattr(response, "candidates", None) or not response.candidates:
-                print(f"      [DEBUG ERROR] API call succeeded on {model_name}, but candidates payload is empty. Raw response object: {response}")
-                continue
+        )
+        
+        if not getattr(response, "candidates", None) or not response.candidates:
+            print(f"      [DEBUG ERROR] API call succeeded on {model_name}, but candidates payload is empty. Raw response object: {response}")
+            return None
 
-            text_val = response.text
-            if text_val and text_val.strip():
-                return text_val, model_name
-            else:
-                finish_reason = response.candidates[0].finish_reason if response.candidates else "Unknown"
-                print(f"      [DEBUG ERROR] Model {model_name} returned empty text. Candidate finish reason: {finish_reason}")
+        text_val = response.text
+        if text_val and text_val.strip():
+            return text_val
+        else:
+            finish_reason = response.candidates[0].finish_reason if response.candidates else "Unknown"
+            print(f"      [DEBUG ERROR] Model {model_name} returned empty text. Candidate finish reason: {finish_reason}")
 
-        except errors.APIError as e:
-            # Captures explicit API rejections (e.g., 429 quota exceeded, 400 bad request)
-            print(f"      [API ERROR on {model_name}]: Code: {getattr(e, 'code', 'N/A')}, Message: {getattr(e, 'message', str(e))}")
-        except Exception as e:
-            # Captures network drops, timeout errors, or unexpected SDK crashes
-            print(f"      [UNEXPECTED ERROR on {model_name}]: {type(e).__name__}: {str(e)}")
-            print(f"      [TRACEBACK]: {traceback.format_exc().strip().replace(chr(10), ' | ')}")
+    except errors.APIError as e:
+        # Captures explicit API rejections (e.g., 429 quota exceeded, 503 capacity, 400 bad request)
+        print(f"      [API ERROR on {model_name}]: Code: {getattr(e, 'code', 'N/A')}, Message: {getattr(e, 'message', str(e))}")
+    except Exception as e:
+        # Captures network drops, timeout errors, or unexpected SDK crashes
+        print(f"      [UNEXPECTED ERROR on {model_name}]: {type(e).__name__}: {str(e)}")
+        print(f"      [TRACEBACK]: {traceback.format_exc().strip().replace(chr(10), ' | ')}")
 
-    return None, None
+    return None
 
 def process_single_movie(json_path: str, prompt_template: str):
     """Processes adjudication for a single movie's JSON file."""
@@ -217,8 +205,40 @@ def process_single_movie(json_path: str, prompt_template: str):
             prompt = prompt_template.replace("{MOVIE_TITLE}", movie_name)\
                                     .replace("{ARTICLE_TEXT}", article_text)
 
-            raw_response, used_model = run_gemini_evaluation(prompt)
+            raw_response = None
+            used_model = None
+            MAX_LOOPS = 3
 
+            for attempt in range(1, MAX_LOOPS + 1):
+                # -------------------------------------------------------------
+                # Attempt 1: Gemma 31B
+                # -------------------------------------------------------------
+                print(f"      [Attempting Model: gemma-4-31b-it (Loop {attempt}/{MAX_LOOPS})]")
+                raw_response = call_gemini_api("gemma-4-31b-it", prompt)
+                if raw_response:
+                    used_model = "gemma-4-31b-it"
+                    break
+                
+                print("      [API FAILURE] gemma-4-31b-it failed. Waiting 10 seconds before 26B fallback...")
+                time.sleep(10)
+
+                # -------------------------------------------------------------
+                # Attempt 2: Gemma 26B Fallback
+                # -------------------------------------------------------------
+                print(f"      [Attempting Model: gemma-4-26b-a4b-it (Loop {attempt}/{MAX_LOOPS})]")
+                raw_response = call_gemini_api("gemma-4-26b-a4b-it", prompt)
+                if raw_response:
+                    used_model = "gemma-4-26b-a4b-it"
+                    break
+                
+                print("      [API FAILURE] gemma-4-26b-a4b-it fallback failed.")
+                if attempt < MAX_LOOPS:
+                    print("      [RETRYING] Waiting 10 seconds before restarting 31B/26B cascade loop...")
+                    time.sleep(10)
+
+            # -------------------------------------------------------------
+            # Resolution & 60-Second Inter-Publisher Cool-off
+            # -------------------------------------------------------------
             if raw_response:
                 clean_response = clean_json_response(raw_response)
                 
@@ -255,9 +275,13 @@ def process_single_movie(json_path: str, prompt_template: str):
                         "status": "FAILED",
                         "reason": "JSON Decode Error"
                     }
-                    
+                
+                # The LLM API successfully returned a response (consuming tokens). Apply the 60s TPM cool-off.
+                print("      [RATE LIMIT] Successful LLM API return. Sleeping 60 seconds to clear TPM buffer before next publisher...")
+                time.sleep(60)
+
             else:
-                print(f"  [FAILED] Publisher exhausted both Gemma models in the cascade.")
+                print(f"  [FAILED] Publisher exhausted all {MAX_LOOPS} loops of the 31B/26B cascade.")
                 tracker.add_failure()
                 movie_log_entry["failure"] += 1
                 movie_log_entry["publisher_details"][pub_id] = {
