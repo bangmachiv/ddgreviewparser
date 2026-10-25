@@ -3,7 +3,8 @@
 03-A-2_adjudicate.py
 Semantically evaluates extracted article text using Gemma 4 31B (with 26B fallback) 
 via the Google Gemini API to verify if the content is a genuine movie review.
-Updates the publisher state machine with a YES/NO 'content_adjudication' flag.
+Updates the publisher block with a YES 'webpage_content_adjudication' flag,
+or performs a precise rollback of fields 5+ on a NO.
 """
 
 import os
@@ -99,7 +100,7 @@ def call_gemini_api(model_name, prompt):
         )
         
         if not getattr(response, "candidates", None) or not response.candidates:
-            print(f"      [DEBUG ERROR] API call succeeded on {model_name}, but candidates payload is empty. Raw response object: {response}")
+            print(f"      [DEBUG ERROR] API call succeeded on {model_name}, but candidates payload is empty.")
             return None
 
         text_val = response.text
@@ -110,10 +111,8 @@ def call_gemini_api(model_name, prompt):
             print(f"      [DEBUG ERROR] Model {model_name} returned empty text. Candidate finish reason: {finish_reason}")
 
     except errors.APIError as e:
-        # Captures explicit API rejections (e.g., 429 quota exceeded, 503 capacity, 400 bad request)
         print(f"      [API ERROR on {model_name}]: Code: {getattr(e, 'code', 'N/A')}, Message: {getattr(e, 'message', str(e))}")
     except Exception as e:
-        # Captures network drops, timeout errors, or unexpected SDK crashes
         print(f"      [UNEXPECTED ERROR on {model_name}]: {type(e).__name__}: {str(e)}")
         print(f"      [TRACEBACK]: {traceback.format_exc().strip().replace(chr(10), ' | ')}")
 
@@ -150,7 +149,8 @@ def process_single_movie(json_path: str, prompt_template: str):
 
     for pub in publishers:
         if pub.get("classified_by") == "AI" and pub.get("webpage_extraction_successful") == "SUCCESS":
-            adj_status = pub.get("content_adjudication", "PENDING")
+            # Target new field: webpage_content_adjudication
+            adj_status = pub.get("webpage_content_adjudication", "PENDING")
             if adj_status in ["YES", "NO"]:
                 earlier_completed += 1
             else:
@@ -176,7 +176,7 @@ def process_single_movie(json_path: str, prompt_template: str):
         pub_name = pub.get("publisher_name")
         classified_by = pub.get("classified_by")
         download_status = pub.get("webpage_extraction_successful")
-        adj_status = pub.get("content_adjudication", "PENDING")
+        adj_status = pub.get("webpage_content_adjudication", "PENDING")
 
         # Execution Gate: Target AI classified + successfully extracted publishers
         if classified_by != "AI" or download_status != "SUCCESS":
@@ -210,9 +210,7 @@ def process_single_movie(json_path: str, prompt_template: str):
             MAX_LOOPS = 3
 
             for attempt in range(1, MAX_LOOPS + 1):
-                # -------------------------------------------------------------
                 # Attempt 1: Gemma 31B
-                # -------------------------------------------------------------
                 print(f"      [Attempting Model: gemma-4-31b-it (Loop {attempt}/{MAX_LOOPS})]")
                 raw_response = call_gemini_api("gemma-4-31b-it", prompt)
                 if raw_response:
@@ -222,9 +220,7 @@ def process_single_movie(json_path: str, prompt_template: str):
                 print("      [API FAILURE] gemma-4-31b-it failed. Waiting 10 seconds before 26B fallback...")
                 time.sleep(10)
 
-                # -------------------------------------------------------------
                 # Attempt 2: Gemma 26B Fallback
-                # -------------------------------------------------------------
                 print(f"      [Attempting Model: gemma-4-26b-a4b-it (Loop {attempt}/{MAX_LOOPS})]")
                 raw_response = call_gemini_api("gemma-4-26b-a4b-it", prompt)
                 if raw_response:
@@ -236,9 +232,7 @@ def process_single_movie(json_path: str, prompt_template: str):
                     print("      [RETRYING] Waiting 10 seconds before restarting 31B/26B cascade loop...")
                     time.sleep(10)
 
-            # -------------------------------------------------------------
-            # Resolution & 60-Second Inter-Publisher Cool-off
-            # -------------------------------------------------------------
+            # Resolution & State Machine Updates
             if raw_response:
                 clean_response = clean_json_response(raw_response)
                 
@@ -246,20 +240,64 @@ def process_single_movie(json_path: str, prompt_template: str):
                     parsed_json = json.loads(clean_response)
                     is_review = str(parsed_json.get("is_movie_review", "")).strip().upper()
                     
-                    if is_review in ["YES", "NO"]:
-                        print(f"  [SUCCESS] Adjudicated via {used_model}: {is_review}")
-                        pub["content_adjudication"] = is_review
+                    if is_review == "YES":
+                        print(f"  [SUCCESS] Adjudicated via {used_model}: YES")
+                        
+                        # INJECT THE NEW FIELD
+                        pub["webpage_content_adjudication"] = "YES"
+                        pub.pop("content_adjudication", None) # Clean legacy field if it exists
+                        
+                        # Unlock Downstream Scripts
+                        pub["ai_critic_name"] = "PENDING"
+                        pub["ai_star_rating"] = "PENDING"
+                        pub["ai_sentiment_category"] = "PENDING"
                         data_changed = True
                         
                         tracker.add_success()
                         movie_log_entry["success"] += 1
                         movie_log_entry["publisher_details"][pub_id] = {
                             "status": "SUCCESS",
-                            "adjudication": is_review,
+                            "adjudication": "YES",
                             "model": used_model
                         }
+                        
+                    elif is_review == "NO":
+                        print(f"  [SUCCESS] Adjudicated via {used_model}: NO (Not a review. Partial rollback initiated.)")
+                        
+                        # PRECISE ROLLBACK: Keep first 4 fields untouched (id, name, search_status, search_count).
+                        # Reset fields 5 through 18 back to 00_initialize state.
+                        pub["review_url"] = "PENDING"
+                        pub["review_title"] = "PENDING"
+                        pub["review_source"] = "PENDING"
+                        pub["classified_by"] = "PENDING"
+                        pub["webpage_extraction_successful"] = "PENDING"
+                        pub["article_title"] = "PENDING"
+                        pub["clean_title"] = "PENDING"
+                        pub["highlighted_title"] = "PENDING"
+                        pub["jsonld_critic_name"] = "PENDING"
+                        pub["jsonld_star_rating"] = "PENDING"
+                        pub["ai_metadata_parsing_attempts"] = 0
+                        pub["ai_critic_name"] = "NOT_NEEDED"
+                        pub["ai_star_rating"] = "NOT_NEEDED"
+                        pub["ai_sentiment_category"] = "PENDING"
+                        
+                        # Strip both new and legacy adjudication keys so they start fresh
+                        pub.pop("webpage_content_adjudication", None)
+                        pub.pop("content_adjudication", None)
+                            
+                        data_changed = True
+                        
+                        tracker.add_success()
+                        movie_log_entry["success"] += 1
+                        movie_log_entry["publisher_details"][pub_id] = {
+                            "status": "SUCCESS",
+                            "adjudication": "NO",
+                            "model": used_model,
+                            "action": "Partial Rollback to PENDING"
+                        }
+
                     else:
-                        print(f"  [FAILED] Model {used_model} returned valid JSON but missing/invalid 'is_movie_review' key. Parsed output: {parsed_json}")
+                        print(f"  [FAILED] Model {used_model} returned valid JSON but missing/invalid 'is_movie_review' key. Output: {parsed_json}")
                         tracker.add_failure()
                         movie_log_entry["failure"] += 1
                         movie_log_entry["publisher_details"][pub_id] = {
@@ -276,8 +314,8 @@ def process_single_movie(json_path: str, prompt_template: str):
                         "reason": "JSON Decode Error"
                     }
                 
-                # The LLM API successfully returned a response (consuming tokens). Apply the 60s TPM cool-off.
-                print("      [RATE LIMIT] Successful LLM API return. Sleeping 60 seconds to clear TPM buffer before next publisher...")
+                # Apply 60s TPM cool-off ONLY after a successful payload return
+                print("      [RATE LIMIT] Successful LLM return. Sleeping 60 seconds to clear 16k TPM buffer...")
                 time.sleep(60)
 
             else:
