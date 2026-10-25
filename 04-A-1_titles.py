@@ -2,6 +2,7 @@
 """
 04-A-1_titles.py
 Extracts the <title> tag from downloaded HTML files and updates reviews JSON.
+Enforces the Execution Gate: Processes deterministic SCRIPT publishers or AI publishers with YES adjudication.
 """
 
 import os
@@ -82,8 +83,7 @@ def process_titles_for_movie(json_path: str):
 
     html_dir = os.path.join(WEBPAGES_DIR, movie_slug)
     movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{movie_slug}")
-    
-    # [FIXED]: Now points to the correct new nomenclature file
+
     script_log_path = os.path.join(movie_logs_dir, "04-A-1_titles.json")
     os.makedirs(movie_logs_dir, exist_ok=True)
 
@@ -98,9 +98,20 @@ def process_titles_for_movie(json_path: str):
     for pub in publishers:
         extraction_status = pub.get("webpage_extraction_successful", "PENDING")
         article_title = pub.get("article_title", "PENDING")
+        classified_by = pub.get("classified_by", "PENDING")
+        adjudication_status = pub.get("webpage_content_adjudication", "PENDING")
 
-        # Candidates are publishers that have a successfully downloaded HTML page
+        # Eligibility Gate
+        is_eligible = False
         if extraction_status == "SUCCESS":
+            if classified_by != "AI": 
+                # Deterministic (SCRIPT) publisher
+                is_eligible = True
+            elif classified_by == "AI" and adjudication_status == "YES":
+                # AI publisher that passed the Gatekeeper
+                is_eligible = True
+
+        if is_eligible:
             if article_title not in ["PENDING", None, ""]:
                 earlier_completed += 1
             else:
@@ -127,9 +138,18 @@ def process_titles_for_movie(json_path: str):
         review_url = pub.get("review_url", "PENDING")
         extraction_status = pub.get("webpage_extraction_successful", "PENDING")
         current_title = pub.get("article_title", "PENDING")
+        classified_by = pub.get("classified_by", "PENDING")
+        adjudication_status = pub.get("webpage_content_adjudication", "PENDING")
 
-        # 1. Skip if download was not successful or no review URL exists
-        if extraction_status != "SUCCESS" or review_url in ["PENDING", "NA", ""]:
+        # 1. Check Eligibility Gate
+        is_eligible = False
+        if extraction_status == "SUCCESS" and review_url not in ["PENDING", "NA", ""]:
+            if classified_by != "AI":
+                is_eligible = True
+            elif classified_by == "AI" and adjudication_status == "YES":
+                is_eligible = True
+
+        if not is_eligible:
             continue
 
         # 2. Skip if title is already extracted
