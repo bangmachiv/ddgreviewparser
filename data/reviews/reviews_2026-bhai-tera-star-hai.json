@@ -63,8 +63,7 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING",
-            "content_adjudication": "YES"
+            "ai_sentiment_category": "PENDING"
         },
         {
             "publisher_id": "bollywood-hungama",
@@ -544,8 +543,7 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING",
-            "content_adjudication": "YES"
+            "ai_sentiment_category": "PENDING"
         },
         {
             "publisher_id": "ndtv",
@@ -605,8 +603,7 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING",
-            "content_adjudication": "NO"
+            "ai_sentiment_category": "PENDING"
         },
         {
             "publisher_id": "peepingmoon",
@@ -766,8 +763,7 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING",
-            "content_adjudication": "YES"
+            "ai_sentiment_category": "PENDING"
         },
         {
             "publisher_id": "the-quint",
@@ -847,8 +843,7 @@
             "ai_metadata_parsing_attempts": 0,
             "ai_critic_name": "NOT_NEEDED",
             "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING",
-            "content_adjudication": "YES"
+            "ai_sentiment_category": "PENDING"
         }
     ],
     "Last searched": "20 09 2026 08 59",
