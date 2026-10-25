@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-03b_adjudicate.py
-Semantically evaluates extracted article text using Google Gemini models
-to verify if the content is a genuine movie review.
+03-A-2_adjudicate.py
+Semantically evaluates extracted article text using Gemma 4 31B (with 26B fallback) 
+via the Google Gemini API to verify if the content is a genuine movie review.
 Updates the publisher state machine with a YES/NO 'content_adjudication' flag.
 """
 
@@ -11,7 +11,7 @@ import json
 import glob
 import time
 import sys
-import re
+import traceback
 from datetime import datetime
 
 try:
@@ -40,10 +40,10 @@ if not GEMINI_API_KEY:
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
-# Fallback Cascade: Gemini Flash Lite Models
+# Fallback Cascade: Gemma 4 Open Models via Gemini API
 MODEL_CONFIG = [
-    "gemini-3.5-flash-lite",
-    "gemini-3.1-flash-lite"
+    "gemma-4-31b-it",
+    "gemma-4-26b-a4b-it"
 ]
 
 # -----------------------------------------------------------------------------
@@ -93,14 +93,14 @@ def clean_json_response(raw_text):
     return clean_text.strip()
 
 def run_gemini_evaluation(prompt):
-    """Executes text generation call with fallback cascade on Gemini."""
+    """Executes text generation call on Gemma with a strict rate-limit lock and fallback cascade."""
     for model_name in MODEL_CONFIG:
-        print(f"      [RATE LIMIT] Sleeping 13 seconds to respect 5 RPM limit...")
-        time.sleep(13)
+        # Strict 60-second lock to clear the 16k TPM buffer window before EVERY call
+        print(f"      [RATE LIMIT] Sleeping 60 seconds to protect 16k TPM limit before calling {model_name}...")
+        time.sleep(60)
         print(f"      [Attempting Model: {model_name}]")
         
         try:
-            # Enforcing JSON output via response_mime_type
             response = client.models.generate_content(
                 model=model_name,
                 contents=prompt,
@@ -111,17 +111,23 @@ def run_gemini_evaluation(prompt):
             )
             
             if not getattr(response, "candidates", None) or not response.candidates:
-                print(f"      [DEBUG ERROR] API call succeeded on {model_name}, but candidates=None.")
+                print(f"      [DEBUG ERROR] API call succeeded on {model_name}, but candidates payload is empty. Raw response object: {response}")
                 continue
 
             text_val = response.text
             if text_val and text_val.strip():
                 return text_val, model_name
+            else:
+                finish_reason = response.candidates[0].finish_reason if response.candidates else "Unknown"
+                print(f"      [DEBUG ERROR] Model {model_name} returned empty text. Candidate finish reason: {finish_reason}")
 
         except errors.APIError as e:
-            print(f"      [API Error on {model_name}]: {e}")
+            # Captures explicit API rejections (e.g., 429 quota exceeded, 400 bad request)
+            print(f"      [API ERROR on {model_name}]: Code: {getattr(e, 'code', 'N/A')}, Message: {getattr(e, 'message', str(e))}")
         except Exception as e:
-            print(f"      [Unexpected Error on {model_name}]: {e}")
+            # Captures network drops, timeout errors, or unexpected SDK crashes
+            print(f"      [UNEXPECTED ERROR on {model_name}]: {type(e).__name__}: {str(e)}")
+            print(f"      [TRACEBACK]: {traceback.format_exc().strip().replace(chr(10), ' | ')}")
 
     return None, None
 
@@ -151,7 +157,6 @@ def process_single_movie(json_path: str, prompt_template: str):
 
     publishers = data.get("publishers", [])
 
-    # Pre-Scan Metrics
     earlier_completed = 0
     earlier_pending = 0
 
@@ -205,64 +210,63 @@ def process_single_movie(json_path: str, prompt_template: str):
             with open(content_file, "r", encoding="utf-8") as f:
                 article_text = f.read()
 
-            # Truncate text slightly if it exceeds Gemini's safe flash-lite limits
-            if len(article_text) > 40000:
-                article_text = article_text[:40000] + "\n...[TRUNCATED]"
+            # Truncate text strictly to 25,000 characters to cap payloads at ~6,250 tokens
+            if len(article_text) > 25000:
+                article_text = article_text[:25000] + "\n...[TRUNCATED]"
 
             prompt = prompt_template.replace("{MOVIE_TITLE}", movie_name)\
                                     .replace("{ARTICLE_TEXT}", article_text)
 
-            raw_response = None
-            used_model = None
-            MAX_RETRIES = 2
-
-            for attempt in range(1, MAX_RETRIES + 1):
-                raw_response, used_model = run_gemini_evaluation(prompt)
-                if raw_response:
-                    break
-                else:
-                    print(f"     [API FAILURE] All cascade models failed on attempt {attempt}.")
-                    if attempt < MAX_RETRIES:
-                        print(f"     [RETRYING] Waiting 2 seconds before attempt {attempt + 1}...")
-                        time.sleep(2)
+            raw_response, used_model = run_gemini_evaluation(prompt)
 
             if raw_response:
                 clean_response = clean_json_response(raw_response)
-                parsed_json = json.loads(clean_response)
                 
-                is_review = str(parsed_json.get("is_movie_review", "")).strip().upper()
-                
-                if is_review in ["YES", "NO"]:
-                    print(f"  [SUCCESS] Adjudicated via {used_model}: {is_review}")
-                    pub["content_adjudication"] = is_review
-                    data_changed = True
+                try:
+                    parsed_json = json.loads(clean_response)
+                    is_review = str(parsed_json.get("is_movie_review", "")).strip().upper()
                     
-                    tracker.add_success()
-                    movie_log_entry["success"] += 1
-                    movie_log_entry["publisher_details"][pub_id] = {
-                        "status": "SUCCESS",
-                        "adjudication": is_review,
-                        "model": used_model
-                    }
-                else:
-                    print(f"  [FAILED] Model returned invalid schema: {clean_response}")
+                    if is_review in ["YES", "NO"]:
+                        print(f"  [SUCCESS] Adjudicated via {used_model}: {is_review}")
+                        pub["content_adjudication"] = is_review
+                        data_changed = True
+                        
+                        tracker.add_success()
+                        movie_log_entry["success"] += 1
+                        movie_log_entry["publisher_details"][pub_id] = {
+                            "status": "SUCCESS",
+                            "adjudication": is_review,
+                            "model": used_model
+                        }
+                    else:
+                        print(f"  [FAILED] Model {used_model} returned valid JSON but missing/invalid 'is_movie_review' key. Parsed output: {parsed_json}")
+                        tracker.add_failure()
+                        movie_log_entry["failure"] += 1
+                        movie_log_entry["publisher_details"][pub_id] = {
+                            "status": "FAILED",
+                            "reason": "Missing/Invalid Key in JSON"
+                        }
+                        
+                except json.JSONDecodeError as e:
+                    print(f"  [FAILED] JSON Decode Error on {used_model}: {e}. Raw model output was: {raw_response}")
                     tracker.add_failure()
                     movie_log_entry["failure"] += 1
                     movie_log_entry["publisher_details"][pub_id] = {
                         "status": "FAILED",
-                        "reason": "Invalid JSON Schema"
+                        "reason": "JSON Decode Error"
                     }
+                    
             else:
-                print(f"  [FAILED] Publisher exhausted all retries.")
+                print(f"  [FAILED] Publisher exhausted both Gemma models in the cascade.")
                 tracker.add_failure()
                 movie_log_entry["failure"] += 1
                 movie_log_entry["publisher_details"][pub_id] = {
                     "status": "FAILED",
-                    "reason": "API Exhausted"
+                    "reason": "Cascade Exhausted"
                 }
 
         except Exception as e:
-            print(f"  [ERROR] Failed to process {pub_name}: {e}")
+            print(f"  [ERROR] File processing or systemic failure on {pub_name}: {e}")
             tracker.add_failure()
             movie_log_entry["failure"] += 1
             movie_log_entry["publisher_details"][pub_id] = {
@@ -303,7 +307,7 @@ def process_single_movie(json_path: str, prompt_template: str):
 
 def main():
     print("=" * 80)
-    print(" 03B: GEMINI CONTENT ADJUDICATION")
+    print(" 03B: GEMMA CONTENT ADJUDICATION")
     print("=" * 80)
     
     if not os.path.exists(PROMPT_FILE):
