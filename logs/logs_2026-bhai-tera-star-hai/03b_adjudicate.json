@@ -100,5 +100,42 @@
         "new_completed": 5,
         "new_pending": 0,
         "publisher_details": {}
+    },
+    "2026-10-25T13:14:33.493995+00:00": {
+        "earlier_completed": 0,
+        "earlier_pending": 5,
+        "processed": 5,
+        "success": 5,
+        "failure": 0,
+        "new_completed": 5,
+        "new_pending": 0,
+        "publisher_details": {
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "adjudication": "YES",
+                "model": "gemma-4-26b-a4b-it"
+            },
+            "navbharat-times": {
+                "status": "SUCCESS",
+                "adjudication": "YES",
+                "model": "gemma-4-31b-it"
+            },
+            "outlook": {
+                "status": "SUCCESS",
+                "adjudication": "NO",
+                "model": "gemma-4-31b-it",
+                "action": "Partial Rollback to PENDING"
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "adjudication": "YES",
+                "model": "gemma-4-26b-a4b-it"
+            },
+            "the-tribune": {
+                "status": "SUCCESS",
+                "adjudication": "YES",
+                "model": "gemma-4-26b-a4b-it"
+            }
+        }
     }
 }

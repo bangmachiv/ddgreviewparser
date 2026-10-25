@@ -61,9 +61,10 @@
             "jsonld_critic_name": "PENDING",
             "jsonld_star_rating": "PENDING",
             "ai_metadata_parsing_attempts": 0,
-            "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_critic_name": "PENDING",
+            "ai_star_rating": "PENDING",
+            "ai_sentiment_category": "PENDING",
+            "webpage_content_adjudication": "YES"
         },
         {
             "publisher_id": "bollywood-hungama",
@@ -541,9 +542,10 @@
             "jsonld_critic_name": "PENDING",
             "jsonld_star_rating": "PENDING",
             "ai_metadata_parsing_attempts": 0,
-            "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_critic_name": "PENDING",
+            "ai_star_rating": "PENDING",
+            "ai_sentiment_category": "PENDING",
+            "webpage_content_adjudication": "YES"
         },
         {
             "publisher_id": "ndtv",
@@ -590,12 +592,12 @@
             "publisher_name": "Outlook",
             "search_status": "SUCCESS",
             "search_count": 3,
-            "review_url": "https://www.outlookindia.com/art-entertainment/-kisi-ka-bhai-kisi-ki-jaan-movie-review-salman-khan-even-you-look-bored-movie_reviews-280361",
-            "review_title": "‘Kisi Ka Bhai Kisi Ki Jaan’ Movie Review: Salman Khan, Even You Look Bored | Outlook India",
-            "review_source": "gemini_semantic",
-            "classified_by": "AI",
-            "webpage_extraction_successful": "SUCCESS",
-            "article_title": "‘Kisi Ka Bhai Kisi Ki Jaan’ Movie Review: Salman Khan, Even You Look Bored | Outlook India",
+            "review_url": "PENDING",
+            "review_title": "PENDING",
+            "review_source": "PENDING",
+            "classified_by": "PENDING",
+            "webpage_extraction_successful": "PENDING",
+            "article_title": "PENDING",
             "clean_title": "PENDING",
             "highlighted_title": "PENDING",
             "jsonld_critic_name": "PENDING",
@@ -761,9 +763,10 @@
             "jsonld_critic_name": "PENDING",
             "jsonld_star_rating": "PENDING",
             "ai_metadata_parsing_attempts": 0,
-            "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_critic_name": "PENDING",
+            "ai_star_rating": "PENDING",
+            "ai_sentiment_category": "PENDING",
+            "webpage_content_adjudication": "YES"
         },
         {
             "publisher_id": "the-quint",
@@ -841,9 +844,10 @@
             "jsonld_critic_name": "PENDING",
             "jsonld_star_rating": "PENDING",
             "ai_metadata_parsing_attempts": 0,
-            "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
-            "ai_sentiment_category": "PENDING"
+            "ai_critic_name": "PENDING",
+            "ai_star_rating": "PENDING",
+            "ai_sentiment_category": "PENDING",
+            "webpage_content_adjudication": "YES"
         }
     ],
     "Last searched": "20 09 2026 08 59",
