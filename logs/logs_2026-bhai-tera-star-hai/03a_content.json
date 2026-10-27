@@ -554,5 +554,36 @@
         "new_completed": 0,
         "new_pending": 0,
         "publisher_details": {}
+    },
+    "2026-10-27T16:58:15.141572+00:00": {
+        "earlier_completed": 0,
+        "earlier_pending": 4,
+        "processed": 4,
+        "success": 4,
+        "failure": 0,
+        "new_completed": 4,
+        "new_pending": 0,
+        "publisher_details": {
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "file": "content_amar-ujala_2026-bhai-tera-star-hai.txt",
+                "characters": 11951
+            },
+            "navbharat-times": {
+                "status": "SUCCESS",
+                "file": "content_navbharat-times_2026-bhai-tera-star-hai.txt",
+                "characters": 15992
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "file": "content_the-indian-express_2026-bhai-tera-star-hai.txt",
+                "characters": 5891
+            },
+            "the-tribune": {
+                "status": "SUCCESS",
+                "file": "content_the-tribune_2026-bhai-tera-star-hai.txt",
+                "characters": 8657
+            }
+        }
     }
 }
