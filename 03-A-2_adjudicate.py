@@ -4,7 +4,8 @@
 Semantically evaluates extracted article text using Gemma 4 31B (with 26B fallback) 
 via the Google Gemini API to verify if the content is a genuine movie review.
 Updates the publisher block with a YES 'webpage_content_adjudication' flag,
-or performs a precise rollback of fields 5+ on a NO.
+marks 'is_review': 'Y' in the searches cache, or performs a precise rollback 
+and blacklists the title on a NO.
 """
 
 import os
@@ -29,6 +30,7 @@ except ImportError:
 BASE_DIR = os.getcwd()
 REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
 WEBCONTENT_DIR = os.path.join(BASE_DIR, "data", "webcontent")
+SEARCHES_DIR = os.path.join(BASE_DIR, "data", "searches")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 PROMPTS_DIR = os.path.join(BASE_DIR, "prompts")
 PROMPT_FILE = os.path.join(PROMPTS_DIR, "adjudicate_review.txt")
@@ -142,6 +144,30 @@ def process_single_movie(json_path: str, prompt_template: str):
     script_log_path = os.path.join(movie_logs_dir, "03b_adjudicate.json")
     os.makedirs(movie_logs_dir, exist_ok=True)
 
+    # -------------------------------------------------------------------------
+    # Load Negative Cache Ledger
+    # -------------------------------------------------------------------------
+    negative_searches_path = os.path.join(SEARCHES_DIR, f"negative_searches_{movie_slug}.json")
+    negative_data = {"movie": {"name": movie_name, "slug": movie_slug}, "publishers": {}}
+    if os.path.exists(negative_searches_path):
+        try:
+            with open(negative_searches_path, "r", encoding="utf-8") as nf:
+                negative_data = json.load(nf)
+        except json.JSONDecodeError:
+            pass
+
+    # -------------------------------------------------------------------------
+    # Load Main Searches Ledger (To mark 'is_review': 'Y')
+    # -------------------------------------------------------------------------
+    searches_path = os.path.join(SEARCHES_DIR, f"searches_{movie_slug}.json")
+    searches_data = {}
+    if os.path.exists(searches_path):
+        try:
+            with open(searches_path, "r", encoding="utf-8") as sf:
+                searches_data = json.load(sf)
+        except json.JSONDecodeError:
+            pass
+
     publishers = data.get("publishers", [])
 
     earlier_completed = 0
@@ -170,6 +196,8 @@ def process_single_movie(json_path: str, prompt_template: str):
     }
 
     data_changed = False
+    negative_data_changed = False
+    searches_data_changed = False
 
     for pub in publishers:
         pub_id = pub.get("publisher_id")
@@ -253,6 +281,22 @@ def process_single_movie(json_path: str, prompt_template: str):
                         pub["ai_sentiment_category"] = "PENDING"
                         data_changed = True
                         
+                        # -----------------------------------------------------------------
+                        # TAG SEARCH LEDGER: Mark 'is_review': 'Y' for future dataset labeling
+                        # -----------------------------------------------------------------
+                        current_url = pub.get("review_url")
+                        if current_url and current_url not in ["PENDING", "NA", ""]:
+                            for spub in searches_data.get("publishers", []):
+                                if spub.get("publisher_id") == pub_id:
+                                    for res in spub.get("results", []):
+                                        if res.get("url") == current_url:
+                                            res["is_review"] = "Y"
+                                            searches_data_changed = True
+                                            print(f"      [SEARCH CACHE] Marked URL as true review (Y) in searches_{movie_slug}.json")
+                                            break
+                                    break
+                        # -----------------------------------------------------------------
+                        
                         tracker.add_success()
                         movie_log_entry["success"] += 1
                         movie_log_entry["publisher_details"][pub_id] = {
@@ -264,8 +308,17 @@ def process_single_movie(json_path: str, prompt_template: str):
                     elif is_review == "NO":
                         print(f"  [SUCCESS] Adjudicated via {used_model}: NO (Not a review. Partial rollback initiated.)")
                         
+                        # BLACKLIST THE BAD TITLE
+                        bad_title = pub.get("review_title")
+                        if bad_title and bad_title not in ["PENDING", "NA", ""]:
+                            if pub_id not in negative_data["publishers"]:
+                                negative_data["publishers"][pub_id] = []
+                            if bad_title not in negative_data["publishers"][pub_id]:
+                                negative_data["publishers"][pub_id].append(bad_title)
+                                negative_data_changed = True
+                                print(f"      [NEGATIVE CACHE] Appended bad title to negative_searches_{movie_slug}.json")
+
                         # PRECISE ROLLBACK: Keep first 4 fields untouched (id, name, search_status, search_count).
-                        # Reset fields 5 through 18 back to 00_initialize state.
                         pub["review_url"] = "PENDING"
                         pub["review_title"] = "PENDING"
                         pub["review_source"] = "PENDING"
@@ -281,7 +334,6 @@ def process_single_movie(json_path: str, prompt_template: str):
                         pub["ai_star_rating"] = "NOT_NEEDED"
                         pub["ai_sentiment_category"] = "PENDING"
                         
-                        # Strip both new and legacy adjudication keys so they start fresh
                         pub.pop("webpage_content_adjudication", None)
                         pub.pop("content_adjudication", None)
                             
@@ -293,7 +345,7 @@ def process_single_movie(json_path: str, prompt_template: str):
                             "status": "SUCCESS",
                             "adjudication": "NO",
                             "model": used_model,
-                            "action": "Partial Rollback to PENDING"
+                            "action": "Partial Rollback & Blacklisted"
                         }
 
                     else:
@@ -336,12 +388,29 @@ def process_single_movie(json_path: str, prompt_template: str):
                 "reason": str(e)
             }
 
+    # Save State Machine
     if data_changed:
         try:
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
         except Exception as e:
             print(f"[ERROR] Could not save updated review file: {e}")
+
+    # Save Negative Cache
+    if negative_data_changed:
+        try:
+            with open(negative_searches_path, "w", encoding="utf-8") as nf:
+                json.dump(negative_data, nf, indent=4, ensure_ascii=False)
+        except Exception as e:
+            print(f"[ERROR] Could not save negative searches ledger: {e}")
+
+    # Save Main Searches Ledger
+    if searches_data_changed:
+        try:
+            with open(searches_path, "w", encoding="utf-8") as sf:
+                json.dump(searches_data, sf, indent=4, ensure_ascii=False)
+        except Exception as e:
+            print(f"[ERROR] Could not save searches ledger: {e}")
 
     # Finalize Log
     movie_log_entry["new_completed"] = earlier_completed + movie_log_entry["success"]
