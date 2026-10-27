@@ -170,7 +170,7 @@ def main():
     for movie in active_movies:
         movie_name = movie.get("name")
         slug = movie.get("slug")
-        
+
         # Pre-calculate the compressed movie string for baseline relevance checking
         movie_ref_string = create_reference_string(movie_name)
 
@@ -256,19 +256,19 @@ def main():
                     # Filter 1: Check negative cache
                     if title in rejected_titles:
                         continue
-                        
+
                     # Filter 2: Baseline relevance check (Compressed String Matching)
                     title_ref_string = create_reference_string(title)
                     if movie_ref_string not in title_ref_string:
                         filtered_out_count += 1
-                        
+
                         # Automatically add to negative cache since it's irrelevant
                         if pub_id not in negative_data["publishers"]:
                             negative_data["publishers"][pub_id] = []
                         if title not in negative_data["publishers"][pub_id]:
                             negative_data["publishers"][pub_id].append(title)
                             negative_data_changed = True
-                            
+
                         continue
 
                     compact_candidates.append({"title": title, "url": url})
@@ -276,7 +276,7 @@ def main():
 
                     print(f"[{get_ordinal(idx)} Title] {title}")
                     idx += 1
-                    
+
                 if filtered_out_count > 0:
                     print(f"  -> [FILTERED] Dropped {filtered_out_count} candidate(s) missing movie name reference string.")
 
@@ -382,11 +382,13 @@ def main():
                                 print(f"     [SUCCESS] Admissible match (Confidence: {best_conf}% >= {MIN_CONFIDENCE_THRESHOLD}%): Serial #{best_sn}")
                                 print(f"     [URL]: {matched_url}")
 
+                                # ==========================================
+                                # SURGICAL FIX: Removed pub["article_title"] leak
+                                # ==========================================
                                 pub["review_url"] = matched_url
                                 pub["search_status"] = "SUCCESS"
                                 pub["review_source"] = "gemini_semantic"
                                 pub["review_title"] = matched_title
-                                pub["article_title"] = matched_title
                                 pub["classified_by"] = "AI"
 
                                 data_changed = True
