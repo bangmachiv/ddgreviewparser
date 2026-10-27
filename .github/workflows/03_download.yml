@@ -20,16 +20,24 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: "pip"  # 1. OPTIMIZATION: Caches pip packages to shave 10-15 seconds off future runs
 
-      - name: Install dependencies
+      - name: Install Python packages
         run: |
           python -m pip install --upgrade pip
           pip install requests playwright playwright-stealth curl_cffi
-          playwright install --with-deps chromium
+
+      - name: Install Playwright Browsers & OS Dependencies
+        run: |
+          # 2. OPTIMIZATION: Strictly limits OS-level dependency fetching to Chromium.
+          # This prevents the 3-5 minute silent hang caused by Ubuntu unpacking fonts for WebKit/Firefox.
+          playwright install chromium
+          playwright install-deps chromium
 
       - name: Run download script
         env:
           SCRAPE_DO_TOKEN: ${{ secrets.SCRAPE_DO_TOKEN }}
+          PYTHONUNBUFFERED: 1  # 3. OPTIMIZATION: Forces Python to stream logs to GitHub Actions in real-time
         run: |
           python 03_download.py
 
