@@ -139,5 +139,46 @@
                 "bytes": 469566
             }
         }
+    },
+    "2026-10-27T14:58:11.768305+00:00": {
+        "earlier_completed": 16,
+        "earlier_pending": 5,
+        "processed": 5,
+        "success": 5,
+        "failure": 0,
+        "new_completed": 21,
+        "new_pending": 0,
+        "publisher_details": {
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_amar-ujala_2026-bhai-tera-star-hai.html",
+                "bytes": 997190
+            },
+            "hindustan-times": {
+                "status": "SUCCESS",
+                "tier": "Tier 3 (Scrape.do)",
+                "file": "webpage_hindustan-times_2026-bhai-tera-star-hai.html",
+                "bytes": 461666
+            },
+            "navbharat-times": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_navbharat-times_2026-bhai-tera-star-hai.html",
+                "bytes": 1058346
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "tier": "Tier 3 (Scrape.do)",
+                "file": "webpage_the-indian-express_2026-bhai-tera-star-hai.html",
+                "bytes": 664025
+            },
+            "the-tribune": {
+                "status": "SUCCESS",
+                "tier": "Tier 1 (Playwright Stealth)",
+                "file": "webpage_the-tribune_2026-bhai-tera-star-hai.html",
+                "bytes": 445789
+            }
+        }
     }
 }
