@@ -4,6 +4,7 @@
 Extracts clean article text from downloaded HTML files using BeautifulSoup.
 Strictly processes publishers identified via the AI semantic step (classified_by == "AI")
 where the HTML download was successful. Outputs to data/webcontent/{slug}/.
+Writes 'webpage_content_extraction': 'SUCCESS' to the state machine.
 """
 
 import os
@@ -60,21 +61,21 @@ def extract_article_text(html_content: str) -> str:
     """Uses BeautifulSoup to strip scripts, styles, and extract the raw text."""
     if not html_content:
         return ""
-        
+
     soup = BeautifulSoup(html_content, "html.parser")
-    
+
     # Remove all script and style elements
     for script in soup(["script", "style", "nav", "footer", "header", "aside"]):
         script.extract()
 
     # Get text
     text = soup.get_text(separator=' ')
-    
+
     # Clean up whitespace
     lines = (line.strip() for line in text.splitlines())
     chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
     text = '\n'.join(chunk for chunk in chunks if chunk)
-    
+
     return text
 
 def process_single_movie(json_path: str):
@@ -112,9 +113,8 @@ def process_single_movie(json_path: str):
 
     for pub in publishers:
         if pub.get("classified_by") == "AI" and pub.get("webpage_extraction_successful") == "SUCCESS":
-            pub_id = pub.get("publisher_id")
-            content_file = os.path.join(content_dir, f"content_{pub_id}_{movie_slug}.txt")
-            if os.path.exists(content_file):
+            # Rely on the state machine field rather than physical files
+            if pub.get("webpage_content_extraction") == "SUCCESS":
                 earlier_completed += 1
             else:
                 earlier_pending += 1
@@ -132,41 +132,48 @@ def process_single_movie(json_path: str):
         "publisher_details": {}
     }
 
+    data_changed = False
+
     for pub in publishers:
         pub_id = pub.get("publisher_id")
         pub_name = pub.get("publisher_name")
         classified_by = pub.get("classified_by")
         download_status = pub.get("webpage_extraction_successful")
+        content_status = pub.get("webpage_content_extraction", "PENDING")
 
         # Execution Gate: Must be AI classified and successfully downloaded
         if classified_by != "AI" or download_status != "SUCCESS":
             continue
-            
+
+        # Skip if already extracted
+        if content_status == "SUCCESS":
+            print(f"  [SKIP] {pub_name} already extracted.")
+            continue
+
         html_file = os.path.join(html_dir, f"webpage_{pub_id}_{movie_slug}.html")
         content_file = os.path.join(content_dir, f"content_{pub_id}_{movie_slug}.txt")
 
-        # Skip if already extracted
-        if os.path.exists(content_file):
-            print(f"  [SKIP] {pub_name} already extracted.")
-            continue
-            
         if not os.path.exists(html_file):
             print(f"  [WARNING] HTML missing for {pub_name}, despite SUCCESS status. Skipping.")
             continue
-            
+
         print(f"\n--- Extracting {pub_name} ---")
         movie_log_entry["processed"] += 1
-        
+
         try:
             with open(html_file, "r", encoding="utf-8") as f:
                 html_content = f.read()
-                
+
             raw_text = extract_article_text(html_content)
-            
+
             if len(raw_text) > 500: # Ensure we got actual article content, not just a broken page
                 with open(content_file, "w", encoding="utf-8") as f:
                     f.write(raw_text)
-                    
+                
+                # INJECT NEW FIELD INTO JSON
+                pub["webpage_content_extraction"] = "SUCCESS"
+                data_changed = True
+
                 print(f"  [SUCCESS] Saved {len(raw_text)} text characters.")
                 tracker.add_success()
                 movie_log_entry["success"] += 1
@@ -183,7 +190,7 @@ def process_single_movie(json_path: str):
                     "status": "FAILED",
                     "reason": "Text payload too short."
                 }
-                
+
         except Exception as e:
             print(f"  [ERROR] Failed to process {pub_name}: {e}")
             tracker.add_failure()
@@ -192,6 +199,14 @@ def process_single_movie(json_path: str):
                 "status": "FAILED",
                 "reason": str(e)
             }
+
+    # Save State Machine if changed
+    if data_changed:
+        try:
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+        except Exception as e:
+            print(f"[ERROR] Could not save updated review file: {e}")
 
     # Finalize Log
     movie_log_entry["new_completed"] = earlier_completed + movie_log_entry["success"]
