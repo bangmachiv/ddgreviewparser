@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
 03_download.py
+Downloads the HTML content for identified review URLs using a 3-tier cascade:
+Playwright Stealth -> curl_cffi -> Scrape.do.
+Writes 'webpage_download': 'SUCCESS' or 'FAILED' to the state machine.
 """
 
 import os
@@ -182,7 +185,9 @@ def process_single_movie(json_path: str, context):
 
     for pub in publishers:
         review_url = pub.get("review_url", "PENDING")
-        status = pub.get("webpage_extraction_successful", "PENDING")
+        
+        # Look for the new field, safely fallback to "PENDING" if not there yet
+        status = pub.get("webpage_download", "PENDING")
 
         # Only items with an identified URL are candidates for download
         if review_url not in ["PENDING", "NA", ""]:
@@ -210,7 +215,9 @@ def process_single_movie(json_path: str, context):
     for index, pub in enumerate(publishers, start=1):
         pub_id = pub.get("publisher_id", f"publisher_{index}")
         review_url = pub.get("review_url", "PENDING")
-        extraction_status = pub.get("webpage_extraction_successful", "PENDING")
+        
+        # New Execution Gate
+        download_status = pub.get("webpage_download", "PENDING")
 
         output_file_name = f"webpage_{pub_id}_{movie_slug}.html"
         output_file_path = os.path.join(output_dir, output_file_name)
@@ -220,13 +227,13 @@ def process_single_movie(json_path: str, context):
             continue
 
         # 2. Skip if already completed and file physically exists on disk
-        if extraction_status == "SUCCESS" and os.path.exists(output_file_path):
+        if download_status == "SUCCESS" and os.path.exists(output_file_path):
             print(f"  [{index}/{len(publishers)}] [SKIP] {pub_id} already downloaded.")
             continue
 
         print(f"\n--- [{index}/{len(publishers)}] Downloading {pub_id} ---")
         print(f"  URL: {review_url}")
-        
+
         movie_log_entry["processed"] += 1
         html_content = None
         used_tier = None
@@ -259,13 +266,17 @@ def process_single_movie(json_path: str, context):
             if html_content:
                 used_tier = "Tier 3 (Scrape.do)"
 
-        # Save HTML and update publisher record
+        # Save HTML and update publisher record with NEW field
         if html_content:
             print(f"  [SUCCESS] Saved {len(html_content)} chars to {output_file_name} via {used_tier}")
             with open(output_file_path, "w", encoding="utf-8") as out_file:
                 out_file.write(html_content)
 
-            pub["webpage_extraction_successful"] = "SUCCESS"
+            pub["webpage_download"] = "SUCCESS"
+            
+            # Clean up the old legacy field from the state machine if it exists
+            pub.pop("webpage_extraction_successful", None)
+            
             tracker.add_success()
             movie_log_entry["success"] += 1
             movie_log_entry["publisher_details"][pub_id] = {
@@ -276,7 +287,10 @@ def process_single_movie(json_path: str, context):
             }
         else:
             print(f"  [FAILED] Could not download HTML for {pub_id} across all 3 tiers.")
-            pub["webpage_extraction_successful"] = "FAILED"
+            pub["webpage_download"] = "FAILED"
+            
+            pub.pop("webpage_extraction_successful", None)
+            
             tracker.add_failure()
             movie_log_entry["failure"] += 1
             movie_log_entry["publisher_details"][pub_id] = {
