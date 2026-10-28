@@ -61,10 +61,10 @@
             "jsonld_critic_name": "PENDING",
             "jsonld_star_rating": "PENDING",
             "ai_metadata_parsing_attempts": 0,
-            "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
+            "ai_critic_name": "PENDING",
+            "ai_star_rating": "PENDING",
             "ai_sentiment_category": "PENDING",
-            "webpage_content_adjudication": "PENDING"
+            "webpage_content_adjudication": "YES"
         },
         {
             "publisher_id": "bollywood-hungama",
@@ -542,10 +542,10 @@
             "jsonld_critic_name": "PENDING",
             "jsonld_star_rating": "PENDING",
             "ai_metadata_parsing_attempts": 0,
-            "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
+            "ai_critic_name": "PENDING",
+            "ai_star_rating": "PENDING",
             "ai_sentiment_category": "PENDING",
-            "webpage_content_adjudication": "PENDING"
+            "webpage_content_adjudication": "YES"
         },
         {
             "publisher_id": "ndtv",
@@ -763,10 +763,10 @@
             "jsonld_critic_name": "PENDING",
             "jsonld_star_rating": "PENDING",
             "ai_metadata_parsing_attempts": 0,
-            "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
+            "ai_critic_name": "PENDING",
+            "ai_star_rating": "PENDING",
             "ai_sentiment_category": "PENDING",
-            "webpage_content_adjudication": "PENDING"
+            "webpage_content_adjudication": "YES"
         },
         {
             "publisher_id": "the-quint",
@@ -844,10 +844,10 @@
             "jsonld_critic_name": "PENDING",
             "jsonld_star_rating": "PENDING",
             "ai_metadata_parsing_attempts": 0,
-            "ai_critic_name": "NOT_NEEDED",
-            "ai_star_rating": "NOT_NEEDED",
+            "ai_critic_name": "PENDING",
+            "ai_star_rating": "PENDING",
             "ai_sentiment_category": "PENDING",
-            "webpage_content_adjudication": "PENDING"
+            "webpage_content_adjudication": "YES"
         }
     ],
     "Last searched": "20 09 2026 08 59",

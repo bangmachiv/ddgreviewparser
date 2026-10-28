@@ -268,5 +268,36 @@
         "new_completed": 4,
         "new_pending": 0,
         "publisher_details": {}
+    },
+    "2026-10-28T06:14:37.111535+00:00": {
+        "earlier_completed": 0,
+        "earlier_pending": 4,
+        "processed": 4,
+        "success": 4,
+        "failure": 0,
+        "new_completed": 4,
+        "new_pending": 0,
+        "publisher_details": {
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "adjudication": "YES",
+                "model": "gemma-4-26b-a4b-it"
+            },
+            "navbharat-times": {
+                "status": "SUCCESS",
+                "adjudication": "YES",
+                "model": "gemma-4-26b-a4b-it"
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "adjudication": "YES",
+                "model": "gemma-4-26b-a4b-it"
+            },
+            "the-tribune": {
+                "status": "SUCCESS",
+                "adjudication": "YES",
+                "model": "gemma-4-26b-a4b-it"
+            }
+        }
     }
 }
