@@ -22,7 +22,8 @@ OUTPUT FILES GENERATED/UPDATED (Per Movie):
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
   publisher_id, publisher_name, search_status, search_count, review_url, 
-  review_title, review_source, classified_by, webpage_extraction_successful, article_title, 
+  review_title, review_source, classified_by, webpage_download, 
+  webpage_content_extraction, webpage_content_adjudication, article_title, 
   clean_title, highlighted_title, jsonld_critic_name, jsonld_star_rating, 
   ai_metadata_parsing_attempts, ai_critic_name, ai_star_rating, ai_sentiment_category
 """
@@ -177,7 +178,7 @@ def main():
                 "01_search.json",
                 "01-C_search-gemini.json",
                 "02_identify.json",
-                "02-C_identify-ai.json",   # <-- ADDED for 02-C Semantic AI
+                "02-C_identify-ai.json", 
                 "03_download.json",
                 "04-A-1_titles.json",
                 "04-A-2_clean.json",
@@ -254,11 +255,11 @@ def main():
         existing_pubs = {p.get("publisher_id"): p for p in reviews_data.get("publishers", [])}
         blocks_to_add = 0
 
-        # D1. search_attempts must never be published into a publisher block.
-        # Strip it from any legacy block and guarantee search_count is present.
+        # D1. Clean Legacy Fields & Inject New Pipeline 3 Fields
         blocks_migrated = 0
         for existing_block in existing_pubs.values():
             block_changed = False
+            
             if "search_attempts" in existing_block:
                 existing_block.pop("search_attempts", None)
                 block_changed = True
@@ -268,21 +269,36 @@ def main():
             if "search_rank" in existing_block:
                 existing_block["review_source"] = existing_block.pop("search_rank")
                 block_changed = True
-            # INJECTION: Add missing classified_by field to legacy blocks
             if "classified_by" not in existing_block:
                 existing_block["classified_by"] = "PENDING"
+                block_changed = True
+                
+            # INJECTION: 3 New Pipeline Phase 3 fields
+            if "webpage_download" not in existing_block:
+                existing_block["webpage_download"] = "PENDING"
+                block_changed = True
+            if "webpage_content_extraction" not in existing_block:
+                existing_block["webpage_content_extraction"] = "PENDING"
+                block_changed = True
+            if "webpage_content_adjudication" not in existing_block:
+                existing_block["webpage_content_adjudication"] = "PENDING"
+                block_changed = True
+                
+            # REMOVE: Legacy field
+            if "webpage_extraction_successful" in existing_block:
+                existing_block.pop("webpage_extraction_successful", None)
                 block_changed = True
 
             if block_changed:
                 blocks_migrated += 1
 
         if blocks_migrated > 0:
-            print(f"  [MIGRATED] Cleaned up legacy fields in {blocks_migrated} existing blocks.")
+            print(f"  [MIGRATED] Cleaned up legacy fields and injected new Step 3 fields in {blocks_migrated} existing blocks.")
 
         for pub in active_publishers:
             pub_id = pub["id"]
             if pub_id not in existing_pubs:
-                # The Master Skeleton with Semantic AI + Search Workflow Fields
+                # The Master Skeleton with new Pipeline Phase 3 Fields
                 existing_pubs[pub_id] = {
                     "publisher_id": pub_id,
                     "publisher_name": pub["name"],
@@ -292,7 +308,9 @@ def main():
                     "review_title": "PENDING",
                     "review_source": "PENDING",
                     "classified_by": "PENDING",
-                    "webpage_extraction_successful": "PENDING",
+                    "webpage_download": "PENDING",
+                    "webpage_content_extraction": "PENDING",
+                    "webpage_content_adjudication": "PENDING",
                     "article_title": "PENDING",
                     "clean_title": "PENDING",
                     "highlighted_title": "PENDING",
