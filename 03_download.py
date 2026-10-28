@@ -1,45 +1,51 @@
 #!/usr/bin/env python3
 """
-03_download.py
-Downloads the HTML content for identified review URLs using a 3-tier cascade:
-Playwright Stealth -> curl_cffi -> Scrape.do.
-Writes 'webpage_download': 'SUCCESS' or 'FAILED' to the state machine.
+03-A-2_adjudicate.py
+Semantically evaluates extracted article text using Gemma 4 31B (with 26B fallback) 
+via the Google Gemini API to verify if the content is a genuine movie review.
+Updates the publisher block with a YES 'webpage_content_adjudication' flag,
+marks 'is_review': 'Y' in the searches cache, or performs a precise rollback,
+blacklists the title, and deletes the bad HTML/TXT files on a NO.
 """
 
 import os
-import sys
 import json
-import time
 import glob
-import urllib.parse
+import time
+import sys
+import traceback
 from datetime import datetime
 
-# TLS Fingerprint spoofing & Browser Automations
-from curl_cffi import requests as cffi_requests
-import requests as standard_requests
-from playwright.sync_api import sync_playwright
-from playwright_stealth import Stealth
+try:
+    from google import genai
+    from google.genai import types
+    from google.genai import errors
+except ImportError:
+    print("[FATAL ERROR] google-genai package is missing. Run: pip install google-genai")
+    sys.exit(1)
 
 # -----------------------------------------------------------------------------
 # Configuration
 # -----------------------------------------------------------------------------
 BASE_DIR = os.getcwd()
 REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
+WEBCONTENT_DIR = os.path.join(BASE_DIR, "data", "webcontent")
 WEBPAGES_DIR = os.path.join(BASE_DIR, "data", "webpages")
+SEARCHES_DIR = os.path.join(BASE_DIR, "data", "searches")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
+PROMPTS_DIR = os.path.join(BASE_DIR, "prompts")
+PROMPT_FILE = os.path.join(PROMPTS_DIR, "adjudicate_review.txt")
 
-MIN_VALID_HTML_BYTES = 2000  # HTML smaller than this is treated as a WAF block
-SCRAPE_DO_TOKEN = os.environ.get("SCRAPE_DO_TOKEN")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
-HTTP_HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Referer": "https://www.google.com/",
-}
+if not GEMINI_API_KEY:
+    print("[FATAL ERROR] GEMINI_API_KEY environment variable is not set.")
+    sys.exit(1)
+
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 # -----------------------------------------------------------------------------
-# 7-Column Pipeline Metric Tracker
+# Pipeline Metric Tracker
 # -----------------------------------------------------------------------------
 class PipelineTracker:
     def __init__(self, metric_name, earlier_completed, earlier_pending):
@@ -70,90 +76,55 @@ class PipelineTracker:
         print(f"| {self.earlier_completed:^17} | {self.earlier_pending:^15} | {self.processed:^9} | {self.succeeded:^7} | {self.failed:^7} | {new_completed:^13} | {new_pending:^11} |")
         print("=" * 125 + "\n")
 
+# -----------------------------------------------------------------------------
+# Utility Functions
+# -----------------------------------------------------------------------------
+def clean_json_response(raw_text):
+    """Removes markdown code blocks if the model wrapped the JSON."""
+    clean_text = raw_text.strip()
+    if clean_text.startswith("```json"):
+        clean_text = clean_text[7:]
+    elif clean_text.startswith("```"):
+        clean_text = clean_text[3:]
+    if clean_text.endswith("```"):
+        clean_text = clean_text[:-3]
+    return clean_text.strip()
 
-def is_valid_html(html_content: str) -> bool:
-    """Checks if the HTML is an actual article or a bot challenge/block page."""
-    if not html_content or len(html_content) < MIN_VALID_HTML_BYTES:
-        return False
-
-    # Challenge pages are typically small; real articles are large
-    if len(html_content) > 80000:
-        return True
-
-    lower_html = html_content.lower()
-
-    bad_titles = [
-        "<title>just a moment...</title>",
-        "<title>attention required!</title>",
-        "<title>security challenge</title>"
-    ]
-
-    for title in bad_titles:
-        if title in lower_html:
-            return False
-
-    bad_signatures = [
-        "enable javascript and cookies to continue",
-        "please verify you are a human",
-        "challenge-platform"
-    ]
-
-    for sig in bad_signatures:
-        if sig in lower_html:
-            return False
-
-    return True
-
-
-def fallback_download(url: str):
-    """Fallback Tier 2: HTTP fetcher using curl_cffi to spoof Chrome TLS fingerprints."""
-    print("    └─► [TIER 2 FALLBACK] Attempting TLS-Spoofed HTTP request...")
+def call_gemini_api(model_name, prompt):
+    """Executes a single text generation call to the specified Gemma model."""
     try:
-        session = cffi_requests.Session(impersonate="chrome120")
-        session.headers.update(HTTP_HEADERS)
-        response = session.get(url, timeout=20)
-
-        if response.status_code == 200 and is_valid_html(response.text):
-            print(f"    └─► [TIER 2 SUCCESS] Received {len(response.text)} characters.")
-            return response.text
-        else:
-            print(f"    └─► [TIER 2 FAILED] Status: {response.status_code}, Length: {len(response.text) if response.text else 0}")
+        response = client.models.generate_content(
+            model=model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                temperature=0.1,
+                response_mime_type="application/json"
+            )
+        )
+        
+        if not getattr(response, "candidates", None) or not response.candidates:
+            print(f"      [DEBUG ERROR] API call succeeded on {model_name}, but candidates payload is empty.")
             return None
-    except Exception as e:
-        print(f"    └─► [TIER 2 ERROR] {e}")
-        return None
 
-
-def scrape_do_fallback(target_url: str):
-    """Fallback Tier 3: Residential Proxy API via Scrape.do."""
-    print("    └─► [TIER 3 FALLBACK] Routing request through Scrape.do API...")
-
-    if not SCRAPE_DO_TOKEN:
-        print("    └─► [TIER 3 ERROR] SCRAPE_DO_TOKEN environment variable is not set!")
-        return None
-
-    encoded_url = urllib.parse.quote(target_url)
-    api_url = f"http://api.scrape.do/?token={SCRAPE_DO_TOKEN}&url={encoded_url}&render=true&super=true&geoCode=in"
-
-    try:
-        response = standard_requests.get(api_url, timeout=60)
-        if response.status_code == 200 and is_valid_html(response.text):
-            print(f"    └─► [TIER 3 SUCCESS] Received {len(response.text)} characters via Scrape.do.")
-            return response.text
+        text_val = response.text
+        if text_val and text_val.strip():
+            return text_val
         else:
-            print(f"    └─► [TIER 3 FAILED] Status: {response.status_code}")
-            if response.status_code == 401:
-                print("    └─► [TIER 3 FATAL] Invalid API Token or Scrape.do Credits Exhausted.")
-            return None
+            finish_reason = response.candidates[0].finish_reason if response.candidates else "Unknown"
+            print(f"      [DEBUG ERROR] Model {model_name} returned empty text. Candidate finish reason: {finish_reason}")
+
+    except errors.APIError as e:
+        print(f"      [API ERROR on {model_name}]: Code: {getattr(e, 'code', 'N/A')}, Message: {getattr(e, 'message', str(e))}")
     except Exception as e:
-        print(f"    └─► [TIER 3 ERROR] {e}")
-        return None
+        print(f"      [UNEXPECTED ERROR on {model_name}]: {type(e).__name__}: {str(e)}")
+        print(f"      [TRACEBACK]: {traceback.format_exc().strip().replace(chr(10), ' | ')}")
 
+    return None
 
-def process_single_movie(json_path: str, context):
-    """Processes a single movie's reviews JSON file."""
+def process_single_movie(json_path: str, prompt_template: str):
+    """Processes adjudication for a single movie's JSON file."""
     print("\n" + "=" * 80)
-    print(f" LOADING TARGET: {json_path}")
+    print(f" CONTENT ADJUDICATION FOR: {json_path}")
     print("=" * 80)
 
     try:
@@ -163,40 +134,57 @@ def process_single_movie(json_path: str, context):
         print(f"[ERROR] Could not read {json_path}: {e}")
         return
 
+    movie_name = data.get("movie", {}).get("name")
     movie_slug = data.get("movie", {}).get("slug")
-    if not movie_slug:
-        print(f"[ERROR] Missing 'slug' in {json_path}. Skipping.")
+    if not movie_slug or not movie_name:
+        print(f"[ERROR] Missing 'slug' or 'name' in {json_path}. Skipping.")
         return
 
-    output_dir = os.path.join(WEBPAGES_DIR, movie_slug)
-    os.makedirs(output_dir, exist_ok=True)
-
+    html_dir = os.path.join(WEBPAGES_DIR, movie_slug)
+    content_dir = os.path.join(WEBCONTENT_DIR, movie_slug)
     movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{movie_slug}")
-    script_log_path = os.path.join(movie_logs_dir, "03_download.json")
+    script_log_path = os.path.join(movie_logs_dir, "03b_adjudicate.json")
     os.makedirs(movie_logs_dir, exist_ok=True)
+
+    # -------------------------------------------------------------------------
+    # Load Negative Cache Ledger
+    # -------------------------------------------------------------------------
+    negative_searches_path = os.path.join(SEARCHES_DIR, f"negative_searches_{movie_slug}.json")
+    negative_data = {"movie": {"name": movie_name, "slug": movie_slug}, "publishers": {}}
+    if os.path.exists(negative_searches_path):
+        try:
+            with open(negative_searches_path, "r", encoding="utf-8") as nf:
+                negative_data = json.load(nf)
+        except json.JSONDecodeError:
+            pass
+
+    # -------------------------------------------------------------------------
+    # Load Main Searches Ledger (To mark 'is_review': 'Y')
+    # -------------------------------------------------------------------------
+    searches_path = os.path.join(SEARCHES_DIR, f"searches_{movie_slug}.json")
+    searches_data = {}
+    if os.path.exists(searches_path):
+        try:
+            with open(searches_path, "r", encoding="utf-8") as sf:
+                searches_data = json.load(sf)
+        except json.JSONDecodeError:
+            pass
 
     publishers = data.get("publishers", [])
 
-    # -------------------------------------------------------------------------
-    # Pre-Scan Metrics Calculation
-    # -------------------------------------------------------------------------
     earlier_completed = 0
     earlier_pending = 0
 
     for pub in publishers:
-        review_url = pub.get("review_url", "PENDING")
-        
-        # Look for the new field, safely fallback to "PENDING" if not there yet
-        status = pub.get("webpage_download", "PENDING")
-
-        # Only items with an identified URL are candidates for download
-        if review_url not in ["PENDING", "NA", ""]:
-            if status == "SUCCESS":
+        # Check against the new webpage_content_extraction field
+        if pub.get("classified_by") == "AI" and pub.get("webpage_content_extraction") == "SUCCESS":
+            adj_status = pub.get("webpage_content_adjudication", "PENDING")
+            if adj_status in ["YES", "NO"]:
                 earlier_completed += 1
             else:
                 earlier_pending += 1
 
-    tracker = PipelineTracker("Webpages Downloaded", earlier_completed, earlier_pending)
+    tracker = PipelineTracker("Content Adjudicated", earlier_completed, earlier_pending)
 
     movie_log_entry = {
         "earlier_completed": earlier_completed,
@@ -209,109 +197,242 @@ def process_single_movie(json_path: str, context):
         "publisher_details": {}
     }
 
-    # -------------------------------------------------------------------------
-    # Execution Loop
-    # -------------------------------------------------------------------------
-    for index, pub in enumerate(publishers, start=1):
-        pub_id = pub.get("publisher_id", f"publisher_{index}")
-        review_url = pub.get("review_url", "PENDING")
+    data_changed = False
+    negative_data_changed = False
+    searches_data_changed = False
+
+    for pub in publishers:
+        pub_id = pub.get("publisher_id")
+        pub_name = pub.get("publisher_name")
+        classified_by = pub.get("classified_by")
+        content_extracted_status = pub.get("webpage_content_extraction", "PENDING")
+        adj_status = pub.get("webpage_content_adjudication", "PENDING")
+
+        # Execution Gate: Target AI classified + successfully EXTRACTED text
+        if classified_by != "AI" or content_extracted_status != "SUCCESS":
+            continue
+
+        if adj_status in ["YES", "NO"]:
+            print(f"  [SKIP] {pub_name} already adjudicated ({adj_status}).")
+            continue
+
+        content_file = os.path.join(content_dir, f"content_{pub_id}_{movie_slug}.txt")
+        html_file = os.path.join(html_dir, f"webpage_{pub_id}_{movie_slug}.html")
         
-        # New Execution Gate
-        download_status = pub.get("webpage_download", "PENDING")
-
-        output_file_name = f"webpage_{pub_id}_{movie_slug}.html"
-        output_file_path = os.path.join(output_dir, output_file_name)
-
-        # 1. Skip if no review URL has been identified yet
-        if review_url in ["PENDING", "NA", ""]:
+        if not os.path.exists(content_file):
+            print(f"  [WARNING] Content file missing for {pub_name}. Skipping.")
             continue
 
-        # 2. Skip if already completed and file physically exists on disk
-        if download_status == "SUCCESS" and os.path.exists(output_file_path):
-            print(f"  [{index}/{len(publishers)}] [SKIP] {pub_id} already downloaded.")
-            continue
-
-        print(f"\n--- [{index}/{len(publishers)}] Downloading {pub_id} ---")
-        print(f"  URL: {review_url}")
-
+        print(f"\n--- Adjudicating {pub_name} ---")
         movie_log_entry["processed"] += 1
-        html_content = None
-        used_tier = None
 
-        # TIER 1: Primary Attempt (Playwright + Stealth)
         try:
-            page = context.new_page()
-            page.goto(review_url, wait_until="domcontentloaded", timeout=30000)
-            page.wait_for_timeout(8000)
-            temp_content = page.content()
-            page.close()
+            with open(content_file, "r", encoding="utf-8") as f:
+                article_text = f.read()
 
-            if is_valid_html(temp_content):
-                html_content = temp_content
-                used_tier = "Tier 1 (Playwright Stealth)"
+            # Truncate text strictly to 25,000 characters to cap payloads at ~6,250 tokens
+            if len(article_text) > 25000:
+                article_text = article_text[:25000] + "\n...[TRUNCATED]"
+
+            prompt = prompt_template.replace("{MOVIE_TITLE}", movie_name)\
+                                    .replace("{ARTICLE_TEXT}", article_text)
+
+            raw_response = None
+            used_model = None
+            MAX_LOOPS = 3
+
+            for attempt in range(1, MAX_LOOPS + 1):
+                # Attempt 1: Gemma 31B
+                print(f"      [Attempting Model: gemma-4-31b-it (Loop {attempt}/{MAX_LOOPS})]")
+                raw_response = call_gemini_api("gemma-4-31b-it", prompt)
+                if raw_response:
+                    used_model = "gemma-4-31b-it"
+                    break
+                
+                print("      [API FAILURE] gemma-4-31b-it failed. Waiting 10 seconds before 26B fallback...")
+                time.sleep(10)
+
+                # Attempt 2: Gemma 26B Fallback
+                print(f"      [Attempting Model: gemma-4-26b-a4b-it (Loop {attempt}/{MAX_LOOPS})]")
+                raw_response = call_gemini_api("gemma-4-26b-a4b-it", prompt)
+                if raw_response:
+                    used_model = "gemma-4-26b-a4b-it"
+                    break
+                
+                print("      [API FAILURE] gemma-4-26b-a4b-it fallback failed.")
+                if attempt < MAX_LOOPS:
+                    print("      [RETRYING] Waiting 10 seconds before restarting 31B/26B cascade loop...")
+                    time.sleep(10)
+
+            # Resolution & State Machine Updates
+            if raw_response:
+                clean_response = clean_json_response(raw_response)
+                
+                try:
+                    parsed_json = json.loads(clean_response)
+                    is_review = str(parsed_json.get("is_movie_review", "")).strip().upper()
+                    
+                    if is_review == "YES":
+                        print(f"  [SUCCESS] Adjudicated via {used_model}: YES")
+                        
+                        # INJECT THE NEW FIELD
+                        pub["webpage_content_adjudication"] = "YES"
+                        pub.pop("content_adjudication", None) # Clean legacy field if it exists
+                        
+                        # Unlock Downstream Scripts
+                        pub["ai_critic_name"] = "PENDING"
+                        pub["ai_star_rating"] = "PENDING"
+                        pub["ai_sentiment_category"] = "PENDING"
+                        data_changed = True
+                        
+                        # -----------------------------------------------------------------
+                        # TAG SEARCH LEDGER: Mark 'is_review': 'Y' for future dataset labeling
+                        # -----------------------------------------------------------------
+                        current_url = pub.get("review_url")
+                        if current_url and current_url not in ["PENDING", "NA", ""]:
+                            for spub in searches_data.get("publishers", []):
+                                if spub.get("publisher_id") == pub_id:
+                                    for res in spub.get("results", []):
+                                        if res.get("url") == current_url:
+                                            res["is_review"] = "Y"
+                                            searches_data_changed = True
+                                            print(f"      [SEARCH CACHE] Marked URL as true review (Y) in searches_{movie_slug}.json")
+                                            break
+                                    break
+                        # -----------------------------------------------------------------
+                        
+                        tracker.add_success()
+                        movie_log_entry["success"] += 1
+                        movie_log_entry["publisher_details"][pub_id] = {
+                            "status": "SUCCESS",
+                            "adjudication": "YES",
+                            "model": used_model
+                        }
+                        
+                    elif is_review == "NO":
+                        print(f"  [SUCCESS] Adjudicated via {used_model}: NO (Not a review. Partial rollback initiated.)")
+                        
+                        # 1. BLACKLIST THE BAD TITLE
+                        bad_title = pub.get("review_title")
+                        if bad_title and bad_title not in ["PENDING", "NA", ""]:
+                            if pub_id not in negative_data["publishers"]:
+                                negative_data["publishers"][pub_id] = []
+                            if bad_title not in negative_data["publishers"][pub_id]:
+                                negative_data["publishers"][pub_id].append(bad_title)
+                                negative_data_changed = True
+                                print(f"      [NEGATIVE CACHE] Appended bad title to negative_searches_{movie_slug}.json")
+                                
+                        # 2. DELETE PHYSICAL FILES
+                        if os.path.exists(content_file):
+                            os.remove(content_file)
+                            print(f"      [FILE SYSTEM] Deleted bad text file: {os.path.basename(content_file)}")
+                            
+                        if os.path.exists(html_file):
+                            os.remove(html_file)
+                            print(f"      [FILE SYSTEM] Deleted bad HTML file: {os.path.basename(html_file)}")
+
+                        # 3. PRECISE ROLLBACK OF STATE MACHINE
+                        pub["review_url"] = "PENDING"
+                        pub["review_title"] = "PENDING"
+                        pub["review_source"] = "PENDING"
+                        pub["classified_by"] = "PENDING"
+                        
+                        # Rollback both HTML download and Text Extraction states
+                        pub["webpage_download"] = "PENDING"
+                        pub["webpage_content_extraction"] = "PENDING"
+                        
+                        pub["article_title"] = "PENDING"
+                        pub["clean_title"] = "PENDING"
+                        pub["highlighted_title"] = "PENDING"
+                        pub["jsonld_critic_name"] = "PENDING"
+                        pub["jsonld_star_rating"] = "PENDING"
+                        pub["ai_metadata_parsing_attempts"] = 0
+                        pub["ai_critic_name"] = "NOT_NEEDED"
+                        pub["ai_star_rating"] = "NOT_NEEDED"
+                        pub["ai_sentiment_category"] = "PENDING"
+                        
+                        pub.pop("webpage_content_adjudication", None)
+                        pub.pop("content_adjudication", None)
+                            
+                        data_changed = True
+                        
+                        tracker.add_success()
+                        movie_log_entry["success"] += 1
+                        movie_log_entry["publisher_details"][pub_id] = {
+                            "status": "SUCCESS",
+                            "adjudication": "NO",
+                            "model": used_model,
+                            "action": "Partial Rollback, Blacklisted, Files Deleted"
+                        }
+
+                    else:
+                        print(f"  [FAILED] Model {used_model} returned valid JSON but missing/invalid 'is_movie_review' key. Output: {parsed_json}")
+                        tracker.add_failure()
+                        movie_log_entry["failure"] += 1
+                        movie_log_entry["publisher_details"][pub_id] = {
+                            "status": "FAILED",
+                            "reason": "Missing/Invalid Key in JSON"
+                        }
+                        
+                except json.JSONDecodeError as e:
+                    print(f"  [FAILED] JSON Decode Error on {used_model}: {e}. Raw model output was: {raw_response}")
+                    tracker.add_failure()
+                    movie_log_entry["failure"] += 1
+                    movie_log_entry["publisher_details"][pub_id] = {
+                        "status": "FAILED",
+                        "reason": "JSON Decode Error"
+                    }
+                
+                # Apply 60s TPM cool-off ONLY after a successful payload return
+                print("      [RATE LIMIT] Successful LLM return. Sleeping 60 seconds to clear 16k TPM buffer...")
+                time.sleep(60)
+
             else:
-                print("    └─► [WARNING] Tier 1 Playwright payload rejected (Bot challenge page).")
+                print(f"  [FAILED] Publisher exhausted all {MAX_LOOPS} loops of the 31B/26B cascade.")
+                tracker.add_failure()
+                movie_log_entry["failure"] += 1
+                movie_log_entry["publisher_details"][pub_id] = {
+                    "status": "FAILED",
+                    "reason": "Cascade Exhausted"
+                }
+
         except Exception as e:
-            print(f"    └─► [WARNING] Tier 1 Playwright failed: {e}")
-
-        # TIER 2: TLS Spoofing (curl_cffi)
-        if not html_content:
-            html_content = fallback_download(review_url)
-            if html_content:
-                used_tier = "Tier 2 (curl_cffi)"
-
-        # TIER 3: Residential Proxy (Scrape.do)
-        if not html_content:
-            html_content = scrape_do_fallback(review_url)
-            if html_content:
-                used_tier = "Tier 3 (Scrape.do)"
-
-        # Save HTML and update publisher record with NEW field
-        if html_content:
-            print(f"  [SUCCESS] Saved {len(html_content)} chars to {output_file_name} via {used_tier}")
-            with open(output_file_path, "w", encoding="utf-8") as out_file:
-                out_file.write(html_content)
-
-            pub["webpage_download"] = "SUCCESS"
-            
-            # Clean up the old legacy field from the state machine if it exists
-            pub.pop("webpage_extraction_successful", None)
-            
-            tracker.add_success()
-            movie_log_entry["success"] += 1
-            movie_log_entry["publisher_details"][pub_id] = {
-                "status": "SUCCESS",
-                "tier": used_tier,
-                "file": output_file_name,
-                "bytes": len(html_content)
-            }
-        else:
-            print(f"  [FAILED] Could not download HTML for {pub_id} across all 3 tiers.")
-            pub["webpage_download"] = "FAILED"
-            
-            pub.pop("webpage_extraction_successful", None)
-            
+            print(f"  [ERROR] File processing or systemic failure on {pub_name}: {e}")
             tracker.add_failure()
             movie_log_entry["failure"] += 1
             movie_log_entry["publisher_details"][pub_id] = {
                 "status": "FAILED",
-                "reason": "All 3 tiers failed"
+                "reason": str(e)
             }
 
-        # Save reviews JSON incrementally
+    # Save State Machine
+    if data_changed:
         try:
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
         except Exception as e:
             print(f"[ERROR] Could not save updated review file: {e}")
 
-        time.sleep(2)
+    # Save Negative Cache
+    if negative_data_changed:
+        try:
+            with open(negative_searches_path, "w", encoding="utf-8") as nf:
+                json.dump(negative_data, nf, indent=4, ensure_ascii=False)
+        except Exception as e:
+            print(f"[ERROR] Could not save negative searches ledger: {e}")
 
-    # Finalize log summary
+    # Save Main Searches Ledger
+    if searches_data_changed:
+        try:
+            with open(searches_path, "w", encoding="utf-8") as sf:
+                json.dump(searches_data, sf, indent=4, ensure_ascii=False)
+        except Exception as e:
+            print(f"[ERROR] Could not save searches ledger: {e}")
+
+    # Finalize Log
     movie_log_entry["new_completed"] = earlier_completed + movie_log_entry["success"]
     movie_log_entry["new_pending"] = earlier_pending - movie_log_entry["success"]
 
-    # Safely write to 03_download.json
     script_log_data = {}
     if os.path.exists(script_log_path) and os.path.getsize(script_log_path) > 0:
         try:
@@ -333,41 +454,31 @@ def process_single_movie(json_path: str, context):
 
 
 def main():
+    print("=" * 80)
+    print(" 03B: GEMMA CONTENT ADJUDICATION")
+    print("=" * 80)
+    
+    if not os.path.exists(PROMPT_FILE):
+        print(f"[FATAL ERROR] Prompt file missing: {PROMPT_FILE}")
+        sys.exit(1)
+
+    with open(PROMPT_FILE, "r", encoding="utf-8") as f:
+        prompt_template = f.read()
+        
     target_files = glob.glob(os.path.join(REVIEWS_DIR, "reviews_*.json"))
 
     if not target_files:
         print("[ERROR] No JSON files found in data/reviews/ directory.")
         return
 
-    print(f"[INFO] Found {len(target_files)} movie review file(s) to process.")
+    print(f"[INFO] Found {len(target_files)} movie review file(s) for adjudication.")
 
-    with Stealth().use_sync(sync_playwright()) as p:
-        browser = p.chromium.launch(
-            headless=True,
-            args=[
-                "--disable-blink-features=AutomationControlled",
-                "--no-sandbox",
-                "--disable-dev-shm-usage"
-            ]
-        )
-
-        context = browser.new_context(
-            user_agent=HTTP_HEADERS["User-Agent"],
-            viewport={"width": 1920, "height": 1080},
-            extra_http_headers={"Referer": "https://www.google.com/"},
-            locale="en-IN",
-            timezone_id="Asia/Kolkata"
-        )
-
-        for json_path in target_files:
-            process_single_movie(json_path, context)
-
-        browser.close()
+    for json_path in target_files:
+        process_single_movie(json_path, prompt_template)
 
     print("\n" + "=" * 40)
-    print(" ALL DOWNLOAD RUNS COMPLETED")
+    print(" ALL ADJUDICATIONS COMPLETED")
     print("=" * 40)
-
 
 if __name__ == "__main__":
     main()
