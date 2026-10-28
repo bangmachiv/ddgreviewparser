@@ -3,7 +3,8 @@
 03a_content.py
 Extracts clean article text from downloaded HTML files using BeautifulSoup.
 Strictly processes publishers identified via the AI semantic step (classified_by == "AI")
-where the HTML download was successful. Outputs to data/webcontent/{slug}/.
+where the HTML download was successful (webpage_download == "SUCCESS"). 
+Outputs to data/webcontent/{slug}/.
 Writes 'webpage_content_extraction': 'SUCCESS' to the state machine.
 """
 
@@ -112,7 +113,8 @@ def process_single_movie(json_path: str):
     earlier_pending = 0
 
     for pub in publishers:
-        if pub.get("classified_by") == "AI" and pub.get("webpage_extraction_successful") == "SUCCESS":
+        # Check against the NEW 'webpage_download' field
+        if pub.get("classified_by") == "AI" and pub.get("webpage_download") == "SUCCESS":
             # Rely on the state machine field rather than physical files
             if pub.get("webpage_content_extraction") == "SUCCESS":
                 earlier_completed += 1
@@ -138,7 +140,9 @@ def process_single_movie(json_path: str):
         pub_id = pub.get("publisher_id")
         pub_name = pub.get("publisher_name")
         classified_by = pub.get("classified_by")
-        download_status = pub.get("webpage_extraction_successful")
+        
+        # Pull the NEW download field status
+        download_status = pub.get("webpage_download", "PENDING")
         content_status = pub.get("webpage_content_extraction", "PENDING")
 
         # Execution Gate: Must be AI classified and successfully downloaded
@@ -169,7 +173,7 @@ def process_single_movie(json_path: str):
             if len(raw_text) > 500: # Ensure we got actual article content, not just a broken page
                 with open(content_file, "w", encoding="utf-8") as f:
                     f.write(raw_text)
-                
+
                 # INJECT NEW FIELD INTO JSON
                 pub["webpage_content_extraction"] = "SUCCESS"
                 data_changed = True
