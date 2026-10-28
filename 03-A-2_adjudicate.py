@@ -174,8 +174,8 @@ def process_single_movie(json_path: str, prompt_template: str):
     earlier_pending = 0
 
     for pub in publishers:
-        if pub.get("classified_by") == "AI" and pub.get("webpage_extraction_successful") == "SUCCESS":
-            # Target new field: webpage_content_adjudication
+        # Check against the new webpage_content_extraction field
+        if pub.get("classified_by") == "AI" and pub.get("webpage_content_extraction") == "SUCCESS":
             adj_status = pub.get("webpage_content_adjudication", "PENDING")
             if adj_status in ["YES", "NO"]:
                 earlier_completed += 1
@@ -203,11 +203,11 @@ def process_single_movie(json_path: str, prompt_template: str):
         pub_id = pub.get("publisher_id")
         pub_name = pub.get("publisher_name")
         classified_by = pub.get("classified_by")
-        download_status = pub.get("webpage_extraction_successful")
+        content_extracted_status = pub.get("webpage_content_extraction", "PENDING")
         adj_status = pub.get("webpage_content_adjudication", "PENDING")
 
-        # Execution Gate: Target AI classified + successfully extracted publishers
-        if classified_by != "AI" or download_status != "SUCCESS":
+        # Execution Gate: Target AI classified + successfully EXTRACTED text
+        if classified_by != "AI" or content_extracted_status != "SUCCESS":
             continue
 
         if adj_status in ["YES", "NO"]:
@@ -323,7 +323,11 @@ def process_single_movie(json_path: str, prompt_template: str):
                         pub["review_title"] = "PENDING"
                         pub["review_source"] = "PENDING"
                         pub["classified_by"] = "PENDING"
+                        
+                        # Rollback both HTML download and Text Extraction states
                         pub["webpage_extraction_successful"] = "PENDING"
+                        pub["webpage_content_extraction"] = "PENDING"
+                        
                         pub["article_title"] = "PENDING"
                         pub["clean_title"] = "PENDING"
                         pub["highlighted_title"] = "PENDING"
