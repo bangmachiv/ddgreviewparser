@@ -9,8 +9,9 @@ INPUT FILES READ:
 
 OUTPUT FOLDERS CREATED (Per Movie):
   1. data/webpages/<slugname>/
-  2. logs/logs_<slugname>/
-  3. logs/logs_<slugname>/pipeline_<slugname>/
+  2. data/webcontent/<slugname>/
+  3. logs/logs_<slugname>/
+  4. logs/logs_<slugname>/pipeline_<slugname>/
 
 OUTPUT FILES GENERATED/UPDATED (Per Movie):
   1. data/searches/searches_<slugname>.json (Initialized as {})
@@ -18,13 +19,13 @@ OUTPUT FILES GENERATED/UPDATED (Per Movie):
   3. data/output/json/summary_<slugname>.json (Initialized as {})
   4. data/reviews/reviews_<slugname>.json
   5. logs/logs_<slugname>/ai_processing_logs.json (Per-publisher AI tracking blocks)
-  6. 14 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/
+  6. 16 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
-  publisher_id, publisher_name, search_status, search_count, review_url, 
-  review_title, review_source, classified_by, webpage_download, 
-  webpage_content_extraction, webpage_content_adjudication, article_title, 
-  clean_title, highlighted_title, jsonld_critic_name, jsonld_star_rating, 
+  publisher_id, publisher_name, search_status, search_count, review_url,
+  review_title, review_source, classified_by, webpage_download,
+  webpage_content_extraction, webpage_content_adjudication, article_title,
+  clean_title, highlighted_title, jsonld_critic_name, jsonld_star_rating,
   ai_metadata_parsing_attempts, ai_critic_name, ai_star_rating, ai_sentiment_category
 """
 
@@ -42,8 +43,53 @@ MOVIES_FILE = os.path.join(BASE_DIR, "data", "movies", "movies-live-today.json")
 REVIEWS_DIR = os.path.join(BASE_DIR, "data", "reviews")
 SEARCHES_DIR = os.path.join(BASE_DIR, "data", "searches")
 WEBPAGES_DIR = os.path.join(BASE_DIR, "data", "webpages")
+WEBCONTENT_DIR = os.path.join(BASE_DIR, "data", "webcontent")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 OUTPUT_JSON_DIR = os.path.join(BASE_DIR, "data", "output", "json")
+
+# New flat alphabetical nomenclature (00 -> 07)
+SCRIPT_LOGS = [
+    "00_initialize.json",
+    "01-A_search-ddgs.json",
+    "01-B_search-tavily.json",
+    "02-A_identify.json",
+    "02-B_identify-ai.json",
+    "03_download.json",
+    "04-A_content.json",
+    "04-B_adjudicate.json",
+    "05-A_titles.json",
+    "05-B_clean.json",
+    "05-C_highlight.json",
+    "06-A_metadata-jsonld.json",
+    "06-B_metadata-ai.json",
+    "06-C_label.json",
+    "07-A_wsap.json",
+    "07-B_summary.json"
+]
+
+# AI Processing Log Schema & Legacy Key Migration Map
+AI_LOG_FIELDS = [
+    "02-B_identify-ai",
+    "02-B_classify-ai",
+    "04-B_adjudicate",
+    "05-B_clean",
+    "05-C_highlight",
+    "06-B_metadata-ai",
+    "06-C_label"
+]
+
+AI_KEY_MIGRATIONS = {
+    "02-C_identify-ai": "02-B_identify-ai",
+    "02-C_classify-ai": "02-B_classify-ai",
+    "04-A-2_clean": "05-B_clean",
+    "04-A-3_highlight": "05-C_highlight",
+    "04-B-2_metadata-ai": "06-B_metadata-ai",
+    "04-B-3_label": "06-C_label"
+}
+
+RETIRED_AI_KEYS = [
+    "01-C_search-gemini"
+]
 
 # -----------------------------------------------------------------------------
 # 7-Column Metric Tracker Utility
@@ -69,13 +115,13 @@ class PipelineTracker:
         done_after = self.done_before + self.succeeded
         to_be_done_after = self.to_be_done_before - self.succeeded
 
-        print("\n" + "="*105)
+        print("\n" + "=" * 105)
         print(f" PIPELINE METRIC: {self.metric_name}")
-        print("="*105)
+        print("=" * 105)
         print(f"| {'Done (Bef)':^10} | {'To Be Done (Bef)':^16} | {'Processed':^9} | {'Succeeded':^9} | {'Failed':^6} | {'Done (Aft)':^10} | {'To Be Done (Aft)':^16} |")
         print("-" * 105)
         print(f"| {self.done_before:^10} | {self.to_be_done_before:^16} | {self.processed:^9} | {self.succeeded:^9} | {self.failed:^6} | {done_after:^10} | {to_be_done_after:^16} |")
-        print("="*105 + "\n")
+        print("=" * 105 + "\n")
 
 # -----------------------------------------------------------------------------
 # Main Execution Logic
@@ -86,7 +132,7 @@ def main():
     print("=" * 80)
 
     # 1. Base Output Directories (Guarantees Write Rights)
-    for folder in [REVIEWS_DIR, SEARCHES_DIR, WEBPAGES_DIR, LOGS_DIR, OUTPUT_JSON_DIR]:
+    for folder in [REVIEWS_DIR, SEARCHES_DIR, WEBPAGES_DIR, WEBCONTENT_DIR, LOGS_DIR, OUTPUT_JSON_DIR]:
         os.makedirs(folder, exist_ok=True)
         # Create a .gitkeep to ensure Git tracks even completely empty base folders
         with open(os.path.join(folder, ".gitkeep"), "w") as f:
@@ -131,20 +177,16 @@ def main():
                     existing_data = json.load(rf)
                 existing_pub_ids = [p.get("publisher_id") for p in existing_data.get("publishers", [])]
 
-                # Count how many active publishers are already in this movie's file
                 movie_done = sum(1 for pub in active_publishers if pub["id"] in existing_pub_ids)
                 movie_todo = len(active_publishers) - movie_done
 
                 global_done_before += movie_done
                 global_to_be_done_before += movie_todo
             except Exception:
-                # If file is corrupted, all active publishers need to be done
                 global_to_be_done_before += len(active_publishers)
         else:
-            # File doesn't exist, all active publishers need to be done for this movie
             global_to_be_done_before += len(active_publishers)
 
-    # Initialize the Tracker
     tracker = PipelineTracker("Blocks made in reviews file", global_done_before, global_to_be_done_before)
 
     # -------------------------------------------------------------------------
@@ -159,44 +201,28 @@ def main():
 
         # A. Create Movie-Specific Folders and force Git to track them
         movie_webpages_dir = os.path.join(WEBPAGES_DIR, movie_slug)
+        movie_webcontent_dir = os.path.join(WEBCONTENT_DIR, movie_slug)
         movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{movie_slug}")
         movie_pipeline_logs = os.path.join(movie_logs_dir, f"pipeline_{movie_slug}")
 
         try:
             os.makedirs(movie_webpages_dir, exist_ok=True)
+            os.makedirs(movie_webcontent_dir, exist_ok=True)
             os.makedirs(movie_pipeline_logs, exist_ok=True)
 
             # Create .gitkeep files inside the movie folders
-            with open(os.path.join(movie_webpages_dir, ".gitkeep"), "w") as f:
-                pass
-            with open(os.path.join(movie_pipeline_logs, ".gitkeep"), "w") as f:
-                pass
+            for target_dir in [movie_webpages_dir, movie_webcontent_dir, movie_pipeline_logs]:
+                with open(os.path.join(target_dir, ".gitkeep"), "w") as f:
+                    pass
 
             # Create empty JSON log files based on the new nomenclature
-            script_logs = [
-                "00_initialize.json",
-                "01_search.json",
-                "01-C_search-gemini.json",
-                "02_identify.json",
-                "02-C_identify-ai.json", 
-                "03_download.json",
-                "04-A-1_titles.json",
-                "04-A-2_clean.json",
-                "04-A-3_highlight.json",
-                "04-B-1_metadata-jsonld.json",
-                "04-B-2_metadata-ai.json",
-                "04-B-3_label.json",
-                "05-A_output-wsap.json",
-                "05-B_summary.json"
-            ]
-
-            for script_log in script_logs:
+            for script_log in SCRIPT_LOGS:
                 log_path = os.path.join(movie_logs_dir, script_log)
                 if not os.path.exists(log_path):
                     with open(log_path, "w", encoding="utf-8") as lf:
-                        json.dump({}, lf) # Initialize as an empty JSON object
+                        json.dump({}, lf)
 
-            print(f"  [SUCCESS] Movie folders and {len(script_logs)} script log files created.")
+            print(f"  [SUCCESS] Movie folders and {len(SCRIPT_LOGS)} script log files verified/created.")
         except Exception as e:
             print(f"  [FAILED] Could not create folders or log files: {e}")
 
@@ -255,11 +281,11 @@ def main():
         existing_pubs = {p.get("publisher_id"): p for p in reviews_data.get("publishers", [])}
         blocks_to_add = 0
 
-        # D1. Clean Legacy Fields & Inject New Pipeline 3 Fields
+        # D1. Clean Legacy Fields & Inject New Step 3 / Step 4 Fields
         blocks_migrated = 0
         for existing_block in existing_pubs.values():
             block_changed = False
-            
+
             if "search_attempts" in existing_block:
                 existing_block.pop("search_attempts", None)
                 block_changed = True
@@ -272,33 +298,35 @@ def main():
             if "classified_by" not in existing_block:
                 existing_block["classified_by"] = "PENDING"
                 block_changed = True
-                
-            # INJECTION: 3 New Pipeline Phase 3 fields
+
+            # Migrate legacy download field safely without losing existing SUCCESS states
+            legacy_download = existing_block.pop("webpage_extraction_successful", None)
+            if legacy_download is not None:
+                block_changed = True
+
             if "webpage_download" not in existing_block:
-                existing_block["webpage_download"] = "PENDING"
+                existing_block["webpage_download"] = legacy_download if legacy_download in ["SUCCESS", "FAILED"] else "PENDING"
                 block_changed = True
             if "webpage_content_extraction" not in existing_block:
                 existing_block["webpage_content_extraction"] = "PENDING"
                 block_changed = True
             if "webpage_content_adjudication" not in existing_block:
-                existing_block["webpage_content_adjudication"] = "PENDING"
+                legacy_adj = existing_block.pop("content_adjudication", None)
+                existing_block["webpage_content_adjudication"] = legacy_adj if legacy_adj in ["YES", "NO"] else "PENDING"
                 block_changed = True
-                
-            # REMOVE: Legacy field
-            if "webpage_extraction_successful" in existing_block:
-                existing_block.pop("webpage_extraction_successful", None)
+            elif "content_adjudication" in existing_block:
+                existing_block.pop("content_adjudication", None)
                 block_changed = True
 
             if block_changed:
                 blocks_migrated += 1
 
         if blocks_migrated > 0:
-            print(f"  [MIGRATED] Cleaned up legacy fields and injected new Step 3 fields in {blocks_migrated} existing blocks.")
+            print(f"  [MIGRATED] Cleaned legacy fields and synced Step 3/4 fields in {blocks_migrated} existing blocks.")
 
         for pub in active_publishers:
             pub_id = pub["id"]
             if pub_id not in existing_pubs:
-                # The Master Skeleton with new Pipeline Phase 3 Fields
                 existing_pubs[pub_id] = {
                     "publisher_id": pub_id,
                     "publisher_name": pub["name"],
@@ -346,11 +374,10 @@ def main():
             print(f"  [INFO] No missing publishers to inject for this movie.")
             save_success = True
 
-        # G. Initialize AI Processing Logs
+        # G. Initialize & Migrate AI Processing Logs
         ai_logs_path = os.path.join(movie_logs_dir, "ai_processing_logs.json")
         ai_logs_data = {}
 
-        # Load existing AI logs if they exist
         if os.path.exists(ai_logs_path) and os.path.getsize(ai_logs_path) > 0:
             try:
                 with open(ai_logs_path, "r", encoding="utf-8") as af:
@@ -362,28 +389,36 @@ def main():
         for pub in active_publishers:
             pub_id = pub["id"]
             if pub_id not in ai_logs_data:
-                ai_logs_data[pub_id] = {
-                    "01-C_search-gemini": "PENDING",
-                    "02-C_identify-ai": "PENDING",
-                    "02-C_classify-ai": "PENDING",
-                    "04-A-2_clean": "PENDING",
-                    "04-A-3_highlight": "PENDING",
-                    "04-B-2_metadata-ai": "PENDING",
-                    "04-B-3_label": "PENDING"
-                }
+                ai_logs_data[pub_id] = {field: "PENDING" for field in AI_LOG_FIELDS}
                 ai_logs_changed = True
             else:
-                # Safely patch existing blocks if any specific fields are missing
-                for field in ["01-C_search-gemini", "02-C_identify-ai", "02-C_classify-ai", "04-A-2_clean", "04-A-3_highlight", "04-B-2_metadata-ai", "04-B-3_label"]:
-                    if field not in ai_logs_data[pub_id]:
-                        ai_logs_data[pub_id][field] = "PENDING"
+                pub_ai_log = ai_logs_data[pub_id]
+
+                # 1. Migrate legacy numbered keys to new nomenclature without losing state
+                for old_key, new_key in AI_KEY_MIGRATIONS.items():
+                    if old_key in pub_ai_log:
+                        old_val = pub_ai_log.pop(old_key)
+                        if new_key not in pub_ai_log or pub_ai_log[new_key] == "PENDING":
+                            pub_ai_log[new_key] = old_val
+                        ai_logs_changed = True
+
+                # 2. Drop retired script keys (e.g., 01-C_search-gemini)
+                for retired_key in RETIRED_AI_KEYS:
+                    if retired_key in pub_ai_log:
+                        pub_ai_log.pop(retired_key, None)
+                        ai_logs_changed = True
+
+                # 3. Ensure all current AI fields exist
+                for field in AI_LOG_FIELDS:
+                    if field not in pub_ai_log:
+                        pub_ai_log[field] = "PENDING"
                         ai_logs_changed = True
 
         if ai_logs_changed or not os.path.exists(ai_logs_path):
             try:
                 with open(ai_logs_path, "w", encoding="utf-8") as af:
                     json.dump(ai_logs_data, af, indent=4, ensure_ascii=False)
-                print(f"  [SUCCESS] Initialized/Updated ai_processing_logs.json for {len(active_publishers)} publishers.")
+                print(f"  [SUCCESS] Initialized/Migrated ai_processing_logs.json for {len(active_publishers)} publishers.")
             except Exception as e:
                 print(f"  [FAILED] Could not save ai_processing_logs.json: {e}")
 
