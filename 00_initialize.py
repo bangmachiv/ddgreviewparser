@@ -16,10 +16,11 @@ OUTPUT FOLDERS CREATED (Per Movie):
 OUTPUT FILES GENERATED/UPDATED (Per Movie):
   1. data/searches/searches_<slugname>.json (Initialized for all active publishers)
   2. data/searches/negative_searches_<slugname>.json (Initialized with publisher dict)
-  3. data/output/json/summary_<slugname>.json (Initialized as {})
-  4. data/reviews/reviews_<slugname>.json
-  5. logs/logs_<slugname>/ai_processing_logs.json (Per-publisher AI tracking blocks)
-  6. 16 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/
+  3. data/output/json/summary_<slugname>.json (Initialized with movie metadata + empty publishers list)
+  4. data/output/wsap/wsap_<slugname>.txt (Initialized as empty file if missing)
+  5. data/reviews/reviews_<slugname>.json
+  6. logs/logs_<slugname>/ai_processing_logs.json (Per-publisher AI tracking blocks)
+  7. 16 Empty Script Log Files based on new nomenclature in logs/logs_<slugname>/
 
 OUTPUT FIELDS WRITTEN (Master Skeleton injected into reviews_<slugname>.json):
   publisher_id, publisher_name, search_status, search_count, review_url,
@@ -46,6 +47,7 @@ WEBPAGES_DIR = os.path.join(BASE_DIR, "data", "webpages")
 WEBCONTENT_DIR = os.path.join(BASE_DIR, "data", "webcontent")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 OUTPUT_JSON_DIR = os.path.join(BASE_DIR, "data", "output", "json")
+OUTPUT_WSAP_DIR = os.path.join(BASE_DIR, "data", "output", "wsap")
 
 # New flat alphabetical nomenclature (00 -> 07)
 SCRIPT_LOGS = [
@@ -132,7 +134,7 @@ def main():
     print("=" * 80)
 
     # 1. Base Output Directories (Guarantees Write Rights)
-    for folder in [REVIEWS_DIR, SEARCHES_DIR, WEBPAGES_DIR, WEBCONTENT_DIR, LOGS_DIR, OUTPUT_JSON_DIR]:
+    for folder in [REVIEWS_DIR, SEARCHES_DIR, WEBPAGES_DIR, WEBCONTENT_DIR, LOGS_DIR, OUTPUT_JSON_DIR, OUTPUT_WSAP_DIR]:
         os.makedirs(folder, exist_ok=True)
         with open(os.path.join(folder, ".gitkeep"), "w") as f:
             pass
@@ -192,9 +194,9 @@ def main():
     # ACTION RUN: Build Files, Folders, and Skeletons
     # -------------------------------------------------------------------------
     for movie in active_movies:
-        movie_name = movie.get("name")
+        movie_name = movie.get("name") or "Unknown Movie"
         movie_slug = movie.get("slug")
-        movie_date = movie.get("date", "")
+        movie_date = movie.get("date") or "Unknown Date"
         movie_meta = {"name": movie_name, "slug": movie_slug, "date": movie_date}
 
         print(f"\n[PROCESSING MOVIE] {movie_name} ({movie_slug})")
@@ -306,15 +308,43 @@ def main():
             except Exception as e:
                 print(f"  [FAILED] Could not create negative searches file: {e}")
 
-        # B3. Initialize JSON Summary Output file if missing
+        # B3. Initialize / Sync JSON Summary Output file (data/output/json/summary_<slug>.json)
         summary_path = os.path.join(OUTPUT_JSON_DIR, f"summary_{movie_slug}.json")
-        if not os.path.exists(summary_path):
-            try:
+        summary_skeleton = {
+            "movie_name": str(movie_name).strip(),
+            "release_date": str(movie_date).strip(),
+            "publishers": []
+        }
+        try:
+            should_write_summary = False
+            if not os.path.exists(summary_path) or os.path.getsize(summary_path) == 0:
+                should_write_summary = True
+            else:
+                with open(summary_path, "r", encoding="utf-8") as sf:
+                    existing_summary = json.load(sf)
+                if not isinstance(existing_summary, dict) or existing_summary == {}:
+                    should_write_summary = True
+
+            if should_write_summary:
                 with open(summary_path, "w", encoding="utf-8") as sf:
-                    json.dump({}, sf)
-                print(f"  [SUCCESS] Created empty summary_{movie_slug}.json")
-            except Exception as e:
-                print(f"  [FAILED] Could not create summary file: {e}")
+                    json.dump(summary_skeleton, sf, indent=4, ensure_ascii=False)
+                print(f"  [SUCCESS] Initialized structured summary_{movie_slug}.json")
+            else:
+                print(f"  [INFO] Preserved existing summary_{movie_slug}.json")
+        except Exception as e:
+            print(f"  [FAILED] Could not initialize summary file: {e}")
+
+        # B4. Initialize Empty WhatsApp Output file (data/output/wsap/wsap_<slug>.txt)
+        wsap_path = os.path.join(OUTPUT_WSAP_DIR, f"wsap_{movie_slug}.txt")
+        try:
+            if not os.path.exists(wsap_path):
+                with open(wsap_path, "w", encoding="utf-8") as wf:
+                    pass
+                print(f"  [SUCCESS] Created empty wsap_{movie_slug}.txt")
+            else:
+                print(f"  [INFO] Preserved existing wsap_{movie_slug}.txt")
+        except Exception as e:
+            print(f"  [FAILED] Could not create wsap file: {e}")
 
         # C. Load or Create Reviews Master Skeleton
         reviews_path = os.path.join(REVIEWS_DIR, f"reviews_{movie_slug}.json")
