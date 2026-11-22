@@ -14,7 +14,7 @@ OUTPUT FOLDERS CREATED (Per Movie):
   4. logs/logs_<slugname>/pipeline_<slugname>/
 
 OUTPUT FILES GENERATED/UPDATED (Per Movie):
-  1. data/searches/searches_<slugname>.json (Initialized as {})
+  1. data/searches/searches_<slugname>.json (Initialized for all active publishers)
   2. data/searches/negative_searches_<slugname>.json (Initialized with publisher dict)
   3. data/output/json/summary_<slugname>.json (Initialized as {})
   4. data/reviews/reviews_<slugname>.json
@@ -134,7 +134,6 @@ def main():
     # 1. Base Output Directories (Guarantees Write Rights)
     for folder in [REVIEWS_DIR, SEARCHES_DIR, WEBPAGES_DIR, WEBCONTENT_DIR, LOGS_DIR, OUTPUT_JSON_DIR]:
         os.makedirs(folder, exist_ok=True)
-        # Create a .gitkeep to ensure Git tracks even completely empty base folders
         with open(os.path.join(folder, ".gitkeep"), "w") as f:
             pass
         print(f"[SUCCESS] Base folder verified and locked for Git tracking: {folder}")
@@ -196,6 +195,7 @@ def main():
         movie_name = movie.get("name")
         movie_slug = movie.get("slug")
         movie_date = movie.get("date", "")
+        movie_meta = {"name": movie_name, "slug": movie_slug, "date": movie_date}
 
         print(f"\n[PROCESSING MOVIE] {movie_name} ({movie_slug})")
 
@@ -208,6 +208,7 @@ def main():
         try:
             os.makedirs(movie_webpages_dir, exist_ok=True)
             os.makedirs(movie_webcontent_dir, exist_ok=True)
+            os.makedirs(movie_logs_dir, exist_ok=True)
             os.makedirs(movie_pipeline_logs, exist_ok=True)
 
             # Create .gitkeep files inside the movie folders
@@ -222,19 +223,78 @@ def main():
                     with open(log_path, "w", encoding="utf-8") as lf:
                         json.dump({}, lf)
 
-            print(f"  [SUCCESS] Movie folders and {len(SCRIPT_LOGS)} script log files verified/created.")
+            print(f"  [SUCCESS] Verified webpages dir:   {movie_webpages_dir}")
+            print(f"  [SUCCESS] Verified webcontent dir: {movie_webcontent_dir}")
+            print(f"  [SUCCESS] Verified logs dir & {len(SCRIPT_LOGS)} script log files.")
         except Exception as e:
             print(f"  [FAILED] Could not create folders or log files: {e}")
 
-        # B. Initialize Searches file if missing
+        # B. Initialize / Sync Searches file for ALL active publishers
         searches_path = os.path.join(SEARCHES_DIR, f"searches_{movie_slug}.json")
-        if not os.path.exists(searches_path):
+        searches_changed = False
+        searches_data = {"movie": movie_meta, "publishers": []}
+
+        if os.path.exists(searches_path) and os.path.getsize(searches_path) > 0:
+            try:
+                with open(searches_path, "r", encoding="utf-8") as sf:
+                    loaded_searches = json.load(sf)
+                if isinstance(loaded_searches, dict) and loaded_searches:
+                    searches_data = loaded_searches
+                else:
+                    searches_changed = True
+            except Exception as e:
+                print(f"  [WARNING] Corrupted searches_{movie_slug}.json ({e}). Rebuilding skeleton...")
+                searches_changed = True
+        else:
+            searches_changed = True
+
+        if searches_data.get("movie") != movie_meta:
+            searches_data["movie"] = movie_meta
+            searches_changed = True
+
+        existing_search_pubs = {
+            p.get("publisher_id"): p
+            for p in (searches_data.get("publishers") or [])
+            if isinstance(p, dict) and p.get("publisher_id")
+        }
+
+        search_blocks_added = 0
+        search_results_patched = 0
+
+        for pub in active_publishers:
+            pub_id = pub["id"]
+            if pub_id not in existing_search_pubs:
+                existing_search_pubs[pub_id] = {
+                    "publisher_id": pub_id,
+                    "publisher_name": pub["name"],
+                    "results": []
+                }
+                search_blocks_added += 1
+                searches_changed = True
+            else:
+                pub_entry = existing_search_pubs[pub_id]
+                if not isinstance(pub_entry.get("results"), list):
+                    pub_entry["results"] = []
+                    searches_changed = True
+                for res in pub_entry["results"]:
+                    if isinstance(res, dict) and "is_review" not in res:
+                        res["is_review"] = "TBD"
+                        search_results_patched += 1
+                        searches_changed = True
+
+        updated_search_pubs = list(existing_search_pubs.values())
+        updated_search_pubs.sort(key=lambda x: x["publisher_id"])
+        searches_data["publishers"] = updated_search_pubs
+
+        if searches_changed or not os.path.exists(searches_path):
             try:
                 with open(searches_path, "w", encoding="utf-8") as sf:
-                    json.dump({}, sf)
-                print(f"  [SUCCESS] Created empty searches_{movie_slug}.json")
+                    json.dump(searches_data, sf, ensure_ascii=False, indent=4)
+                print(f"  [SUCCESS] Synced searches_{movie_slug}.json (Added {search_blocks_added} publishers, patched {search_results_patched} URLs).")
             except Exception as e:
-                print(f"  [FAILED] Could not create searches file: {e}")
+                print(f"  [FAILED] Could not save searches file: {e}")
+        else:
+            print(f"  [INFO] searches_{movie_slug}.json already synced for all {len(active_publishers)} publishers.")
 
         # B2. Initialize Negative Searches file if missing
         negative_searches_path = os.path.join(SEARCHES_DIR, f"negative_searches_{movie_slug}.json")
@@ -267,12 +327,12 @@ def main():
             except Exception as e:
                 print(f"  [FAILED] Corrupted reviews file ({e}). Rebuilding skeleton...")
                 reviews_data = {
-                    "movie": {"name": movie_name, "slug": movie_slug, "date": movie_date},
+                    "movie": movie_meta,
                     "publishers": []
                 }
         else:
             reviews_data = {
-                "movie": {"name": movie_name, "slug": movie_slug, "date": movie_date},
+                "movie": movie_meta,
                 "publishers": []
             }
             print(f"  [SUCCESS] Created new reviews base object.")
@@ -281,7 +341,7 @@ def main():
         existing_pubs = {p.get("publisher_id"): p for p in reviews_data.get("publishers", [])}
         blocks_to_add = 0
 
-        # D1. Clean Legacy Fields & Inject New Step 3 / Step 4 Fields
+        # D1. Clean Legacy Fields & Sync Step 3 / Step 4 Fields
         blocks_migrated = 0
         for existing_block in existing_pubs.values():
             block_changed = False
@@ -299,7 +359,9 @@ def main():
                 existing_block["classified_by"] = "PENDING"
                 block_changed = True
 
-            # Migrate legacy download field safely without losing existing SUCCESS states
+            classified_by = existing_block.get("classified_by", "PENDING")
+
+            # Migrate legacy download field safely without losing existing SUCCESS/FAILED states
             legacy_download = existing_block.pop("webpage_extraction_successful", None)
             if legacy_download is not None:
                 block_changed = True
@@ -307,15 +369,27 @@ def main():
             if "webpage_download" not in existing_block:
                 existing_block["webpage_download"] = legacy_download if legacy_download in ["SUCCESS", "FAILED"] else "PENDING"
                 block_changed = True
+
+            # Step 4 fields default to NOT_NEEDED unless classified_by == "AI"
             if "webpage_content_extraction" not in existing_block:
-                existing_block["webpage_content_extraction"] = "PENDING"
+                existing_block["webpage_content_extraction"] = "PENDING" if classified_by == "AI" else "NOT_NEEDED"
                 block_changed = True
+            elif classified_by != "AI" and existing_block["webpage_content_extraction"] == "PENDING":
+                existing_block["webpage_content_extraction"] = "NOT_NEEDED"
+                block_changed = True
+
+            legacy_adj = existing_block.pop("content_adjudication", None)
+            if legacy_adj is not None:
+                block_changed = True
+
             if "webpage_content_adjudication" not in existing_block:
-                legacy_adj = existing_block.pop("content_adjudication", None)
-                existing_block["webpage_content_adjudication"] = legacy_adj if legacy_adj in ["YES", "NO"] else "PENDING"
+                if legacy_adj in ["YES", "NO"]:
+                    existing_block["webpage_content_adjudication"] = legacy_adj
+                else:
+                    existing_block["webpage_content_adjudication"] = "PENDING" if classified_by == "AI" else "NOT_NEEDED"
                 block_changed = True
-            elif "content_adjudication" in existing_block:
-                existing_block.pop("content_adjudication", None)
+            elif classified_by != "AI" and existing_block["webpage_content_adjudication"] == "PENDING":
+                existing_block["webpage_content_adjudication"] = "NOT_NEEDED"
                 block_changed = True
 
             if block_changed:
@@ -337,8 +411,8 @@ def main():
                     "review_source": "PENDING",
                     "classified_by": "PENDING",
                     "webpage_download": "PENDING",
-                    "webpage_content_extraction": "PENDING",
-                    "webpage_content_adjudication": "PENDING",
+                    "webpage_content_extraction": "NOT_NEEDED",
+                    "webpage_content_adjudication": "NOT_NEEDED",
                     "article_title": "PENDING",
                     "clean_title": "PENDING",
                     "highlighted_title": "PENDING",
@@ -394,7 +468,6 @@ def main():
             else:
                 pub_ai_log = ai_logs_data[pub_id]
 
-                # 1. Migrate legacy numbered keys to new nomenclature without losing state
                 for old_key, new_key in AI_KEY_MIGRATIONS.items():
                     if old_key in pub_ai_log:
                         old_val = pub_ai_log.pop(old_key)
@@ -402,13 +475,11 @@ def main():
                             pub_ai_log[new_key] = old_val
                         ai_logs_changed = True
 
-                # 2. Drop retired script keys (e.g., 01-C_search-gemini)
                 for retired_key in RETIRED_AI_KEYS:
                     if retired_key in pub_ai_log:
                         pub_ai_log.pop(retired_key, None)
                         ai_logs_changed = True
 
-                # 3. Ensure all current AI fields exist
                 for field in AI_LOG_FIELDS:
                     if field not in pub_ai_log:
                         pub_ai_log[field] = "PENDING"
@@ -437,6 +508,7 @@ def main():
         init_log[timestamp] = {
             "blocks_added": blocks_to_add,
             "blocks_migrated": blocks_migrated,
+            "search_blocks_added": search_blocks_added,
             "total_publishers_active": len(updated_publishers),
             "status": "SUCCESS" if save_success else "FAILED"
         }
