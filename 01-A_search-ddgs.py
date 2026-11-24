@@ -54,6 +54,11 @@ BLOCKED_PATH_SEGMENTS = {
     "author", "authors", "category", "categories", "page"
 }
 
+# Non-article file extensions to exclude
+BLOCKED_EXTENSIONS = (
+    ".webp", ".jpg", ".jpeg", ".png", ".gif", ".svg", ".pdf", ".mp4", ".mp3"
+)
+
 logging.basicConfig(level=logging.ERROR, format="%(asctime)s [%(levelname)s] %(message)s")
 
 
@@ -112,8 +117,9 @@ def normalize_url(url: str) -> str:
 
 def is_valid_article_url(url: str, target_domain: str) -> bool:
     """
-    Validates a candidate result strictly by URL domain & path (never by title length).
-    Rejects cross-domain links, bare homepages, and generic tag/search/video/gallery hubs.
+    Validates a candidate result strictly by URL domain, path, and extension (never by title length).
+    Rejects cross-domain links, non-article file extensions, bare homepages,
+    and generic tag/search/video/gallery hubs.
     """
     if not url or not target_domain:
         return False
@@ -121,6 +127,9 @@ def is_valid_article_url(url: str, target_domain: str) -> bool:
         parsed = urlparse(url.strip())
         item_domain = parsed.netloc.lower().replace("www.", "")
         if not item_domain or not (item_domain == target_domain or item_domain.endswith("." + target_domain)):
+            return False
+
+        if parsed.path.lower().endswith(BLOCKED_EXTENSIONS):
             return False
 
         segments = [seg.lower() for seg in parsed.path.strip("/").split("/") if seg]
@@ -363,7 +372,7 @@ def main():
                         if not url or not norm_url or norm_url in seen_urls:
                             continue
 
-                        # Validate strictly by URL domain & path (do not filter by title length)
+                        # Validate strictly by URL domain, path & extension (do not filter by title length)
                         if not is_valid_article_url(url, domain):
                             continue
 
