@@ -28,7 +28,7 @@ jobs:
 
       - name: Run search script
         run: |
-          python 01-B_search-ddgs.py
+          python 01-A_search-ddgs.py
 
       - name: Commit updated search and review files
         run: |
