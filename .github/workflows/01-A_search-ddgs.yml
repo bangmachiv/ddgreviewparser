@@ -1,4 +1,4 @@
-name: 01. DuckDuckGo Search
+name: 01-A. DuckDuckGo Search
 
 on:
   workflow_dispatch:
@@ -28,7 +28,7 @@ jobs:
 
       - name: Run search script
         run: |
-          python 01_search.py
+          python 01-B_search-ddgs.py
 
       - name: Commit updated search and review files
         run: |
