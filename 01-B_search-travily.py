@@ -3,9 +3,9 @@
 01-B_search-tavily.py
 Augmenter search step using Tavily in chunked publisher batches.
 Targets active publishers where review_url is PENDING/FAILED/NA or empty,
-appends deduplicated domain- and extension-validated URLs with 'snippet' and
-'is_review': 'TBD' to searches_<slug>.json without overwriting prior entries,
-and updates search_status and search_count in reviews_<slug>.json.
+appends deduplicated domain- and extension-validated URLs with true query rank,
+timestamp, and 'is_review': 'TBD' to searches_<slug>.json without overwriting
+prior entries, and updates search_status and search_count in reviews_<slug>.json.
 """
 
 import json
@@ -272,8 +272,6 @@ def main():
                     seen_seed.add(nu)
                     if "is_review" not in item:
                         item["is_review"] = "TBD"
-                    if "snippet" not in item:
-                        item["snippet"] = ""
                     cleaned_prior.append(item)
 
             new_searches_data["publishers"].append({
@@ -294,6 +292,7 @@ def main():
         }
 
         if len(needs_search_pubs) > 0:
+            run_timestamp = datetime.now().astimezone().isoformat()
             query = f'"{movie_name}" {movie_year} movie review'.strip()
             valid_pubs_for_chunking = [p for p in needs_search_pubs if extract_domain(p.get("url", ""))]
             chunks = chunk_publishers(valid_pubs_for_chunking, max_chunks=3)
@@ -314,7 +313,9 @@ def main():
                     )
                     if isinstance(response, dict):
                         raw_items = response.get("results") or []
-                        all_raw_results.extend([r for r in raw_items if isinstance(r, dict)])
+                        for q_rank, r in enumerate(raw_items, start=1):
+                            if isinstance(r, dict):
+                                all_raw_results.append((q_rank, r))
                 except Exception as e:
                     err_msg = f"Chunk {idx}: {type(e).__name__}: {e}"
                     movie_log_entry["chunk_errors"].append(err_msg)
@@ -337,7 +338,7 @@ def main():
                     if normalize_url(r.get("url", ""))
                 }
 
-            for item in all_raw_results:
+            for q_rank, item in all_raw_results:
                 item_url = str(item.get("url") or "").strip()
                 norm_url = normalize_url(item_url)
                 if not item_url or not norm_url:
@@ -368,11 +369,11 @@ def main():
                     seen_by_pub[matched_pub_id].add(norm_url)
                     bucket = search_entry_map[matched_pub_id]["results"]
                     bucket.append({
-                        "rank": len(bucket) + 1,
-                        "match_type": "Tavily",
+                        "rank": q_rank,
+                        "match_type": "tavily",
                         "title": str(item.get("title") or "").strip(),
                         "url": item_url,
-                        "snippet": str(item.get("content") or "").strip(),
+                        "timestamp": run_timestamp,
                         "is_review": "TBD"
                     })
                     added_count_by_pub[matched_pub_id] += 1
