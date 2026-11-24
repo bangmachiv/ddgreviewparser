@@ -1,4 +1,4 @@
-name: 01. Tavily Search
+name: 01-B. Tavily Search
 
 on:
   workflow_dispatch:
@@ -35,7 +35,7 @@ jobs:
           # Passes the GitHub Secret into the script securely
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
         run: |
-          python 01-A_search.py
+          python 01-B_search-travily.py
 
       - name: Commit updated search and review files
         run: |
