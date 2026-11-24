@@ -1,4 +1,4 @@
-name: 01-B. Tavily Search
+name: 01-B. Travily Search
 
 on:
   workflow_dispatch:
