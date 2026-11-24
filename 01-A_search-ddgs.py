@@ -4,8 +4,8 @@
 Primary search step using DDGS (9.14.4, backend='yandex,yahoo') on GitHub Actions.
 Targets publishers where review_url is PENDING/FAILED/NA, executes Specific + Generic
 site-scoped queries, appends deduplicated URL/domain/path-validated links with
-'is_review': 'TBD' to searches_<slug>.json without overwriting prior entries, and
-updates search_status and search_count in reviews_<slug>.json.
+true search rank, timestamp, and 'is_review': 'TBD' to searches_<slug>.json without
+overwriting prior entries, and updates search_status and search_count in reviews_<slug>.json.
 """
 
 import json
@@ -355,6 +355,7 @@ def main():
             err_generic = None
 
             try:
+                run_timestamp = datetime.now().astimezone().isoformat()
                 query_specific = f'"{movie_name}" {movie_year} movie review site:{domain}'.strip()
                 query_generic = f'{movie_name} {movie_year} movie review site:{domain}'.strip()
 
@@ -364,7 +365,7 @@ def main():
 
                 def add_results(results_list, match_type):
                     added = 0
-                    for r in results_list:
+                    for idx, r in enumerate(results_list, start=1):
                         if not isinstance(r, dict):
                             continue
                         url = str(r.get("href") or "").strip()
@@ -378,18 +379,18 @@ def main():
 
                         seen_urls.add(norm_url)
                         combined_results.append({
-                            "rank": len(combined_results) + 1,
+                            "rank": idx,
                             "match_type": match_type,
                             "title": str(r.get("title") or "").strip(),
                             "url": url,
-                            "snippet": str(r.get("body") or "").strip(),
+                            "timestamp": run_timestamp,
                             "is_review": "TBD"
                         })
                         added += 1
                     return added
 
-                added_specific = add_results(results_specific, "Specific")
-                added_generic = add_results(results_generic, "Generic")
+                added_specific = add_results(results_specific, "ddgs-specific")
+                added_generic = add_results(results_generic, "ddgs-generic")
             except Exception as e:
                 err_generic = f"Unexpected search error: {type(e).__name__}: {e}"
                 print(f"      [WARNING] Exception while searching {pub_name}: {err_generic}")
