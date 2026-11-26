@@ -1,1 +1,181 @@
-{}
+{
+    "2026-11-26T08:59:02.335223+00:00": {
+        "earlier_completed": 0,
+        "earlier_pending": 42,
+        "processed": 42,
+        "success": 21,
+        "failure": 21,
+        "new_completed": 21,
+        "new_pending": 21,
+        "publisher_details": {
+            "aaj-tak": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "abp": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "bollyspice": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "bollywood-hungama": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "business-standard": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "cinema-express": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "cinetales": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "dainik-bhaskar": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "dainik-jagran": {
+                "status": "SUCCESS",
+                "source_rank": "tavily_14"
+            },
+            "deccan-chronicle": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "deccan-herald": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "filmfare": {
+                "status": "SUCCESS",
+                "source_rank": "tavily_2"
+            },
+            "firstpost": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "free-press-journal": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "hindustan": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "hindustan-times": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "ians-live": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "india-today": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "koimoi": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "lensmen-reviews": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "lokmat": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "mid-day": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "mint": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "moneycontrol": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "movie-talkies": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "navbharat-times": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_5"
+            },
+            "ndtv": {
+                "status": "SUCCESS",
+                "source_rank": "tavily_3"
+            },
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "outlook": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "peepingmoon": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "rediff": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "scroll-in": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "south-asian-herald": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "the-economic-times": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "the-federal": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "the-hindu": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "the-quint": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "the-telegraph": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            },
+            "the-times-of-india": {
+                "status": "SUCCESS",
+                "source_rank": "ddgs-specific_1"
+            },
+            "the-tribune": {
+                "status": "FAILED",
+                "reason": "No deterministic title match"
+            }
+        }
+    }
+}
