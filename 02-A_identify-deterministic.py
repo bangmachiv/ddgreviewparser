@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-02_identify.py
+02-A_identify-deterministic.py
 Deterministic search result classifier utilizing strict string compression boundaries.
-Filters candidate URLs based on video parameters, negative phrase exclusions, 
-and exact-match compressed permutations of the movie title and review identifiers.
-Updates the 6-field state machine for the pipeline.
+Evaluates 'is_review': 'TBD' candidates from searches_<slug>.json based on video URL
+checks, negative phrase exclusions, and exact-match compressed permutations of the
+movie title and review identifiers. Marks confirmed matches as 'is_review': 'Y' and
+updates reviews_<slug>.json without disturbing unresolved candidates for 02-B.
 """
 
 import os
@@ -53,19 +54,20 @@ class PipelineTracker:
     def print_summary(self):
         new_completed = self.earlier_completed + self.succeeded
         new_pending = self.earlier_pending - self.succeeded
-        print("\n" + "="*125)
+        print("\n" + "=" * 125)
         print(f" PIPELINE METRIC: {self.metric_name}")
-        print("="*125)
+        print("=" * 125)
         print(f"| {'Earlier Completed':^17} | {'Earlier Pending':^15} | {'Processed':^9} | {'Success':^7} | {'Failure':^7} | {'New Completed':^13} | {'New Pending':^11} |")
         print("-" * 125)
         print(f"| {self.earlier_completed:^17} | {self.earlier_pending:^15} | {self.processed:^9} | {self.succeeded:^7} | {self.failed:^7} | {new_completed:^13} | {new_pending:^11} |")
-        print("="*125 + "\n")
+        print("=" * 125 + "\n")
 
 # -----------------------------------------------------------------------------
 # Utility Functions
 # -----------------------------------------------------------------------------
 def is_video_url(url: str) -> bool:
-    if not url: return False
+    if not url:
+        return False
     url_lower = url.lower()
     parsed = urlparse(url_lower)
     if "/video/" in parsed.path or parsed.path.rstrip("/").endswith("/video"):
@@ -79,7 +81,8 @@ def compress_string(text: str) -> str:
     Compresses a string by removing all spaces and special characters.
     Natively preserves Unicode letters (like Hindi/Devanagari).
     """
-    if not text: return ""
+    if not text:
+        return ""
     return re.sub(r'[^\w]', '', str(text)).lower()
 
 def check_if_review(raw_title: str, raw_url: str, search_titles_array: list) -> bool:
@@ -95,8 +98,7 @@ def check_if_review(raw_title: str, raw_url: str, search_titles_array: list) -> 
     if is_video_url(raw_url):
         return False
 
-    # 2. Negative Phrase Check 
-    # (Checked against padded raw title so we don't accidentally match substrings)
+    # 2. Negative Phrase Check
     title_lower = raw_title.lower()
     padded_title = f" {re.sub(r'[^a-z0-9\s]', ' ', title_lower)} "
     for neg in NEGATIVE_PHRASES:
@@ -108,17 +110,15 @@ def check_if_review(raw_title: str, raw_url: str, search_titles_array: list) -> 
 
     for movie_name in search_titles_array:
         compressed_movie = compress_string(movie_name)
-        
+        if not compressed_movie:
+            continue
+
         for phrase in REVIEW_PHRASES:
             compressed_phrase = compress_string(phrase)
-            
-            # Create the valid combo units
+
             combo_front = compressed_movie + compressed_phrase
             combo_back = compressed_phrase + compressed_movie
 
-            # The valid combo MUST anchor to either the start or end of the title
-            # OR equal the entire title exactly. This completely prevents mid-string 
-            # alphanumeric merging false positives.
             if compressed_target.startswith(combo_front) or \
                compressed_target.endswith(combo_front) or \
                compressed_target.startswith(combo_back) or \
@@ -138,12 +138,12 @@ def main():
     searches_dir = os.path.join(base, "data", "searches")
     reviews_dir = os.path.join(base, "data", "reviews")
 
-    if not os.path.exists(movies_file): return
+    if not os.path.exists(movies_file):
+        return
 
     with open(movies_file, encoding="utf-8") as f:
         movies_data = json.load(f)
-    
-    # Safely handle the list vs object structure
+
     active_movies = movies_data.get("movies", []) if isinstance(movies_data, dict) else movies_data
 
     for movie in active_movies:
@@ -156,33 +156,37 @@ def main():
             continue
 
         movie_logs_dir = os.path.join(base, "logs", f"logs_{slug}")
-        script_log_path = os.path.join(movie_logs_dir, "02_identify.json")
+        script_log_path = os.path.join(movie_logs_dir, "02-A_identify.json")
         os.makedirs(movie_logs_dir, exist_ok=True)
 
-        print(f"\n================================================================================")
-        print(f" Parsing Reviews for: {movie['name']}")
-        print(f"================================================================================")
+        print("\n" + "=" * 80)
+        print(f" PIPELINE STEP 2A (DETERMINISTIC): {movie_name}")
+        print("=" * 80)
 
         with open(search_file, encoding="utf-8") as f:
             search_data = json.load(f)
         with open(reviews_file_path, "r", encoding="utf-8") as f:
             reviews_data = json.load(f)
 
-        # Retrieve localized name array or fallback to english name
-        search_titles_array = movie.get("search_titles", [movie_name])
-        
-        search_results_map = {pub.get("publisher_id"): pub for pub in search_data.get("publishers", [])}
+        # Retrieve localized name array or fallback to English name
+        search_titles_array = movie.get("search_titles") or [movie_name]
+
+        search_results_map = {
+            pub.get("publisher_id"): pub
+            for pub in search_data.get("publishers", [])
+            if isinstance(pub, dict) and pub.get("publisher_id")
+        }
 
         earlier_completed = 0
         earlier_pending = 0
         for pub_block in reviews_data.get("publishers", []):
-            ru = pub_block.get("review_url", "PENDING")
-            if ru not in ["PENDING", "NA", ""]:
+            ru = str(pub_block.get("review_url") or "PENDING").strip().upper()
+            if ru not in ["PENDING", "FAILED", "NA", ""]:
                 earlier_completed += 1
             else:
                 earlier_pending += 1
 
-        tracker = PipelineTracker("Review URLs Identified", earlier_completed, earlier_pending)
+        tracker = PipelineTracker("Review URLs Identified (Deterministic)", earlier_completed, earlier_pending)
 
         movie_log_entry = {
             "earlier_completed": earlier_completed,
@@ -195,52 +199,64 @@ def main():
             "publisher_details": {}
         }
 
+        searches_changed = False
+
         for pub_block in reviews_data.get("publishers", []):
             pub_id = pub_block.get("publisher_id", "")
             pub_name = pub_block.get("publisher_name", "")
-            ru = pub_block.get("review_url", "PENDING")
-            ss = pub_block.get("search_status", "PENDING")
+            ru = str(pub_block.get("review_url") or "PENDING").strip().upper()
             sc = pub_block.get("search_count", 0)
 
-            if ru not in ["PENDING", "NA", ""]:
+            if ru not in ["PENDING", "FAILED", "NA", ""]:
                 print(f"  [SKIP PARSING] {pub_name} already classified.")
                 continue
 
-            if ru in ["PENDING", "NA", ""] and ss == "SUCCESS" and sc > 0:
-                print(f"  [EVALUATING] {pub_name}...")
-                movie_log_entry["processed"] += 1
+            if sc > 0:
                 search_pub_data = search_results_map.get(pub_id, {})
+                tbd_results = [
+                    r for r in search_pub_data.get("results", [])
+                    if isinstance(r, dict) and str(r.get("is_review", "TBD")).strip().upper() == "TBD"
+                ]
+
+                if not tbd_results:
+                    continue
+
+                print(f"  [EVALUATING] {pub_name} ({len(tbd_results)} TBD candidates)...")
+                movie_log_entry["processed"] += 1
                 first = None
 
-                for result in search_pub_data.get("results", []):
-                    # Uses exact boundary compressed logic against the search array
+                for result in tbd_results:
                     if check_if_review(result.get("title", ""), result.get("url", ""), search_titles_array):
-                        if first is None:
-                            first = result
+                        first = result
+                        break
 
                 if first:
-                    rank = first.get('rank')
-                    print(f"    -> [SUCCESS] Found valid review at Rank {rank}")
+                    rank = first.get("rank", "NA")
+                    match_type = str(first.get("match_type") or "unknown").strip()
+                    source_tag = f"{match_type}_{rank}"
+
+                    print(f"    -> [SUCCESS] Found valid review ({source_tag})")
                     pub_block["review_url"] = first.get("url", "NA")
                     pub_block["review_title"] = first.get("title", "NA")
-                    pub_block["review_source"] = f"tavily_{rank}"
+                    pub_block["review_source"] = source_tag
                     pub_block["classified_by"] = "SCRIPT"
+
+                    first["is_review"] = "Y"
+                    searches_changed = True
 
                     tracker.add_success()
                     movie_log_entry["success"] += 1
                     movie_log_entry["publisher_details"][pub_id] = {
                         "status": "SUCCESS",
-                        "source_rank": f"tavily_{rank}"
+                        "source_rank": source_tag
                     }
                 else:
-                    print(f"    -> [FAILED] No valid review titles found.")
-                    pub_block["search_status"] = "PENDING"
-
+                    print(f"    -> [NO MATCH] Left TBD for 02-B AI identification.")
                     tracker.add_failure()
                     movie_log_entry["failure"] += 1
                     movie_log_entry["publisher_details"][pub_id] = {
                         "status": "FAILED",
-                        "reason": "No valid titles found"
+                        "reason": "No deterministic title match"
                     }
 
         movie_log_entry["new_completed"] = earlier_completed + movie_log_entry["success"]
@@ -249,13 +265,17 @@ def main():
         with open(reviews_file_path, "w", encoding="utf-8") as f:
             json.dump(reviews_data, f, ensure_ascii=False, indent=4)
 
+        if searches_changed:
+            with open(search_file, "w", encoding="utf-8") as sf:
+                json.dump(search_data, sf, ensure_ascii=False, indent=4)
+
         script_log_data = {}
         if os.path.exists(script_log_path) and os.path.getsize(script_log_path) > 0:
             try:
                 with open(script_log_path, "r", encoding="utf-8") as lf:
                     script_log_data = json.load(lf)
             except json.JSONDecodeError:
-                pass 
+                pass
 
         timestamp = datetime.now().astimezone().isoformat()
         script_log_data[timestamp] = movie_log_entry
