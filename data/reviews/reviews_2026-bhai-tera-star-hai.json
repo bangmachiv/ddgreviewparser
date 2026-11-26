@@ -97,7 +97,7 @@
             "publisher_id": "bollywood-hungama",
             "publisher_name": "Bollywood Hungama",
             "search_status": "SUCCESS",
-            "search_count": 17,
+            "search_count": 18,
             "review_url": "PENDING",
             "review_title": "PENDING",
             "review_source": "PENDING",
@@ -206,8 +206,8 @@
         {
             "publisher_id": "dainik-jagran",
             "publisher_name": "Dainik Jagran",
-            "search_status": "FAILED",
-            "search_count": 0,
+            "search_status": "SUCCESS",
+            "search_count": 1,
             "review_url": "PENDING",
             "review_title": "PENDING",
             "review_source": "PENDING",
@@ -603,7 +603,7 @@
             "publisher_id": "ndtv",
             "publisher_name": "NDTV",
             "search_status": "SUCCESS",
-            "search_count": 8,
+            "search_count": 9,
             "review_url": "PENDING",
             "review_title": "PENDING",
             "review_source": "PENDING",
@@ -823,7 +823,7 @@
             "publisher_id": "the-indian-express",
             "publisher_name": "The Indian Express",
             "search_status": "SUCCESS",
-            "search_count": 7,
+            "search_count": 8,
             "review_url": "PENDING",
             "review_title": "PENDING",
             "review_source": "PENDING",
@@ -889,7 +889,7 @@
             "publisher_id": "the-times-of-india",
             "publisher_name": "The Times of India",
             "search_status": "SUCCESS",
-            "search_count": 17,
+            "search_count": 20,
             "review_url": "PENDING",
             "review_title": "PENDING",
             "review_source": "PENDING",
@@ -930,6 +930,6 @@
             "ai_sentiment_category": "PENDING"
         }
     ],
-    "Last searched": "25 11 2026 09 24",
+    "Last searched": "26 11 2026 05 02",
     "Search results": 42
 }

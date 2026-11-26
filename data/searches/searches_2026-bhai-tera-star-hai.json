@@ -362,6 +362,14 @@
                     "url": "https://www.bollywoodhungama.com/movie/bhai-tera-star-hai/photos",
                     "timestamp": "2026-11-25T09:24:34.929609+00:00",
                     "is_review": "TBD"
+                },
+                {
+                    "rank": 20,
+                    "match_type": "tavily",
+                    "title": "EXCLUSIVE: “Salman Khan called Raghav Juyal and told him, 'I saw ...",
+                    "url": "https://www.bollywoodhungama.com/news/features/exclusive-salman-khan-called-raghav-juyal-and-told-him-i-saw-bhai-tera-star-hai-trailer-twice-and-the-kisi-ka-bhai-kisi-ki-jaan-joke-was-fabulous-vivek",
+                    "timestamp": "2026-11-26T05:02:49.848316+00:00",
+                    "is_review": "TBD"
                 }
             ]
         },
@@ -750,7 +758,16 @@
         {
             "publisher_id": "dainik-jagran",
             "publisher_name": "Dainik Jagran",
-            "results": []
+            "results": [
+                {
+                    "rank": 14,
+                    "match_type": "tavily",
+                    "title": "Bhai Tera Star Hai Review: कॉमेडी के नाम पर फूहड़ता, बेकार कहानी... राघव ...",
+                    "url": "https://www.jagran.com/entertainment/reviews-bhai-tera-star-hai-film-review-raghav-juyal-performance-not-appealing-storyline-also-bad-40323676.html",
+                    "timestamp": "2026-11-26T05:02:49.848316+00:00",
+                    "is_review": "TBD"
+                }
+            ]
         },
         {
             "publisher_id": "deccan-chronicle",
@@ -2073,6 +2090,14 @@
                     "url": "https://www.ndtv.com/entertainment/bhai-tera-star-hai-review-raghav-juyal-shines-but-the-comedy-falls-flat-11842704",
                     "timestamp": "2026-11-25T09:24:34.929609+00:00",
                     "is_review": "TBD"
+                },
+                {
+                    "rank": 16,
+                    "match_type": "tavily",
+                    "title": "Bhai Tera Star Hai Trailer: Raghav Juyal Promises A Laugh Riot In His Next",
+                    "url": "https://www.ndtv.com/entertainment/bhai-tera-star-hai-trailer-out-raghav-juyal-brings-comedy-and-chaos-to-the-big-screen-11748337",
+                    "timestamp": "2026-11-26T05:02:49.848316+00:00",
+                    "is_review": "TBD"
                 }
             ]
         },
@@ -2773,6 +2798,14 @@
                     "url": "https://indianexpress.com/article/entertainment/bollywood/raghav-juyal-defends-niharika-nm-actor-influencer-debate-bhai-tera-star-hai-10800084/",
                     "timestamp": "2026-11-24T18:08:36.149052+00:00",
                     "is_review": "TBD"
+                },
+                {
+                    "rank": 6,
+                    "match_type": "tavily",
+                    "title": "Page 5 | Movie Reviews: Latest Review and Rating of Bollywood, Hollywood ...",
+                    "url": "https://indianexpress.com/section/entertainment/movie-review/page/5?id=7246507&device=mobile",
+                    "timestamp": "2026-11-26T05:02:49.848316+00:00",
+                    "is_review": "TBD"
                 }
             ]
         },
@@ -3086,6 +3119,30 @@
                     "title": "Nach Le Lalariya | Song - Bhai Tera Star Hai | Hindi Video Songs - Times of India",
                     "url": "https://timesofindia.indiatimes.com/videos/entertainment/music/hindi/nach-le-lalariya-song-bhai-tera-star-hai/amp_videoshow/132683060.cms",
                     "timestamp": "2026-11-25T09:24:34.929609+00:00",
+                    "is_review": "TBD"
+                },
+                {
+                    "rank": 12,
+                    "match_type": "tavily",
+                    "title": "'Bhai Tera Star Hai' actress Niharika NM reveals why Sai Pallavi inspires her | Hindi Movie News - The Times of India",
+                    "url": "https://timesofindia.indiatimes.com/entertainment/hindi/bollywood/news/bhai-tera-star-hai-actress-niharika-nm-reveals-why-sai-pallavi-inspires-her/articleshow/132767365.cms",
+                    "timestamp": "2026-11-26T05:02:49.848316+00:00",
+                    "is_review": "TBD"
+                },
+                {
+                    "rank": 16,
+                    "match_type": "tavily",
+                    "title": "Raghav Juyal's comedy drama 'Bhai Tera Star Hai' goes on floors in London | Hindi Movie News - The Times of India",
+                    "url": "https://timesofindia.indiatimes.com/entertainment/hindi/bollywood/news/raghav-juyals-comedy-drama-bhai-tera-star-hai-goes-on-floors-in-london/articleshow/129026157.cms",
+                    "timestamp": "2026-11-26T05:02:49.848316+00:00",
+                    "is_review": "TBD"
+                },
+                {
+                    "rank": 20,
+                    "match_type": "tavily",
+                    "title": "'Bhai Tera Star Hai' Niharika NM reveals she lost a film over an intimacy clause: 'The actor refused to work with a body double' | - The Times of India",
+                    "url": "https://timesofindia.indiatimes.com/entertainment/hindi/bollywood/news/bhai-tera-star-hai-niharika-nm-reveals-she-lost-a-film-over-an-intimacy-clause-the-actor-refused-to-work-with-a-body-double/articleshow/132658479.cms",
+                    "timestamp": "2026-11-26T05:02:49.848316+00:00",
                     "is_review": "TBD"
                 }
             ]

@@ -519,5 +519,791 @@
                 "total_results": 8
             }
         }
+    },
+    "2026-11-26T05:02:57.980642+00:00": {
+        "publishers_attempted": 42,
+        "publishers_succeeded": 42,
+        "publishers_failed": 0,
+        "chunks_executed": 3,
+        "raw_results_count": 60,
+        "chunk_errors": [],
+        "raw_results": [
+            {
+                "chunk": 1,
+                "rank": 1,
+                "title": "Bhai Tera Star Hai Movie: Review | Release Date (2026) | Songs | Music | Images | Official Trailers | Videos | Photos | News - Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/movie/bhai-tera-star-hai",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 2,
+                "title": "Bhai Tera Star Hai Review: A Bumbling Comedy of Errors | Filmfare.com",
+                "url": "https://www.filmfare.com/reviews/bollywood-movies/bhai-tera-star-hai-review-a-bumbling-comedy-of-errors-85153.html",
+                "matched_publisher": "filmfare",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 3,
+                "title": "Bhai Tera Star Hai Movie Review: BHAI TERA STAR HAI is a chaotic and unfunny comedy",
+                "url": "https://www.bollywoodhungama.com/movie/bhai-tera-star-hai/critic-review/bhai-tera-star-hai-movie-review/bhai-tera-star-hai-is-a-chaotic-and-unfunny-comedy",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 4,
+                "title": "Bhai Tera Star Hai Movie Review: Too wacky for its own good",
+                "url": "https://www.cinemaexpress.com/hindi/review/2026/Jul/30/bhai-tera-star-hai-movie-review-too-wacky-for-its-own-good",
+                "matched_publisher": "cinema-express",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 5,
+                "title": "Bhai Tera Star Hai Hindi Review Starring Raghav Juyal Sanjay Kapoor Nikki Walia To Niharika Nm - Entertainment News: Amar Ujala - Bhai Tera Star Hai Review:राघव जुयाल की कॉमेडी ने दिया सिरदर्द, दो घंटे तक दर्शकों के धैर्य की हुई परीक्षा",
+                "url": "https://www.amarujala.com/entertainment/movie-review/bhai-tera-star-hai-hindi-review-starring-raghav-juyal-sanjay-kapoor-nikki-walia-to-niharika-nm-2026-07-30",
+                "matched_publisher": "amar-ujala",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 6,
+                "title": "Bhai Tera Star Hai cast revealed: Sanjay Kapoor, Barkha Singh and others join Raghav Juyal-led comedy : Bollywood News - Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/news/bollywood/bhai-tera-star-hai-cast-revealed-sanjay-kapoor-barkha-singh-and-others-join-raghav-juyal-led-comedy",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 7,
+                "title": "Raghav Juyal steps into mainstream lead role with Bhai Tera Star Hai : Bollywood News - Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/news/features/raghav-juyal-steps-into-mainstream-lead-role-with-bhai-tera-star-hai",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 8,
+                "title": "Raghav Juyal starrer Bhai Tera Star Hai teaser out now; actor plays his most delightfully delusional character in Vivek B Agrawal directorial : Bollywood News - Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/news/features/raghav-juyal-starrer-bhai-tera-star-hai-teaser-out-now-actor-plays-his-most-delightfully-delusional-character-in-vivek-b-agrawal-directorial",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 9,
+                "title": "EXCLUSIVE: “Bhai Tera Star Hai was shot in LESS than a month,” says Vivek B Agarwal; adds, “It takes a phenomenal actor like Raghav Juyal to make bad acting look so convincing…Sanjay Kapoor wore the wig even when he wasn’t shooting!” : Bollywood News - Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/news/features/exclusive-bhai-tera-star-hai-was-shot-in-less-than-a-month-says-vivek-b-agarwal-adds-it-takes-a-phenomenal-actor-like-raghav-juyal-to-make-bad-acting-look-so-convincing",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 10,
+                "title": "Bhai Tera Star Hai Trailer: Raghav Juyal promises a laughter riot ahead of July 30 release; watch 30 : Bollywood News - Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/news/features/bhai-tera-star-hai-trailer-raghav-juyal-promises-a-laughter-riot-ahead-of-july-30-release-watch",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 11,
+                "title": "EXCLUSIVE: Bhai Tera Star Hai targets 900–1000 screens despite Spider-Man: Brand New Day CLASH; Vivek B Agarwal says, “There was NO other viable weekend until February 2027-end” : Bollywood News - Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/news/bollywood/exclusive-bhai-tera-star-hai-targets-900-1000-screens-despite-spider-man-brand-new-day-clash-vivek-b-agarwal-says-there-was-no-other-viable-weekend-until-february-2027-end",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 12,
+                "title": "EXCLUSIVE: “Each character in Bhai Tera Star Hai wears ONLY one colour,” shares costume designer Rick Roy; also reveals how he convinced Sanjay Kapoor to wear a funny-looking orange suit for a song : Bollywood News - Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/news/features/exclusive-each-character-in-bhai-tera-star-hai-wears-only-one-colour-shares-costume-designer-rick-roy-also-reveals-how-he-convinced-sanjay-kapoor-to-wear-a-funny-looking-orange-su",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 13,
+                "title": "Raghav Juyal starrer Bhai Tera Star Hai first look out: Vivek B. Agrawal introduces Ajay Singh with ‘Talent Loading…’ : Bollywood News - Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/news/features/raghav-juyal-starrer-bhai-tera-star-hai-first-look-out-vivek-b-agrawal-introduces-ajay-singh-with-talent-loading",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 14,
+                "title": "Bhai Tera Star Hai Review: कॉमेडी के नाम पर फूहड़ता, बेकार कहानी... राघव ...",
+                "url": "https://www.jagran.com/entertainment/reviews-bhai-tera-star-hai-film-review-raghav-juyal-performance-not-appealing-storyline-also-bad-40323676.html",
+                "matched_publisher": "dainik-jagran",
+                "action": "ADDED"
+            },
+            {
+                "chunk": 1,
+                "rank": 15,
+                "title": "Reviews – Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/movie/bhai-tera-star-hai/user-reviews",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 16,
+                "title": "EXCLUSIVE: Niki Walia reveals why Bhai Tera Star Hai was an instant yes: “My character is so out of my comfort zone” : Bollywood News - Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/news/features/exclusive-niki-walia-reveals-why-bhai-tera-star-hai-was-an-instant-yes-my-character-is-so-out-of-my-comfort-zone",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 17,
+                "title": "Reviews – Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/movie/bhai-tera-star-hai/songs/music-critic-review",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 18,
+                "title": "Bhai Tera Star Hai News",
+                "url": "https://www.bollywoodhungama.com/movie/bhai-tera-star-hai/articles",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 19,
+                "title": "Bhai Tera Star Hai Photos, Poster, Images, Photos, Wallpapers, HD Images, Pictures - Bollywood Hungama",
+                "url": "https://www.bollywoodhungama.com/movie/bhai-tera-star-hai/photos",
+                "matched_publisher": "bollywood-hungama",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 1,
+                "rank": 20,
+                "title": "EXCLUSIVE: “Salman Khan called Raghav Juyal and told him, 'I saw ...",
+                "url": "https://www.bollywoodhungama.com/news/features/exclusive-salman-khan-called-raghav-juyal-and-told-him-i-saw-bhai-tera-star-hai-trailer-twice-and-the-kisi-ka-bhai-kisi-ki-jaan-joke-was-fabulous-vivek",
+                "matched_publisher": "bollywood-hungama",
+                "action": "ADDED"
+            },
+            {
+                "chunk": 2,
+                "rank": 1,
+                "title": "Bhai Tera Star Hai review: This Raghav Juyal-Sanjay Kapoor comedy film leaves you asking... 'Why?' | Bollywood",
+                "url": "https://www.hindustantimes.com/entertainment/bollywood/bhai-tera-star-hai-review-this-raghav-juyal-sanjay-kapoor-comedy-film-leaves-you-asking-why-niharika-nm-101785499542811.html",
+                "matched_publisher": "hindustan-times",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 2,
+                "title": "Bhai Tera Star Hai Movie Review: Raghav Juyal leads a comedy where the jokes need their own rescue mission",
+                "url": "https://www.moneycontrol.com/entertainment/bhai-tera-star-hai-movie-review-raghav-juyal-leads-a-comedy-where-the-jokes-need-their-own-rescue-mission-article-13989199.html",
+                "matched_publisher": "moneycontrol",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 3,
+                "title": "Bhai Tera Star Hai (2026) | Koimoi",
+                "url": "https://www.koimoi.com/movie/bhai-tera-star-hai",
+                "matched_publisher": "koimoi",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 4,
+                "title": "Bhai Tera Star Hai Review: Raghav Juyal Shines, But The Comedy Falls Flat",
+                "url": "https://www.ndtv.com/entertainment/bhai-tera-star-hai-review-raghav-juyal-shines-but-the-comedy-falls-flat-11842704",
+                "matched_publisher": "ndtv",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 5,
+                "title": "Bhai Tera Star Hai Movie Review: Raghav Juyal's Film Is Unfunny, Aimless & Pointless!",
+                "url": "https://www.koimoi.com/bollywood-movies/movie-reviews/bhai-tera-star-hai-movie-review-raghav-juyals-film-is-unfunny-aimless-pointless",
+                "matched_publisher": "koimoi",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 6,
+                "title": "Bhai Tera Star Hai Review: Did Raghav Juyal’s Big Leap Into Solo Superstardom Just Turn Into Superstar-Doom?",
+                "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-review-did-raghav-juyals-big-leap-into-solo-superstardom-just-turn-into-superstar-doom",
+                "matched_publisher": "free-press-journal",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 7,
+                "title": "Bhai Tera Star Hai movie review: Raghav Juyal-starrer is dull and done",
+                "url": "https://www.mid-day.com/entertainment/bollywood-news/article/bhai-tera-star-hai-movie-review-raghav-juyal-niharika-nm-dull-done-23642427",
+                "matched_publisher": "mid-day",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 8,
+                "title": "Bhai Tera Star Hai Review: A painful blow to filmmaking standards –",
+                "url": "https://www.movietalkies.com/reviews/bhai-tera-star-hai-review-painful-blow-filmmaking-standards-12216142",
+                "matched_publisher": "movie-talkies",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 9,
+                "title": "Bhai Tera Star Hai movie review: Raghav Juyal’s comic timing can’t save this film",
+                "url": "https://www.mid-day.com/entertainment/bollywood-news/article/bhai-tera-star-hai-movie-review-raghav-juyals-comic-timing-cant-save-this-film-23642325",
+                "matched_publisher": "mid-day",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 10,
+                "title": "Bhai Tera Star Hai review: The only star was Vijay Deverakonda in Vijay Sales ad - India Today",
+                "url": "https://www.indiatoday.in/movies/reviews/story/bhai-tera-star-hai-review-the-only-star-was-vijay-deverakonda-in-vijay-sales-ad-2959658-2026-07-30",
+                "matched_publisher": "india-today",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 11,
+                "title": "Bhai Tera Star Hai Twitter review: Raghav Juyal delivers sincere performance; but the movie… | Mint",
+                "url": "https://www.livemint.com/entertainment/bhai-tera-star-hai-twitter-review-raghav-juyal-delivers-sincere-performance-but-the-movie-11785420710380.html",
+                "matched_publisher": "mint",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 12,
+                "title": "Bhai Tera Star Hai Box Office Collection Day 2: Raghav Juyal Starrer Stays Steady, Collects ₹25 Lakh On Friday",
+                "url": "https://www.freepressjournal.in/entertainment/bhai-tera-star-hai-box-office-collection-day-2-raghav-juyal-starrer-stays-steady-collects-25-lakh-on-friday",
+                "matched_publisher": "free-press-journal",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 13,
+                "title": "Bhai Tera Star Hai Trailer Review: Raghav Juyal Being Himself Is Never a Bad Idea- And Not To Be Missed Is The Bhaijaan Joke",
+                "url": "https://www.koimoi.com/reviews/trailer-reviews/bhai-tera-star-hai-trailer-review-raghav-juyal-being-himself-is-never-a-bad-idea-and-not-to-be-missed-is-the-bhaijaan-joke",
+                "matched_publisher": "koimoi",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 14,
+                "title": "Bhai Tera Star Hai Box Office (Closing Collection): Raghav Juyal's Solo Lead Ends On A Disastrous Note, Earning Less Than 1.5 Crore",
+                "url": "https://www.koimoi.com/box-office/bhai-tera-star-hai-box-office-closing-collection-raghav-juyals-solo-lead-ends-on-a-disastrous-note-earning-less-than-1-5-crore",
+                "matched_publisher": "koimoi",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 15,
+                "title": "Bhai Tera Star Hai Box Office Collection Day 4: Ends Opening Weekend Under 1 Crore, Shows Slashed by 41% Since Opening Day",
+                "url": "https://www.koimoi.com/box-office/bhai-tera-star-hai-box-office-collection-day-4-ends-opening-weekend-under-1-crore-shows-slashed-by-41-since-opening-day",
+                "matched_publisher": "koimoi",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 16,
+                "title": "Bhai Tera Star Hai Trailer: Raghav Juyal Promises A Laugh Riot In His Next",
+                "url": "https://www.ndtv.com/entertainment/bhai-tera-star-hai-trailer-out-raghav-juyal-brings-comedy-and-chaos-to-the-big-screen-11748337",
+                "matched_publisher": "ndtv",
+                "action": "ADDED"
+            },
+            {
+                "chunk": 2,
+                "rank": 17,
+                "title": "Bhai Tera Star Hai Box Office Collection Day 3: 88% Behind Kill, Likely To End Its First Weekend Below 1 Crore",
+                "url": "https://www.koimoi.com/box-office/bhai-tera-star-hai-box-office-collection-day-3-88-behind-kill-likely-to-end-its-first-weekend-below-1-crore",
+                "matched_publisher": "koimoi",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 18,
+                "title": "Bhai Tera Star Hai Box Office Collection Day 6: Raghav Juyal Starrer Aims To End Extended Week Under 1.2 Crore",
+                "url": "https://www.koimoi.com/box-office/bhai-tera-star-hai-box-office-collection-day-6-raghav-juyal-starrer-aims-to-end-extended-week-under-1-2-crore",
+                "matched_publisher": "koimoi",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 19,
+                "title": "Bhai Tera Star Hai Box Office Collection Day 5: Faces An Outright Rejection, Scores 95% Less Than Kill's First Monday",
+                "url": "https://www.koimoi.com/box-office/bhai-tera-star-hai-box-office-collection-day-5-faces-an-outright-rejection-scores-95-less-than-kills-first-monday",
+                "matched_publisher": "koimoi",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 2,
+                "rank": 20,
+                "title": "Bhai Tera Star Hai Box Office Collection Day 7: 2 Crore Lifetime ...",
+                "url": "https://www.koimoi.com/box-office/bhai-tera-star-hai-box-office-collection-day-7-2-crore-lifetime-now-looks-out-of-reach-for-raghav-juyals-film",
+                "matched_publisher": "koimoi",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 1,
+                "title": "Bhai Tera Star Hai Movie Review: A nightmare of a comedy that drags on",
+                "url": "https://timesofindia.indiatimes.com/entertainment/hindi/bhai-tera-star-hai/movie-review/132726638.cms",
+                "matched_publisher": "the-times-of-india",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 2,
+                "title": "Bhai Tera Star Hai Movie: Showtimes, Review, Songs, Trailer, Posters, News & Videos | eTimes",
+                "url": "https://timesofindia.indiatimes.com/entertainment/hindi/movie-details/bhai-tera-star-hai/movieshow/132093624.cms",
+                "matched_publisher": "the-times-of-india",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 3,
+                "title": "Bhai Tera Star Hai Box Office Day 1: Raghav Juyal's Solo Lead Debut Struggles With Rs 25 Lakh Opening | Bollywood News - News18",
+                "url": "https://www.news18.com/movies/bollywood/bhai-tera-star-hai-box-office-day-1-raghav-juyals-solo-lead-debut-struggles-with-rs-25-lakh-opening-ws-l-10245058.html",
+                "matched_publisher": "news18-showsha",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 4,
+                "title": "Bhai Tera Star Hai movie review: Raghav Juyal film is a comedy with scant laughs | Movie-review News - The Indian Express",
+                "url": "https://indianexpress.com/article/entertainment/movie-review/bhai-tera-star-hai-movie-review-raghav-juyal-film-is-a-comedy-with-scant-laughs-10811541",
+                "matched_publisher": "the-indian-express",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 5,
+                "title": "Bhai Tera Star Hai Movie Review And Rating: Raghav Juyal Is On Fire But This Slapstick Comedy Runs Out of Steam Too Soon | Bollywood News - News18",
+                "url": "https://www.news18.com/movies/bollywood/bhai-tera-star-hai-review-raghav-juyal-is-on-fire-but-this-slapstick-comedy-runs-out-of-steam-too-soon-ws-l-10241198.html",
+                "matched_publisher": "news18-showsha",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 6,
+                "title": "Page 5 | Movie Reviews: Latest Review and Rating of Bollywood, Hollywood ...",
+                "url": "https://indianexpress.com/section/entertainment/movie-review/page/5?id=7246507&device=mobile",
+                "matched_publisher": "the-indian-express",
+                "action": "ADDED"
+            },
+            {
+                "chunk": 3,
+                "rank": 7,
+                "title": "Raghav Juyal recalls Shah Rukh Khan’s ‘12th Fail’ example and 'go for it' advice on ‘Bhai Tera Star Hai’, says Salman Khan watched the 'trailer twice, was laughing so much': ‘If the film is good, it will connect’",
+                "url": "https://timesofindia.indiatimes.com/entertainment/hindi/bollywood/news/raghav-juyal-recalls-shah-rukh-khans-12th-fail-example-and-go-for-it-advice-on-bhai-tera-star-hai-says-salman-khan-watched-the-trailer-twice-was-laughing-so-much-if-the-film-is-good-it-will-connect/articleshow/133229571.cms",
+                "matched_publisher": "the-times-of-india",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 8,
+                "title": "Bhai Tera Star Hai Review: Raghav Juyal's Film Is Absurd - Rediff.com movies",
+                "url": "https://m.rediff.com/movies/review/bhai-tera-star-hai-review-raghav-juyal-film-is-absurd/20260730.htm",
+                "matched_publisher": "rediff",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 9,
+                "title": "Bhai Tera Star Hai Box Office Day 2: Raghav Juyal's Film Stays Flat, Earns Just Rs 50 Lakh | Bollywood News - News18",
+                "url": "https://www.news18.com/movies/bollywood/bhai-tera-star-hai-box-office-day-2-raghav-juyals-film-stays-flat-earns-just-rs-50-lakh-ws-l-10246556.html",
+                "matched_publisher": "news18-showsha",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 10,
+                "title": "Bhai Tera Star Hai Movie Review: A nightmare of a comedy that drags on",
+                "url": "https://timesofindia.indiatimes.com/entertainment/hindi/bhai-tera-star-hai/amp_movie_review/132726638.cms",
+                "matched_publisher": "the-times-of-india",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 11,
+                "title": "‘Bhai Tera Star Hai’: More madness than amusement - The Tribune",
+                "url": "https://www.tribuneindia.com/news/movie-review/bhai-tera-star-hai-more-madness-than-amusement",
+                "matched_publisher": "the-tribune",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 12,
+                "title": "'Bhai Tera Star Hai' actress Niharika NM reveals why Sai Pallavi inspires her | Hindi Movie News - The Times of India",
+                "url": "https://timesofindia.indiatimes.com/entertainment/hindi/bollywood/news/bhai-tera-star-hai-actress-niharika-nm-reveals-why-sai-pallavi-inspires-her/articleshow/132767365.cms",
+                "matched_publisher": "the-times-of-india",
+                "action": "ADDED"
+            },
+            {
+                "chunk": 3,
+                "rank": 13,
+                "title": "Bhai Tera Star Hai Review - Rediff.com",
+                "url": "https://m.rediff.com/tags/Bhai%20Tera%20Star%20Hai%20Review",
+                "matched_publisher": "rediff",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 14,
+                "title": "Raghav Juyal's 'Bhai Tera Star Hai' teaser promises a wild ride, comic chaos | - The Times of India",
+                "url": "https://timesofindia.indiatimes.com/entertainment/hindi/bollywood/news/raghav-juyals-bhai-tera-star-hai-teaser-promises-a-wild-ride-comic-chaos/articleshow/132163561.cms",
+                "matched_publisher": "the-times-of-india",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 15,
+                "title": "Bhai Tera Star Hai Movie: Showtimes, Review, Songs, Trailer, Posters, News & Videos | eTimes",
+                "url": "https://timesofindia.indiatimes.com/entertainment/hindi/movie-details/bhai-tera-star-hai/amp_movieshow/132093624.cms",
+                "matched_publisher": "the-times-of-india",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 16,
+                "title": "Raghav Juyal's comedy drama 'Bhai Tera Star Hai' goes on floors in London | Hindi Movie News - The Times of India",
+                "url": "https://timesofindia.indiatimes.com/entertainment/hindi/bollywood/news/raghav-juyals-comedy-drama-bhai-tera-star-hai-goes-on-floors-in-london/articleshow/129026157.cms",
+                "matched_publisher": "the-times-of-india",
+                "action": "ADDED"
+            },
+            {
+                "chunk": 3,
+                "rank": 17,
+                "title": "Bhai Tera Star Hai trailer: Raghav Juyal desperately wants to do a film with Salman Khan | Bollywood News - The Indian Express",
+                "url": "https://indianexpress.com/article/entertainment/bollywood/bhai-tera-star-hai-trailer-raghav-juyal-desperately-wants-a-film-with-salman-khan-watch-10778758",
+                "matched_publisher": "the-indian-express",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 18,
+                "title": "Niharika Nm: 'Had imposter syndrome for the longest time growing up on the internet': Niharika NM on her film 'Bhai Tera Star hai', being on social media since the age of 16 and more | Hindi Movie News - The Times of India",
+                "url": "https://timesofindia.indiatimes.com/entertainment/hindi/bollywood/news/had-imposter-syndrome-for-the-longest-time-growing-up-on-the-internet-niharika-nm-on-her-film-bhai-tera-star-hai-being-on-social-media-since-the-age-of-16-and-more/articleshow/132712063.cms",
+                "matched_publisher": "the-times-of-india",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 19,
+                "title": "Raghav Juyal: 'I wanted to bring back the kind of humor we saw in Govinda’s films': Raghav Juyal aims to recreate 90s humor as solo lead with ‘Bhai Tera Star Hai’ | Hindi Movie News - The Times of India",
+                "url": "https://timesofindia.indiatimes.com/entertainment/hindi/bollywood/news/i-wanted-to-bring-back-the-kind-of-humor-we-saw-in-govindas-films-raghav-juyal-aims-to-recreate-90s-humor-as-solo-lead-with-bhai-tera-star-hai/articleshow/132574093.cms",
+                "matched_publisher": "the-times-of-india",
+                "action": "DUPLICATE"
+            },
+            {
+                "chunk": 3,
+                "rank": 20,
+                "title": "'Bhai Tera Star Hai' Niharika NM reveals she lost a film over an intimacy clause: 'The actor refused to work with a body double' | - The Times of India",
+                "url": "https://timesofindia.indiatimes.com/entertainment/hindi/bollywood/news/bhai-tera-star-hai-niharika-nm-reveals-she-lost-a-film-over-an-intimacy-clause-the-actor-refused-to-work-with-a-body-double/articleshow/132658479.cms",
+                "matched_publisher": "the-times-of-india",
+                "action": "ADDED"
+            }
+        ],
+        "publisher_details": {
+            "aaj-tak": {
+                "status": "SUCCESS",
+                "prior_results": 11,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 11
+            },
+            "abp": {
+                "status": "SUCCESS",
+                "prior_results": 7,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 7
+            },
+            "amar-ujala": {
+                "status": "SUCCESS",
+                "prior_results": 7,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 1,
+                "total_results": 7
+            },
+            "bollywood-hungama": {
+                "status": "SUCCESS",
+                "prior_results": 17,
+                "new_tavily_added": 1,
+                "duplicate_tavily_skipped": 15,
+                "total_results": 18
+            },
+            "bollyspice": {
+                "status": "SUCCESS",
+                "prior_results": 10,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 10
+            },
+            "business-standard": {
+                "status": "SUCCESS",
+                "prior_results": 12,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 12
+            },
+            "cinema-express": {
+                "status": "SUCCESS",
+                "prior_results": 8,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 1,
+                "total_results": 8
+            },
+            "cinetales": {
+                "status": "SUCCESS",
+                "prior_results": 8,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 8
+            },
+            "dainik-bhaskar": {
+                "status": "SUCCESS",
+                "prior_results": 6,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 6
+            },
+            "dainik-jagran": {
+                "status": "SUCCESS",
+                "prior_results": 0,
+                "new_tavily_added": 1,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 1
+            },
+            "deccan-chronicle": {
+                "status": "SUCCESS",
+                "prior_results": 9,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 9
+            },
+            "deccan-herald": {
+                "status": "SUCCESS",
+                "prior_results": 9,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 9
+            },
+            "filmfare": {
+                "status": "SUCCESS",
+                "prior_results": 1,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 1,
+                "total_results": 1
+            },
+            "firstpost": {
+                "status": "SUCCESS",
+                "prior_results": 11,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 11
+            },
+            "free-press-journal": {
+                "status": "SUCCESS",
+                "prior_results": 8,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 2,
+                "total_results": 8
+            },
+            "hindustan": {
+                "status": "SUCCESS",
+                "prior_results": 10,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 10
+            },
+            "hindustan-times": {
+                "status": "SUCCESS",
+                "prior_results": 7,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 1,
+                "total_results": 7
+            },
+            "ians-live": {
+                "status": "SUCCESS",
+                "prior_results": 7,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 7
+            },
+            "india-today": {
+                "status": "SUCCESS",
+                "prior_results": 8,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 1,
+                "total_results": 8
+            },
+            "koimoi": {
+                "status": "SUCCESS",
+                "prior_results": 12,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 9,
+                "total_results": 12
+            },
+            "lensmen-reviews": {
+                "status": "SUCCESS",
+                "prior_results": 9,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 9
+            },
+            "lokmat": {
+                "status": "SUCCESS",
+                "prior_results": 9,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 9
+            },
+            "mid-day": {
+                "status": "SUCCESS",
+                "prior_results": 7,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 2,
+                "total_results": 7
+            },
+            "mint": {
+                "status": "SUCCESS",
+                "prior_results": 12,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 1,
+                "total_results": 12
+            },
+            "moneycontrol": {
+                "status": "SUCCESS",
+                "prior_results": 9,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 1,
+                "total_results": 9
+            },
+            "movie-talkies": {
+                "status": "SUCCESS",
+                "prior_results": 7,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 1,
+                "total_results": 7
+            },
+            "navbharat-times": {
+                "status": "SUCCESS",
+                "prior_results": 9,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 9
+            },
+            "ndtv": {
+                "status": "SUCCESS",
+                "prior_results": 8,
+                "new_tavily_added": 1,
+                "duplicate_tavily_skipped": 1,
+                "total_results": 9
+            },
+            "news18-showsha": {
+                "status": "SUCCESS",
+                "prior_results": 4,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 3,
+                "total_results": 4
+            },
+            "outlook": {
+                "status": "SUCCESS",
+                "prior_results": 10,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 10
+            },
+            "peepingmoon": {
+                "status": "SUCCESS",
+                "prior_results": 10,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 10
+            },
+            "rediff": {
+                "status": "SUCCESS",
+                "prior_results": 12,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 2,
+                "total_results": 12
+            },
+            "scroll-in": {
+                "status": "SUCCESS",
+                "prior_results": 9,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 9
+            },
+            "south-asian-herald": {
+                "status": "SUCCESS",
+                "prior_results": 7,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 7
+            },
+            "the-economic-times": {
+                "status": "SUCCESS",
+                "prior_results": 6,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 6
+            },
+            "the-federal": {
+                "status": "SUCCESS",
+                "prior_results": 8,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 8
+            },
+            "the-hindu": {
+                "status": "SUCCESS",
+                "prior_results": 7,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 7
+            },
+            "the-indian-express": {
+                "status": "SUCCESS",
+                "prior_results": 7,
+                "new_tavily_added": 1,
+                "duplicate_tavily_skipped": 2,
+                "total_results": 8
+            },
+            "the-quint": {
+                "status": "SUCCESS",
+                "prior_results": 10,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 10
+            },
+            "the-telegraph": {
+                "status": "SUCCESS",
+                "prior_results": 10,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 0,
+                "total_results": 10
+            },
+            "the-times-of-india": {
+                "status": "SUCCESS",
+                "prior_results": 17,
+                "new_tavily_added": 3,
+                "duplicate_tavily_skipped": 8,
+                "total_results": 20
+            },
+            "the-tribune": {
+                "status": "SUCCESS",
+                "prior_results": 8,
+                "new_tavily_added": 0,
+                "duplicate_tavily_skipped": 1,
+                "total_results": 8
+            }
+        }
     }
 }
