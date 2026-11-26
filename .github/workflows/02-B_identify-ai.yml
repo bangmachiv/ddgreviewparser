@@ -1,4 +1,4 @@
-name: 02-C Identify AI
+name: 02-B Identify AI
 
 on:
   workflow_dispatch:
@@ -39,7 +39,7 @@ jobs:
       - name: 02-C - Execute Gemini Semantic Identification
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python -u 02-C_identify-ai.py
+        run: python -u 02-B_identify-ai.py
 
       - name: Commit and push changes
         if: always()
