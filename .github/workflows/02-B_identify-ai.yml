@@ -1,4 +1,4 @@
-name: 02-B Identify Reviews AI
+name: 02-B. Identify Reviews AI
 
 on:
   workflow_dispatch:
