@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-02-C_identify-ai.py
+02-B_identify-ai.py
 Semantic evaluation script utilizing Google Gemini text models.
-Reads DDGS search candidates from Step 1, filters out previously rejected titles, 
-and evaluates fresh titles semantically to identify official editorial reviews.
-Executes purely as a text prompt (Zero Search API costs).
-Features 2-model lite fallback cascade, 13-second rate-limit delays for 5 RPM free tier, 
-2-attempt retries, real-time logs, dedicated history JSON, and terminal summary tables.
+Reads search candidates (is_review == 'TBD') from Step 1 (DDGS / Tavily),
+filters out previously rejected titles/URLs, evaluates fresh candidates
+semantically to identify official editorial reviews, updates is_review ('Y'/'N')
+in searches_<slug>.json, and updates reviews_<slug>.json.
 """
 
 import builtins
@@ -58,13 +57,13 @@ MODEL_CONFIG = [
     "gemini-3.1-flash-lite"
 ]
 
-# Load threshold from central config mapped to this specific script
+# Load threshold from central config (supports new 02-B key with 02-C fallback)
 MIN_CONFIDENCE_THRESHOLD = 95
 if os.path.exists(CONFIG_FILE):
     try:
         with open(CONFIG_FILE, "r", encoding="utf-8") as f:
             config_data = json.load(f)
-            script_config = config_data.get("02-C_identify-ai", {})
+            script_config = config_data.get("02-B_identify-ai") or config_data.get("02-C_identify-ai", {})
             MIN_CONFIDENCE_THRESHOLD = script_config.get("AI_MIN_CONFIDENCE_THRESHOLD", 95)
     except Exception as e:
         print(f"[WARNING] Could not load config.json, defaulting to {MIN_CONFIDENCE_THRESHOLD}: {e}")
@@ -114,7 +113,7 @@ def run_gemini_evaluation(client, prompt):
 
             if not getattr(response, "candidates", None) or not response.candidates:
                 print(f"      [DEBUG ERROR] API call succeeded on {model_name}, but candidates=None.")
-                continue # Trigger fallback
+                continue  # Trigger fallback
 
             text_val = response.text
             if text_val and text_val.strip():
@@ -134,7 +133,7 @@ def print_summary_table(global_stats):
         return
 
     print("\n" + "=" * 80)
-    print(" 02-C: EXECUTION SUMMARY TABLE")
+    print(" 02-B: EXECUTION SUMMARY TABLE")
     print("=" * 80)
     print(f"| {'Movie Slug':<30} | {'Pubs Eval':<10} | {'Matches':<8} | {'Rejected':<10} |")
     print("-" * 71)
@@ -147,7 +146,7 @@ def print_summary_table(global_stats):
 # -----------------------------------------------------------------------------
 def main():
     print("=" * 80)
-    print(f" 02-C: GEMINI SEMANTIC IDENTIFICATION (Threshold: {MIN_CONFIDENCE_THRESHOLD}%)")
+    print(f" 02-B: GEMINI SEMANTIC IDENTIFICATION (Threshold: {MIN_CONFIDENCE_THRESHOLD}%)")
     print("=" * 80)
 
     if not os.path.exists(PROMPT_FILE):
@@ -182,7 +181,7 @@ def main():
 
         movie_logs_dir = os.path.join(LOGS_DIR, f"logs_{slug}")
         ai_logs_path = os.path.join(movie_logs_dir, "ai_processing_logs.json")
-        script_log_path = os.path.join(movie_logs_dir, "02-C_identify-ai.json")
+        script_log_path = os.path.join(movie_logs_dir, "02-B_identify-ai.json")
 
         if not os.path.exists(reviews_path) or not os.path.exists(searches_path):
             print(f"  -> Skipping: Missing reviews or searches JSON file.")
@@ -216,6 +215,7 @@ def main():
         search_results_map = {pub["publisher_id"]: pub.get("results", []) for pub in sdata.get("publishers", [])}
 
         data_changed = False
+        searches_changed = False
         ai_logs_changed = False
         negative_data_changed = False
 
@@ -232,8 +232,8 @@ def main():
             review_url = str(pub.get("review_url", "")).strip().upper()
             sc = pub.get("search_count", 0)
 
-            # Execution Gate: Relies purely on the target state matrix criteria
-            if review_url == "PENDING" and sc > 0:
+            # Execution Gate: Unresolved review_url with available search results
+            if review_url in ["PENDING", "FAILED", "NA", ""] and sc > 0:
                 candidates = search_results_map.get(pub_id, [])
 
                 if not candidates:
@@ -250,28 +250,44 @@ def main():
                 print(f"Starting for {pub_name}\n")
 
                 for c in candidates:
-                    title = c.get("title", "").strip()
-                    url = c.get("url", "").strip()
+                    if not isinstance(c, dict):
+                        continue
+
+                    # Gate on is_review state machine (skip already classified Y/N URLs)
+                    if str(c.get("is_review", "TBD")).strip().upper() != "TBD":
+                        continue
+
+                    title = str(c.get("title", "")).strip()
+                    url = str(c.get("url", "")).strip()
 
                     # Filter 1: Check negative cache
                     if title in rejected_titles:
+                        c["is_review"] = "N"
+                        searches_changed = True
                         continue
 
-                    # Filter 2: Baseline relevance check (Compressed String Matching)
+                    # Filter 2: Baseline relevance check (check both title & URL slug so Hindi titles aren't dropped)
                     title_ref_string = create_reference_string(title)
-                    if movie_ref_string not in title_ref_string:
+                    url_ref_string = create_reference_string(url)
+                    if movie_ref_string not in title_ref_string and movie_ref_string not in url_ref_string:
                         filtered_out_count += 1
+                        c["is_review"] = "N"
+                        searches_changed = True
 
-                        # Automatically add to negative cache since it's irrelevant
                         if pub_id not in negative_data["publishers"]:
                             negative_data["publishers"][pub_id] = []
-                        if title not in negative_data["publishers"][pub_id]:
+                        if title and title not in negative_data["publishers"][pub_id]:
                             negative_data["publishers"][pub_id].append(title)
                             negative_data_changed = True
 
                         continue
 
-                    compact_candidates.append({"title": title, "url": url})
+                    compact_candidates.append({
+                        "title": title,
+                        "url": url,
+                        "match_type": str(c.get("match_type") or "gemini_semantic").strip(),
+                        "raw_ref": c
+                    })
                     numbered_candidate_lines.append(f"{idx}. {title}")
 
                     print(f"[{get_ordinal(idx)} Title] {title}")
@@ -281,7 +297,7 @@ def main():
                     print(f"  -> [FILTERED] Dropped {filtered_out_count} candidate(s) missing movie name reference string.")
 
                 if not compact_candidates:
-                    print(f"  -> [SKIP] All available candidates were previously rejected or filtered out.")
+                    print(f"  -> [SKIP] All available candidates were previously evaluated, rejected, or filtered out.")
                     continue
 
                 print(f"\n  -> [GEMINI EVAL] Analyzing {len(compact_candidates)} fresh search candidates...")
@@ -298,7 +314,7 @@ def main():
                     raw_response = run_gemini_evaluation(client, prompt)
 
                     if raw_response:
-                        break 
+                        break
                     else:
                         print(f"     [API FAILURE] All cascade models failed on attempt {attempt}.")
                         if attempt < MAX_RETRIES:
@@ -359,7 +375,7 @@ def main():
 
                         if is_valid_response:
                             current_iso_time = datetime.now().astimezone().isoformat()
-                            ai_logs[pub_id]["02-C_classify-ai"] = current_iso_time
+                            ai_logs[pub_id]["02-B_classify-ai"] = current_iso_time
                             ai_logs_changed = True
                             print(f"     [LOGGED] Recorded timestamp in ai_processing_logs: {current_iso_time}")
 
@@ -367,6 +383,7 @@ def main():
                                 c for c in valid_parsed_candidates if c["confidence"] >= MIN_CONFIDENCE_THRESHOLD
                             ]
 
+                            matched_url = None
                             matched_title = None
 
                             if admissible_matches:
@@ -378,27 +395,39 @@ def main():
                                 matched_item = compact_candidates[best_sn - 1]
                                 matched_url = matched_item["url"]
                                 matched_title = matched_item["title"]
+                                matched_source = matched_item["match_type"]
 
                                 print(f"     [SUCCESS] Admissible match (Confidence: {best_conf}% >= {MIN_CONFIDENCE_THRESHOLD}%): Serial #{best_sn}")
                                 print(f"     [URL]: {matched_url}")
 
-                                # ==========================================
-                                # SURGICAL FIX: Removed pub["article_title"] leak
-                                # ==========================================
                                 pub["review_url"] = matched_url
                                 pub["search_status"] = "SUCCESS"
-                                pub["review_source"] = "gemini_semantic"
+                                pub["review_source"] = matched_source
                                 pub["review_title"] = matched_title
                                 pub["classified_by"] = "AI"
 
+                                # Unlock Step 3/4 content extraction & adjudication for AI-classified reviews
+                                if pub.get("webpage_content_extraction") in [None, "", "NOT_NEEDED"]:
+                                    pub["webpage_content_extraction"] = "PENDING"
+                                if pub.get("webpage_content_adjudication") in [None, "", "NOT_NEEDED"]:
+                                    pub["webpage_content_adjudication"] = "PENDING"
+
+                                matched_item["raw_ref"]["is_review"] = "Y"
+                                searches_changed = True
                                 data_changed = True
                                 movie_stats["found"] += 1
                             else:
                                 print(f"     [NOT ADMISSIBLE] No candidate met confidence threshold >= {MIN_CONFIDENCE_THRESHOLD}% (or returned empty). Remaining PENDING.")
-                                pub["search_status"] = "PENDING"
                                 movie_stats["not_found"] += 1
 
-                            newly_rejected_titles = [c["title"] for c in compact_candidates if c["title"] != matched_title]
+                            # Mark all non-winning evaluated candidates as 'N' and cache their titles
+                            newly_rejected_titles = []
+                            for cand in compact_candidates:
+                                if cand["url"] != matched_url:
+                                    cand["raw_ref"]["is_review"] = "N"
+                                    searches_changed = True
+                                    if cand["title"]:
+                                        newly_rejected_titles.append(cand["title"])
 
                             if newly_rejected_titles:
                                 if pub_id not in negative_data["publishers"]:
@@ -441,12 +470,17 @@ def main():
 
             with open(script_log_path, "w", encoding="utf-8") as f:
                 json.dump(script_history, f, indent=4, ensure_ascii=False)
-            print(f"  -> Saved execution history to 02-C_identify-ai.json")
+            print(f"  -> Saved execution history to 02-B_identify-ai.json")
 
         if data_changed:
             with open(reviews_path, "w", encoding="utf-8") as f:
                 json.dump(rdata, f, indent=4, ensure_ascii=False)
             print(f"  -> Saved updates to reviews_{slug}.json")
+
+        if searches_changed:
+            with open(searches_path, "w", encoding="utf-8") as f:
+                json.dump(sdata, f, indent=4, ensure_ascii=False)
+            print(f"  -> Saved is_review updates to searches_{slug}.json")
 
         if ai_logs_changed:
             with open(ai_logs_path, "w", encoding="utf-8") as f:
@@ -458,7 +492,7 @@ def main():
                 json.dump(negative_data, f, indent=4, ensure_ascii=False)
 
     print_summary_table(global_execution_stats)
-    print("\n[COMPLETE] 02-C Gemini Semantic Identification finished.")
+    print("\n[COMPLETE] 02-B Gemini Semantic Identification finished.")
 
 if __name__ == "__main__":
     main()
