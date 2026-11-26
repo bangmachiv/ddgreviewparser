@@ -4,8 +4,9 @@
 Semantic evaluation script utilizing Google Gemini text models.
 Reads search candidates (is_review == 'TBD') from Step 1 (DDGS / Tavily),
 filters out previously rejected titles/URLs, evaluates fresh candidates
-semantically to identify official editorial reviews, updates is_review ('Y'/'N')
-in searches_<slug>.json, and updates reviews_<slug>.json.
+semantically to identify official editorial reviews, applies a deterministic
+post-check blocklist on AI matches, updates is_review ('Y'/'N') in
+searches_<slug>.json, and updates reviews_<slug>.json.
 """
 
 import builtins
@@ -57,6 +58,22 @@ MODEL_CONFIG = [
     "gemini-3.1-flash-lite"
 ]
 
+# Deterministic post-check blocklist to veto non-editorial AI false positives
+POST_CHECK_BLOCKLIST = [
+    "twitter review", "x review", "x reacts",
+    "public review", "audience review", "user review", "user reviews",
+    "public reaction", "audience reaction", "fans react",
+    "early reactions", "first reactions",
+    "पब्लिक रिव्यू", "ट्विटर रिव्यू",
+    "trailer review", "teaser review", "music review", "album review",
+    "first look", "फर्स्ट लुक",
+    "ending explained", "plot explained",
+    "live updates", "live blog",
+    "release date", "ott release", "where to watch", "showtimes",
+    "रिलीज डेट", "ओटीटी",
+    "exclusive interview"
+]
+
 # Load threshold from central config (supports new 02-B key with 02-C fallback)
 MIN_CONFIDENCE_THRESHOLD = 95
 if os.path.exists(CONFIG_FILE):
@@ -96,6 +113,15 @@ def create_reference_string(text):
     if not text:
         return ""
     return re.sub(r'[^a-zA-Z0-9]', '', str(text)).lower()
+
+def get_blocked_reason(title: str, url: str):
+    """Returns the matched blocklist phrase if the candidate is a known non-editorial false positive."""
+    combined = f"{title} {url}".lower()
+    padded = f" {re.sub(r'[^\w\s]', ' ', combined)} "
+    for phrase in POST_CHECK_BLOCKLIST:
+        if f" {phrase} " in padded:
+            return phrase
+    return None
 
 def run_gemini_evaluation(client, prompt):
     """Executes text generation call with fallback cascade and 5 RPM timegaps."""
@@ -388,34 +414,47 @@ def main():
 
                             if admissible_matches:
                                 admissible_matches.sort(key=lambda x: x["confidence"], reverse=True)
-                                best_match = admissible_matches[0]
-                                best_sn = best_match["serial_number"]
-                                best_conf = best_match["confidence"]
+                                chosen_match = None
 
-                                matched_item = compact_candidates[best_sn - 1]
-                                matched_url = matched_item["url"]
-                                matched_title = matched_item["title"]
-                                matched_source = matched_item["match_type"]
+                                for cand_match in admissible_matches:
+                                    cand_sn = cand_match["serial_number"]
+                                    cand_conf = cand_match["confidence"]
+                                    cand_item = compact_candidates[cand_sn - 1]
+                                    blocked_reason = get_blocked_reason(cand_item["title"], cand_item["url"])
+                                    if blocked_reason:
+                                        print(f"     [POST-CHECK BLOCKED] Serial #{cand_sn} ({cand_conf}%) rejected due to '{blocked_reason}': {cand_item['title']}")
+                                        continue
+                                    chosen_match = (cand_sn, cand_conf, cand_item)
+                                    break
 
-                                print(f"     [SUCCESS] Admissible match (Confidence: {best_conf}% >= {MIN_CONFIDENCE_THRESHOLD}%): Serial #{best_sn}")
-                                print(f"     [URL]: {matched_url}")
+                                if chosen_match:
+                                    best_sn, best_conf, matched_item = chosen_match
+                                    matched_url = matched_item["url"]
+                                    matched_title = matched_item["title"]
+                                    matched_source = matched_item["match_type"]
 
-                                pub["review_url"] = matched_url
-                                pub["search_status"] = "SUCCESS"
-                                pub["review_source"] = matched_source
-                                pub["review_title"] = matched_title
-                                pub["classified_by"] = "AI"
+                                    print(f"     [SUCCESS] Admissible match (Confidence: {best_conf}% >= {MIN_CONFIDENCE_THRESHOLD}%): Serial #{best_sn}")
+                                    print(f"     [URL]: {matched_url}")
 
-                                # Unlock Step 3/4 content extraction & adjudication for AI-classified reviews
-                                if pub.get("webpage_content_extraction") in [None, "", "NOT_NEEDED"]:
-                                    pub["webpage_content_extraction"] = "PENDING"
-                                if pub.get("webpage_content_adjudication") in [None, "", "NOT_NEEDED"]:
-                                    pub["webpage_content_adjudication"] = "PENDING"
+                                    pub["review_url"] = matched_url
+                                    pub["search_status"] = "SUCCESS"
+                                    pub["review_source"] = matched_source
+                                    pub["review_title"] = matched_title
+                                    pub["classified_by"] = "AI"
 
-                                matched_item["raw_ref"]["is_review"] = "Y"
-                                searches_changed = True
-                                data_changed = True
-                                movie_stats["found"] += 1
+                                    # Unlock Step 3/4 content extraction & adjudication for AI-classified reviews
+                                    if pub.get("webpage_content_extraction") in [None, "", "NOT_NEEDED"]:
+                                        pub["webpage_content_extraction"] = "PENDING"
+                                    if pub.get("webpage_content_adjudication") in [None, "", "NOT_NEEDED"]:
+                                        pub["webpage_content_adjudication"] = "PENDING"
+
+                                    matched_item["raw_ref"]["is_review"] = "Y"
+                                    searches_changed = True
+                                    data_changed = True
+                                    movie_stats["found"] += 1
+                                else:
+                                    print(f"     [NOT ADMISSIBLE] All AI matches were blocked by deterministic post-check. Remaining PENDING.")
+                                    movie_stats["not_found"] += 1
                             else:
                                 print(f"     [NOT ADMISSIBLE] No candidate met confidence threshold >= {MIN_CONFIDENCE_THRESHOLD}% (or returned empty). Remaining PENDING.")
                                 movie_stats["not_found"] += 1
