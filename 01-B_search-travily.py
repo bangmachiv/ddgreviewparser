@@ -5,7 +5,8 @@ Augmenter search step using Tavily in chunked publisher batches.
 Targets active publishers where review_url is PENDING/FAILED/NA or empty,
 appends deduplicated domain- and extension-validated URLs with true query rank,
 timestamp, and 'is_review': 'TBD' to searches_<slug>.json without overwriting
-prior entries, and updates search_status and search_count in reviews_<slug>.json.
+prior entries, logs raw Tavily dispositions + per-publisher duplicate counts,
+and updates search_status and search_count in reviews_<slug>.json.
 """
 
 import json
@@ -287,7 +288,9 @@ def main():
             "publishers_succeeded": 0,
             "publishers_failed": 0,
             "chunks_executed": 0,
+            "raw_results_count": 0,
             "chunk_errors": [],
+            "raw_results": [],
             "publisher_details": {}
         }
 
@@ -313,9 +316,10 @@ def main():
                     )
                     if isinstance(response, dict):
                         raw_items = response.get("results") or []
+                        print(f"      └─► Returned {len(raw_items)} raw results.")
                         for q_rank, r in enumerate(raw_items, start=1):
                             if isinstance(r, dict):
-                                all_raw_results.append((q_rank, r))
+                                all_raw_results.append((idx, q_rank, r))
                 except Exception as e:
                     err_msg = f"Chunk {idx}: {type(e).__name__}: {e}"
                     movie_log_entry["chunk_errors"].append(err_msg)
@@ -323,46 +327,69 @@ def main():
                 if idx < len(chunks):
                     time.sleep(1)
 
+            movie_log_entry["raw_results_count"] = len(all_raw_results)
+
             seen_by_pub = {}
             initial_count_by_pub = {}
             added_count_by_pub = {}
+            dup_count_by_pub = {}
 
             for pub in needs_search_pubs:
                 pub_id = pub.get("id")
                 existing_list = search_entry_map[pub_id]["results"]
                 initial_count_by_pub[pub_id] = len(existing_list)
                 added_count_by_pub[pub_id] = 0
+                dup_count_by_pub[pub_id] = 0
                 seen_by_pub[pub_id] = {
                     normalize_url(r.get("url", ""))
                     for r in existing_list
                     if normalize_url(r.get("url", ""))
                 }
 
-            for q_rank, item in all_raw_results:
+            for chunk_idx, q_rank, item in all_raw_results:
                 item_url = str(item.get("url") or "").strip()
+                item_title = str(item.get("title") or "").strip()
                 norm_url = normalize_url(item_url)
+
+                log_row = {
+                    "chunk": chunk_idx,
+                    "rank": q_rank,
+                    "title": item_title,
+                    "url": item_url,
+                    "matched_publisher": None,
+                    "action": "SKIPPED"
+                }
+
                 if not item_url or not norm_url:
+                    log_row["action"] = "EMPTY_URL"
+                    movie_log_entry["raw_results"].append(log_row)
                     continue
 
                 item_domain = extract_domain(item_url)
-                if not item_domain:
-                    continue
-
                 matched_pub = None
-                for pub_domain, pub_data in publisher_map.items():
-                    if item_domain == pub_domain or item_domain.endswith("." + pub_domain):
-                        matched_pub = pub_data
-                        break
+                if item_domain:
+                    for pub_domain, pub_data in publisher_map.items():
+                        if item_domain == pub_domain or item_domain.endswith("." + pub_domain):
+                            matched_pub = pub_data
+                            break
 
                 if not matched_pub:
+                    log_row["action"] = "UNMATCHED_DOMAIN"
+                    movie_log_entry["raw_results"].append(log_row)
                     continue
 
                 matched_pub_id = matched_pub.get("id")
+                log_row["matched_publisher"] = matched_pub_id
+
                 if matched_pub_id not in seen_by_pub:
+                    log_row["action"] = "NOT_QUEUED"
+                    movie_log_entry["raw_results"].append(log_row)
                     continue
 
                 target_domain = extract_domain(matched_pub.get("url", ""))
                 if not is_valid_url_for_domain(item_url, target_domain):
+                    log_row["action"] = "BLOCKED_EXTENSION"
+                    movie_log_entry["raw_results"].append(log_row)
                     continue
 
                 if norm_url not in seen_by_pub[matched_pub_id]:
@@ -371,12 +398,18 @@ def main():
                     bucket.append({
                         "rank": q_rank,
                         "match_type": "tavily",
-                        "title": str(item.get("title") or "").strip(),
+                        "title": item_title,
                         "url": item_url,
                         "timestamp": run_timestamp,
                         "is_review": "TBD"
                     })
                     added_count_by_pub[matched_pub_id] += 1
+                    log_row["action"] = "ADDED"
+                else:
+                    dup_count_by_pub[matched_pub_id] += 1
+                    log_row["action"] = "DUPLICATE"
+
+                movie_log_entry["raw_results"].append(log_row)
 
             for pub in needs_search_pubs:
                 pub_id = pub.get("id")
@@ -384,6 +417,7 @@ def main():
                 bucket = search_entry_map[pub_id]["results"]
                 total_hits = len(bucket)
                 new_added = added_count_by_pub.get(pub_id, 0)
+                dup_skipped = dup_count_by_pub.get(pub_id, 0)
                 prior_cnt = initial_count_by_pub.get(pub_id, 0)
 
                 p_block = existing_reviews_dict.get(pub_id)
@@ -399,9 +433,10 @@ def main():
                         "status": "SUCCESS",
                         "prior_results": prior_cnt,
                         "new_tavily_added": new_added,
+                        "duplicate_tavily_skipped": dup_skipped,
                         "total_results": total_hits
                     }
-                    print(f"  └─► {pub_name}: +{new_added} new Tavily URLs (Total in bucket: {total_hits}).")
+                    print(f"  └─► {pub_name}: +{new_added} new Tavily URLs, {dup_skipped} already present (Total in bucket: {total_hits}).")
                 else:
                     if p_block is not None:
                         p_block["search_status"] = "FAILED"
