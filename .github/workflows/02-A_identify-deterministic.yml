@@ -1,4 +1,4 @@
-name: 02. Classify Reviews
+name: 02-A. Identify Reviews Deterministically
 
 on:
   workflow_dispatch:
@@ -23,7 +23,7 @@ jobs:
 
       - name: Run review classifier
         run: |
-          python 02_identify.py
+          python 02-A_identify-deterministic.py
 
       - name: Commit updated JSON files
         run: |
