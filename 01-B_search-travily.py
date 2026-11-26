@@ -3,10 +3,11 @@
 01-B_search-tavily.py
 Augmenter search step using Tavily in chunked publisher batches.
 Targets active publishers where review_url is PENDING/FAILED/NA or empty,
-appends deduplicated domain- and extension-validated URLs with true query rank,
-timestamp, and 'is_review': 'TBD' to searches_<slug>.json without overwriting
-prior entries, logs raw Tavily dispositions + per-publisher duplicate counts,
-and updates search_status and search_count in reviews_<slug>.json.
+isolates high-SEO crowder publishers into Query 1, appends deduplicated
+domain- and extension-validated URLs with true query rank, timestamp, and
+'is_review': 'TBD' to searches_<slug>.json without overwriting prior entries,
+logs raw Tavily dispositions + per-publisher duplicate counts, and updates
+search_status and search_count in reviews_<slug>.json.
 """
 
 import json
@@ -39,6 +40,14 @@ LOGS_DIR = os.path.join(BASE_DIR, "logs")
 BLOCKED_EXTENSIONS = (
     ".webp", ".jpg", ".jpeg", ".png", ".gif", ".svg", ".pdf", ".mp4", ".mp3"
 )
+
+# High-SEO crowder publishers forced into Query 1 (add/remove publisher_ids here, max 15)
+MAX_CROWDERS = 15
+CROWDER_PUBLISHER_IDS = [
+    "bollywood-hungama",
+    "koimoi",
+    "the-times-of-india",
+]
 
 logging.basicConfig(level=logging.ERROR, format="%(asctime)s [%(levelname)s] %(message)s")
 
@@ -112,13 +121,37 @@ def is_valid_url_for_domain(url: str, target_domain: str) -> bool:
         return False
 
 
-def chunk_publishers(pubs, max_chunks=3):
+def chunk_publishers(pubs, max_chunks=3, crowder_ids=None, max_crowders=MAX_CROWDERS):
+    """
+    Forces all active crowder publishers (up to max_crowders) into Query 1,
+    fills the rest of Query 1 with (base_size - n) non-crowders, and distributes
+    the remaining non-crowders evenly across the remaining chunks.
+    For 42 publishers and 3 crowders: Query 1 = 3 crowders + 11 others (14), Query 2 = 14, Query 3 = 14.
+    """
     if not pubs:
         return []
     if len(pubs) <= max_chunks:
         return [[p] for p in pubs]
-    chunk_size = math.ceil(len(pubs) / max_chunks)
-    return [pubs[i:i + chunk_size] for i in range(0, len(pubs), chunk_size)]
+
+    crowder_set = set((crowder_ids or [])[:max_crowders])
+    crowders = [p for p in pubs if p.get("id") in crowder_set][:max_crowders]
+    crowder_picked_ids = {p.get("id") for p in crowders}
+    non_crowders = [p for p in pubs if p.get("id") not in crowder_picked_ids]
+
+    base_size = math.ceil(len(pubs) / max_chunks)
+    fill_for_chunk1 = max(0, base_size - len(crowders))
+
+    chunk1 = crowders + non_crowders[:fill_for_chunk1]
+    remaining = non_crowders[fill_for_chunk1:]
+
+    chunks = [chunk1]
+    rem_slots = max_chunks - 1
+    if remaining and rem_slots > 0:
+        rem_chunk_size = math.ceil(len(remaining) / rem_slots)
+        for i in range(0, len(remaining), rem_chunk_size):
+            chunks.append(remaining[i:i + rem_chunk_size])
+
+    return chunks
 
 
 def main():
@@ -298,15 +331,23 @@ def main():
             run_timestamp = datetime.now().astimezone().isoformat()
             query = f'"{movie_name}" {movie_year} movie review'.strip()
             valid_pubs_for_chunking = [p for p in needs_search_pubs if extract_domain(p.get("url", ""))]
-            chunks = chunk_publishers(valid_pubs_for_chunking, max_chunks=3)
+            crowder_set = set(CROWDER_PUBLISHER_IDS[:MAX_CROWDERS])
+            chunks = chunk_publishers(
+                valid_pubs_for_chunking,
+                max_chunks=3,
+                crowder_ids=CROWDER_PUBLISHER_IDS,
+                max_crowders=MAX_CROWDERS
+            )
             all_raw_results = []
 
             for idx, chunk in enumerate(chunks, start=1):
                 chunk_domains = [extract_domain(p["url"]) for p in chunk if extract_domain(p.get("url", ""))]
                 if not chunk_domains:
                     continue
+                crowders_in_chunk = sum(1 for p in chunk if p.get("id") in crowder_set)
+                crowder_tag = f" ({crowders_in_chunk} crowders)" if crowders_in_chunk > 0 else ""
                 movie_log_entry["chunks_executed"] += 1
-                print(f"  └─► [Call {idx}/{len(chunks)}] Searching {len(chunk_domains)} domains...")
+                print(f"  └─► [Call {idx}/{len(chunks)}] Searching {len(chunk_domains)} domains{crowder_tag}...")
                 try:
                     response = client.search(
                         query=query,
