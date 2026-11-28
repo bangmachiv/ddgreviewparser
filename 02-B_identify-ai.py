@@ -5,8 +5,9 @@ Semantic evaluation script utilizing Google Gemini text models.
 Reads search candidates (is_review == 'TBD') from Step 1 (DDGS / Tavily),
 filters out previously rejected titles/URLs, evaluates fresh candidates
 semantically to identify official editorial reviews, applies a deterministic
-post-check blocklist on AI matches, updates is_review ('Y'/'N') in
-searches_<slug>.json, and updates reviews_<slug>.json.
+post-check blocklist on AI matches, enforces the 2-state is_review invariant
+('Y-AI' / 'Y-DETERMINISTIC' + all others 'N', or all 'N') in searches_<slug>.json,
+and updates reviews_<slug>.json.
 """
 
 import builtins
@@ -122,6 +123,25 @@ def get_blocked_reason(title: str, url: str):
         if f" {phrase} " in padded:
             return phrase
     return None
+
+def reconcile_publisher_bucket(candidates, confirmed_url, marker):
+    """
+    Enforces the 2-state invariant on a publisher's search results:
+    - If confirmed_url is provided: marks that URL with marker ('Y-DETERMINISTIC' or 'Y-AI')
+      and marks all other URLs as 'N'.
+    - Returns True if any item's is_review field was modified.
+    """
+    changed = False
+    target_url = str(confirmed_url or "").strip()
+    for c in candidates:
+        if not isinstance(c, dict):
+            continue
+        c_url = str(c.get("url") or "").strip()
+        desired_state = marker if (target_url and c_url == target_url) else "N"
+        if c.get("is_review") != desired_state:
+            c["is_review"] = desired_state
+            changed = True
+    return changed
 
 def run_gemini_evaluation(client, prompt):
     """Executes text generation call with fallback cascade and 5 RPM timegaps."""
@@ -255,16 +275,23 @@ def main():
         for pub in rdata.get("publishers", []):
             pub_id = pub.get("publisher_id")
             pub_name = pub.get("publisher_name")
-            review_url = str(pub.get("review_url", "")).strip().upper()
+            raw_review_url = str(pub.get("review_url", "")).strip()
+            review_url_upper = raw_review_url.upper()
             sc = pub.get("search_count", 0)
+            candidates = search_results_map.get(pub_id, [])
+
+            # Already confirmed (by 02-A deterministic or prior 02-B AI):
+            # Enforce 1 Y-(marker) + all others N in searches_<slug>.json
+            if review_url_upper not in ["PENDING", "FAILED", "NA", ""]:
+                if candidates:
+                    classified_by = str(pub.get("classified_by") or "").strip().upper()
+                    marker = "Y-DETERMINISTIC" if classified_by == "SCRIPT" else "Y-AI"
+                    if reconcile_publisher_bucket(candidates, raw_review_url, marker):
+                        searches_changed = True
+                continue
 
             # Execution Gate: Unresolved review_url with available search results
-            if review_url in ["PENDING", "FAILED", "NA", ""] and sc > 0:
-                candidates = search_results_map.get(pub_id, [])
-
-                if not candidates:
-                    continue
-
+            if sc > 0 and candidates:
                 rejected_titles = set(negative_data["publishers"].get(pub_id, []))
 
                 compact_candidates = []
@@ -448,25 +475,28 @@ def main():
                                     if pub.get("webpage_content_adjudication") in [None, "", "NOT_NEEDED"]:
                                         pub["webpage_content_adjudication"] = "PENDING"
 
-                                    matched_item["raw_ref"]["is_review"] = "Y"
-                                    searches_changed = True
+                                    # Enforce 1 'Y-AI' + all others 'N' across the entire publisher bucket
+                                    if reconcile_publisher_bucket(candidates, matched_url, "Y-AI"):
+                                        searches_changed = True
+
                                     data_changed = True
                                     movie_stats["found"] += 1
                                 else:
                                     print(f"     [NOT ADMISSIBLE] All AI matches were blocked by deterministic post-check. Remaining PENDING.")
+                                    if reconcile_publisher_bucket(candidates, None, "N"):
+                                        searches_changed = True
                                     movie_stats["not_found"] += 1
                             else:
                                 print(f"     [NOT ADMISSIBLE] No candidate met confidence threshold >= {MIN_CONFIDENCE_THRESHOLD}% (or returned empty). Remaining PENDING.")
+                                if reconcile_publisher_bucket(candidates, None, "N"):
+                                    searches_changed = True
                                 movie_stats["not_found"] += 1
 
-                            # Mark all non-winning evaluated candidates as 'N' and cache their titles
-                            newly_rejected_titles = []
-                            for cand in compact_candidates:
-                                if cand["url"] != matched_url:
-                                    cand["raw_ref"]["is_review"] = "N"
-                                    searches_changed = True
-                                    if cand["title"]:
-                                        newly_rejected_titles.append(cand["title"])
+                            # Cache all non-winning evaluated titles in negative_searches_<slug>.json
+                            newly_rejected_titles = [
+                                cand["title"] for cand in compact_candidates
+                                if cand["url"] != matched_url and cand["title"]
+                            ]
 
                             if newly_rejected_titles:
                                 if pub_id not in negative_data["publishers"]:
